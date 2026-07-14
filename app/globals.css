@@ -833,6 +833,13 @@ a:focus-visible {
     serif;
   margin-top: 4px;
 }
+.prospect-range-note {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.45;
+  text-align: right;
+}
 .editor-note {
   font-size: 10px;
   line-height: 1.5;

@@ -57,6 +57,9 @@ const records = database.players
       contractSeasons: player.kind === "mlb" ? seasons.length : null,
       contractScenario:
         player.kind === "mlb" ? player.contractScenario?.selectedId ?? null : null,
+      prospectRisk: player.kind === "prospect" ? player.riskLabel ?? null : null,
+      rosterContext:
+        player.kind === "prospect" ? player.rosterContext ?? "none" : null,
       expectedIncentives:
         player.kind === "mlb"
           ? Number(
@@ -114,6 +117,12 @@ const report = {
   conditionalContractPaths: records.filter(
     (player) => player.contractScenario,
   ),
+  prospectContextCounts: Object.fromEntries(
+    ["none", "rule5", "on40", "crunch"].map((context) => [
+      context,
+      records.filter((player) => player.rosterContext === context).length,
+    ]),
+  ),
 };
 
 if (jsonOutput) {
@@ -133,6 +142,8 @@ if (jsonOutput) {
   console.table(report.contractsWithExpectedIncentives);
   console.log("Contracts with conditional paths");
   console.table(report.conditionalContractPaths);
+  console.log("Prospect roster context");
+  console.table(report.prospectContextCounts);
   console.log("Bounds");
   console.table([report.bounds.maximum, report.bounds.minimum]);
 }

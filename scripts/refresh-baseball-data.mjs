@@ -1,4 +1,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
+import {
+  normalizeProspectRisk,
+  prospectRosterContext,
+} from "../lib/prospect-context.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
@@ -778,7 +782,7 @@ const prospects = boardRows
     age: Math.floor(Number(row.Age) || 20),
     source: {
       projection: "FanGraphs The Board",
-      contract: "Not applicable",
+      contract: "FV, ETA, scouting risk & roster status",
       refreshed: new Date().toISOString().slice(0, 10),
     },
     prospectType: String(row.positionDB || row.Position).includes("P")
@@ -787,9 +791,9 @@ const prospects = boardRows
     fv: prospectGrade(row.cFV || row.FV_Current),
     eta: Number(row.cETA || row.ETA_Current) || BASE_YEAR + 1,
     adjustment: 0,
-    rosterContext: "none",
+    rosterContext: prospectRosterContext(row, BASE_YEAR),
     rank: Number(row.Ovr_Rank) || null,
-    riskLabel: row.cRisk || row.Variance || null,
+    riskLabel: normalizeProspectRisk(row.cRisk || row.Variance),
   }));
 
 const teams = teamRows

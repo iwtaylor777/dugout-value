@@ -85,6 +85,7 @@ type ProspectPlayer = {
   eta: number;
   adjustment: number;
   rosterContext?: ProspectRosterContext;
+  riskLabel?: string | null;
   rank?: number | null;
   custom?: boolean;
 };
@@ -110,6 +111,7 @@ type ValueResult = {
   prospectTotal?: number;
   rookieAdjustment?: number;
   horizonRisk?: number;
+  rangeUncertainty?: number;
   rows: Array<{
     year: number;
     war: number;
@@ -160,6 +162,13 @@ const displayPosition = (player: Player) =>
         ? "SP"
         : "P"
     : player.position;
+const rosterContextLabel = (player: ProspectPlayer) =>
+  ({
+    none: "",
+    rule5: "Rule 5 decision",
+    on40: "40-man roster",
+    crunch: "roster crunch",
+  })[player.rosterContext ?? "none"] ?? "";
 const contractLabel = (player: MLBPlayer) => {
   const seasons = effectiveSeasons(player) as MLBSeason[];
   const firstPlayerDecision = seasons.find((season) =>
@@ -475,6 +484,7 @@ export default function Home() {
             eta: BASE_YEAR + 1,
             adjustment: 0,
             rosterContext: "none",
+            riskLabel: "Med",
           };
     setPlayers((current) => ({ ...current, [id]: player }));
     addPlayer(side, id);
@@ -560,9 +570,13 @@ export default function Home() {
             <small>
               {displayPosition(player)} · Age {player.age} ·{" "}
               {player.kind === "prospect"
-                ? `${player.fv} FV${
-                    player.rosterContext && player.rosterContext !== "none"
-                      ? " · roster pressure"
+                ? `${player.fv} FV · ${
+                    player.riskLabel?.toLowerCase() === "med"
+                      ? "medium"
+                      : (player.riskLabel ?? "medium").toLowerCase()
+                  } risk${
+                    rosterContextLabel(player)
+                      ? ` · ${rosterContextLabel(player)}`
                       : ""
                   }`
                 : contractLabel(player)}
@@ -1461,6 +1475,32 @@ export default function Home() {
                         />
                       </label>
                       <label>
+                        <span>Scouting risk</span>
+                        <select
+                          value={
+                            selected.riskLabel?.toLowerCase().startsWith("low")
+                              ? "Low"
+                              : selected.riskLabel
+                                    ?.toLowerCase()
+                                    .startsWith("high")
+                                ? "High"
+                                : "Med"
+                          }
+                          onChange={(event) =>
+                            updatePlayer(selected.id, (player) =>
+                              player.kind === "prospect"
+                                ? { ...player, riskLabel: event.target.value }
+                                : player,
+                            )
+                          }
+                        >
+                          <option value="Low">Low</option>
+                          <option value="Med">Medium</option>
+                          <option value="High">High</option>
+                        </select>
+                        <small>Changes the range, not the FV median.</small>
+                      </label>
+                      <label>
                         <span>Scout adjustment</span>
                         <span className="percent-field">
                           <NumericField
@@ -1506,7 +1546,8 @@ export default function Home() {
                           </option>
                         </select>
                         <small>
-                          This changes trade leverage, not the scouting grade.
+                          Seeded from signing year and option status. This changes
+                          leverage, not the scouting grade.
                         </small>
                       </label>
                     </div>
@@ -1530,6 +1571,14 @@ export default function Home() {
                         </strong>
                       </div>
                     </div>
+                    <p className="prospect-range-note">
+                      {selected.riskLabel ?? "Medium"} scouting risk · range{" "}
+                      {money(values[selected.id]?.low ?? 0)}–
+                      {money(values[selected.id]?.high ?? 0)}
+                      {values[selected.id]?.rangeUncertainty
+                        ? ` · ±${values[selected.id]?.rangeUncertainty?.toFixed(0)}%`
+                        : ""}
+                    </p>
                   </>
                 )}
               </>
@@ -1624,6 +1673,9 @@ export default function Home() {
                       <small>
                         {teamName(player.team)} · {displayPosition(player)} · Age{" "}
                         {player.age}
+                        {player.kind === "prospect" && rosterContextLabel(player)
+                          ? ` · ${rosterContextLabel(player)}`
+                          : ""}
                       </small>
                     </div>
                     <span className={`type-pill ${player.kind}`}>
@@ -1694,8 +1746,9 @@ export default function Home() {
                   upside without erasing downside. Playing-time escalators use
                   projected odds; mutually exclusive award bonuses stay out of
                   the salary estimate. Young MLB players can retain recent FV
-                  value, while Rule 5 and 40-man pressure is an explicit context
-                  adjustment rather than a hidden talent downgrade.
+                  value. The Board&apos;s risk label changes a prospect&apos;s range,
+                  not its median; signing year and option status identify Rule 5
+                  and 40-man pressure as a separate roster-leverage adjustment.
                 </p>
               </article>
             </div>

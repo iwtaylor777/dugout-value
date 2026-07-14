@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import {
+  normalizeProspectRisk,
+  prospectRosterContext,
+} from "../lib/prospect-context.mjs";
+import {
   effectiveSeasons,
   initialSettings,
   isReliever,
@@ -81,6 +85,91 @@ test("player options preserve downside but do not invent club upside", () => {
   assert.equal(result.total, -20);
 });
 
+test("prospect scouting risk widens the range without moving the median", () => {
+  const baseProspect = {
+    id: "test-prospect-risk",
+    kind: "prospect",
+    name: "Range Prospect",
+    team: "SEA",
+    position: "SS",
+    prospectType: "Hitter",
+    fv: "50",
+    eta: database.meta.baseYear + 2,
+    adjustment: 0,
+    rosterContext: "none",
+  };
+  const lowRisk = valuePlayer(
+    { ...baseProspect, riskLabel: "Low" },
+    initialSettings,
+    database,
+  );
+  const highRisk = valuePlayer(
+    { ...baseProspect, riskLabel: "High" },
+    initialSettings,
+    database,
+  );
+
+  assert.equal(lowRisk.total, highRisk.total);
+  assert.ok(highRisk.low < lowRisk.low);
+  assert.ok(highRisk.high > lowRisk.high);
+  assert.ok(highRisk.rangeUncertainty > lowRisk.rangeUncertainty);
+});
+
+test("prospect roster context follows option status and Rule 5 timing", () => {
+  const baseYear = 2026;
+  assert.equal(normalizeProspectRisk("high"), "High");
+  assert.equal(normalizeProspectRisk("Short"), "Med");
+  assert.equal(
+    prospectRosterContext(
+      { options: "3", cETA: 2028, Age: 22 },
+      baseYear,
+    ),
+    "on40",
+  );
+  assert.equal(
+    prospectRosterContext(
+      {
+        options: "",
+        cETA: 2027,
+        Age: 21,
+        Signed_Yr: 2023,
+        Signed_Mkt: "Draft",
+        BirthDate: 38342,
+      },
+      baseYear,
+    ),
+    "none",
+  );
+  assert.equal(
+    prospectRosterContext(
+      {
+        options: "",
+        cETA: 2027,
+        Age: 21,
+        Signed_Yr: 2022,
+        Signed_Mkt: "Intl15",
+        BirthDate: 38500,
+      },
+      baseYear,
+    ),
+    "rule5",
+  );
+  assert.equal(
+    prospectRosterContext(
+      {
+        options: "",
+        cETA: 2028,
+        Age: 24,
+        Signed_Yr: 2022,
+        Signed_Mkt: "Draft",
+        BirthDate: 37300,
+      },
+      baseYear,
+    ),
+    "crunch",
+  );
+});
+
 test("the live snapshot clears identity, reliever, opt-out, and arb checks", () => {
   const identities = database.players.map(identity);
   assert.equal(new Set(identities).size, identities.length);
@@ -89,6 +178,26 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
     (player) => player.kind === "mlb" && isReliever(player),
   );
   assert.ok(relievers.length > 100);
+
+  const prospects = database.players.filter(
+    (player) => player.kind === "prospect",
+  );
+  assert.ok(
+    prospects.every((player) =>
+      ["Low", "Med", "High"].includes(player.riskLabel),
+    ),
+  );
+  assert.ok(
+    prospects.filter((player) => player.rosterContext === "rule5").length >
+      100,
+  );
+  assert.ok(
+    prospects.filter((player) => player.rosterContext === "on40").length > 20,
+  );
+  assert.ok(
+    prospects.filter((player) => player.rosterContext === "crunch").length >
+      100,
+  );
 
   const mlbPlayers = database.players.filter(
     (player) => player.kind === "mlb",

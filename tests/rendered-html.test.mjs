@@ -89,6 +89,9 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(model, /starPremium: 30/);
   assert.match(model, /player\.role === "reliever"/);
   assert.match(page, /rosterContext/);
+  assert.match(page, /Scouting risk/);
+  assert.match(page, /Changes the range, not the FV median/);
+  assert.match(page, /prospect-range-note/);
   assert.match(page, /Club control through/);
   assert.match(page, /Playing-time escalators use/);
   assert.match(page, /extra long-range uncertainty/);
