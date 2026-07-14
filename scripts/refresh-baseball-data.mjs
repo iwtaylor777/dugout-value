@@ -442,6 +442,7 @@ const prospects = boardRows
     fv: prospectGrade(row.cFV || row.FV_Current),
     eta: Number(row.cETA || row.ETA_Current) || BASE_YEAR + 1,
     adjustment: 0,
+    rosterContext: "none",
     rank: Number(row.Ovr_Rank) || null,
     riskLabel: row.cRisk || row.Variance || null,
   }));

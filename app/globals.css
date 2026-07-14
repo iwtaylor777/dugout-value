@@ -1013,6 +1013,154 @@ footer p {
     text-align: left;
   }
 }
+
+/* Light ballpark character and interaction polish */
+body {
+  font-family:
+    "Avenir Next",
+    ui-rounded,
+    var(--font-geist-sans),
+    Arial,
+    sans-serif;
+}
+.brand,
+.intro h1,
+.rankings-heading h2,
+.section-title h2,
+.editor-heading h2,
+.method-grid h3 {
+  font-family:
+    "Avenir Next",
+    ui-rounded,
+    var(--font-geist-sans),
+    Arial,
+    sans-serif;
+}
+.brand,
+.intro h1,
+.rankings-heading h2 {
+  letter-spacing: -0.045em;
+}
+.masthead .brand::before {
+  background: #fff8ea;
+  box-shadow:
+    inset 0 0 0 2px #fff8ea,
+    3px -3px 0 -2px var(--gold);
+}
+.snapshot {
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgba(255, 253, 248, 0.68);
+}
+.model-strip,
+.trade-board,
+.editor,
+.rankings-panel,
+.methodology {
+  border-radius: 10px;
+}
+.nav-button,
+.model-strip button,
+.section-title button,
+.trade-verdict button,
+.ranking-row > button,
+.add-row input,
+.add-row > button,
+.ranking-filters input,
+.ranking-filters select {
+  border-radius: 8px;
+}
+.assumption-panel {
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 10px;
+  padding: 14px;
+}
+.timing-presets {
+  grid-column: 1 / -1;
+}
+.timing-presets > span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--red);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.timing-presets > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  max-width: 520px;
+}
+.timing-presets button {
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper-light);
+  color: var(--ink);
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+}
+.timing-presets button small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 500;
+}
+.timing-presets button.is-active {
+  border-color: var(--red);
+  background: #fff6e7;
+  box-shadow: inset 3px 0 0 var(--red);
+}
+.assumption-panel > p {
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.picker-menu button.is-active {
+  background: #f7ecda;
+}
+.wide-field > small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.4;
+}
+.methodology {
+  scroll-margin-top: 70px;
+  outline: none;
+}
+.methodology:focus-visible {
+  outline: 3px solid rgba(178, 82, 62, 0.22);
+  outline-offset: 3px;
+}
+.workspace-tabs button,
+.nav-button,
+.add-row > button,
+.ranking-row > button {
+  min-height: 36px;
+}
+@media (max-width: 980px) {
+  .assumption-panel {
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .snapshot {
+    padding: 8px 10px;
+  }
+  .assumption-panel,
+  .timing-presets > div {
+    grid-template-columns: 1fr;
+  }
+  .picker-menu {
+    max-height: 260px;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -34,6 +34,8 @@ test("server-renders the trade builder", async () => {
   assert.match(html, /Trade builder/);
   assert.match(html, /Value rankings/);
   assert.match(html, /Value by control year/);
+  assert.match(html, /Neutral · no discount/);
+  assert.match(html, /30<!-- -->% star premium/);
   assert.match(html, /role="combobox"/);
   assert.doesNotMatch(html, /Locked provenance/);
 });
@@ -52,9 +54,36 @@ test("keeps rankings, search, and the yearly chart in the client", async () => {
   assert.match(page, /setRankingTeam/);
   assert.match(page, /className="picker-menu"/);
   assert.match(page, /event\.key === "Enter"/);
+  assert.match(page, /event\.key === "ArrowDown"/);
+  assert.match(page, /event\.key === "ArrowUp"/);
+  assert.match(page, /aria-activedescendant/);
   assert.doesNotMatch(page, /showLedger/);
   assert.doesNotMatch(page, /<datalist/);
   assert.match(css, /\.workspace-tabs/);
   assert.match(css, /\.rankings-panel/);
   assert.match(css, /\.picker-menu/);
+});
+
+test("keeps the audited navigation and model behavior explicit", async () => {
+  const page = await readFile(
+    new URL("../app/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const audit = await readFile(
+    new URL("../docs/interaction-audit.md", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(page, /const openMethod/);
+  assert.match(page, /getElementById\("methodology"\)/);
+  assert.match(page, /scrollIntoView/);
+  assert.match(page, /const swapTeams/);
+  assert.match(page, /openPlayerEditor\(player\.id, true\)/);
+  assert.match(page, /regularRosterWar: 0\.5/);
+  assert.match(page, /relieverRosterWar: 0\.2/);
+  assert.match(page, /timingPreference: 0/);
+  assert.match(page, /starPremium: 30/);
+  assert.match(page, /rosterContext/);
+  assert.match(audit, /Navigate search with keyboard/);
+  assert.match(audit, /Account for Rule 5 \/ 40-man pressure/);
 });

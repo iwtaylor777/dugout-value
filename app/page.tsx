@@ -16,6 +16,7 @@ type SalaryMode =
   | "vestingOption";
 type ProspectType = "Hitter" | "Pitcher";
 type RookieMode = "projection" | "blend" | "prospect";
+type ProspectRosterContext = "none" | "rule5" | "on40" | "crunch";
 type Provenance = { projection: string; contract: string; refreshed: string };
 type MLBSeason = {
   year: number;
@@ -62,6 +63,7 @@ type ProspectPlayer = {
   fv: string;
   eta: number;
   adjustment: number;
+  rosterContext?: ProspectRosterContext;
   rank?: number | null;
   custom?: boolean;
 };
@@ -69,8 +71,11 @@ type Player = MLBPlayer | ProspectPlayer;
 type Team = { abbr: string; name: string };
 type ModelSettings = {
   dollarsPerWar: number;
-  freeWar: number;
-  discountRate: number;
+  regularRosterWar: number;
+  relieverRosterWar: number;
+  timingPreference: number;
+  starPremium: number;
+  relieverPremium: number;
   inflation: number;
   minimumSalary: number;
 };
@@ -111,8 +116,11 @@ const initialPlayers = Object.fromEntries(
 );
 const initialSettings: ModelSettings = {
   dollarsPerWar: 12,
-  freeWar: 0.5,
-  discountRate: 8,
+  regularRosterWar: 0.5,
+  relieverRosterWar: 0.2,
+  timingPreference: 0,
+  starPremium: 30,
+  relieverPremium: 0,
   inflation: 3,
   minimumSalary: 0.78,
 };
@@ -173,17 +181,58 @@ const prettyDate = (date: string) =>
     timeZone: "UTC",
   }).format(new Date(`${date}T12:00:00Z`));
 
+const isReliever = (player: MLBPlayer) => {
+  const roles = player.position.split(/[\/,]/).map((role) => role.trim());
+  return roles.includes("RP") && !roles.includes("SP");
+};
+
+const prospectRosterMultiplier: Record<ProspectRosterContext, number> = {
+  none: 1,
+  rule5: 0.85,
+  on40: 0.9,
+  crunch: 0.6,
+};
+
+function marketValueForSeason(
+  player: MLBPlayer,
+  season: MLBSeason,
+  settings: ModelSettings,
+  inflation: number,
+) {
+  const seasonShare = season.ros
+    ? (database.meta.seasonRemainingFraction ?? 1)
+    : 1;
+  const reliever = isReliever(player);
+  const rosterBurden =
+    (reliever ? settings.relieverRosterWar : settings.regularRosterWar) *
+    seasonShare;
+  const netWar = Math.max(0, season.war - rosterBurden);
+  const starThreshold = 2 * seasonShare;
+  const standardWar = Math.min(netWar, starThreshold);
+  const starWar = Math.max(0, netWar - starThreshold);
+  const curvedValue =
+    standardWar * settings.dollarsPerWar +
+    starWar *
+      settings.dollarsPerWar *
+      (1 + settings.starPremium / 100);
+  const bullpenMarket = reliever ? 1 + settings.relieverPremium / 100 : 1;
+  return curvedValue * bullpenMarket * inflation;
+}
+
 function valuePlayer(player: Player, settings: ModelSettings): ValueResult {
   if (player.kind === "prospect") {
     const tier =
       prospectValues[player.fv]?.[player.prospectType] ??
       prospectValues["40"][player.prospectType];
     const yearsAway = Math.max(0, player.eta - BASE_YEAR);
+    const rosterMultiplier =
+      prospectRosterMultiplier[player.rosterContext ?? "none"];
     const total =
       (tier.value *
         (settings.dollarsPerWar / 12) *
-        (1 + player.adjustment / 100)) /
-      Math.pow(1 + settings.discountRate / 100, yearsAway);
+        (1 + player.adjustment / 100) *
+        rosterMultiplier) /
+      Math.pow(1 + settings.timingPreference / 100, yearsAway);
     const uncertainty =
       0.23 + yearsAway * 0.04 + (player.prospectType === "Pitcher" ? 0.06 : 0);
     return {
@@ -201,12 +250,9 @@ function valuePlayer(player: Player, settings: ModelSettings): ValueResult {
     const contractMode = season.contractType ?? season.salaryMode;
     const yearsOut = Math.max(0, season.year - BASE_YEAR);
     const inflation = Math.pow(1 + settings.inflation / 100, yearsOut);
-    const discount = 1 / Math.pow(1 + settings.discountRate / 100, yearsOut);
-    const freeWar = season.ros
-      ? settings.freeWar * (database.meta.seasonRemainingFraction ?? 1)
-      : settings.freeWar;
-    const market =
-      Math.max(0, season.war - freeWar) * settings.dollarsPerWar * inflation;
+    const timingFactor =
+      1 / Math.pow(1 + settings.timingPreference / 100, yearsOut);
+    const market = marketValueForSeason(player, season, settings, inflation);
     const floor = settings.minimumSalary * inflation;
     let salary = season.salary;
     if (season.salaryMode === "prearb") salary = salary || floor;
@@ -253,7 +299,7 @@ function valuePlayer(player: Player, settings: ModelSettings): ValueResult {
       war: season.war,
       market,
       salary,
-      surplus: rawSurplus * discount,
+      surplus: rawSurplus * timingFactor,
     });
   });
   const projectionTotal = rows.reduce((sum, row) => sum + row.surplus, 0);
@@ -336,6 +382,7 @@ export default function Home() {
   const [leftSearch, setLeftSearch] = useState("");
   const [rightSearch, setRightSearch] = useState("");
   const [openPicker, setOpenPicker] = useState<"left" | "right" | null>(null);
+  const [pickerIndex, setPickerIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<"trade" | "rankings">("trade");
   const [rankingType, setRankingType] = useState<"all" | "mlb" | "prospect">(
     "all",
@@ -445,11 +492,25 @@ export default function Home() {
     );
     setSelectedId(id);
   };
+  const openPlayerEditor = (id: string, fromRankings = false) => {
+    setSelectedId(id);
+    if (fromRankings) setActiveTab("trade");
+    window.setTimeout(() => {
+      if (window.innerWidth <= 1250) {
+        document
+          .getElementById("player-editor")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 0);
+  };
   const removePlayer = (side: "left" | "right", id: string) => {
     (side === "left" ? setLeftIds : setRightIds)((ids) =>
       ids.filter((item) => item !== id),
     );
-    if (selectedId === id) setSelectedId("");
+    if (selectedId === id) {
+      const remaining = [...leftIds, ...rightIds].filter((item) => item !== id);
+      setSelectedId(remaining[0] ?? "");
+    }
   };
   const changeTeam = (side: "left" | "right", team: string) => {
     if (
@@ -457,14 +518,22 @@ export default function Home() {
       (side === "right" && team === leftTeam)
     )
       return;
+    const clearedIds = side === "left" ? leftIds : rightIds;
+    const retainedIds = side === "left" ? rightIds : leftIds;
     if (side === "left") {
       setLeftTeam(team);
       setLeftIds([]);
+      setLeftSearch("");
     } else {
       setRightTeam(team);
       setRightIds([]);
+      setRightSearch("");
     }
-    setSelectedId("");
+    setOpenPicker(null);
+    setPickerIndex(0);
+    if (clearedIds.includes(selectedId)) {
+      setSelectedId(retainedIds[0] ?? "");
+    }
   };
   const addCustom = (side: "left" | "right", kind: "mlb" | "prospect") => {
     const id = `custom-${Date.now()}`;
@@ -503,6 +572,7 @@ export default function Home() {
             fv: "50",
             eta: BASE_YEAR + 1,
             adjustment: 0,
+            rosterContext: "none",
           };
     setPlayers((current) => ({ ...current, [id]: player }));
     addPlayer(side, id);
@@ -515,6 +585,14 @@ export default function Home() {
     setRightIds(["mlb-694973"]);
     setSelectedId("mlb-694973");
     setSettings(initialSettings);
+    setLeftSearch("");
+    setRightSearch("");
+    setOpenPicker(null);
+    setPickerIndex(0);
+    setShowSettings(false);
+    setShowMethod(false);
+    setActiveTab("trade");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const newTrade = () => {
     setPlayers(deepCopy(initialPlayers));
@@ -527,7 +605,31 @@ export default function Home() {
     setLeftSearch("");
     setRightSearch("");
     setOpenPicker(null);
+    setPickerIndex(0);
+    setShowSettings(false);
+    setShowMethod(false);
     setActiveTab("trade");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const openMethod = () => {
+    setShowMethod(true);
+    window.setTimeout(() => {
+      const method = document.getElementById("methodology");
+      method?.scrollIntoView({ behavior: "smooth", block: "start" });
+      method?.focus({ preventScroll: true });
+    }, 0);
+  };
+  const swapTeams = () => {
+    const team = leftTeam;
+    const ids = leftIds;
+    setLeftTeam(rightTeam);
+    setLeftIds(rightIds);
+    setRightTeam(team);
+    setRightIds(ids);
+    setLeftSearch("");
+    setRightSearch("");
+    setOpenPicker(null);
+    setPickerIndex(0);
   };
 
   const renderCard = (id: string, side: "left" | "right") => {
@@ -541,7 +643,7 @@ export default function Home() {
       >
         <button
           className="player-main"
-          onClick={() => setSelectedId(id)}
+          onClick={() => openPlayerEditor(id)}
           aria-label={`Edit ${player.name}`}
         >
           <span className="player-avatar" aria-hidden="true">
@@ -556,7 +658,11 @@ export default function Home() {
             <small>
               {player.position} · Age {player.age} ·{" "}
               {player.kind === "prospect"
-                ? `${player.fv} FV`
+                ? `${player.fv} FV${
+                    player.rosterContext && player.rosterContext !== "none"
+                      ? " · roster pressure"
+                      : ""
+                  }`
                 : `${player.seasons.length} control yrs`}
             </small>
             <span className="value-range">
@@ -610,6 +716,7 @@ export default function Home() {
       addPlayer(side, player.id);
       setSearch("");
       setOpenPicker(null);
+      setPickerIndex(0);
     };
     return (
       <section className={`trade-side ${side}-side`}>
@@ -658,16 +765,35 @@ export default function Home() {
               aria-controls={`${side}-player-results`}
               placeholder={`Search ${teamName(team)} players…`}
               value={search}
-              onFocus={() => setOpenPicker(side)}
+              aria-activedescendant={
+                openPicker === side && matches[pickerIndex]
+                  ? `${side}-player-${matches[pickerIndex].id}`
+                  : undefined
+              }
+              onFocus={() => {
+                setOpenPicker(side);
+                setPickerIndex(0);
+              }}
               onBlur={() => window.setTimeout(() => setOpenPicker(null), 120)}
               onChange={(event) => {
                 setSearch(event.target.value);
                 setOpenPicker(side);
+                setPickerIndex(0);
               }}
               onKeyDown={(event) => {
-                if (event.key === "Enter" && matches[0]) {
+                if (event.key === "ArrowDown" && matches.length) {
                   event.preventDefault();
-                  choosePlayer(matches[0]);
+                  setPickerIndex((index) =>
+                    Math.min(index + 1, matches.length - 1),
+                  );
+                }
+                if (event.key === "ArrowUp" && matches.length) {
+                  event.preventDefault();
+                  setPickerIndex((index) => Math.max(index - 1, 0));
+                }
+                if (event.key === "Enter" && matches[pickerIndex]) {
+                  event.preventDefault();
+                  choosePlayer(matches[pickerIndex]);
                 }
                 if (event.key === "Escape") setOpenPicker(null);
               }}
@@ -679,12 +805,15 @@ export default function Home() {
                 role="listbox"
               >
                 {matches.length ? (
-                  matches.map((player) => (
+                  matches.map((player, index) => (
                     <button
                       type="button"
                       role="option"
-                      aria-selected="false"
+                      aria-selected={pickerIndex === index}
                       key={player.id}
+                      id={`${side}-player-${player.id}`}
+                      className={pickerIndex === index ? "is-active" : ""}
+                      onMouseEnter={() => setPickerIndex(index)}
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={() => choosePlayer(player)}
                     >
@@ -721,7 +850,7 @@ export default function Home() {
         <nav>
           <button
             className="nav-button"
-            onClick={() => setShowMethod((value) => !value)}
+            onClick={openMethod}
           >
             Method
           </button>
@@ -782,20 +911,29 @@ export default function Home() {
           <>
         <section className="model-strip">
           <div>
-            <span>Market rate</span>
-            <strong>${settings.dollarsPerWar}M / WAR</strong>
+            <span>Market curve</span>
+            <strong>
+              ${settings.dollarsPerWar}M + {settings.starPremium}% star premium
+            </strong>
           </div>
           <div>
             <span>2026 valuation</span>
             <strong>Steamer RoS + remaining salary</strong>
           </div>
           <div>
-            <span>Future projection order</span>
-            <strong>ZiPS → Steamer → Marcel</strong>
+            <span>Roster burden</span>
+            <strong>
+              {settings.regularRosterWar.toFixed(1)} /{" "}
+              {settings.relieverRosterWar.toFixed(1)} fWAR by role
+            </strong>
           </div>
           <div>
-            <span>Arbitration raises</span>
-            <strong>20 / 25 / 30 / 35%</strong>
+            <span>Timing lens</span>
+            <strong>
+              {settings.timingPreference === 0
+                ? "Neutral · no discount"
+                : `Win now · ${settings.timingPreference}% / year`}
+            </strong>
           </div>
           <button onClick={() => setShowSettings((value) => !value)}>
             {showSettings ? "Close assumptions" : "Edit assumptions"}
@@ -803,8 +941,37 @@ export default function Home() {
         </section>
         {showSettings && (
           <section className="assumption-panel">
+            <div className="timing-presets">
+              <span>Team timing lens</span>
+              <div>
+                <button
+                  type="button"
+                  className={
+                    settings.timingPreference === 0 ? "is-active" : ""
+                  }
+                  onClick={() =>
+                    setSettings({ ...settings, timingPreference: 0 })
+                  }
+                >
+                  Neutral value
+                  <small>Future wins count equally</small>
+                </button>
+                <button
+                  type="button"
+                  className={
+                    settings.timingPreference === 8 ? "is-active" : ""
+                  }
+                  onClick={() =>
+                    setSettings({ ...settings, timingPreference: 8 })
+                  }
+                >
+                  Win-now behavior
+                  <small>8% less per future year</small>
+                </button>
+              </div>
+            </div>
             <label>
-              <span>Dollars per WAR</span>
+              <span>Base dollars per WAR</span>
               <NumericField
                 label="Dollars per WAR"
                 value={settings.dollarsPerWar}
@@ -815,24 +982,61 @@ export default function Home() {
               />
             </label>
             <label>
-              <span>Free WAR each year</span>
+              <span>Star premium after 2 net WAR</span>
               <NumericField
-                label="Free WAR"
-                value={settings.freeWar}
+                label="Star premium"
+                value={settings.starPremium}
                 min={0}
                 onChange={(value) =>
-                  setSettings({ ...settings, freeWar: value })
+                  setSettings({ ...settings, starPremium: value })
                 }
               />
+              <em>%</em>
             </label>
             <label>
-              <span>Discount rate</span>
+              <span>Position player / SP burden</span>
               <NumericField
-                label="Discount rate"
-                value={settings.discountRate}
+                label="Position player and starter roster burden"
+                value={settings.regularRosterWar}
                 min={0}
                 onChange={(value) =>
-                  setSettings({ ...settings, discountRate: value })
+                  setSettings({ ...settings, regularRosterWar: value })
+                }
+              />
+              <em>WAR</em>
+            </label>
+            <label>
+              <span>Reliever roster burden</span>
+              <NumericField
+                label="Reliever roster burden"
+                value={settings.relieverRosterWar}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, relieverRosterWar: value })
+                }
+              />
+              <em>WAR</em>
+            </label>
+            <label>
+              <span>Custom timing preference</span>
+              <NumericField
+                label="Custom timing preference"
+                value={settings.timingPreference}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, timingPreference: value })
+                }
+              />
+              <em>%</em>
+            </label>
+            <label>
+              <span>Optional reliever premium</span>
+              <NumericField
+                label="Reliever market premium"
+                value={settings.relieverPremium}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, relieverPremium: value })
                 }
               />
               <em>%</em>
@@ -862,9 +1066,10 @@ export default function Home() {
               <em>M</em>
             </label>
             <p>
-              Field value = max(fWAR − free WAR, 0) × $/WAR. Salary is
-              subtracted after inflation and discounting; uncertainty changes
-              the range, not the mean estimate.
+              Net fWAR subtracts the role’s roster burden, then the first two
+              wins use the base rate and additional wins receive the star
+              premium. FanGraphs pitcher WAR already includes a leverage
+              adjustment, so the extra reliever premium is off by default.
             </p>
           </section>
         )}
@@ -897,16 +1102,7 @@ export default function Home() {
                     ? "Even estimates"
                     : `${difference > 0 ? teamName(leftTeam) : teamName(rightTeam)} sends more estimated value`}
                 </p>
-                <button
-                  onClick={() => {
-                    const lt = leftTeam,
-                      li = leftIds;
-                    setLeftTeam(rightTeam);
-                    setLeftIds(rightIds);
-                    setRightTeam(lt);
-                    setRightIds(li);
-                  }}
-                >
+                <button onClick={swapTeams}>
                   Swap teams
                 </button>
               </div>
@@ -967,7 +1163,7 @@ export default function Home() {
             </section>
           </div>
 
-          <aside className="editor">
+          <aside className="editor" id="player-editor">
             {selected ? (
               <>
                 <div className="editor-heading">
@@ -1381,6 +1577,37 @@ export default function Home() {
                           %
                         </span>
                       </label>
+                      <label className="wide-field">
+                        <span>Roster situation</span>
+                        <select
+                          value={selected.rosterContext ?? "none"}
+                          onChange={(event) =>
+                            updatePlayer(selected.id, (player) =>
+                              player.kind === "prospect"
+                                ? {
+                                    ...player,
+                                    rosterContext: event.target
+                                      .value as ProspectRosterContext,
+                                  }
+                                : player,
+                            )
+                          }
+                        >
+                          <option value="none">No roster adjustment</option>
+                          <option value="rule5">
+                            Rule 5 decision soon · −15%
+                          </option>
+                          <option value="on40">
+                            40-man spot before ETA · −10%
+                          </option>
+                          <option value="crunch">
+                            Acute organization crunch · −40%
+                          </option>
+                        </select>
+                        <small>
+                          This changes trade leverage, not the scouting grade.
+                        </small>
+                      </label>
                     </div>
                     <div className="prospect-output">
                       <div>
@@ -1509,10 +1736,7 @@ export default function Home() {
                     </strong>
                     <button
                       type="button"
-                      onClick={() => {
-                        setSelectedId(player.id);
-                        setActiveTab("trade");
-                      }}
+                      onClick={() => openPlayerEditor(player.id, true)}
                     >
                       Open model
                     </button>
@@ -1527,7 +1751,11 @@ export default function Home() {
         )}
 
         {showMethod && (
-          <section className="methodology">
+          <section
+            className="methodology"
+            id="methodology"
+            tabIndex={-1}
+          >
             <div className="section-title">
               <div>
                 <span>Open model</span>
@@ -1547,21 +1775,24 @@ export default function Home() {
               </article>
               <article>
                 <b>02</b>
-                <h3>Contracts and arbitration</h3>
+                <h3>Market curve, not one flat price</h3>
                 <p>
-                  Arbitration raises respond modestly to the platform year.
-                  Club, player, mutual, and vesting options use decision-aware
-                  value, while deferred contracts use economic AAV.
+                  The model subtracts a smaller roster burden for relievers,
+                  prices the first two net wins at the base rate, and gives
+                  additional wins a restrained star premium. Future seasons
+                  count equally by default; the optional win-now lens describes
+                  team behavior rather than financial time value.
                 </p>
               </article>
               <article>
                 <b>03</b>
-                <h3>Scouting carryover</h3>
+                <h3>Contracts, scouting, and roster pressure</h3>
                 <p>
-                  Players under one year of service can use MLB projections,
-                  their most recent FanGraphs FV value, or a smoothly decaying
-                  service-time blend. Prospect values scale with the same
-                  dollars-per-WAR setting as MLB value.
+                  Arbitration follows platform performance; options and
+                  deferrals use their economic terms. Young MLB players can
+                  retain recent FV value, while Rule 5 and 40-man pressure is an
+                  explicit context adjustment rather than a hidden talent
+                  downgrade.
                 </p>
               </article>
             </div>
@@ -1594,6 +1825,20 @@ export default function Home() {
                 rel="noreferrer"
               >
                 MLB arbitration rules ↗
+              </a>
+              <a
+                href="https://blogs.fangraphs.com/what-are-teams-paying-for-a-win-in-free-agency-2026-edition/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                2026 free-agent win prices ↗
+              </a>
+              <a
+                href="https://www.mlb.com/glossary/transactions/rule-5-draft"
+                target="_blank"
+                rel="noreferrer"
+              >
+                MLB Rule 5 rules ↗
               </a>
             </div>
           </section>
