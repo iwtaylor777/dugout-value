@@ -3,7 +3,7 @@ import {
   normalizeProspectRisk,
   prospectRosterContext,
 } from "../lib/prospect-context.mjs";
-import { tradeProtectionFromNote } from "../lib/contract-context.mjs";
+import { tradeProtectionForPlayer } from "../lib/contract-context.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
@@ -534,7 +534,7 @@ for (const id of projectionIds) {
   const lastProspect = lastProspectByFgId.get(fgId);
   const contractNote =
     matchedContract.notes || fullContractNote(matchedContract.summary);
-  const tradeProtection = tradeProtectionFromNote(contractNote);
+  const tradeProtection = tradeProtectionForPlayer(id, contractNote);
   const hasDeferrals = /deferr/i.test(contractNote);
   const optOutAfter = firstOptOutYear(contractNote);
   const role = isTwoWay

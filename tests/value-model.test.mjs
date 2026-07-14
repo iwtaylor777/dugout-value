@@ -5,7 +5,10 @@ import {
   normalizeProspectRisk,
   prospectRosterContext,
 } from "../lib/prospect-context.mjs";
-import { tradeProtectionFromNote } from "../lib/contract-context.mjs";
+import {
+  tradeProtectionForPlayer,
+  tradeProtectionFromNote,
+} from "../lib/contract-context.mjs";
 import {
   effectiveSeasons,
   initialSettings,
@@ -38,6 +41,12 @@ test("contract notes distinguish full, partial, and absent trade protection", ()
   assert.equal(
     tradeProtectionFromNote("The extension has no no-trade clause."),
     "none",
+  );
+  assert.equal(tradeProtectionForPlayer("663728", ""), "full");
+  assert.equal(tradeProtectionForPlayer("596019", ""), "partial");
+  assert.equal(
+    tradeProtectionForPlayer("unknown", "Full no-trade clause"),
+    "full",
   );
 });
 
@@ -247,11 +256,24 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
   );
   assert.ok(protectedPlayers.length > 40);
   assert.ok(
-    ["Shohei Ohtani", "Manny Machado", "Bobby Witt Jr.", "Julio Rodríguez"].every(
+    [
+      "Shohei Ohtani",
+      "Manny Machado",
+      "Bobby Witt Jr.",
+      "Julio Rodríguez",
+      "Cal Raleigh",
+      "José Ramírez",
+      "Mookie Betts",
+    ].every(
       (name) =>
         protectedPlayers.find((player) => player.name === name)
           ?.tradeProtection === "full",
     ),
+  );
+  assert.equal(
+    protectedPlayers.find((player) => player.name === "Francisco Lindor")
+      ?.tradeProtection,
+    "partial",
   );
   assert.ok(
     protectedPlayers.filter((player) => player.tradeProtection === "partial")
