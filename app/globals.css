@@ -713,6 +713,17 @@ a:focus-visible {
   text-align: center;
   color: var(--red-dark);
 }
+.salary-input-wrap {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+.salary-input-wrap small {
+  font-size: 7px;
+  line-height: 1.15;
+  color: var(--muted);
+}
 .math-box {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -736,6 +747,12 @@ a:focus-visible {
   grid-column: 1/-1;
   margin: 2px 0 0;
   font-size: 9px;
+  color: #cbd3d9;
+}
+.math-box > small {
+  grid-column: 1/-1;
+  margin-top: 3px;
+  font-size: 8px;
   color: #cbd3d9;
 }
 .prospect-fields {

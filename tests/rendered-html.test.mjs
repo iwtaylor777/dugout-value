@@ -90,6 +90,8 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(model, /player\.role === "reliever"/);
   assert.match(page, /rosterContext/);
   assert.match(page, /Club control through/);
+  assert.match(page, /Playing-time escalators use/);
+  assert.match(page, /extra long-range uncertainty/);
   assert.match(audit, /Navigate search with keyboard/);
   assert.match(audit, /Account for Rule 5 \/ 40-man pressure/);
 });

@@ -176,6 +176,81 @@ function pitcherRole(row) {
   return starts / games < 0.35 ? "reliever" : "starter";
 }
 
+function projectedPlayingTime(
+  metric,
+  triggerYear,
+  history,
+  rosProjection,
+  future2027,
+  future2028,
+  fallback,
+  isPitcher,
+) {
+  if (triggerYear === BASE_YEAR) {
+    const ytd = history
+      .filter((row) => Number(row.Season) === BASE_YEAR)
+      .reduce((sum, row) => sum + (Number(row[metric]) || 0), 0);
+    return ytd + (Number(rosProjection?.[metric]) || 0);
+  }
+  if (triggerYear === BASE_YEAR + 1)
+    return Number(future2027?.[metric] ?? fallback?.[metric]) || 0;
+  const longRange = Number(future2028?.[metric] ?? fallback?.[metric]) || 0;
+  if (triggerYear === BASE_YEAR + 2) return longRange;
+  const yearsBeyondExplicit = Math.max(0, triggerYear - (BASE_YEAR + 2));
+  return (
+    longRange * Math.pow(isPitcher ? 0.93 : 0.96, yearsBeyondExplicit)
+  );
+}
+
+function playingTimeProbability(expected, threshold, metric) {
+  const spread = { PA: 60, IP: 24, G: 8, GS: 5 }[metric] ?? threshold * 0.12;
+  return 1 / (1 + Math.exp(-(expected - threshold) / spread));
+}
+
+function expectedPlayingTimeIncentives(groups, context) {
+  const bySeason = new Map();
+  for (const group of groups ?? []) {
+    for (const incentive of group.data ?? []) {
+      if (String(incentive.type).toUpperCase() !== "PLAYING TIME") continue;
+      const targetSeason = Number(incentive.season);
+      if (targetSeason < BASE_YEAR) continue;
+      const match = String(incentive.desc).match(
+        /(\d+(?:\.\d+)?)\s*(PA|IP|GS|G)\s+in\s+(20\d{2})/i,
+      );
+      if (!match) continue;
+      const status = String(incentive.reached ?? "PENDING").toUpperCase();
+      let probability = 0;
+      if (status.includes("NOT") || status.includes("FAIL")) probability = 0;
+      else if (status.includes("REACHED")) probability = 1;
+      else {
+        const [, threshold, rawMetric, triggerYear] = match;
+        const metric = rawMetric.toUpperCase();
+        const expected = projectedPlayingTime(
+          metric,
+          Number(triggerYear),
+          context.history,
+          context.rosProjection,
+          context.future2027,
+          context.future2028,
+          context.fallback,
+          context.isPitcher,
+        );
+        probability = playingTimeProbability(
+          expected,
+          Number(threshold),
+          metric,
+        );
+      }
+      const expectedValue = (Number(incentive.value) || 0) * probability;
+      bySeason.set(
+        targetSeason,
+        (bySeason.get(targetSeason) ?? 0) + expectedValue / 1_000_000,
+      );
+    }
+  }
+  return bySeason;
+}
+
 function projectionMap(rows) {
   const map = new Map();
   for (const row of rows) {
@@ -268,7 +343,12 @@ for (const [abbr, slug] of Object.entries(teamSlugs)) {
     );
     const existing = contracts.get(id);
     if (!existing || years.length > existing.years.length)
-      contracts.set(id, { summary, years, team: abbr });
+      contracts.set(id, {
+        summary,
+        years,
+        incentives: contract.incentivesAll ?? [],
+        team: abbr,
+      });
   }
   await sleep(120);
 }
@@ -362,13 +442,30 @@ for (const id of projectionIds) {
     : isPitcher
       ? pitcherRole(primary ?? backup ?? rosProjection)
       : "position";
+  const expectedIncentives = expectedPlayingTimeIncentives(
+    matchedContract.incentives,
+    {
+      history,
+      rosProjection,
+      future2027: zips2027ById.get(id),
+      future2028: zips2028ById.get(id),
+      fallback: primary ?? backup,
+      isPitcher,
+    },
+  );
   const seasons = contractYears.map((year) => {
     const season = Number(year.Season);
     const economicAnnual = hasDeferrals
       ? matchedContract.summary?.AAV
       : year.ArbSalaryProjection || year.Salary || 780000;
-    const annualSalary = Number(
+    const expectedIncentive = Number(
+      (expectedIncentives.get(season) ?? 0).toFixed(2),
+    );
+    const baseAnnualSalary = Number(
       (Number(economicAnnual || 780000) / 1_000_000).toFixed(2),
+    );
+    const annualSalary = Number(
+      (baseAnnualSalary + expectedIncentive).toFixed(2),
     );
     const listedOptionMode = salaryMode(year.Type, year.ArbYear);
     // Once a player can opt out, the club cannot count later positive surplus
@@ -397,11 +494,17 @@ for (const id of projectionIds) {
           : Number(futureWar.toFixed(1)),
       salary:
         season === BASE_YEAR
-          ? Number((annualSalary * seasonRemainingFraction).toFixed(2))
+          ? Number(
+              (
+                baseAnnualSalary * seasonRemainingFraction +
+                expectedIncentive
+              ).toFixed(2),
+            )
           : String(year.Type).toUpperCase().includes("ARB")
             ? 0
             : annualSalary,
       annualSalary,
+      expectedIncentives: expectedIncentive || undefined,
       salaryMode:
         season === BASE_YEAR
           ? "fixed"
@@ -436,9 +539,13 @@ for (const id of projectionIds) {
     age: age ? Math.floor(age) : isPitcher ? 28 : 27,
     source: {
       projection: `Steamer RoS (2026) · ${source} future`,
-      contract: hasDeferrals
-        ? "FanGraphs RosterResource · economic AAV"
-        : "FanGraphs RosterResource",
+      contract: [
+        "FanGraphs RosterResource",
+        hasDeferrals ? "economic AAV" : null,
+        expectedIncentives.size ? "expected playing-time incentives" : null,
+      ]
+        .filter(Boolean)
+        .join(" · "),
       refreshed: new Date().toISOString().slice(0, 10),
     },
     risk: isTwoWay ? 14 : isPitcher ? 12 : 7,

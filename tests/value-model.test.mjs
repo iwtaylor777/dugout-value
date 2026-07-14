@@ -112,4 +112,31 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
   );
   const duranRows = valuePlayer(duran, initialSettings, database).rows;
   assert.ok(duranRows.find((row) => row.year === 2027).salary < 15);
+
+  const merrill = database.players.find(
+    (player) => player.name === "Jackson Merrill" && player.kind === "mlb",
+  );
+  const merrillExpectedIncentives = merrill.seasons.reduce(
+    (sum, season) => sum + (season.expectedIncentives ?? 0),
+    0,
+  );
+  const merrillValue = valuePlayer(merrill, initialSettings, database);
+  assert.ok(
+    merrillExpectedIncentives > 20 && merrillExpectedIncentives < 30,
+  );
+  assert.ok(
+    merrillValue.rows.reduce((sum, row) => sum + row.salary, 0) > 180,
+  );
+  assert.ok(merrillValue.horizonRisk > 5);
+
+  const chourio = database.players.find(
+    (player) => player.name === "Jackson Chourio" && player.kind === "mlb",
+  );
+  assert.equal(
+    chourio.seasons.reduce(
+      (sum, season) => sum + (season.expectedIncentives ?? 0),
+      0,
+    ),
+    0,
+  );
 });

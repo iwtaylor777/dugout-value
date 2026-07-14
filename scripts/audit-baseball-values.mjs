@@ -16,6 +16,22 @@ const records = database.players
   .filter((player) => !player.custom)
   .map((player) => {
     const result = valuePlayer(player, initialSettings, database);
+    const firstPlayerDecision =
+      player.kind === "mlb"
+        ? player.seasons.find((season) =>
+            ["playerOption", "mutualOption"].includes(
+              season.contractType ?? season.salaryMode,
+            ),
+          )
+        : null;
+    const controlledSeasons =
+      player.kind === "mlb"
+        ? firstPlayerDecision
+          ? player.seasons.filter(
+              (season) => season.year < firstPlayerDecision.year,
+            )
+          : player.seasons
+        : [];
     return {
       id: player.id,
       name: player.name,
@@ -25,11 +41,30 @@ const records = database.players
       subtype:
         player.kind === "prospect"
           ? `${player.fv} FV ${player.prospectType}`
-          : isReliever(player)
-            ? "Reliever"
-            : "MLB",
+          : player.role === "two-way"
+            ? "Two-way"
+            : isReliever(player)
+              ? "Reliever"
+              : player.role === "starter"
+                ? "Starter"
+                : "Position",
       age: player.age,
-      controlYears: player.kind === "mlb" ? player.seasons.length : null,
+      controlThrough:
+        player.kind === "mlb" ? controlledSeasons.at(-1)?.year : null,
+      contractSeasons: player.kind === "mlb" ? player.seasons.length : null,
+      expectedIncentives:
+        player.kind === "mlb"
+          ? Number(
+              player.seasons
+                .reduce(
+                  (sum, season) =>
+                    sum + Number(season.expectedIncentives ?? 0),
+                  0,
+                )
+                .toFixed(2),
+            )
+          : 0,
+      horizonRisk: Number((result.horizonRisk ?? 0).toFixed(2)),
       value: Number(result.total.toFixed(2)),
       low: Number(result.low.toFixed(2)),
       high: Number(result.high.toFixed(2)),
@@ -59,6 +94,11 @@ const report = {
   topRelievers: records
     .filter((player) => player.subtype === "Reliever")
     .slice(0, 20),
+  contractsWithExpectedIncentives: records
+    .filter((player) => player.expectedIncentives > 0)
+    .sort(
+      (left, right) => right.expectedIncentives - left.expectedIncentives,
+    ),
 };
 
 if (jsonOutput) {
@@ -74,6 +114,8 @@ if (jsonOutput) {
   console.table(report.topProspects);
   console.log("Top relievers");
   console.table(report.topRelievers);
+  console.log("Contracts with modeled playing-time incentives");
+  console.table(report.contractsWithExpectedIncentives);
   console.log("Bounds");
   console.table([report.bounds.maximum, report.bounds.minimum]);
 }

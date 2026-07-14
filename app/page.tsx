@@ -28,6 +28,7 @@ type MLBSeason = {
   war: number;
   salary: number;
   annualSalary?: number;
+  expectedIncentives?: number;
   salaryMode: SalaryMode;
   contractType?: SalaryMode;
   ros?: boolean;
@@ -94,6 +95,7 @@ type ValueResult = {
   projectionTotal?: number;
   prospectTotal?: number;
   rookieAdjustment?: number;
+  horizonRisk?: number;
   rows: Array<{
     year: number;
     war: number;
@@ -1132,7 +1134,7 @@ export default function Home() {
                   <>
                     <div className="risk-field">
                       <label htmlFor="risk">
-                        Projection uncertainty <strong>{selected.risk}%</strong>
+                        Player-specific risk <strong>{selected.risk}%</strong>
                       </label>
                       <input
                         id="risk"
@@ -1285,26 +1287,33 @@ export default function Home() {
                             </select>
                             {season.salaryMode === "fixed" ||
                             season.salaryMode.endsWith("Option") ? (
-                              <NumericField
-                                label="Salary in millions"
-                                value={season.salary}
-                                min={0}
-                                onChange={(value) =>
-                                  updatePlayer(selected.id, (player) =>
-                                    player.kind === "mlb"
-                                      ? {
-                                          ...player,
-                                          seasons: player.seasons.map(
-                                            (item, i) =>
-                                              i === index
-                                                ? { ...item, salary: value }
-                                                : item,
-                                          ),
-                                        }
-                                      : player,
-                                  )
-                                }
-                              />
+                              <span className="salary-input-wrap">
+                                <NumericField
+                                  label="Salary in millions"
+                                  value={season.salary}
+                                  min={0}
+                                  onChange={(value) =>
+                                    updatePlayer(selected.id, (player) =>
+                                      player.kind === "mlb"
+                                        ? {
+                                            ...player,
+                                            seasons: player.seasons.map(
+                                              (item, i) =>
+                                                i === index
+                                                  ? { ...item, salary: value }
+                                                  : item,
+                                            ),
+                                          }
+                                        : player,
+                                    )
+                                  }
+                                />
+                                {!!season.expectedIncentives && (
+                                  <small>
+                                    incl. {money(season.expectedIncentives)} expected
+                                  </small>
+                                )}
+                              </span>
                             ) : (
                               <span className="modelled-pay">
                                 {money(row?.salary ?? 0)}
@@ -1322,6 +1331,12 @@ export default function Home() {
                         Range {money(values[selected.id]?.low ?? 0)}–
                         {money(values[selected.id]?.high ?? 0)}
                       </p>
+                      {!!values[selected.id]?.horizonRisk && (
+                        <small>
+                          Includes {values[selected.id]?.horizonRisk?.toFixed(0)}%
+                          extra long-range uncertainty
+                        </small>
+                      )}
                     </div>
                   </>
                 ) : (
@@ -1611,9 +1626,11 @@ export default function Home() {
                 <p>
                   Arbitration follows platform performance; options and
                   deferrals use their economic terms, and opt-outs remove future
-                  upside without erasing downside. Young MLB players can retain
-                  recent FV value, while Rule 5 and 40-man pressure is an explicit
-                  context adjustment rather than a hidden talent downgrade.
+                  upside without erasing downside. Playing-time escalators use
+                  projected odds; mutually exclusive award bonuses stay out of
+                  the salary estimate. Young MLB players can retain recent FV
+                  value, while Rule 5 and 40-man pressure is an explicit context
+                  adjustment rather than a hidden talent downgrade.
                 </p>
               </article>
             </div>
