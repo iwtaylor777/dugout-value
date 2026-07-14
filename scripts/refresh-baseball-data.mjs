@@ -4,6 +4,7 @@ const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
 const boardUrl = "https://www.fangraphs.com/prospects/the-board/";
 const projectionUrl = (type, stats) => `https://www.fangraphs.com/projections?pos=all&stats=${stats}&type=${type}`;
+const historyUrl = (stats) => `https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=${stats}&lg=all&qual=0&type=8&season=2025&season1=2023&ind=1&pageitems=10000&pagenum=1`;
 
 const teamSlugs = {
   ARI: "diamondbacks", ATL: "braves", BAL: "orioles", BOS: "red-sox", CHC: "cubs",
@@ -28,6 +29,13 @@ async function getNextData(url) {
 
 const queryData = (queries, key) => queries.find((query) => query.queryKey?.[0] === key)?.state?.data;
 
+async function loadHistory(stats) {
+  const response = await fetch(historyUrl(stats), { headers: { "user-agent": "DugoutValueDataRefresh/1.0 (public-source snapshot)" } });
+  if (!response.ok) throw new Error(`History download failed: ${response.status}`);
+  const payload = await response.json();
+  return (payload.data ?? []).map((row) => ({ ...row, _stats: stats }));
+}
+
 async function loadProjection(type) {
   const rows = [];
   for (const stats of ["bat", "pit"]) {
@@ -48,6 +56,18 @@ function ageWar(war, age, isPitcher, yearsOut) {
     else projected += currentAge <= 26 ? 0.15 : currentAge === 27 ? 0 : currentAge <= 31 ? -0.25 : -0.4;
   }
   return Math.max(-0.5, Number(projected.toFixed(1)));
+}
+
+function marcelWar(rows) {
+  const weights = { 2023: 3, 2024: 4, 2025: 5 };
+  let weightedWar = 1.2 * 4; // regression toward a modest regular-player baseline
+  let totalWeight = 4;
+  for (const row of rows) {
+    const weight = weights[row.Season] ?? 0;
+    weightedWar += (Number(row.WAR) || 0) * weight;
+    totalWeight += weight;
+  }
+  return Number((weightedWar / totalWeight).toFixed(1));
 }
 
 function salaryMode(type, arbYear) {
@@ -71,10 +91,12 @@ function prospectGrade(value) {
   return "35+";
 }
 
-console.log("Loading ZiPS, Steamer, and FanGraphs prospect data…");
-const [zips, steamer, boardQueries] = await Promise.all([
+console.log("Loading ZiPS, Steamer, three-year history, and FanGraphs prospect data…");
+const [zips, steamer, hitterHistory, pitcherHistory, boardQueries] = await Promise.all([
   loadProjection("zips"),
   loadProjection("steamer"),
+  loadHistory("bat"),
+  loadHistory("pit"),
   getNextData(boardUrl),
 ]);
 
@@ -100,21 +122,38 @@ for (const [abbr, slug] of Object.entries(teamSlugs)) {
 
 const steamerById = new Map(steamer.map((row) => [String(row.xMLBAMID || row.playerid), row]));
 const zipsById = new Map(zips.map((row) => [String(row.xMLBAMID || row.playerid), row]));
-const projectionIds = new Set([...zipsById.keys(), ...steamerById.keys()]);
+const historyById = new Map();
+for (const row of [...hitterHistory, ...pitcherHistory]) {
+  const id = String(row.xMLBAMID || "");
+  if (!id) continue;
+  historyById.set(id, [...(historyById.get(id) ?? []), row]);
+}
+const projectionIds = new Set([...zipsById.keys(), ...steamerById.keys(), ...contracts.keys()]);
 const mlb = [];
 
 for (const id of projectionIds) {
-  const primary = zipsById.get(id) ?? steamerById.get(id);
+  const history = historyById.get(id) ?? [];
+  const latestHistory = history.sort((a, b) => b.Season - a.Season)[0];
+  const contract = contracts.get(id);
+  const primary = zipsById.get(id) ?? steamerById.get(id) ?? (contract ? {
+    xMLBAMID: id,
+    PlayerName: contract.summary.playerName,
+    Team: contract.team,
+    positionDB: latestHistory?.positionDB || latestHistory?.position || "UTIL",
+    WAR: marcelWar(history),
+    _stats: latestHistory?._stats || "bat",
+  } : null);
+  if (!primary) continue;
   const backup = steamerById.get(id);
   const team = normalizeTeam(primary?.Team || backup?.Team);
   if (!teamSlugs[team]) continue;
-  const contract = contracts.get(String(primary?.xMLBAMID || backup?.xMLBAMID || ""));
+  const matchedContract = contract ?? contracts.get(String(primary?.xMLBAMID || backup?.xMLBAMID || ""));
   // Keep the major-league library aligned to current RosterResource payroll/control pages.
   // The full minor-league universe is supplied separately by The Board.
-  if (!contract) continue;
-  const age = Number(contract?.summary?.age) || null;
+  if (!matchedContract) continue;
+  const age = Number(matchedContract.summary?.age) || null;
   const isPitcher = primary?._stats === "pit";
-  const contractYears = contract.years.length ? contract.years : [{ Season: BASE_YEAR, Type: "PRE-ARB", Salary: 780000, ArbYear: 0 }];
+  const contractYears = matchedContract.years.length ? matchedContract.years : [{ Season: BASE_YEAR, Type: "PRE-ARB", Salary: 780000, ArbYear: 0 }];
   const source = zipsById.has(id) ? "ZiPS" : steamerById.has(id) ? "Steamer" : "Marcel + aging";
   const currentWar = Number(primary?.WAR ?? backup?.WAR ?? 0);
   const seasons = contractYears.map((year) => ({
