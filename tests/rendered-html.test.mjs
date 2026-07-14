@@ -104,8 +104,12 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /document\.execCommand\("copy"\)/);
   assert.match(page, /decodeTradeState/);
   assert.match(page, /window\.history\.replaceState/);
+  assert.match(page, /Tradeability/);
+  assert.match(page, /surplus value is unchanged/);
+  assert.match(page, /tradeProtection/);
   assert.match(audit, /Navigate search with keyboard/);
   assert.match(audit, /Account for Rule 5 \/ 40-man pressure/);
   assert.match(audit, /Compare mutually exclusive contract paths/);
   assert.match(audit, /Copy a trade link \/ open a shared trade/);
+  assert.match(audit, /Review trade protection/);
 });

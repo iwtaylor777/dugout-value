@@ -5,6 +5,7 @@ import {
   normalizeProspectRisk,
   prospectRosterContext,
 } from "../lib/prospect-context.mjs";
+import { tradeProtectionFromNote } from "../lib/contract-context.mjs";
 import {
   effectiveSeasons,
   initialSettings,
@@ -23,6 +24,45 @@ const identity = (player) =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]/gi, "")
     .toLowerCase()}::${player.team}`;
+
+test("contract notes distinguish full, partial, and absent trade protection", () => {
+  assert.equal(
+    tradeProtectionFromNote("Deal includes a full no-trade clause."),
+    "full",
+  );
+  assert.equal(tradeProtectionFromNote("Full NTC"), "full");
+  assert.equal(
+    tradeProtectionFromNote("Player receives a 10-team no-trade list."),
+    "partial",
+  );
+  assert.equal(
+    tradeProtectionFromNote("The extension has no no-trade clause."),
+    "none",
+  );
+});
+
+test("trade consent is surfaced separately from economic value", () => {
+  const player = {
+    id: "test-trade-protection",
+    kind: "mlb",
+    name: "Protected Player",
+    team: "SEA",
+    position: "SS",
+    role: "position",
+    risk: 0,
+    seasons: [
+      { year: 2027, war: 3, salary: 10, salaryMode: "fixed" },
+    ],
+  };
+  const unprotected = valuePlayer(player, initialSettings, database);
+  const protectedValue = valuePlayer(
+    { ...player, tradeProtection: "full" },
+    initialSettings,
+    database,
+  );
+
+  assert.equal(protectedValue.total, unprotected.total);
+});
 
 test("role-aware roster burden gives relievers the intended baseline", () => {
   const season = { year: 2027, war: 1, ros: false };
@@ -201,6 +241,21 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
 
   const mlbPlayers = database.players.filter(
     (player) => player.kind === "mlb",
+  );
+  const protectedPlayers = mlbPlayers.filter(
+    (player) => player.tradeProtection !== "none",
+  );
+  assert.ok(protectedPlayers.length > 40);
+  assert.ok(
+    ["Shohei Ohtani", "Manny Machado", "Bobby Witt Jr.", "Julio Rodríguez"].every(
+      (name) =>
+        protectedPlayers.find((player) => player.name === name)
+          ?.tradeProtection === "full",
+    ),
+  );
+  assert.ok(
+    protectedPlayers.filter((player) => player.tradeProtection === "partial")
+      .length >= 3,
   );
   assert.ok(
     mlbPlayers.every((player) =>

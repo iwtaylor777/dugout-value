@@ -1727,6 +1727,12 @@ body {
   font-size: 10px;
   line-height: 1.4;
 }
+.trade-verdict .trade-caveat {
+  max-width: 190px;
+  margin-top: 9px;
+  color: var(--red-dark);
+  font-weight: 650;
+}
 .trade-verdict button {
   color: var(--navy);
   border: 1px solid var(--line);
@@ -1791,6 +1797,56 @@ body {
 .identity-card,
 .provenance-card > small {
   background: var(--paper-deep);
+}
+.tradeability-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px 10px;
+  align-items: center;
+  margin: -8px 0 16px;
+  padding: 10px;
+  border-left: 3px solid var(--line);
+  background: var(--paper-light);
+}
+.tradeability-card.partial {
+  border-left-color: var(--gold);
+  background: rgba(213, 162, 79, 0.08);
+}
+.tradeability-card.full {
+  border-left-color: var(--red);
+  background: rgba(178, 82, 62, 0.07);
+}
+.tradeability-card span,
+.tradeability-card strong,
+.tradeability-card small {
+  display: block;
+}
+.tradeability-card span {
+  margin-bottom: 2px;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tradeability-card strong {
+  color: var(--navy);
+  font-size: 11px;
+}
+.tradeability-card select {
+  max-width: 150px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--ink);
+  padding: 7px;
+  font-size: 10px;
+}
+.tradeability-card small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.4;
 }
 .identity-card strong,
 .rookie-valuation > div:first-child strong {

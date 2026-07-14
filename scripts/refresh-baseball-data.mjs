@@ -3,6 +3,7 @@ import {
   normalizeProspectRisk,
   prospectRosterContext,
 } from "../lib/prospect-context.mjs";
+import { tradeProtectionFromNote } from "../lib/contract-context.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
@@ -174,6 +175,7 @@ function fullContractNote(summary) {
   return [
     summary?.ContractSummaryPayrollNote,
     summary?.LongContractSummaryPayrollNote,
+    summary?.NoTradeNotes,
   ]
     .filter(Boolean)
     .join(" ");
@@ -532,6 +534,7 @@ for (const id of projectionIds) {
   const lastProspect = lastProspectByFgId.get(fgId);
   const contractNote =
     matchedContract.notes || fullContractNote(matchedContract.summary);
+  const tradeProtection = tradeProtectionFromNote(contractNote);
   const hasDeferrals = /deferr/i.test(contractNote);
   const optOutAfter = firstOptOutYear(contractNote);
   const role = isTwoWay
@@ -737,12 +740,14 @@ for (const id of projectionIds) {
         hasDeferrals ? "economic AAV" : null,
         expectedIncentives.size ? "expected playing-time incentives" : null,
         contractScenario ? "conditional option paths" : null,
+        tradeProtection !== "none" ? "trade protection" : null,
       ]
         .filter(Boolean)
         .join(" · "),
       refreshed: new Date().toISOString().slice(0, 10),
     },
     risk: isTwoWay ? 14 : isPitcher ? 12 : 7,
+    tradeProtection,
     seasons,
     contractScenario,
     platformWar: Number((ytdWar + Number(rosProjection?.WAR || 0)).toFixed(1)),

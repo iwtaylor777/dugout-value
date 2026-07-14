@@ -32,6 +32,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Player editor | Add/edit a control year | Works | Keep salary-mode behavior and calculated surplus readable |
 | Player editor | Read a contract with an opt-out | Later guaranteed years look like unconditional club control | Stop crediting upside after the first opt-out while retaining downside if the player stays |
 | Player editor | Compare mutually exclusive contract paths | Complex club/player/mutual branches can be silently combined or reduced to one misleading estimate | Default to the conservative unilateral path; let the user switch one complete branch at a time and immediately update the table, chart, and value |
+| Player editor | Review trade protection | Not represented | Surface full and partial no-trade protection in the package, rankings, and editor while keeping consent separate from economic surplus |
 | Player editor | Read an injury-conditional option | A conditional club option looks available in every health state | Exclude it from the healthy-player default and expose a clearly labeled condition-met path |
 | Prospect editor | Change FV, type, ETA, or scout adjustment | Works | Preserve immediate feedback |
 | Prospect editor | Account for Rule 5 / 40-man pressure | Missing | Add a transparent context adjustment without pretending it is intrinsic talent |
@@ -55,6 +56,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Roster pressure for prospects:** treat Rule 5/40-man pressure as context, not a scouting-grade downgrade. Provide explicit, editable scenarios rather than inventing eligibility for players whose source data does not establish it.
 - **Prospect uncertainty:** use The Board's scouting-risk label to widen or narrow the value range without moving the FV-based central estimate. This avoids pretending that a high-risk 18-year-old and a low-risk upper-minors player have equally certain outcomes while also avoiding a second hidden discount to the FV grade.
 - **Shared trade state:** links store current player IDs and model settings. Official, untouched players refresh against the latest public-data snapshot when the link is opened; custom players and manually edited official records carry their saved assumptions in the link.
+- **Tradeability vs. value:** a no-trade clause changes whether a deal can happen, not the player’s projected wins or salary. Surface the consent constraint prominently, keep it editable, and do not bury an arbitrary penalty in the surplus number.
 
 ## Loop results
 
@@ -67,3 +69,4 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Pass 7 — midseason extension integrity:** found that RosterResource can publish a new extension as a second contract record while retaining the current deal. The refresh now merges records by effective season, so a 2027 extension cannot erase the player’s 2026 rest-of-season WAR and salary. Every MLB record in the current snapshot now includes a 2026 RoS row.
 - **Pass 8 — prospect context:** The Board now supplies the missing inputs: scouting risk, signing year, age, ETA, and remaining option years. Those fields drive editable risk ranges and source-backed 40-man/Rule 5 context; the model still keeps roster leverage separate from the scouting grade.
 - **Pass 9 — trade handoff:** added compact, versioned trade links with input validation, Unicode-safe encoding, clipboard fallback, and visible load/copy feedback. A shared decision can now move between people without accounts or a backend.
+- **Pass 10 — tradeability context:** separated contract value from permission to trade. RosterResource’s dedicated no-trade field now feeds full/partial protection labels for 49 MLB players; protected players are flagged in packages and rankings, missing source data is labeled as unconfirmed, and central surplus remains unchanged.

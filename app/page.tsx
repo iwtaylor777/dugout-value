@@ -24,6 +24,7 @@ type SalaryMode =
 type ProspectType = "Hitter" | "Pitcher";
 type RookieMode = "projection" | "blend" | "prospect";
 type ProspectRosterContext = "none" | "rule5" | "on40" | "crunch";
+type TradeProtection = "none" | "partial" | "full";
 type Provenance = { projection: string; contract: string; refreshed: string };
 type MLBSeason = {
   year: number;
@@ -66,6 +67,7 @@ type MLBPlayer = {
   age: number;
   source: Provenance;
   risk: number;
+  tradeProtection?: TradeProtection;
   seasons: MLBSeason[];
   contractScenario?: ContractScenario;
   platformWar?: number;
@@ -184,6 +186,10 @@ const isSharedPlayer = (value: unknown): value is Player => {
   if (value.kind === "mlb") {
     return (
       isFiniteNumber(value.risk) &&
+      (value.tradeProtection === undefined ||
+        ["none", "partial", "full"].includes(
+          String(value.tradeProtection),
+        )) &&
       Array.isArray(value.seasons) &&
       value.seasons.every(isMlbSeason)
     );
@@ -244,6 +250,12 @@ const rosterContextLabel = (player: ProspectPlayer) =>
     on40: "40-man roster",
     crunch: "roster crunch",
   })[player.rosterContext ?? "none"] ?? "";
+const tradeProtectionLabel = (player: MLBPlayer) =>
+  ({
+    none: "No listed protection",
+    partial: "Trade list applies",
+    full: "Player approval required",
+  })[player.tradeProtection ?? "none"] ?? "No listed protection";
 const contractLabel = (player: MLBPlayer) => {
   const seasons = effectiveSeasons(player) as MLBSeason[];
   const firstPlayerDecision = seasons.find((season) =>
@@ -419,6 +431,35 @@ export default function Home() {
   const rangesOverlap = leftLow <= rightHigh && rightLow <= leftHigh;
   const verdict = rangesOverlap ? "Ranges overlap" : "Outside model range";
   const selected = players[selectedId];
+  const protectedPackagePlayers = Array.from(
+    new Set([...leftIds, ...rightIds]),
+  )
+    .map((id) => players[id])
+    .filter(
+      (player): player is MLBPlayer =>
+        player?.kind === "mlb" &&
+        ["partial", "full"].includes(player.tradeProtection ?? "none"),
+    );
+  const fullProtectionNames = protectedPackagePlayers
+    .filter((player) => player.tradeProtection === "full")
+    .map((player) => player.name);
+  const partialProtectionNames = protectedPackagePlayers
+    .filter((player) => player.tradeProtection === "partial")
+    .map((player) => player.name);
+  const tradeProtectionSummary = [
+    fullProtectionNames.length === 1
+      ? `${fullProtectionNames[0]} must approve a trade`
+      : fullProtectionNames.length > 1
+        ? `${fullProtectionNames.length} players must approve a trade`
+        : "",
+    partialProtectionNames.length === 1
+      ? `${partialProtectionNames[0]} has a trade list`
+      : partialProtectionNames.length > 1
+        ? `${partialProtectionNames.length} players have trade lists`
+        : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
   const selectedSeasons =
     selected?.kind === "mlb"
       ? (effectiveSeasons(selected) as MLBSeason[])
@@ -612,6 +653,7 @@ export default function Home() {
             age: 27,
             source,
             risk: 8,
+            tradeProtection: "none",
             seasons: [
               { year: BASE_YEAR, war: 2.5, salary: 1, salaryMode: "fixed" },
             ],
@@ -783,6 +825,11 @@ export default function Home() {
                       : ""
                   }`
                 : contractLabel(player)}
+              {player.kind === "mlb" &&
+              player.tradeProtection &&
+              player.tradeProtection !== "none"
+                ? ` · ${tradeProtectionLabel(player).toLowerCase()}`
+                : ""}
             </small>
             <span className="value-range">
               Range {money(result.low)}–{money(result.high)}
@@ -1222,6 +1269,11 @@ export default function Home() {
                     ? "Even estimates"
                     : `${difference > 0 ? teamName(leftTeam) : teamName(rightTeam)} sends more estimated value`}
                 </p>
+                {tradeProtectionSummary && (
+                  <p className="trade-caveat">
+                    {tradeProtectionSummary} · surplus value is unchanged
+                  </p>
+                )}
                 <div className="trade-actions">
                   <button onClick={swapTeams}>Swap teams</button>
                   <button className="share-trade" onClick={copyTradeLink}>
@@ -1376,6 +1428,40 @@ export default function Home() {
                   </div>
                   <small>Updated {prettyDate(selected.source.refreshed)}</small>
                 </div>
+                {selected.kind === "mlb" && (
+                  <div
+                    className={`tradeability-card ${selected.tradeProtection ?? "none"}`}
+                  >
+                    <div>
+                      <span>Tradeability</span>
+                      <strong>{tradeProtectionLabel(selected)}</strong>
+                    </div>
+                    <select
+                      aria-label="Trade protection"
+                      value={selected.tradeProtection ?? "none"}
+                      onChange={(event) =>
+                        updatePlayer(selected.id, (player) =>
+                          player.kind === "mlb"
+                            ? {
+                                ...player,
+                                tradeProtection: event.target
+                                  .value as TradeProtection,
+                              }
+                            : player,
+                        )
+                      }
+                    >
+                      <option value="none">No listed protection</option>
+                      <option value="partial">Limited trade list</option>
+                      <option value="full">Player approval required</option>
+                    </select>
+                    <small>
+                      {(selected.tradeProtection ?? "none") === "none"
+                        ? "No clause is listed in the contract feed; confirm 10-and-5 rights before a real deal."
+                        : "A consent constraint, not a discount to the player’s underlying baseball value."}
+                    </small>
+                  </div>
+                )}
                 {selected.kind === "mlb" && selected.lastProspect && (
                   <div className="rookie-valuation">
                     <div>
@@ -1891,6 +1977,11 @@ export default function Home() {
                         {player.kind === "prospect" && rosterContextLabel(player)
                           ? ` · ${rosterContextLabel(player)}`
                           : ""}
+                        {player.kind === "mlb" &&
+                        player.tradeProtection &&
+                        player.tradeProtection !== "none"
+                          ? ` · ${tradeProtectionLabel(player)}`
+                          : ""}
                       </small>
                     </div>
                     <span className={`type-pill ${player.kind}`}>
@@ -1960,7 +2051,8 @@ export default function Home() {
                   deferrals use their economic terms, and opt-outs remove future
                   upside without erasing downside. Playing-time escalators use
                   projected odds; mutually exclusive award bonuses stay out of
-                  the salary estimate. Young MLB players can retain recent FV
+                  the salary estimate. Trade protection is shown as a consent
+                  constraint but never quietly discounted from surplus. Young MLB players can retain recent FV
                   value. The Board&apos;s risk label changes a prospect&apos;s range,
                   not its median; signing year and option status identify Rule 5
                   and 40-man pressure as a separate roster-leverage adjustment.
