@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
 const boardUrl = "https://www.fangraphs.com/prospects/the-board/";
+const graduatesUrl = "https://www.fangraphs.com/prospects/the-board/2025-graduates";
 const projectionUrl = (type, stats) => `https://www.fangraphs.com/projections?pos=all&stats=${stats}&type=${type}`;
 const historyUrl = (stats) => `https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=${stats}&lg=all&qual=0&type=8&season=2025&season1=2023&ind=1&pageitems=10000&pagenum=1`;
 
@@ -17,6 +18,10 @@ const teamSlugs = {
 
 const normalizeTeam = (team) => ({ KC: "KCR", SD: "SDP", SF: "SFG", TB: "TBR", WSH: "WSN", CWS: "CHW", OAK: "ATH" }[team] ?? team);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const seasonStart = new Date("2026-03-25T12:00:00Z");
+const seasonEnd = new Date("2026-09-27T12:00:00Z");
+const snapshotDate = new Date();
+const seasonRemainingFraction = Math.max(0, Math.min(1, (seasonEnd - snapshotDate) / (seasonEnd - seasonStart)));
 
 async function getNextData(url) {
   const response = await fetch(url, { headers: { "user-agent": "DugoutValueDataRefresh/1.0 (public-source snapshot; one request per page)" } });
@@ -91,18 +96,21 @@ function prospectGrade(value) {
   return "35+";
 }
 
-console.log("Loading ZiPS, Steamer, three-year history, and FanGraphs prospect data…");
-const [zips, steamer, hitterHistory, pitcherHistory, boardQueries] = await Promise.all([
+console.log("Loading ZiPS, Steamer RoS, three-year history, and FanGraphs prospect data…");
+const [zips, steamer, steamerRos, hitterHistory, pitcherHistory, boardQueries, graduateQueries] = await Promise.all([
   loadProjection("zips"),
   loadProjection("steamer"),
+  loadProjection("steamerr"),
   loadHistory("bat"),
   loadHistory("pit"),
   getNextData(boardUrl),
+  getNextData(graduatesUrl),
 ]);
 
 const boardRows = queryData(boardQueries, "prospects/the-board");
+const graduateRows = queryData(graduateQueries, "prospects/the-board");
 const teamRows = queryData(boardQueries, "useTeamInfoBySeason");
-if (!Array.isArray(boardRows) || !Array.isArray(teamRows)) throw new Error("The Board payload is incomplete");
+if (!Array.isArray(boardRows) || !Array.isArray(graduateRows) || !Array.isArray(teamRows)) throw new Error("The Board payload is incomplete");
 
 const contracts = new Map();
 for (const [abbr, slug] of Object.entries(teamSlugs)) {
@@ -121,7 +129,15 @@ for (const [abbr, slug] of Object.entries(teamSlugs)) {
 }
 
 const steamerById = new Map(steamer.map((row) => [String(row.xMLBAMID || row.playerid), row]));
+const steamerRosById = new Map(steamerRos.map((row) => [String(row.xMLBAMID || row.playerid), row]));
 const zipsById = new Map(zips.map((row) => [String(row.xMLBAMID || row.playerid), row]));
+const lastProspectByFgId = new Map();
+for (const row of [...boardRows, ...graduateRows]) {
+  const fgId = String(row.PlayerId || row.UPID || "");
+  if (!fgId || !(row.cFV || row.FV_Current)) continue;
+  const existing = lastProspectByFgId.get(fgId);
+  if (!existing || Number(row.Season) >= Number(existing.Season)) lastProspectByFgId.set(fgId, row);
+}
 const historyById = new Map();
 for (const row of [...hitterHistory, ...pitcherHistory]) {
   const id = String(row.xMLBAMID || "");
@@ -153,15 +169,26 @@ for (const id of projectionIds) {
   if (!matchedContract) continue;
   const age = Number(matchedContract.summary?.age) || null;
   const isPitcher = primary?._stats === "pit";
+  const rosProjection = steamerRosById.get(id);
   const contractYears = matchedContract.years.length ? matchedContract.years : [{ Season: BASE_YEAR, Type: "PRE-ARB", Salary: 780000, ArbYear: 0 }];
   const source = zipsById.has(id) ? "ZiPS" : steamerById.has(id) ? "Steamer" : "Marcel + aging";
   const currentWar = Number(primary?.WAR ?? backup?.WAR ?? 0);
-  const seasons = contractYears.map((year) => ({
-    year: Number(year.Season),
-    war: ageWar(currentWar, age, isPitcher, Number(year.Season) - BASE_YEAR),
-    salary: Number(((year.ArbSalaryProjection || year.Salary || 780000) / 1_000_000).toFixed(2)),
-    salaryMode: salaryMode(year.Type, year.ArbYear),
-  }));
+  const fgId = String(primary?.playerid || backup?.playerid || matchedContract.summary?.playerId || "");
+  const lastProspect = lastProspectByFgId.get(fgId);
+  const seasons = contractYears.map((year) => {
+    const season = Number(year.Season);
+    const annualSalary = Number(((year.ArbSalaryProjection || year.Salary || 780000) / 1_000_000).toFixed(2));
+    return {
+      year: season,
+      war: season === BASE_YEAR
+        ? Number((Number(rosProjection?.WAR ?? currentWar * seasonRemainingFraction)).toFixed(1))
+        : ageWar(currentWar, age, isPitcher, season - BASE_YEAR),
+      salary: season === BASE_YEAR ? Number((annualSalary * seasonRemainingFraction).toFixed(2)) : (String(year.Type).toUpperCase().includes("ARB") ? 0 : annualSalary),
+      annualSalary,
+      salaryMode: season === BASE_YEAR ? "fixed" : salaryMode(year.Type, year.ArbYear),
+      ros: season === BASE_YEAR,
+    };
+  });
   mlb.push({
     id: `mlb-${primary?.xMLBAMID || primary?.playerid}`,
     kind: "mlb",
@@ -169,9 +196,17 @@ for (const id of projectionIds) {
     team,
     position: primary?.positionDB || primary?.minpos || (isPitcher ? "P" : "UTIL"),
     age: age ? Math.floor(age) : (isPitcher ? 28 : 27),
-    source: { projection: source, contract: "FanGraphs RosterResource", refreshed: new Date().toISOString().slice(0, 10) },
+    source: { projection: `Steamer RoS (2026) · ${source} future`, contract: "FanGraphs RosterResource", refreshed: new Date().toISOString().slice(0, 10) },
     risk: isPitcher ? 12 : 7,
     seasons,
+    rookieMode: lastProspect && Number(lastProspect.servicetime || 99) < 1 ? "blend" : "projection",
+    lastProspect: lastProspect && Number(lastProspect.servicetime || 99) < 1 ? {
+      fv: prospectGrade(lastProspect.cFV || lastProspect.FV_Current),
+      rank: Number(lastProspect.Ovr_Rank || lastProspect.cOVR) || null,
+      year: Number(lastProspect.Season) || 2025,
+      serviceTime: Number(lastProspect.servicetime) || 0,
+      risk: lastProspect.cRisk || lastProspect.Variance || null,
+    } : null,
   });
 }
 
@@ -206,6 +241,7 @@ const output = {
     mlbCount: mlb.length,
     prospectCount: prospects.length,
     projectionPriority: ["ZiPS", "Steamer", "Marcel + aging"],
+    seasonRemainingFraction: Number(seasonRemainingFraction.toFixed(4)),
     sources: ["FanGraphs projections", "FanGraphs RosterResource", "FanGraphs The Board"],
   },
   teams,
