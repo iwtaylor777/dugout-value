@@ -333,9 +333,15 @@ export default function Home() {
   const [settings, setSettings] = useState(initialSettings);
   const [showSettings, setShowSettings] = useState(false);
   const [showMethod, setShowMethod] = useState(false);
-  const [showLedger, setShowLedger] = useState(false);
   const [leftSearch, setLeftSearch] = useState("");
   const [rightSearch, setRightSearch] = useState("");
+  const [openPicker, setOpenPicker] = useState<"left" | "right" | null>(null);
+  const [activeTab, setActiveTab] = useState<"trade" | "rankings">("trade");
+  const [rankingType, setRankingType] = useState<"all" | "mlb" | "prospect">(
+    "all",
+  );
+  const [rankingTeam, setRankingTeam] = useState("ALL");
+  const [rankingSearch, setRankingSearch] = useState("");
 
   const teamName = (abbr: string) =>
     database.teams.find((team) => team.abbr === abbr)?.name ?? abbr;
@@ -374,6 +380,24 @@ export default function Home() {
   const rangesOverlap = leftLow <= rightHigh && rightLow <= leftHigh;
   const verdict = rangesOverlap ? "Ranges overlap" : "Outside model range";
   const selected = players[selectedId];
+  const rankedPlayers = useMemo(() => {
+    const query = rankingSearch.trim().toLowerCase();
+    return Object.values(players)
+      .filter((player) => !player.custom)
+      .filter((player) => rankingType === "all" || player.kind === rankingType)
+      .filter((player) => rankingTeam === "ALL" || player.team === rankingTeam)
+      .filter((player) =>
+        query
+          ? `${player.name} ${player.team} ${player.position} ${
+              player.kind === "prospect" ? player.fv : "mlb"
+            }`
+              .toLowerCase()
+              .includes(query)
+          : true,
+      )
+      .sort((a, b) => (values[b.id]?.total ?? 0) - (values[a.id]?.total ?? 0))
+      .slice(0, 100);
+  }, [players, rankingSearch, rankingTeam, rankingType, values]);
   const allYears = Array.from(
     new Set(
       [...leftIds, ...rightIds].flatMap(
@@ -502,6 +526,8 @@ export default function Home() {
     setSettings(initialSettings);
     setLeftSearch("");
     setRightSearch("");
+    setOpenPicker(null);
+    setActiveTab("trade");
   };
 
   const renderCard = (id: string, side: "left" | "right") => {
@@ -553,7 +579,7 @@ export default function Home() {
     );
   };
 
-  const TeamSide = ({
+  const renderTeamSide = ({
     side,
     team,
     ids,
@@ -567,8 +593,24 @@ export default function Home() {
     const available = libraryFor(team, ids);
     const search = side === "left" ? leftSearch : rightSearch;
     const setSearch = side === "left" ? setLeftSearch : setRightSearch;
-    const optionLabel = (player: Player) =>
-      `${player.name} — ${player.position}${player.kind === "prospect" ? ` · ${player.fv} FV` : ""}`;
+    const query = search.trim().toLowerCase();
+    const matches = available
+      .filter((player) =>
+        query
+          ? `${player.name} ${player.position} ${
+              player.kind === "prospect" ? `${player.fv} fv prospect` : "mlb"
+            }`
+              .toLowerCase()
+              .includes(query)
+          : true,
+      )
+      .sort((a, b) => (values[b.id]?.total ?? 0) - (values[a.id]?.total ?? 0))
+      .slice(0, 12);
+    const choosePlayer = (player: Player) => {
+      addPlayer(side, player.id);
+      setSearch("");
+      setOpenPicker(null);
+    };
     return (
       <section className={`trade-side ${side}-side`}>
         <div className="side-heading">
@@ -607,28 +649,60 @@ export default function Home() {
           )}
         </div>
         <div className="add-row">
-          <input
-            list={`${side}-player-list`}
-            aria-label={`Search ${teamName(team)} players`}
-            placeholder={`Search ${teamName(team)} players…`}
-            value={search}
-            onChange={(event) => {
-              const next = event.target.value;
-              setSearch(next);
-              const match = available.find(
-                (player) => optionLabel(player) === next,
-              );
-              if (match) {
-                addPlayer(side, match.id);
-                setSearch("");
-              }
-            }}
-          />
-          <datalist id={`${side}-player-list`}>
-            {available.map((player) => (
-              <option key={player.id} value={optionLabel(player)} />
-            ))}
-          </datalist>
+          <div className="player-picker">
+            <input
+              role="combobox"
+              aria-autocomplete="list"
+              aria-label={`Search ${teamName(team)} players`}
+              aria-expanded={openPicker === side}
+              aria-controls={`${side}-player-results`}
+              placeholder={`Search ${teamName(team)} players…`}
+              value={search}
+              onFocus={() => setOpenPicker(side)}
+              onBlur={() => window.setTimeout(() => setOpenPicker(null), 120)}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setOpenPicker(side);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && matches[0]) {
+                  event.preventDefault();
+                  choosePlayer(matches[0]);
+                }
+                if (event.key === "Escape") setOpenPicker(null);
+              }}
+            />
+            {openPicker === side && (
+              <div
+                className="picker-menu"
+                id={`${side}-player-results`}
+                role="listbox"
+              >
+                {matches.length ? (
+                  matches.map((player) => (
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected="false"
+                      key={player.id}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => choosePlayer(player)}
+                    >
+                      <span>
+                        <strong>{player.name}</strong>
+                        <small>
+                          {player.position} · {player.kind === "prospect" ? `${player.fv} FV prospect` : "MLB"}
+                        </small>
+                      </span>
+                      <b>{money(values[player.id]?.total ?? 0)}</b>
+                    </button>
+                  ))
+                ) : (
+                  <p>No matching players in this organization.</p>
+                )}
+              </div>
+            )}
+          </div>
           <button onClick={() => addCustom(side, "mlb")}>Custom MLB</button>
           <button onClick={() => addCustom(side, "prospect")}>
             Custom prospect
@@ -662,11 +736,12 @@ export default function Home() {
       <div className="page" id="top">
         <section className="intro">
           <div>
-            <p className="kicker">Trade workspace</p>
-            <h1>Build a trade</h1>
+            <p className="kicker">Deadline trade lab</p>
+            <h1>{activeTab === "trade" ? "Build a trade" : "The big board"}</h1>
             <p className="lede">
-              Compare outgoing packages, then open any player to adjust the
-              assumptions.
+              {activeTab === "trade"
+                ? "Put together a deal, see how the value lines up, and tune any assumption."
+                : "A just-for-fun leaguewide ranking from the same transparent model."}
             </p>
           </div>
           <div className="snapshot">
@@ -679,6 +754,32 @@ export default function Home() {
             </small>
           </div>
         </section>
+        <div
+          className="workspace-tabs"
+          role="tablist"
+          aria-label="Dugout Value views"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "trade"}
+            className={activeTab === "trade" ? "is-active" : ""}
+            onClick={() => setActiveTab("trade")}
+          >
+            Trade builder
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "rankings"}
+            className={activeTab === "rankings" ? "is-active" : ""}
+            onClick={() => setActiveTab("rankings")}
+          >
+            Value rankings
+          </button>
+        </div>
+        {activeTab === "trade" ? (
+          <>
         <section className="model-strip">
           <div>
             <span>Market rate</span>
@@ -778,12 +879,12 @@ export default function Home() {
               </strong>
             </div>
             <div className="trade-sides">
-              <TeamSide
-                side="left"
-                team={leftTeam}
-                ids={leftIds}
-                total={leftTotal}
-              />
+              {renderTeamSide({
+                side: "left",
+                team: leftTeam,
+                ids: leftIds,
+                total: leftTotal,
+              })}
               <div className="trade-verdict">
                 <span
                   className={`verdict-stamp ${rangesOverlap ? "balanced" : ""}`}
@@ -809,12 +910,12 @@ export default function Home() {
                   Swap teams
                 </button>
               </div>
-              <TeamSide
-                side="right"
-                team={rightTeam}
-                ids={rightIds}
-                total={rightTotal}
-              />
+              {renderTeamSide({
+                side: "right",
+                team: rightTeam,
+                ids: rightIds,
+                total: rightTotal,
+              })}
             </div>
             <section className="year-ledger">
               <div className="section-title">
@@ -822,12 +923,8 @@ export default function Home() {
                   <span>Control years</span>
                   <h2>Value by control year</h2>
                 </div>
-                <button onClick={() => setShowLedger((value) => !value)}>
-                  {showLedger ? "Hide breakdown" : "View breakdown"}
-                </button>
               </div>
-              {showLedger &&
-                (allYears.length ? (
+              {allYears.length ? (
                   <div className="ledger-table">
                     <div className="ledger-row ledger-head">
                       <span>Year</span>
@@ -866,7 +963,7 @@ export default function Home() {
                   <p className="empty-ledger">
                     Add players to compare the packages.
                   </p>
-                ))}
+                )}
             </section>
           </div>
 
@@ -949,10 +1046,7 @@ export default function Home() {
                     </span>
                     <strong>{selected.source.contract}</strong>
                   </div>
-                  <small>
-                    Locked provenance · refreshed{" "}
-                    {prettyDate(selected.source.refreshed)}
-                  </small>
+                  <small>Updated {prettyDate(selected.source.refreshed)}</small>
                 </div>
                 {selected.kind === "mlb" && selected.lastProspect && (
                   <div className="rookie-valuation">
@@ -1323,6 +1417,114 @@ export default function Home() {
             )}
           </aside>
         </section>
+          </>
+        ) : (
+          <section
+            className="rankings-panel"
+            aria-label="Overall trade value rankings"
+          >
+            <div className="rankings-heading">
+              <div>
+                <span>Leaguewide board</span>
+                <h2>Overall trade value rankings</h2>
+                <p>
+                  Estimated surplus value today. Treat the order as a
+                  conversation starter, especially where the ranges overlap.
+                </p>
+              </div>
+              <strong>Top 100</strong>
+            </div>
+            <div className="ranking-filters">
+              <label>
+                <span>Find a player</span>
+                <input
+                  value={rankingSearch}
+                  onChange={(event) => setRankingSearch(event.target.value)}
+                  placeholder="Name, position, or FV…"
+                />
+              </label>
+              <label>
+                <span>Organization</span>
+                <select
+                  value={rankingTeam}
+                  onChange={(event) => setRankingTeam(event.target.value)}
+                >
+                  <option value="ALL">All organizations</option>
+                  {database.teams.map((team) => (
+                    <option value={team.abbr} key={team.abbr}>
+                      {team.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="ranking-type" aria-label="Player type">
+                <span>Player type</span>
+                <div>
+                  {(["all", "mlb", "prospect"] as const).map((type) => (
+                    <button
+                      type="button"
+                      key={type}
+                      className={rankingType === type ? "is-active" : ""}
+                      onClick={() => setRankingType(type)}
+                    >
+                      {type === "all"
+                        ? "All"
+                        : type === "mlb"
+                          ? "MLB"
+                          : "Prospects"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="ranking-list">
+              <div className="ranking-row ranking-head">
+                <span>Rank</span>
+                <span>Player</span>
+                <span>Type</span>
+                <span>Value range</span>
+                <span>Model value</span>
+                <span />
+              </div>
+              {rankedPlayers.map((player, index) => {
+                const result = values[player.id];
+                return (
+                  <article className="ranking-row" key={player.id}>
+                    <strong className="ranking-number">{index + 1}</strong>
+                    <div className="ranking-player">
+                      <strong>{player.name}</strong>
+                      <small>
+                        {teamName(player.team)} · {player.position} · Age{" "}
+                        {player.age}
+                      </small>
+                    </div>
+                    <span className={`type-pill ${player.kind}`}>
+                      {player.kind === "prospect" ? `${player.fv} FV` : "MLB"}
+                    </span>
+                    <span className="ranking-range">
+                      {money(result?.low ?? 0)}–{money(result?.high ?? 0)}
+                    </span>
+                    <strong className="ranking-value">
+                      {money(result?.total ?? 0)}
+                    </strong>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedId(player.id);
+                        setActiveTab("trade");
+                      }}
+                    >
+                      Open model
+                    </button>
+                  </article>
+                );
+              })}
+              {!rankedPlayers.length && (
+                <p className="ranking-empty">No players match those filters.</p>
+              )}
+            </div>
+          </section>
+        )}
 
         {showMethod && (
           <section className="methodology">
