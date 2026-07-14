@@ -9,6 +9,11 @@ import {
   valuePlayer,
 } from "../lib/value-model.mjs";
 import { decodeTradeState, encodeTradeState } from "../lib/trade-share.mjs";
+import {
+  MAX_CASH_AMOUNT,
+  normalizeCashAmount,
+  packageValue,
+} from "../lib/trade-package.mjs";
 
 type SalaryMode =
   | "fixed"
@@ -143,6 +148,8 @@ type SharedTradeState = {
   rightTeam: string;
   leftIds: string[];
   rightIds: string[];
+  leftCash: number;
+  rightCash: number;
   selectedId?: string;
   settings: ModelSettings;
   overrides: Player[];
@@ -308,6 +315,8 @@ export default function Home() {
   const [rightTeam, setRightTeam] = useState("PIT");
   const [leftIds, setLeftIds] = useState<string[]>(["mlb-677594"]);
   const [rightIds, setRightIds] = useState<string[]>(["mlb-694973"]);
+  const [leftCash, setLeftCash] = useState(0);
+  const [rightCash, setRightCash] = useState(0);
   const [selectedId, setSelectedId] = useState("mlb-694973");
   const [settings, setSettings] = useState(initialSettings);
   const [showSettings, setShowSettings] = useState(false);
@@ -373,6 +382,8 @@ export default function Home() {
         ? shared.selectedId
         : (packageIds[0] ?? "");
     const restoredSettings = sharedSettings(shared.settings);
+    const restoredLeftCash = normalizeCashAmount(shared.leftCash);
+    const restoredRightCash = normalizeCashAmount(shared.rightCash);
 
     const restoreTimer = window.setTimeout(() => {
       setPlayers(restoredPlayers);
@@ -380,6 +391,8 @@ export default function Home() {
       setRightTeam(restoredRightTeam);
       setLeftIds(restoredLeftIds);
       setRightIds(restoredRightIds);
+      setLeftCash(restoredLeftCash);
+      setRightCash(restoredRightCash);
       setSelectedId(restoredSelectedId);
       setSettings(restoredSettings);
       setLeftSearch("");
@@ -406,27 +419,12 @@ export default function Home() {
       ),
     [players, settings],
   );
-  const leftTotal = leftIds.reduce(
-    (sum, id) => sum + (values[id]?.total ?? 0),
-    0,
-  );
-  const rightTotal = rightIds.reduce(
-    (sum, id) => sum + (values[id]?.total ?? 0),
-    0,
-  );
-  const leftLow = leftIds.reduce((sum, id) => sum + (values[id]?.low ?? 0), 0);
-  const leftHigh = leftIds.reduce(
-    (sum, id) => sum + (values[id]?.high ?? 0),
-    0,
-  );
-  const rightLow = rightIds.reduce(
-    (sum, id) => sum + (values[id]?.low ?? 0),
-    0,
-  );
-  const rightHigh = rightIds.reduce(
-    (sum, id) => sum + (values[id]?.high ?? 0),
-    0,
-  );
+  const leftTotal = packageValue(leftIds, leftCash, values, "total");
+  const rightTotal = packageValue(rightIds, rightCash, values, "total");
+  const leftLow = packageValue(leftIds, leftCash, values, "low");
+  const leftHigh = packageValue(leftIds, leftCash, values, "high");
+  const rightLow = packageValue(rightIds, rightCash, values, "low");
+  const rightHigh = packageValue(rightIds, rightCash, values, "high");
   const difference = leftTotal - rightTotal;
   const rangesOverlap = leftLow <= rightHigh && rightLow <= leftHigh;
   const verdict = rangesOverlap ? "Ranges overlap" : "Outside model range";
@@ -505,6 +503,8 @@ export default function Home() {
     }, 0);
   const maxYearValue = Math.max(
     1,
+    leftCash,
+    rightCash,
     ...allYears.flatMap((year) => [
       Math.abs(sideYearValue(leftIds, year)),
       Math.abs(sideYearValue(rightIds, year)),
@@ -621,10 +621,12 @@ export default function Home() {
     if (side === "left") {
       setLeftTeam(team);
       setLeftIds([]);
+      setLeftCash(0);
       setLeftSearch("");
     } else {
       setRightTeam(team);
       setRightIds([]);
+      setRightCash(0);
       setRightSearch("");
     }
     setOpenPicker(null);
@@ -690,6 +692,8 @@ export default function Home() {
     setRightTeam("PIT");
     setLeftIds(["mlb-677594"]);
     setRightIds(["mlb-694973"]);
+    setLeftCash(0);
+    setRightCash(0);
     setSelectedId("mlb-694973");
     setSettings(initialSettings);
     setLeftSearch("");
@@ -709,6 +713,8 @@ export default function Home() {
     setRightTeam("PIT");
     setLeftIds([]);
     setRightIds([]);
+    setLeftCash(0);
+    setRightCash(0);
     setSelectedId("");
     setSettings(initialSettings);
     setLeftSearch("");
@@ -732,10 +738,13 @@ export default function Home() {
   const swapTeams = () => {
     const team = leftTeam;
     const ids = leftIds;
+    const cash = leftCash;
     setLeftTeam(rightTeam);
     setLeftIds(rightIds);
+    setLeftCash(rightCash);
     setRightTeam(team);
     setRightIds(ids);
+    setRightCash(cash);
     setLeftSearch("");
     setRightSearch("");
     setOpenPicker(null);
@@ -759,6 +768,8 @@ export default function Home() {
       rightTeam,
       leftIds,
       rightIds,
+      leftCash,
+      rightCash,
       selectedId: packageIds.includes(selectedId) ? selectedId : undefined,
       settings,
       overrides,
@@ -865,6 +876,8 @@ export default function Home() {
     const available = libraryFor(team, ids);
     const search = side === "left" ? leftSearch : rightSearch;
     const setSearch = side === "left" ? setLeftSearch : setRightSearch;
+    const cash = side === "left" ? leftCash : rightCash;
+    const setCash = side === "left" ? setLeftCash : setRightCash;
     const query = search.trim().toLowerCase();
     const matches = available
       .filter((player) =>
@@ -921,6 +934,30 @@ export default function Home() {
             </div>
           )}
         </div>
+        <label className={`cash-adjustment ${cash > 0 ? "has-cash" : ""}`}>
+          <span>Cash / salary relief</span>
+          <span className="cash-input">
+            <b>$</b>
+            <input
+              aria-label={`${teamName(team)} cash or retained salary sent`}
+              type="number"
+              min="0"
+              max={MAX_CASH_AMOUNT}
+              step="0.1"
+              value={cash || ""}
+              placeholder="0.0"
+              onChange={(event) =>
+                setCash(normalizeCashAmount(event.target.value))
+              }
+            />
+            <em>M</em>
+          </span>
+          {cash > 0 && (
+            <small>
+              Added dollar-for-dollar; CBT and payment timing are not modeled.
+            </small>
+          )}
+        </label>
         <div className="add-row">
           <div className="player-picker">
             <input
@@ -1304,7 +1341,7 @@ export default function Home() {
                   <h2>Value by control year</h2>
                 </div>
               </div>
-              {allYears.length ? (
+              {allYears.length || leftCash > 0 || rightCash > 0 ? (
                   <div className="ledger-table">
                     <div className="ledger-row ledger-head">
                       <span>Year</span>
@@ -1338,6 +1375,28 @@ export default function Home() {
                         </div>
                       );
                     })}
+                    {(leftCash > 0 || rightCash > 0) && (
+                      <div className="ledger-row cash-ledger-row">
+                        <strong>Cash / relief</strong>
+                        <span>{money(leftCash)}</span>
+                        <div className="year-bars">
+                          <i
+                            className="left-bar"
+                            style={{
+                              width: `${leftCash > 0 ? Math.max(2, (leftCash / maxYearValue) * 48) : 0}%`,
+                            }}
+                          />
+                          <b />
+                          <i
+                            className="right-bar"
+                            style={{
+                              width: `${rightCash > 0 ? Math.max(2, (rightCash / maxYearValue) * 48) : 0}%`,
+                            }}
+                          />
+                        </div>
+                        <span>{money(rightCash)}</span>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <p className="empty-ledger">
@@ -2056,6 +2115,8 @@ export default function Home() {
                   value. The Board&apos;s risk label changes a prospect&apos;s range,
                   not its median; signing year and option status identify Rule 5
                   and 40-man pressure as a separate roster-leverage adjustment.
+                  Cash or retained salary is a separate dollar-for-dollar deal
+                  adjustment; CBT and payment timing remain outside the model.
                 </p>
               </article>
             </div>

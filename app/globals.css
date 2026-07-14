@@ -1644,6 +1644,60 @@ body {
   line-height: 1.4;
   text-align: center;
 }
+.cash-adjustment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 7px 8px;
+  border: 1px dashed var(--line);
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.cash-adjustment.has-cash {
+  border-style: solid;
+  border-color: var(--gold);
+  background: rgba(213, 162, 79, 0.08);
+  color: var(--ink);
+}
+.cash-adjustment > span:first-child {
+  font-weight: 650;
+}
+.cash-input {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.cash-input b,
+.cash-input em {
+  color: var(--muted);
+  font-style: normal;
+  font-weight: 650;
+}
+.cash-input input {
+  width: 58px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--navy);
+  padding: 3px 2px;
+  font: 650 11px var(--font-geist-mono), monospace;
+  text-align: right;
+}
+.cash-adjustment small {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+.cash-adjustment.has-cash {
+  flex-wrap: wrap;
+}
+.cash-ledger-row {
+  background: rgba(213, 162, 79, 0.07);
+}
 .player-card {
   border-radius: 5px;
   box-shadow: none;

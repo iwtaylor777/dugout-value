@@ -9,6 +9,8 @@ test("round-trips a versioned trade with Unicode player data", () => {
     rightTeam: "NYM",
     leftIds: ["custom-jose"],
     rightIds: ["mlb-123"],
+    leftCash: 12.5,
+    rightCash: 0,
     overrides: [{ id: "custom-jose", name: "José Álvarez ⚾" }],
   };
 

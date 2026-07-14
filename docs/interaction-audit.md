@@ -6,8 +6,8 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | --- | --- | --- | --- |
 | Header | Click the wordmark | Works; returns to the top | Preserve native anchor behavior and visible focus |
 | Header | Open Method | Reveals content below the fold but leaves the user in place | Reveal Method and scroll it into view |
-| Header | Load example | Restores data but can leave the user on Rankings | Restore example, switch to Trade Builder, close stray menus, and clear a stale shared-trade token |
-| Header | Start a new trade | Clears the packages | Also reset searches, selection, panels, shared-trade state, and return to Trade Builder |
+| Header | Load example | Restores data but can leave the user on Rankings | Restore example, switch to Trade Builder, close stray menus, clear cash adjustments, and clear a stale shared-trade token |
+| Header | Start a new trade | Clears the packages | Also reset searches, cash, selection, panels, shared-trade state, and return to Trade Builder |
 | Navigation | Switch Trade Builder / Rankings | Works | Preserve each view’s useful filter/package state; support visible focus |
 | Assumptions | Open or close model settings | Works, but terminology is finance-heavy | Use baseball language and make the active valuation lens obvious |
 | Assumptions | Edit market inputs | Recalculates immediately | Keep immediate feedback; guard against misleading labels and invalid negative values |
@@ -22,8 +22,9 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Team package | Add a custom prospect | Works | Select the new prospect and expose scouting/roster assumptions |
 | Team package | Open a player card | Works | On narrow screens, bring the editor into view after selection |
 | Team package | Remove a player | Leaves an empty editor if the selected player is removed | Select the next available player when possible |
-| Trade center | Swap teams | Swaps teams and packages | Also clear stale search menus/queries |
-| Trade center | Copy a trade link / open a shared trade | Missing | Restore both teams, packages, selected player, model settings, and any custom or edited player assumptions without requiring an account |
+| Team package | Add cash or retained salary | Missing | Add a bounded dollar-for-dollar package adjustment, preserve it through swaps and shared links, clear it with the package, and keep it separate from player projection uncertainty |
+| Trade center | Swap teams | Swaps teams and packages | Swap cash adjustments with their packages and clear stale search menus/queries |
+| Trade center | Copy a trade link / open a shared trade | Missing | Restore both teams, packages, cash adjustments, selected player, model settings, and any custom or edited player assumptions without requiring an account |
 | Trade center | Read the verdict | Works | Keep range overlap as the primary signal; avoid false precision |
 | Control years | Read yearly value | Always visible | Preserve; keep empty state useful |
 | Player editor | Edit custom identity | Works | Preserve; official records remain non-editable |
@@ -57,6 +58,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Prospect uncertainty:** use The Board's scouting-risk label to widen or narrow the value range without moving the FV-based central estimate. This avoids pretending that a high-risk 18-year-old and a low-risk upper-minors player have equally certain outcomes while also avoiding a second hidden discount to the FV grade.
 - **Shared trade state:** links store current player IDs and model settings. Official, untouched players refresh against the latest public-data snapshot when the link is opened; custom players and manually edited official records carry their saved assumptions in the link.
 - **Tradeability vs. value:** a no-trade clause changes whether a deal can happen, not the player’s projected wins or salary. Surface the consent constraint prominently, keep it editable, and do not bury an arbitrary penalty in the surplus number.
+- **Cash and salary relief:** treat entered cash or retained salary as a certain dollar-for-dollar package adjustment. Do not pretend the single total models CBT effects or payment timing; show it separately from control-year player value.
 
 ## Loop results
 
@@ -70,3 +72,4 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Pass 8 — prospect context:** The Board now supplies the missing inputs: scouting risk, signing year, age, ETA, and remaining option years. Those fields drive editable risk ranges and source-backed 40-man/Rule 5 context; the model still keeps roster leverage separate from the scouting grade.
 - **Pass 9 — trade handoff:** added compact, versioned trade links with input validation, Unicode-safe encoding, clipboard fallback, and visible load/copy feedback. A shared decision can now move between people without accounts or a backend.
 - **Pass 10 — tradeability context:** separated contract value from permission to trade. RosterResource’s dedicated no-trade field feeds full/partial protection labels, with a small tested fallback for four primary-source omissions and 10-and-5 rights. Protected players are flagged in packages and rankings, missing source data is labeled as unconfirmed, and central surplus remains unchanged.
+- **Pass 11 — cash and salary relief:** added a compact package adjustment for cash considerations or retained salary. It flows through totals, ranges, swaps, resets, yearly comparison, and shared links while remaining visibly separate from player WAR and contract assumptions.

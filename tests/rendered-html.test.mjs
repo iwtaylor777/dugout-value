@@ -37,6 +37,7 @@ test("server-renders the trade builder", async () => {
   assert.match(html, /Neutral · no discount/);
   assert.match(html, /30<!-- -->% star premium/);
   assert.match(html, /role="combobox"/);
+  assert.match(html, /Cash \/ salary relief/);
   assert.doesNotMatch(html, /Locked provenance/);
 });
 
@@ -107,9 +108,14 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /Tradeability/);
   assert.match(page, /surplus value is unchanged/);
   assert.match(page, /tradeProtection/);
+  assert.match(page, /Cash \/ salary relief/);
+  assert.match(page, /setLeftCash/);
+  assert.match(page, /packageValue/);
+  assert.match(page, /leftCash,/);
   assert.match(audit, /Navigate search with keyboard/);
   assert.match(audit, /Account for Rule 5 \/ 40-man pressure/);
   assert.match(audit, /Compare mutually exclusive contract paths/);
   assert.match(audit, /Copy a trade link \/ open a shared trade/);
   assert.match(audit, /Review trade protection/);
+  assert.match(audit, /Add cash or retained salary/);
 });
