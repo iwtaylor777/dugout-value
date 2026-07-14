@@ -69,6 +69,10 @@ test("keeps the audited navigation and model behavior explicit", async () => {
     new URL("../app/page.tsx", import.meta.url),
     "utf8",
   );
+  const model = await readFile(
+    new URL("../lib/value-model.mjs", import.meta.url),
+    "utf8",
+  );
   const audit = await readFile(
     new URL("../docs/interaction-audit.md", import.meta.url),
     "utf8",
@@ -79,11 +83,13 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /scrollIntoView/);
   assert.match(page, /const swapTeams/);
   assert.match(page, /openPlayerEditor\(player\.id, true\)/);
-  assert.match(page, /regularRosterWar: 0\.5/);
-  assert.match(page, /relieverRosterWar: 0\.2/);
-  assert.match(page, /timingPreference: 0/);
-  assert.match(page, /starPremium: 30/);
+  assert.match(model, /regularRosterWar: 0\.5/);
+  assert.match(model, /relieverRosterWar: 0\.2/);
+  assert.match(model, /timingPreference: 0/);
+  assert.match(model, /starPremium: 30/);
+  assert.match(model, /player\.role === "reliever"/);
   assert.match(page, /rosterContext/);
+  assert.match(page, /Club control through/);
   assert.match(audit, /Navigate search with keyboard/);
   assert.match(audit, /Account for Rule 5 \/ 40-man pressure/);
 });

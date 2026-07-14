@@ -53,6 +53,12 @@ const normalizeTeam = (team) =>
     CWS: "CHW",
     OAK: "ATH",
   })[team] ?? team;
+const normalizeIdentity = (name, team) =>
+  `${String(name ?? "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/gi, "")
+    .toLowerCase()}::${normalizeTeam(team)}`;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const seasonStart = new Date("2026-03-25T12:00:00Z");
 const seasonEnd = new Date("2026-09-27T12:00:00Z");
@@ -148,6 +154,26 @@ function salaryMode(type, arbYear) {
   if (label.includes("ARB"))
     return `arb${Math.min(4, Math.max(1, Number(arbYear) || Number(label.match(/\d/)?.[0]) || 1))}`;
   return "fixed";
+}
+
+function firstOptOutYear(summary) {
+  const note = String(
+    summary?.ContractSummaryPayrollNote ??
+      summary?.LongContractSummaryPayrollNote ??
+      "",
+  );
+  if (!/opt[ -]?out/i.test(note)) return null;
+  const years = [...note.matchAll(/20\d{2}/g)].map((match) =>
+    Number(match[0]),
+  );
+  return years.length ? Math.min(...years) : null;
+}
+
+function pitcherRole(row) {
+  const games = Number(row?.G) || 0;
+  const starts = Number(row?.GS) || 0;
+  if (!games) return "starter";
+  return starts / games < 0.35 ? "reliever" : "starter";
 }
 
 function projectionMap(rows) {
@@ -330,6 +356,12 @@ for (const id of projectionIds) {
         "",
     ),
   );
+  const optOutAfter = firstOptOutYear(matchedContract.summary);
+  const role = isTwoWay
+    ? "two-way"
+    : isPitcher
+      ? pitcherRole(primary ?? backup ?? rosProjection)
+      : "position";
   const seasons = contractYears.map((year) => {
     const season = Number(year.Season);
     const economicAnnual = hasDeferrals
@@ -338,7 +370,13 @@ for (const id of projectionIds) {
     const annualSalary = Number(
       (Number(economicAnnual || 780000) / 1_000_000).toFixed(2),
     );
-    const optionMode = salaryMode(year.Type, year.ArbYear);
+    const listedOptionMode = salaryMode(year.Type, year.ArbYear);
+    // Once a player can opt out, the club cannot count later positive surplus
+    // as guaranteed control. A struggling player can still keep the downside.
+    const optionMode =
+      optOutAfter !== null && season > optOutAfter
+        ? "playerOption"
+        : listedOptionMode;
     const futureWar =
       season === 2027 && Number.isFinite(future2027)
         ? future2027
@@ -394,6 +432,7 @@ for (const id of projectionIds) {
     position: isTwoWay
       ? "TWP"
       : primary?.positionDB || primary?.minpos || (isPitcher ? "P" : "UTIL"),
+    role,
     age: age ? Math.floor(age) : isPitcher ? 28 : 27,
     source: {
       projection: `Steamer RoS (2026) · ${source} future`,
@@ -422,8 +461,16 @@ for (const id of projectionIds) {
   });
 }
 
+const mlbIdentities = new Set(
+  mlb.map((player) => normalizeIdentity(player.name, player.team)),
+);
 const prospects = boardRows
-  .filter((row) => teamSlugs[normalizeTeam(row.Team)] && row.playerName)
+  .filter(
+    (row) =>
+      teamSlugs[normalizeTeam(row.Team)] &&
+      row.playerName &&
+      !mlbIdentities.has(normalizeIdentity(row.playerName, row.Team)),
+  )
   .map((row) => ({
     id: `prospect-${row.PlayerId || row.ID}`,
     kind: "prospect",

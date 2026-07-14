@@ -15,6 +15,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Team package | Change a team | Clears that side, but also clears an unrelated selected player | Clear only the changed package and preserve the other side’s selection |
 | Team package | Focus player search | Opens high-value suggestions | Keep suggestions ranked and scoped to the selected organization |
 | Team package | Type a partial name / position / FV | Works | Keep partial matching and a useful no-results message |
+| Team package | Search for a pitcher by SP/RP | Source data labels every pitcher as “P” | Derive role from projected starts/games; search and display the familiar role |
 | Team package | Navigate search with keyboard | Enter works only for the first result | Add Up/Down highlighting, Enter selection, and Escape dismissal |
 | Team package | Click a search result | Works | Add the player once, select them, close the menu, and clear the query |
 | Team package | Add a custom MLB player | Works | Select the new player and expose editable assumptions |
@@ -28,6 +29,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Player editor | Change rookie value basis | Works | Preserve projection/FV/blend choices |
 | Player editor | Change risk | Works | Preserve immediate range update |
 | Player editor | Add/edit a control year | Works | Keep salary-mode behavior and calculated surplus readable |
+| Player editor | Read a contract with an opt-out | Later guaranteed years look like unconditional club control | Stop crediting upside after the first opt-out while retaining downside if the player stays |
 | Prospect editor | Change FV, type, ETA, or scout adjustment | Works | Preserve immediate feedback |
 | Prospect editor | Account for Rule 5 / 40-man pressure | Missing | Add a transparent context adjustment without pretending it is intrinsic talent |
 | Rankings | Search, filter team, filter player type | Works | Preserve filters and stable model ordering |
@@ -42,6 +44,8 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Roster burden:** replace one universal free-WAR hurdle with a role-aware opportunity cost: 0.5 WAR for position players/starters and 0.2 WAR for relievers by default.
 - **Nonlinear win pricing:** retain the user’s $12M base rate and add a restrained 30% premium only for WAR above the first two net WAR. This reflects the recent star premium without turning the model into a black box.
 - **Relievers:** FanGraphs pitcher WAR already contains a leverage multiplier. Do not apply another large automatic adjustment. Expose an optional bullpen-market premium, defaulting to zero.
+- **Opt-outs:** an opt-out is a player decision, not club control. Later positive surplus is zeroed while negative value remains possible if the player stays. Club options before any player decision still count normally.
+- **Identity handling:** when a projected major leaguer is also still present on The Board for the same organization, keep the richer MLB record and its last-prospect blend rather than listing the player twice.
 - **Roster pressure for prospects:** treat Rule 5/40-man pressure as context, not a scouting-grade downgrade. Provide explicit, editable scenarios rather than inventing eligibility for players whose source data does not establish it.
 
 ## Loop results
@@ -49,4 +53,5 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Pass 1 — intent and feedback:** found and corrected the Method navigation, example/reset state, cross-team editor clearing, selected-player removal, stale swap searches, narrow-screen editor handoff, and incomplete search keyboard behavior.
 - **Pass 2 — model language and behavior:** replaced the finance-default discount with neutral timing plus an optional win-now lens; replaced universal free WAR with role-aware roster burden; added transparent star and reliever market controls; added prospect roster-pressure context.
 - **Pass 3 — render and regression checks:** the complete server-rendered action surface, always-visible control-year view, rankings, search contract, model defaults, and navigation hooks pass the project checks in both hosting formats.
+- **Pass 4 — leaguewide calibration:** extracted all 2,000+ player values through the production model; corrected MLB/prospect duplicates, pitcher role detection, opt-out ownership, and misleading “control years” labels. Added repeatable checks for the roster baselines, option asymmetry, Bobby Witt Jr.’s opt-out, Mason Miller’s role, and a bounded Jarren Duran arbitration estimate.
 - **Deliberate boundary:** automatic Rule 5 labeling is not asserted when the source snapshot does not establish eligibility. The editor exposes the context now; the data refresh records a neutral default until a reliable roster-status field is available.

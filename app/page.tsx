@@ -2,6 +2,11 @@
 
 import { useMemo, useState } from "react";
 import databaseJson from "./data/player-database.json";
+import {
+  initialSettings as modelInitialSettings,
+  prospectValues as modelProspectValues,
+  valuePlayer,
+} from "../lib/value-model.mjs";
 
 type SalaryMode =
   | "fixed"
@@ -42,6 +47,7 @@ type MLBPlayer = {
   name: string;
   team: string;
   position: string;
+  role?: "position" | "starter" | "reliever" | "two-way";
   age: number;
   source: Provenance;
   risk: number;
@@ -114,61 +120,11 @@ const BASE_YEAR = database.meta.baseYear;
 const initialPlayers = Object.fromEntries(
   database.players.map((player) => [player.id, player]),
 );
-const initialSettings: ModelSettings = {
-  dollarsPerWar: 12,
-  regularRosterWar: 0.5,
-  relieverRosterWar: 0.2,
-  timingPreference: 0,
-  starPremium: 30,
-  relieverPremium: 0,
-  inflation: 3,
-  minimumSalary: 0.78,
-};
-const prospectValues: Record<
+const initialSettings = modelInitialSettings as ModelSettings;
+const prospectValues = modelProspectValues as Record<
   string,
   Record<ProspectType, { value: number; war: number; star: number }>
-> = {
-  "70": {
-    Hitter: { value: 195, war: 27.5, star: 87.5 },
-    Pitcher: { value: 195, war: 27, star: 87.5 },
-  },
-  "65": {
-    Hitter: { value: 95, war: 13.5, star: 40 },
-    Pitcher: { value: 95, war: 13.5, star: 40 },
-  },
-  "60": {
-    Hitter: { value: 82, war: 12.5, star: 33 },
-    Pitcher: { value: 70, war: 11, star: 21 },
-  },
-  "55": {
-    Hitter: { value: 55, war: 8, star: 17.5 },
-    Pitcher: { value: 45, war: 7, star: 7 },
-  },
-  "50": {
-    Hitter: { value: 45, war: 7, star: 13.5 },
-    Pitcher: { value: 33.5, war: 5, star: 7 },
-  },
-  "45+": {
-    Hitter: { value: 18.5, war: 3.2, star: 6 },
-    Pitcher: { value: 15, war: 2.6, star: 3 },
-  },
-  "45": {
-    Hitter: { value: 14.5, war: 2.5, star: 3.5 },
-    Pitcher: { value: 9.5, war: 1.6, star: 1.5 },
-  },
-  "40+": {
-    Hitter: { value: 8, war: 1.2, star: 1.8 },
-    Pitcher: { value: 7, war: 1, star: 1 },
-  },
-  "40": {
-    Hitter: { value: 5.5, war: 0.75, star: 0.8 },
-    Pitcher: { value: 4, war: 0.55, star: 0.4 },
-  },
-  "35+": {
-    Hitter: { value: 2, war: 0.3, star: 0.4 },
-    Pitcher: { value: 1.5, war: 0.25, star: 0.4 },
-  },
-};
+>;
 
 const money = (value: number) =>
   `${value < 0 ? "−" : ""}$${Math.abs(value).toFixed(1)}M`;
@@ -180,166 +136,30 @@ const prettyDate = (date: string) =>
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(`${date}T12:00:00Z`));
-
-const isReliever = (player: MLBPlayer) => {
-  const roles = player.position.split(/[\/,]/).map((role) => role.trim());
-  return roles.includes("RP") && !roles.includes("SP");
+const displayPosition = (player: Player) =>
+  player.kind === "mlb" && player.position === "P"
+    ? player.role === "reliever"
+      ? "RP"
+      : player.role === "starter"
+        ? "SP"
+        : "P"
+    : player.position;
+const contractLabel = (player: MLBPlayer) => {
+  const firstPlayerDecision = player.seasons.find((season) =>
+    ["playerOption", "mutualOption"].includes(
+      season.contractType ?? season.salaryMode,
+    ),
+  );
+  const controlledSeasons = firstPlayerDecision
+    ? player.seasons.filter((season) => season.year < firstPlayerDecision.year)
+    : player.seasons;
+  const finalControlledYear = controlledSeasons.at(-1)?.year;
+  if (!finalControlledYear) return "No club control listed";
+  return firstPlayerDecision
+    ? `Club control through ${finalControlledYear} · then player decision`
+    : `Club control through ${finalControlledYear}`;
 };
 
-const prospectRosterMultiplier: Record<ProspectRosterContext, number> = {
-  none: 1,
-  rule5: 0.85,
-  on40: 0.9,
-  crunch: 0.6,
-};
-
-function marketValueForSeason(
-  player: MLBPlayer,
-  season: MLBSeason,
-  settings: ModelSettings,
-  inflation: number,
-) {
-  const seasonShare = season.ros
-    ? (database.meta.seasonRemainingFraction ?? 1)
-    : 1;
-  const reliever = isReliever(player);
-  const rosterBurden =
-    (reliever ? settings.relieverRosterWar : settings.regularRosterWar) *
-    seasonShare;
-  const netWar = Math.max(0, season.war - rosterBurden);
-  const starThreshold = 2 * seasonShare;
-  const standardWar = Math.min(netWar, starThreshold);
-  const starWar = Math.max(0, netWar - starThreshold);
-  const curvedValue =
-    standardWar * settings.dollarsPerWar +
-    starWar *
-      settings.dollarsPerWar *
-      (1 + settings.starPremium / 100);
-  const bullpenMarket = reliever ? 1 + settings.relieverPremium / 100 : 1;
-  return curvedValue * bullpenMarket * inflation;
-}
-
-function valuePlayer(player: Player, settings: ModelSettings): ValueResult {
-  if (player.kind === "prospect") {
-    const tier =
-      prospectValues[player.fv]?.[player.prospectType] ??
-      prospectValues["40"][player.prospectType];
-    const yearsAway = Math.max(0, player.eta - BASE_YEAR);
-    const rosterMultiplier =
-      prospectRosterMultiplier[player.rosterContext ?? "none"];
-    const total =
-      (tier.value *
-        (settings.dollarsPerWar / 12) *
-        (1 + player.adjustment / 100) *
-        rosterMultiplier) /
-      Math.pow(1 + settings.timingPreference / 100, yearsAway);
-    const uncertainty =
-      0.23 + yearsAway * 0.04 + (player.prospectType === "Pitcher" ? 0.06 : 0);
-    return {
-      total,
-      low: Math.max(0, total * (1 - uncertainty)),
-      high: total * (1 + uncertainty),
-      expectedWar: tier.war,
-      starOdds: tier.star,
-      rows: [],
-    };
-  }
-  const rows: ValueResult["rows"] = [];
-  let priorAnnualSalary = 0;
-  player.seasons.forEach((season, index) => {
-    const contractMode = season.contractType ?? season.salaryMode;
-    const yearsOut = Math.max(0, season.year - BASE_YEAR);
-    const inflation = Math.pow(1 + settings.inflation / 100, yearsOut);
-    const timingFactor =
-      1 / Math.pow(1 + settings.timingPreference / 100, yearsOut);
-    const market = marketValueForSeason(player, season, settings, inflation);
-    const floor = settings.minimumSalary * inflation;
-    let salary = season.salary;
-    if (season.salaryMode === "prearb") salary = salary || floor;
-    if (season.salaryMode.startsWith("arb")) {
-      const previousWar = index
-        ? player.seasons[index - 1].war
-        : (player.platformWar ?? season.war);
-      const platformWar =
-        season.year === BASE_YEAR + 1
-          ? (player.platformWar ?? previousWar)
-          : previousWar;
-      const boundedWar = Math.max(0, Math.min(4, platformWar));
-      if (season.salaryMode === "arb1" && priorAnnualSalary <= 1.5) {
-        salary = Math.max(
-          2.5,
-          Math.min(12, 1.5 + 1.8 * Math.max(0, platformWar)),
-        );
-      } else {
-        const raise =
-          season.salaryMode === "arb2"
-            ? 0.1 + 0.04 * boundedWar
-            : season.salaryMode === "arb3"
-              ? 0.12 + 0.045 * boundedWar
-              : 0.15 + 0.05 * boundedWar;
-        salary = Math.max(floor, priorAnnualSalary * (1 + raise));
-      }
-    }
-    priorAnnualSalary = season.salaryMode.startsWith("arb")
-      ? salary
-      : (season.annualSalary ?? salary);
-    const buyout = season.optionBuyout ?? 0;
-    let rawSurplus = market - salary;
-    if (contractMode === "clubOption")
-      rawSurplus = Math.max(market - salary, -buyout);
-    if (contractMode === "playerOption")
-      rawSurplus = Math.min(market - salary, 0);
-    if (contractMode === "mutualOption") rawSurplus = -buyout;
-    if (contractMode === "vestingOption")
-      rawSurplus =
-        ((season.optionProbability ?? 50) / 100) * (market - salary) +
-        (1 - (season.optionProbability ?? 50) / 100) * -buyout;
-    rows.push({
-      year: season.year,
-      war: season.war,
-      market,
-      salary,
-      surplus: rawSurplus * timingFactor,
-    });
-  });
-  const projectionTotal = rows.reduce((sum, row) => sum + row.surplus, 0);
-  const lastProspect = player.lastProspect;
-  const prospectTier = lastProspect
-    ? (prospectValues[lastProspect.fv]?.[
-        player.position.includes("P") ? "Pitcher" : "Hitter"
-      ] ?? null)
-    : null;
-  const prospectTotal = prospectTier
-    ? prospectTier.value *
-      (settings.dollarsPerWar / 12) *
-      Math.max(0, (6 - lastProspect!.serviceTime) / 6)
-    : undefined;
-  const prospectWeight = lastProspect
-    ? Math.min(
-        0.8,
-        Math.pow(0.8, Math.max(0, BASE_YEAR - lastProspect.year)) *
-          0.8 *
-          Math.exp(-lastProspect.serviceTime / 0.75),
-      )
-    : 0;
-  const total =
-    player.rookieMode === "prospect" && prospectTotal !== undefined
-      ? prospectTotal
-      : player.rookieMode === "blend" && prospectTotal !== undefined
-        ? projectionTotal * (1 - prospectWeight) +
-          prospectTotal * prospectWeight
-        : projectionTotal;
-  const uncertainty = 0.1 + player.risk / 200;
-  return {
-    total,
-    projectionTotal,
-    prospectTotal,
-    rookieAdjustment: total - projectionTotal,
-    low: total >= 0 ? total * (1 - uncertainty) : total * (1 + uncertainty),
-    high: total >= 0 ? total * (1 + uncertainty) : total * (1 - uncertainty),
-    rows,
-  };
-}
 
 function NumericField({
   value,
@@ -397,7 +217,7 @@ export default function Home() {
       Object.fromEntries(
         Object.values(players).map((player) => [
           player.id,
-          valuePlayer(player, settings),
+          valuePlayer(player, settings, database) as ValueResult,
         ]),
       ),
     [players, settings],
@@ -435,7 +255,7 @@ export default function Home() {
       .filter((player) => rankingTeam === "ALL" || player.team === rankingTeam)
       .filter((player) =>
         query
-          ? `${player.name} ${player.team} ${player.position} ${
+          ? `${player.name} ${player.team} ${displayPosition(player)} ${
               player.kind === "prospect" ? player.fv : "mlb"
             }`
               .toLowerCase()
@@ -656,14 +476,14 @@ export default function Home() {
           <span className="player-copy">
             <strong>{player.name}</strong>
             <small>
-              {player.position} · Age {player.age} ·{" "}
+              {displayPosition(player)} · Age {player.age} ·{" "}
               {player.kind === "prospect"
                 ? `${player.fv} FV${
                     player.rosterContext && player.rosterContext !== "none"
                       ? " · roster pressure"
                       : ""
                   }`
-                : `${player.seasons.length} control yrs`}
+                : contractLabel(player)}
             </small>
             <span className="value-range">
               Range {money(result.low)}–{money(result.high)}
@@ -703,7 +523,7 @@ export default function Home() {
     const matches = available
       .filter((player) =>
         query
-          ? `${player.name} ${player.position} ${
+          ? `${player.name} ${displayPosition(player)} ${
               player.kind === "prospect" ? `${player.fv} fv prospect` : "mlb"
             }`
               .toLowerCase()
@@ -820,7 +640,7 @@ export default function Home() {
                       <span>
                         <strong>{player.name}</strong>
                         <small>
-                          {player.position} · {player.kind === "prospect" ? `${player.fv} FV prospect` : "MLB"}
+                          {displayPosition(player)} · {player.kind === "prospect" ? `${player.fv} FV prospect` : "MLB"}
                         </small>
                       </span>
                       <b>{money(values[player.id]?.total ?? 0)}</b>
@@ -1069,7 +889,8 @@ export default function Home() {
               Net fWAR subtracts the role’s roster burden, then the first two
               wins use the base rate and additional wins receive the star
               premium. FanGraphs pitcher WAR already includes a leverage
-              adjustment, so the extra reliever premium is off by default.
+              adjustment, so the extra reliever premium stays an optional team
+              preference rather than a hidden assumption.
             </p>
           </section>
         )}
@@ -1217,7 +1038,7 @@ export default function Home() {
                 ) : (
                   <div className="identity-card">
                     <span>{selected.team}</span>
-                    <strong>{selected.position}</strong>
+                    <strong>{displayPosition(selected)}</strong>
                     <small>
                       Age {selected.age}
                       {selected.kind === "prospect" && selected.rank
@@ -1721,7 +1542,7 @@ export default function Home() {
                     <div className="ranking-player">
                       <strong>{player.name}</strong>
                       <small>
-                        {teamName(player.team)} · {player.position} · Age{" "}
+                        {teamName(player.team)} · {displayPosition(player)} · Age{" "}
                         {player.age}
                       </small>
                     </div>
@@ -1789,10 +1610,10 @@ export default function Home() {
                 <h3>Contracts, scouting, and roster pressure</h3>
                 <p>
                   Arbitration follows platform performance; options and
-                  deferrals use their economic terms. Young MLB players can
-                  retain recent FV value, while Rule 5 and 40-man pressure is an
-                  explicit context adjustment rather than a hidden talent
-                  downgrade.
+                  deferrals use their economic terms, and opt-outs remove future
+                  upside without erasing downside. Young MLB players can retain
+                  recent FV value, while Rule 5 and 40-man pressure is an explicit
+                  context adjustment rather than a hidden talent downgrade.
                 </p>
               </article>
             </div>
