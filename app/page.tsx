@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import databaseJson from "./data/player-database.json";
 import {
+  effectiveSeasons,
   initialSettings as modelInitialSettings,
   prospectValues as modelProspectValues,
   valuePlayer,
@@ -42,6 +43,18 @@ type LastProspect = {
   serviceTime: number;
   risk: string | null;
 };
+type ContractScenarioOption = {
+  id: string;
+  label: string;
+  description: string;
+  seasons: MLBSeason[];
+};
+type ContractScenario = {
+  startYear: number;
+  selectedId: string;
+  note: string;
+  options: ContractScenarioOption[];
+};
 type MLBPlayer = {
   id: string;
   kind: "mlb";
@@ -53,6 +66,7 @@ type MLBPlayer = {
   source: Provenance;
   risk: number;
   seasons: MLBSeason[];
+  contractScenario?: ContractScenario;
   platformWar?: number;
   rookieMode?: RookieMode;
   lastProspect?: LastProspect | null;
@@ -147,14 +161,15 @@ const displayPosition = (player: Player) =>
         : "P"
     : player.position;
 const contractLabel = (player: MLBPlayer) => {
-  const firstPlayerDecision = player.seasons.find((season) =>
+  const seasons = effectiveSeasons(player) as MLBSeason[];
+  const firstPlayerDecision = seasons.find((season) =>
     ["playerOption", "mutualOption"].includes(
       season.contractType ?? season.salaryMode,
     ),
   );
   const controlledSeasons = firstPlayerDecision
-    ? player.seasons.filter((season) => season.year < firstPlayerDecision.year)
-    : player.seasons;
+    ? seasons.filter((season) => season.year < firstPlayerDecision.year)
+    : seasons;
   const finalControlledYear = controlledSeasons.at(-1)?.year;
   if (!finalControlledYear) return "No club control listed";
   return firstPlayerDecision
@@ -249,6 +264,10 @@ export default function Home() {
   const rangesOverlap = leftLow <= rightHigh && rightLow <= leftHigh;
   const verdict = rangesOverlap ? "Ranges overlap" : "Outside model range";
   const selected = players[selectedId];
+  const selectedSeasons =
+    selected?.kind === "mlb"
+      ? (effectiveSeasons(selected) as MLBSeason[])
+      : [];
   const rankedPlayers = useMemo(() => {
     const query = rankingSearch.trim().toLowerCase();
     return Object.values(players)
@@ -300,6 +319,67 @@ export default function Home() {
       ...current,
       [id]: updater(deepCopy(current[id])),
     }));
+  const updateMlbSeasonAt = (
+    id: string,
+    index: number,
+    updater: (season: MLBSeason) => MLBSeason,
+  ) =>
+    updatePlayer(id, (player) => {
+      if (player.kind !== "mlb") return player;
+      if (index < player.seasons.length) {
+        return {
+          ...player,
+          seasons: player.seasons.map((season, seasonIndex) =>
+            seasonIndex === index ? updater(season) : season,
+          ),
+        };
+      }
+      const scenario = player.contractScenario;
+      if (!scenario) return player;
+      const branchIndex = index - player.seasons.length;
+      return {
+        ...player,
+        contractScenario: {
+          ...scenario,
+          options: scenario.options.map((option) =>
+            option.id === scenario.selectedId
+              ? {
+                  ...option,
+                  seasons: option.seasons.map((season, seasonIndex) =>
+                    seasonIndex === branchIndex ? updater(season) : season,
+                  ),
+                }
+              : option,
+          ),
+        },
+      };
+    });
+  const addMlbSeason = (id: string) =>
+    updatePlayer(id, (player) => {
+      if (player.kind !== "mlb") return player;
+      const seasons = effectiveSeasons(player) as MLBSeason[];
+      const nextSeason: MLBSeason = {
+        year:
+          Math.max(BASE_YEAR, ...seasons.map((season) => season.year)) + 1,
+        war: 2,
+        salary: 1,
+        salaryMode: "fixed",
+      };
+      if (!player.contractScenario) {
+        return { ...player, seasons: [...player.seasons, nextSeason] };
+      }
+      return {
+        ...player,
+        contractScenario: {
+          ...player.contractScenario,
+          options: player.contractScenario.options.map((option) =>
+            option.id === player.contractScenario?.selectedId
+              ? { ...option, seasons: [...option.seasons, nextSeason] }
+              : option,
+          ),
+        },
+      };
+    });
   const libraryFor = (team: string, used: string[]) =>
     Object.values(players)
       .filter((player) => player.team === team && !used.includes(player.id))
@@ -1123,8 +1203,8 @@ export default function Home() {
                     season. Future arbitration starts from the full-year salary
                     (
                     {money(
-                      selected.seasons[0]?.annualSalary ??
-                        selected.seasons[0]?.salary ??
+                      selectedSeasons[0]?.annualSalary ??
+                        selectedSeasons[0]?.salary ??
                         0,
                     )}
                     ) and uses platform-performance raises.
@@ -1132,6 +1212,46 @@ export default function Home() {
                 )}
                 {selected.kind === "mlb" ? (
                   <>
+                    {selected.contractScenario && (
+                      <div className="contract-scenario">
+                        <label>
+                          <span>Contract path</span>
+                          <select
+                            value={selected.contractScenario.selectedId}
+                            onChange={(event) =>
+                              updatePlayer(selected.id, (player) =>
+                                player.kind === "mlb" &&
+                                player.contractScenario
+                                  ? {
+                                      ...player,
+                                      contractScenario: {
+                                        ...player.contractScenario,
+                                        selectedId: event.target.value,
+                                      },
+                                    }
+                                  : player,
+                              )
+                            }
+                          >
+                            {selected.contractScenario.options.map((option) => (
+                              <option key={option.id} value={option.id}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <p>
+                          {
+                            selected.contractScenario.options.find(
+                              (option) =>
+                                option.id ===
+                                selected.contractScenario?.selectedId,
+                            )?.description
+                          }
+                        </p>
+                        <small>{selected.contractScenario.note}</small>
+                      </div>
+                    )}
                     <div className="risk-field">
                       <label htmlFor="risk">
                         Player-specific risk <strong>{selected.risk}%</strong>
@@ -1160,30 +1280,7 @@ export default function Home() {
                         </small>
                       </div>
                       <button
-                        onClick={() =>
-                          updatePlayer(selected.id, (player) =>
-                            player.kind === "mlb"
-                              ? {
-                                  ...player,
-                                  seasons: [
-                                    ...player.seasons,
-                                    {
-                                      year:
-                                        Math.max(
-                                          BASE_YEAR,
-                                          ...player.seasons.map(
-                                            (season) => season.year,
-                                          ),
-                                        ) + 1,
-                                      war: 2,
-                                      salary: 1,
-                                      salaryMode: "fixed",
-                                    },
-                                  ],
-                                }
-                              : player,
-                          )
-                        }
+                        onClick={() => addMlbSeason(selected.id)}
                       >
                         + Year
                       </button>
@@ -1196,7 +1293,7 @@ export default function Home() {
                         <span>Salary</span>
                         <span>Surplus</span>
                       </div>
-                      {selected.seasons.map((season, index) => {
+                      {selectedSeasons.map((season, index) => {
                         const row = values[selected.id]?.rows[index];
                         return (
                           <div
@@ -1209,18 +1306,10 @@ export default function Home() {
                               step={1}
                               min={BASE_YEAR}
                               onChange={(value) =>
-                                updatePlayer(selected.id, (player) =>
-                                  player.kind === "mlb"
-                                    ? {
-                                        ...player,
-                                        seasons: player.seasons.map(
-                                          (item, i) =>
-                                            i === index
-                                              ? { ...item, year: value }
-                                              : item,
-                                        ),
-                                      }
-                                    : player,
+                                updateMlbSeasonAt(
+                                  selected.id,
+                                  index,
+                                  (item) => ({ ...item, year: value }),
                                 )
                               }
                             />
@@ -1228,18 +1317,10 @@ export default function Home() {
                               label="Projected fWAR"
                               value={season.war}
                               onChange={(value) =>
-                                updatePlayer(selected.id, (player) =>
-                                  player.kind === "mlb"
-                                    ? {
-                                        ...player,
-                                        seasons: player.seasons.map(
-                                          (item, i) =>
-                                            i === index
-                                              ? { ...item, war: value }
-                                              : item,
-                                        ),
-                                      }
-                                    : player,
+                                updateMlbSeasonAt(
+                                  selected.id,
+                                  index,
+                                  (item) => ({ ...item, war: value }),
                                 )
                               }
                             />
@@ -1247,24 +1328,16 @@ export default function Home() {
                               aria-label="Salary type"
                               value={season.contractType ?? season.salaryMode}
                               onChange={(event) =>
-                                updatePlayer(selected.id, (player) =>
-                                  player.kind === "mlb"
-                                    ? {
-                                        ...player,
-                                        seasons: player.seasons.map(
-                                          (item, i) =>
-                                            i === index
-                                              ? {
-                                                  ...item,
-                                                  salaryMode: event.target
-                                                    .value as SalaryMode,
-                                                  contractType: event.target
-                                                    .value as SalaryMode,
-                                                }
-                                              : item,
-                                        ),
-                                      }
-                                    : player,
+                                updateMlbSeasonAt(
+                                  selected.id,
+                                  index,
+                                  (item) => ({
+                                    ...item,
+                                    salaryMode: event.target
+                                      .value as SalaryMode,
+                                    contractType: event.target
+                                      .value as SalaryMode,
+                                  }),
                                 )
                               }
                             >
@@ -1293,18 +1366,10 @@ export default function Home() {
                                   value={season.salary}
                                   min={0}
                                   onChange={(value) =>
-                                    updatePlayer(selected.id, (player) =>
-                                      player.kind === "mlb"
-                                        ? {
-                                            ...player,
-                                            seasons: player.seasons.map(
-                                              (item, i) =>
-                                                i === index
-                                                  ? { ...item, salary: value }
-                                                  : item,
-                                            ),
-                                          }
-                                        : player,
+                                    updateMlbSeasonAt(
+                                      selected.id,
+                                      index,
+                                      (item) => ({ ...item, salary: value }),
                                     )
                                   }
                                 />

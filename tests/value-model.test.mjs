@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import {
+  effectiveSeasons,
   initialSettings,
   isReliever,
   marketValueForSeason,
@@ -138,5 +139,50 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
       0,
     ),
     0,
+  );
+});
+
+test("mutually exclusive contract paths stay separate and conservative", () => {
+  const julio = database.players.find(
+    (player) => player.name === "Julio Rodríguez" && player.kind === "mlb",
+  );
+  assert.ok(julio?.contractScenario);
+  assert.equal(julio.contractScenario.selectedId, "fallback");
+  assert.deepEqual(
+    julio.contractScenario.options.map((option) => option.id),
+    ["fallback", "club", "mutual"],
+  );
+  assert.equal(effectiveSeasons(julio).at(-1)?.year, 2034);
+  const fallbackValue = valuePlayer(julio, initialSettings, database).total;
+  assert.ok(fallbackValue > 150 && fallbackValue < 230);
+
+  const clubScenario = structuredClone(julio);
+  clubScenario.contractScenario.selectedId = "club";
+  assert.equal(effectiveSeasons(clubScenario).at(-1)?.year, 2037);
+  assert.ok(
+    valuePlayer(clubScenario, initialSettings, database).total >
+      fallbackValue + 100,
+  );
+
+  const mutual = julio.contractScenario.options.find(
+    (option) => option.id === "mutual",
+  );
+  assert.match(mutual?.description ?? "", /both the player and club/i);
+});
+
+test("injury-only club options are excluded from the healthy default", () => {
+  const diaz = database.players.find(
+    (player) => player.name === "Edwin Díaz" && player.kind === "mlb",
+  );
+  assert.ok(diaz?.contractScenario);
+  assert.equal(diaz.contractScenario.selectedId, "unavailable");
+  assert.equal(effectiveSeasons(diaz).at(-1)?.year, 2028);
+
+  const conditionMet = structuredClone(diaz);
+  conditionMet.contractScenario.selectedId = "condition-met";
+  assert.equal(effectiveSeasons(conditionMet).at(-1)?.year, 2029);
+  assert.equal(
+    effectiveSeasons(conditionMet).at(-1)?.contractType,
+    "clubOption",
   );
 });

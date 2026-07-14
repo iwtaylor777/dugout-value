@@ -169,6 +169,64 @@ function firstOptOutYear(summary) {
   return years.length ? Math.min(...years) : null;
 }
 
+function fullContractNote(summary) {
+  return [
+    summary?.ContractSummaryPayrollNote,
+    summary?.LongContractSummaryPayrollNote,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+function numberFromWord(value) {
+  const words = {
+    one: 1,
+    two: 2,
+    three: 3,
+    four: 4,
+    five: 5,
+    six: 6,
+    seven: 7,
+    eight: 8,
+    nine: 9,
+    ten: 10,
+    eleven: 11,
+    twelve: 12,
+  };
+  return words[String(value).toLowerCase()] ?? Number(value);
+}
+
+function multiYearOptionTerms(note, optionName) {
+  const patterns = [
+    new RegExp(
+      `${optionName}\\s+(?:for\\s+)?([a-z]+|\\d+)\\s+years?\\s+(?:and|for)\\s+\\$?([\\d.]+)\\s*(?:million|m)`,
+      "i",
+    ),
+    new RegExp(
+      `([a-z]+|\\d+)\\s+years?\\s*[/,]\\s*\\$?([\\d.]+)\\s*(?:million|m)?.{0,24}${optionName}`,
+      "i",
+    ),
+  ];
+  for (const pattern of patterns) {
+    const match = String(note).match(pattern);
+    if (!match) continue;
+    const years = numberFromWord(match[1]);
+    const total = Number(match[2]);
+    if (Number.isFinite(years) && years > 0 && Number.isFinite(total))
+      return { years, total };
+  }
+  return null;
+}
+
+function hasInjuryConditionalOption(note) {
+  return (
+    /option (?:is )?conditional/i.test(note) ||
+    /option may only be exercised[\s\S]{0,180}(?:injur|surgery|healthy)/i.test(
+      note,
+    )
+  );
+}
+
 function pitcherRole(row) {
   const games = Number(row?.G) || 0;
   const starts = Number(row?.GS) || 0;
@@ -429,13 +487,8 @@ for (const id of projectionIds) {
       "",
   );
   const lastProspect = lastProspectByFgId.get(fgId);
-  const hasDeferrals = /deferr/i.test(
-    String(
-      matchedContract.summary?.ContractSummaryPayrollNote ||
-        matchedContract.summary?.LongContractSummaryPayrollNote ||
-        "",
-    ),
-  );
+  const contractNote = fullContractNote(matchedContract.summary);
+  const hasDeferrals = /deferr/i.test(contractNote);
   const optOutAfter = firstOptOutYear(matchedContract.summary);
   const role = isTwoWay
     ? "two-way"
@@ -453,7 +506,24 @@ for (const id of projectionIds) {
       isPitcher,
     },
   );
-  const seasons = contractYears.map((year) => {
+  const projectedWarForSeason = (season) => {
+    const futureWar =
+      season === 2027 && Number.isFinite(future2027)
+        ? future2027
+        : season === 2028 && Number.isFinite(future2028)
+          ? future2028
+          : season > 2028 && Number.isFinite(future2028)
+            ? ageWar(future2028, age ? age + 2 : null, isPitcher, season - 2028)
+            : ageWar(currentWar, age, isPitcher, season - BASE_YEAR);
+    return season === BASE_YEAR
+      ? Number(
+          Number(
+            rosProjection?.WAR ?? currentWar * seasonRemainingFraction,
+          ).toFixed(1),
+        )
+      : Number(futureWar.toFixed(1));
+  };
+  let seasons = contractYears.map((year) => {
     const season = Number(year.Season);
     const economicAnnual = hasDeferrals
       ? matchedContract.summary?.AAV
@@ -474,24 +544,9 @@ for (const id of projectionIds) {
       optOutAfter !== null && season > optOutAfter
         ? "playerOption"
         : listedOptionMode;
-    const futureWar =
-      season === 2027 && Number.isFinite(future2027)
-        ? future2027
-        : season === 2028 && Number.isFinite(future2028)
-          ? future2028
-          : season > 2028 && Number.isFinite(future2028)
-            ? ageWar(future2028, age ? age + 2 : null, isPitcher, season - 2028)
-            : ageWar(currentWar, age, isPitcher, season - BASE_YEAR);
     return {
       year: season,
-      war:
-        season === BASE_YEAR
-          ? Number(
-              Number(
-                rosProjection?.WAR ?? currentWar * seasonRemainingFraction,
-              ).toFixed(1),
-            )
-          : Number(futureWar.toFixed(1)),
+      war: projectedWarForSeason(season),
       salary:
         season === BASE_YEAR
           ? Number(
@@ -524,6 +579,98 @@ for (const id of projectionIds) {
       optionProbability: optionMode === "vestingOption" ? 50 : undefined,
     };
   });
+  let contractScenario;
+  const firstFallbackYear = seasons.find((season) =>
+    ["playerOption", "mutualOption"].includes(
+      season.contractType ?? season.salaryMode,
+    ),
+  )?.year;
+  const clubBlock = multiYearOptionTerms(contractNote, "club option");
+  const mutualBlock = multiYearOptionTerms(contractNote, "mutual option");
+  if (firstFallbackYear && clubBlock) {
+    const guaranteed = seasons.filter(
+      (season) => season.year < firstFallbackYear,
+    );
+    const fallback = seasons.filter(
+      (season) => season.year >= firstFallbackYear,
+    );
+    const fixedBlock = (terms) =>
+      Array.from({ length: terms.years }, (_, index) => {
+        const year = firstFallbackYear + index;
+        const salary = Number((terms.total / terms.years).toFixed(2));
+        return {
+          year,
+          war: projectedWarForSeason(year),
+          salary,
+          annualSalary: salary,
+          salaryMode: "fixed",
+          contractType: "fixed",
+          ros: false,
+          optionBuyout: 0,
+        };
+      });
+    const options = [
+      {
+        id: "fallback",
+        label: "Player-option fallback",
+        description:
+          "Conservative default: the club declines its earlier choice and the player controls the listed fallback years.",
+        seasons: fallback,
+      },
+      {
+        id: "club",
+        label: "Current club-option tier",
+        description: `Assumes the club exercises the current ${clubBlock.years}-year, $${clubBlock.total}M tier as one guaranteed commitment.`,
+        seasons: fixedBlock(clubBlock),
+      },
+    ];
+    if (mutualBlock) {
+      options.push({
+        id: "mutual",
+        label: "Mutual-option path",
+        description: `Assumes both the player and club agree to the ${mutualBlock.years}-year, $${mutualBlock.total}M option.`,
+        seasons: fixedBlock(mutualBlock),
+      });
+    }
+    contractScenario = {
+      startYear: firstFallbackYear,
+      selectedId: "fallback",
+      note:
+        "This contract has mutually exclusive paths. Pick one to compare it; impossible combinations are never added together.",
+      options,
+    };
+    seasons = guaranteed;
+  } else if (hasInjuryConditionalOption(contractNote)) {
+    const conditionalIndex = seasons.findIndex(
+      (season) => season.contractType === "clubOption",
+    );
+    if (conditionalIndex >= 0) {
+      const conditionalSeason = seasons[conditionalIndex];
+      seasons = seasons.filter((_, index) => index !== conditionalIndex);
+      contractScenario = {
+        startYear: conditionalSeason.year,
+        selectedId: "unavailable",
+        note:
+          "The option only becomes available if the injury language in the contract is triggered.",
+        options: [
+          {
+            id: "unavailable",
+            label: "Option unavailable",
+            description:
+              "Healthy-player default: the injury condition is not met, so the option is excluded.",
+            seasons: [],
+          },
+          {
+            id: "condition-met",
+            label: "Injury condition met",
+            description:
+              "The condition is met and the club option becomes available; the club still chooses whether to exercise it.",
+            seasons: [conditionalSeason],
+          },
+        ],
+      };
+    }
+  }
   const ytdWar = history
     .filter((row) => Number(row.Season) === BASE_YEAR)
     .reduce((sum, row) => sum + (Number(row.WAR) || 0), 0);
@@ -543,6 +690,7 @@ for (const id of projectionIds) {
         "FanGraphs RosterResource",
         hasDeferrals ? "economic AAV" : null,
         expectedIncentives.size ? "expected playing-time incentives" : null,
+        contractScenario ? "conditional option paths" : null,
       ]
         .filter(Boolean)
         .join(" · "),
@@ -550,6 +698,7 @@ for (const id of projectionIds) {
     },
     risk: isTwoWay ? 14 : isPitcher ? 12 : 7,
     seasons,
+    contractScenario,
     platformWar: Number((ytdWar + Number(rosProjection?.WAR || 0)).toFixed(1)),
     rookieMode:
       lastProspect && Number(lastProspect.servicetime || 99) < 1

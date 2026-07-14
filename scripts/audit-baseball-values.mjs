@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import {
+  effectiveSeasons,
   initialSettings,
   isReliever,
   valuePlayer,
@@ -16,9 +17,11 @@ const records = database.players
   .filter((player) => !player.custom)
   .map((player) => {
     const result = valuePlayer(player, initialSettings, database);
+    const seasons =
+      player.kind === "mlb" ? effectiveSeasons(player) : [];
     const firstPlayerDecision =
       player.kind === "mlb"
-        ? player.seasons.find((season) =>
+        ? seasons.find((season) =>
             ["playerOption", "mutualOption"].includes(
               season.contractType ?? season.salaryMode,
             ),
@@ -27,10 +30,10 @@ const records = database.players
     const controlledSeasons =
       player.kind === "mlb"
         ? firstPlayerDecision
-          ? player.seasons.filter(
+          ? seasons.filter(
               (season) => season.year < firstPlayerDecision.year,
             )
-          : player.seasons
+          : seasons
         : [];
     return {
       id: player.id,
@@ -51,11 +54,13 @@ const records = database.players
       age: player.age,
       controlThrough:
         player.kind === "mlb" ? controlledSeasons.at(-1)?.year : null,
-      contractSeasons: player.kind === "mlb" ? player.seasons.length : null,
+      contractSeasons: player.kind === "mlb" ? seasons.length : null,
+      contractScenario:
+        player.kind === "mlb" ? player.contractScenario?.selectedId ?? null : null,
       expectedIncentives:
         player.kind === "mlb"
           ? Number(
-              player.seasons
+              seasons
                 .reduce(
                   (sum, season) =>
                     sum + Number(season.expectedIncentives ?? 0),
@@ -99,6 +104,9 @@ const report = {
     .sort(
       (left, right) => right.expectedIncentives - left.expectedIncentives,
     ),
+  conditionalContractPaths: records.filter(
+    (player) => player.contractScenario,
+  ),
 };
 
 if (jsonOutput) {
@@ -116,6 +124,8 @@ if (jsonOutput) {
   console.table(report.topRelievers);
   console.log("Contracts with modeled playing-time incentives");
   console.table(report.contractsWithExpectedIncentives);
+  console.log("Contracts with conditional paths");
+  console.table(report.conditionalContractPaths);
   console.log("Bounds");
   console.table([report.bounds.maximum, report.bounds.minimum]);
 }

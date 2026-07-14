@@ -20,6 +20,14 @@ export function isReliever(player: {
   position: string;
   role?: "position" | "starter" | "reliever" | "two-way";
 }): boolean;
+export function effectiveSeasons<T extends { seasons: unknown[] }>(
+  player: T & {
+    contractScenario?: {
+      selectedId: string;
+      options: Array<{ id: string; seasons: unknown[] }>;
+    };
+  },
+): unknown[];
 export function marketValueForSeason(
   player: unknown,
   season: unknown,

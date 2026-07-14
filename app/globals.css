@@ -640,6 +640,47 @@ a:focus-visible {
 .wide-field {
   margin-top: 10px;
 }
+.contract-scenario {
+  margin: 18px 0;
+  padding: 12px;
+  border: 1px solid #dacb9a;
+  border-left: 4px solid var(--gold);
+  background: #fff9e9;
+}
+.contract-scenario label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+.contract-scenario label > span {
+  margin: 0;
+  color: var(--navy);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.contract-scenario select {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid #cdbb80;
+  background: var(--white);
+  padding: 7px 8px;
+  color: var(--ink);
+  font-weight: 700;
+}
+.contract-scenario p {
+  margin: 9px 0 3px;
+  color: #3f4746;
+  font: 400 11px/1.45 Georgia, serif;
+}
+.contract-scenario small {
+  display: block;
+  color: var(--muted);
+  font-size: 8px;
+  line-height: 1.4;
+}
 .risk-field {
   margin: 18px 0;
 }

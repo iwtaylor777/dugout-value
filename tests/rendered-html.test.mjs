@@ -92,6 +92,10 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /Club control through/);
   assert.match(page, /Playing-time escalators use/);
   assert.match(page, /extra long-range uncertainty/);
+  assert.match(page, /Contract path/);
+  assert.match(page, /selected\.contractScenario\.options/);
+  assert.match(page, /updateMlbSeasonAt/);
   assert.match(audit, /Navigate search with keyboard/);
   assert.match(audit, /Account for Rule 5 \/ 40-man pressure/);
+  assert.match(audit, /Compare mutually exclusive contract paths/);
 });
