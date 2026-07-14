@@ -6,3 +6,23 @@
 @media(max-width:860px){.intro{display:block}.snapshot{text-align:left;margin-top:18px}.model-strip{grid-template-columns:1fr 1fr}.model-strip button{min-height:46px}.trade-sides{grid-template-columns:1fr}.trade-verdict{min-height:180px}.trade-side{border-top-width:4px}.right-side{border-top-color:var(--red)}.assumption-panel{grid-template-columns:1fr 1fr}.method-grid{grid-template-columns:1fr}.editor{padding:16px}}
 @media(max-width:560px){.masthead{height:64px}.masthead .brand{font-size:19px}.masthead nav .nav-button:first-child{display:none}.page{padding-top:26px}.intro h1{font-size:42px}.lede{font-size:16px}.model-strip{grid-template-columns:1fr}.model-strip>div{border-right:0;border-bottom:1px solid var(--line)}.assumption-panel{grid-template-columns:1fr}.trade-side,.year-ledger{padding:14px}.side-heading{align-items:flex-start}.side-heading>strong{font-size:20px}.side-heading input{font-size:21px}.player-main{grid-template-columns:36px minmax(0,1fr);padding-right:27px}.player-avatar{width:36px;height:36px}.player-value{grid-column:2;text-align:left}.add-row{grid-template-columns:1fr 1fr}.add-row select{grid-column:1/-1}.ledger-row{grid-template-columns:42px 58px minmax(90px,1fr) 58px;gap:5px}.ledger-head{font-size:7px}.section-title{display:block}.section-title p{text-align:left;margin-top:7px}.two-col{grid-template-columns:1fr}.projection-row{grid-template-columns:46px 46px 64px 54px 1fr}.prospect-output{grid-template-columns:1fr}.methodology{padding:16px}footer{display:block}footer p{text-align:left}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.player-card{transition:none}}
+
+/* Team-first trade builder and locked source provenance */
+.package-explainer{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 20px;background:#ece3cd;border-bottom:1px solid var(--line);font-size:10px;color:var(--muted)}
+.package-explainer span{text-transform:uppercase;letter-spacing:.11em;color:var(--red);font-weight:800}
+.package-explainer strong{font-weight:600;color:var(--ink);text-align:right}
+.side-heading>div{min-width:0;flex:1}
+.side-heading .team-select{display:block;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--navy);font:700 21px Georgia,serif;width:100%;max-width:245px;padding:4px 22px 4px 0}
+.side-heading small{display:block;color:var(--muted);font-size:10px;margin-top:6px}
+.identity-card{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;padding:12px;background:var(--paper-deep);border-left:3px solid var(--gold);margin-bottom:10px}
+.identity-card span{font-size:10px;font-weight:800;color:var(--red);letter-spacing:.08em}
+.identity-card strong{font:700 16px Georgia,serif}
+.identity-card small{grid-column:1/-1;color:var(--muted)}
+.provenance-card{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin:10px 0 18px}
+.provenance-card>div{background:var(--white);padding:10px}
+.provenance-card span,.provenance-card strong{display:block}
+.provenance-card span{font-size:8px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:3px}
+.provenance-card strong{font-size:11px}
+.provenance-card>small{grid-column:1/-1;background:var(--paper-deep);padding:7px 10px;color:var(--muted);font-size:9px}
+@media(max-width:860px){.package-explainer{display:block}.package-explainer strong{display:block;text-align:left;margin-top:4px}}
+@media(max-width:560px){.side-heading .team-select{font-size:19px}.provenance-card{grid-template-columns:1fr}}
