@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import databaseJson from "./data/player-database.json";
 import {
   effectiveSeasons,
@@ -8,6 +8,7 @@ import {
   prospectValues as modelProspectValues,
   valuePlayer,
 } from "../lib/value-model.mjs";
+import { decodeTradeState, encodeTradeState } from "../lib/trade-share.mjs";
 
 type SalaryMode =
   | "fixed"
@@ -132,6 +133,18 @@ type Database = {
   teams: Team[];
   players: Player[];
 };
+type ShareStatus = "idle" | "loaded" | "copied" | "error";
+type SharedTradeState = {
+  v: 1;
+  snapshot?: string;
+  leftTeam: string;
+  rightTeam: string;
+  leftIds: string[];
+  rightIds: string[];
+  selectedId?: string;
+  settings: ModelSettings;
+  overrides: Player[];
+};
 
 const database = databaseJson as unknown as Database;
 const BASE_YEAR = database.meta.baseYear;
@@ -147,6 +160,68 @@ const prospectValues = modelProspectValues as Record<
 const money = (value: number) =>
   `${value < 0 ? "−" : ""}$${Math.abs(value).toFixed(1)}M`;
 const deepCopy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+const isFiniteNumber = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
+const isMlbSeason = (value: unknown): value is MLBSeason =>
+  isRecord(value) &&
+  isFiniteNumber(value.year) &&
+  isFiniteNumber(value.war) &&
+  isFiniteNumber(value.salary) &&
+  typeof value.salaryMode === "string";
+const isSharedPlayer = (value: unknown): value is Player => {
+  if (
+    !isRecord(value) ||
+    typeof value.id !== "string" ||
+    typeof value.name !== "string" ||
+    typeof value.team !== "string" ||
+    typeof value.position !== "string" ||
+    !isFiniteNumber(value.age) ||
+    !isRecord(value.source)
+  )
+    return false;
+  if (value.kind === "mlb") {
+    return (
+      isFiniteNumber(value.risk) &&
+      Array.isArray(value.seasons) &&
+      value.seasons.every(isMlbSeason)
+    );
+  }
+  return (
+    value.kind === "prospect" &&
+    (value.prospectType === "Hitter" || value.prospectType === "Pitcher") &&
+    typeof value.fv === "string" &&
+    Boolean(prospectValues[value.fv]) &&
+    isFiniteNumber(value.eta) &&
+    isFiniteNumber(value.adjustment)
+  );
+};
+const sharedSettings = (value: unknown): ModelSettings => {
+  if (!isRecord(value)) return initialSettings;
+  const ranges: Record<keyof ModelSettings, [number, number]> = {
+    dollarsPerWar: [0, 50],
+    regularRosterWar: [0, 10],
+    relieverRosterWar: [0, 10],
+    timingPreference: [0, 100],
+    starPremium: [0, 200],
+    relieverPremium: [0, 200],
+    inflation: [0, 100],
+    minimumSalary: [0, 10],
+  };
+  return Object.fromEntries(
+    Object.entries(ranges).map(([key, [minimum, maximum]]) => {
+      const candidate = value[key];
+      const fallback = initialSettings[key as keyof ModelSettings];
+      return [
+        key,
+        isFiniteNumber(candidate)
+          ? Math.min(maximum, Math.max(minimum, candidate))
+          : fallback,
+      ];
+    }),
+  ) as unknown as ModelSettings;
+};
 const prettyDate = (date: string) =>
   new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -235,6 +310,77 @@ export default function Home() {
   );
   const [rankingTeam, setRankingTeam] = useState("ALL");
   const [rankingSearch, setRankingSearch] = useState("");
+  const [shareStatus, setShareStatus] = useState<ShareStatus>("idle");
+
+  useEffect(() => {
+    const payload = new URLSearchParams(window.location.search).get("trade");
+    const shared = decodeTradeState(payload ?? "");
+    if (!isRecord(shared)) return;
+    const teams = new Set(database.teams.map((team) => team.abbr));
+    if (
+      typeof shared.leftTeam !== "string" ||
+      typeof shared.rightTeam !== "string" ||
+      shared.leftTeam === shared.rightTeam ||
+      !teams.has(shared.leftTeam) ||
+      !teams.has(shared.rightTeam) ||
+      !Array.isArray(shared.leftIds) ||
+      !Array.isArray(shared.rightIds)
+    )
+      return;
+    const restoredLeftTeam = shared.leftTeam;
+    const restoredRightTeam = shared.rightTeam;
+
+    const overrides = Array.isArray(shared.overrides)
+      ? shared.overrides.filter(isSharedPlayer)
+      : [];
+    const restoredPlayers = deepCopy(initialPlayers);
+    for (const player of overrides) {
+      const official = initialPlayers[player.id];
+      if (
+        (official && official.kind === player.kind) ||
+        (!official && player.custom)
+      ) {
+        restoredPlayers[player.id] = deepCopy(player);
+      }
+    }
+    const validIds = (ids: unknown[], team: string) =>
+      Array.from(
+        new Set(
+          ids.filter(
+            (id): id is string =>
+              typeof id === "string" && restoredPlayers[id]?.team === team,
+          ),
+        ),
+      );
+    const restoredLeftIds = validIds(shared.leftIds, restoredLeftTeam);
+    const restoredRightIds = validIds(shared.rightIds, restoredRightTeam);
+    const packageIds = [...restoredLeftIds, ...restoredRightIds];
+    const restoredSelectedId =
+      typeof shared.selectedId === "string" &&
+      packageIds.includes(shared.selectedId)
+        ? shared.selectedId
+        : (packageIds[0] ?? "");
+    const restoredSettings = sharedSettings(shared.settings);
+
+    const restoreTimer = window.setTimeout(() => {
+      setPlayers(restoredPlayers);
+      setLeftTeam(restoredLeftTeam);
+      setRightTeam(restoredRightTeam);
+      setLeftIds(restoredLeftIds);
+      setRightIds(restoredRightIds);
+      setSelectedId(restoredSelectedId);
+      setSettings(restoredSettings);
+      setLeftSearch("");
+      setRightSearch("");
+      setOpenPicker(null);
+      setPickerIndex(0);
+      setShowSettings(false);
+      setShowMethod(false);
+      setActiveTab("trade");
+      setShareStatus("loaded");
+    }, 0);
+    return () => window.clearTimeout(restoreTimer);
+  }, []);
 
   const teamName = (abbr: string) =>
     database.teams.find((team) => team.abbr === abbr)?.name ?? abbr;
@@ -489,7 +635,14 @@ export default function Home() {
     setPlayers((current) => ({ ...current, [id]: player }));
     addPlayer(side, id);
   };
+  const clearSharedTradeUrl = () => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("trade")) return;
+    url.searchParams.delete("trade");
+    window.history.replaceState(null, "", url);
+  };
   const resetTrade = () => {
+    clearSharedTradeUrl();
     setPlayers(deepCopy(initialPlayers));
     setLeftTeam("SEA");
     setRightTeam("PIT");
@@ -504,9 +657,11 @@ export default function Home() {
     setShowSettings(false);
     setShowMethod(false);
     setActiveTab("trade");
+    setShareStatus("idle");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const newTrade = () => {
+    clearSharedTradeUrl();
     setPlayers(deepCopy(initialPlayers));
     setLeftTeam("SEA");
     setRightTeam("PIT");
@@ -521,6 +676,7 @@ export default function Home() {
     setShowSettings(false);
     setShowMethod(false);
     setActiveTab("trade");
+    setShareStatus("idle");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const openMethod = () => {
@@ -542,6 +698,53 @@ export default function Home() {
     setRightSearch("");
     setOpenPicker(null);
     setPickerIndex(0);
+  };
+  const copyTradeLink = async () => {
+    const packageIds = Array.from(new Set([...leftIds, ...rightIds]));
+    const overrides = packageIds
+      .map((id) => players[id])
+      .filter((player): player is Player => Boolean(player))
+      .filter(
+        (player) =>
+          player.custom ||
+          !initialPlayers[player.id] ||
+          JSON.stringify(player) !== JSON.stringify(initialPlayers[player.id]),
+      );
+    const state: SharedTradeState = {
+      v: 1,
+      snapshot: database.meta.refreshed,
+      leftTeam,
+      rightTeam,
+      leftIds,
+      rightIds,
+      selectedId: packageIds.includes(selectedId) ? selectedId : undefined,
+      settings,
+      overrides,
+    };
+    try {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = "";
+      url.searchParams.set("trade", encodeTradeState(state));
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url.toString());
+      } else {
+        const textarea = document.createElement("textarea");
+        try {
+          textarea.value = url.toString();
+          textarea.style.position = "fixed";
+          textarea.style.opacity = "0";
+          document.body.appendChild(textarea);
+          textarea.select();
+          if (!document.execCommand("copy")) throw new Error("Copy failed");
+        } finally {
+          textarea.remove();
+        }
+      }
+      setShareStatus("copied");
+    } catch {
+      setShareStatus("error");
+    }
   };
 
   const renderCard = (id: string, side: "left" | "right") => {
@@ -1019,9 +1222,21 @@ export default function Home() {
                     ? "Even estimates"
                     : `${difference > 0 ? teamName(leftTeam) : teamName(rightTeam)} sends more estimated value`}
                 </p>
-                <button onClick={swapTeams}>
-                  Swap teams
-                </button>
+                <div className="trade-actions">
+                  <button onClick={swapTeams}>Swap teams</button>
+                  <button className="share-trade" onClick={copyTradeLink}>
+                    Copy trade link
+                  </button>
+                </div>
+                <small className="share-status" aria-live="polite">
+                  {shareStatus === "loaded"
+                    ? "Shared trade loaded"
+                    : shareStatus === "copied"
+                      ? "Link copied"
+                      : shareStatus === "error"
+                        ? "Couldn’t copy link"
+                        : "Includes edited assumptions"}
+                </small>
               </div>
               {renderTeamSide({
                 side: "right",

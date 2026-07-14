@@ -1733,6 +1733,22 @@ body {
   border-radius: 5px;
   margin-top: 12px;
 }
+.trade-actions {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.trade-actions .share-trade {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--white);
+}
+.share-status {
+  min-height: 14px;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 9px;
+}
 .balance-track {
   display: none;
 }

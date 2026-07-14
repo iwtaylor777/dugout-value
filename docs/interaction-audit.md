@@ -6,8 +6,8 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | --- | --- | --- | --- |
 | Header | Click the wordmark | Works; returns to the top | Preserve native anchor behavior and visible focus |
 | Header | Open Method | Reveals content below the fold but leaves the user in place | Reveal Method and scroll it into view |
-| Header | Load example | Restores data but can leave the user on Rankings | Restore example, switch to Trade Builder, close stray menus |
-| Header | Start a new trade | Clears the packages | Also reset searches, selection, panels, and return to Trade Builder |
+| Header | Load example | Restores data but can leave the user on Rankings | Restore example, switch to Trade Builder, close stray menus, and clear a stale shared-trade token |
+| Header | Start a new trade | Clears the packages | Also reset searches, selection, panels, shared-trade state, and return to Trade Builder |
 | Navigation | Switch Trade Builder / Rankings | Works | Preserve each view’s useful filter/package state; support visible focus |
 | Assumptions | Open or close model settings | Works, but terminology is finance-heavy | Use baseball language and make the active valuation lens obvious |
 | Assumptions | Edit market inputs | Recalculates immediately | Keep immediate feedback; guard against misleading labels and invalid negative values |
@@ -23,6 +23,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Team package | Open a player card | Works | On narrow screens, bring the editor into view after selection |
 | Team package | Remove a player | Leaves an empty editor if the selected player is removed | Select the next available player when possible |
 | Trade center | Swap teams | Swaps teams and packages | Also clear stale search menus/queries |
+| Trade center | Copy a trade link / open a shared trade | Missing | Restore both teams, packages, selected player, model settings, and any custom or edited player assumptions without requiring an account |
 | Trade center | Read the verdict | Works | Keep range overlap as the primary signal; avoid false precision |
 | Control years | Read yearly value | Always visible | Preserve; keep empty state useful |
 | Player editor | Edit custom identity | Works | Preserve; official records remain non-editable |
@@ -53,6 +54,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Identity handling:** when a projected major leaguer is also still present on The Board for the same organization, keep the richer MLB record and its last-prospect blend rather than listing the player twice.
 - **Roster pressure for prospects:** treat Rule 5/40-man pressure as context, not a scouting-grade downgrade. Provide explicit, editable scenarios rather than inventing eligibility for players whose source data does not establish it.
 - **Prospect uncertainty:** use The Board's scouting-risk label to widen or narrow the value range without moving the FV-based central estimate. This avoids pretending that a high-risk 18-year-old and a low-risk upper-minors player have equally certain outcomes while also avoiding a second hidden discount to the FV grade.
+- **Shared trade state:** links store current player IDs and model settings. Official, untouched players refresh against the latest public-data snapshot when the link is opened; custom players and manually edited official records carry their saved assumptions in the link.
 
 ## Loop results
 
@@ -64,3 +66,4 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Pass 6 — conditional-contract decisions:** inventoried the leaguewide source snapshot for decision-tree contracts, prevented injury-only options from appearing universally available, and added one-path-at-a-time comparison for club/player/mutual branches. The default rankings remain conservative rather than assuming a favorable long-term option will be exercised.
 - **Pass 7 — midseason extension integrity:** found that RosterResource can publish a new extension as a second contract record while retaining the current deal. The refresh now merges records by effective season, so a 2027 extension cannot erase the player’s 2026 rest-of-season WAR and salary. Every MLB record in the current snapshot now includes a 2026 RoS row.
 - **Pass 8 — prospect context:** The Board now supplies the missing inputs: scouting risk, signing year, age, ETA, and remaining option years. Those fields drive editable risk ranges and source-backed 40-man/Rule 5 context; the model still keeps roster leverage separate from the scouting grade.
+- **Pass 9 — trade handoff:** added compact, versioned trade links with input validation, Unicode-safe encoding, clipboard fallback, and visible load/copy feedback. A shared decision can now move between people without accounts or a backend.

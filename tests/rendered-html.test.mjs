@@ -98,7 +98,14 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /Contract path/);
   assert.match(page, /selected\.contractScenario\.options/);
   assert.match(page, /updateMlbSeasonAt/);
+  assert.match(page, /Copy trade link/);
+  assert.match(page, /new URLSearchParams\(window\.location\.search\)/);
+  assert.match(page, /navigator\.clipboard\?\.writeText/);
+  assert.match(page, /document\.execCommand\("copy"\)/);
+  assert.match(page, /decodeTradeState/);
+  assert.match(page, /window\.history\.replaceState/);
   assert.match(audit, /Navigate search with keyboard/);
   assert.match(audit, /Account for Rule 5 \/ 40-man pressure/);
   assert.match(audit, /Compare mutually exclusive contract paths/);
+  assert.match(audit, /Copy a trade link \/ open a shared trade/);
 });
