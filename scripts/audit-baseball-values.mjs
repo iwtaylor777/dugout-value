@@ -86,6 +86,13 @@ const report = {
     prospects: records.filter((player) => player.kind === "prospect").length,
     positive: records.filter((player) => player.value > 0).length,
     negative: records.filter((player) => player.value < 0).length,
+    mlbWithCurrentSeason: database.players.filter(
+      (player) =>
+        player.kind === "mlb" &&
+        effectiveSeasons(player).some(
+          (season) => season.year === database.meta.baseYear,
+        ),
+    ).length,
   },
   bounds: {
     maximum: records[0],

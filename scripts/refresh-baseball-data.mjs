@@ -157,11 +157,8 @@ function salaryMode(type, arbYear) {
 }
 
 function firstOptOutYear(summary) {
-  const note = String(
-    summary?.ContractSummaryPayrollNote ??
-      summary?.LongContractSummaryPayrollNote ??
-      "",
-  );
+  const note =
+    typeof summary === "string" ? summary : fullContractNote(summary);
   if (!/opt[ -]?out/i.test(note)) return null;
   const years = [...note.matchAll(/20\d{2}/g)].map((match) =>
     Number(match[0]),
@@ -383,7 +380,7 @@ if (
 )
   throw new Error("The Board payload is incomplete");
 
-const contracts = new Map();
+const contractRecords = new Map();
 for (const [abbr, slug] of Object.entries(teamSlugs)) {
   console.log(`Loading ${abbr} payroll…`);
   const queries = await getNextData(
@@ -399,17 +396,59 @@ for (const [abbr, slug] of Object.entries(teamSlugs)) {
         year.Season >= BASE_YEAR &&
         String(year.Type).toUpperCase() !== "FREE AGENT",
     );
-    const existing = contracts.get(id);
-    if (!existing || years.length > existing.years.length)
-      contracts.set(id, {
-        summary,
-        years,
-        incentives: contract.incentivesAll ?? [],
-        team: abbr,
-      });
+    const existing = contractRecords.get(id) ?? { records: [], team: abbr };
+    existing.records.push({
+      summary,
+      years,
+      incentives: contract.incentivesAll ?? [],
+    });
+    contractRecords.set(id, existing);
   }
   await sleep(120);
 }
+
+// RosterResource can publish a future extension as a separate contract record
+// while retaining the player's current deal. Merge those records by effective
+// season so a 2027 extension never erases the 2026 deadline value.
+const contracts = new Map(
+  [...contractRecords.entries()].map(([id, bundle]) => {
+    const records = bundle.records.toSorted((left, right) => {
+      const leftStart = Number(
+        left.summary?.startSeason ?? left.years[0]?.Season ?? BASE_YEAR,
+      );
+      const rightStart = Number(
+        right.summary?.startSeason ?? right.years[0]?.Season ?? BASE_YEAR,
+      );
+      return leftStart - rightStart;
+    });
+    const yearsBySeason = new Map();
+    for (const record of records) {
+      for (const year of record.years) {
+        yearsBySeason.set(Number(year.Season), {
+          ...year,
+          _contractSummary: record.summary,
+        });
+      }
+    }
+    const latest = records.at(-1);
+    return [
+      id,
+      {
+        summary: latest?.summary,
+        summaries: records.map((record) => record.summary),
+        years: [...yearsBySeason.values()].sort(
+          (left, right) => Number(left.Season) - Number(right.Season),
+        ),
+        incentives: records.flatMap((record) => record.incentives),
+        notes: records
+          .map((record) => fullContractNote(record.summary))
+          .filter(Boolean)
+          .join(" "),
+        team: bundle.team,
+      },
+    ];
+  }),
+);
 
 const steamerById = projectionMap(steamer);
 const steamerRosById = projectionMap(steamerRos);
@@ -487,9 +526,10 @@ for (const id of projectionIds) {
       "",
   );
   const lastProspect = lastProspectByFgId.get(fgId);
-  const contractNote = fullContractNote(matchedContract.summary);
+  const contractNote =
+    matchedContract.notes || fullContractNote(matchedContract.summary);
   const hasDeferrals = /deferr/i.test(contractNote);
-  const optOutAfter = firstOptOutYear(matchedContract.summary);
+  const optOutAfter = firstOptOutYear(contractNote);
   const role = isTwoWay
     ? "two-way"
     : isPitcher
@@ -525,8 +565,10 @@ for (const id of projectionIds) {
   };
   let seasons = contractYears.map((year) => {
     const season = Number(year.Season);
-    const economicAnnual = hasDeferrals
-      ? matchedContract.summary?.AAV
+    const yearSummary = year._contractSummary ?? matchedContract.summary;
+    const yearHasDeferrals = /deferr/i.test(fullContractNote(yearSummary));
+    const economicAnnual = yearHasDeferrals
+      ? yearSummary?.AAV
       : year.ArbSalaryProjection || year.Salary || 780000;
     const expectedIncentive = Number(
       (expectedIncentives.get(season) ?? 0).toFixed(2),

@@ -90,6 +90,38 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
   );
   assert.ok(relievers.length > 100);
 
+  const mlbPlayers = database.players.filter(
+    (player) => player.kind === "mlb",
+  );
+  assert.ok(
+    mlbPlayers.every((player) =>
+      player.seasons.some(
+        (season) =>
+          season.year === database.meta.baseYear && season.ros === true,
+      ),
+    ),
+  );
+  assert.ok(
+    mlbPlayers.every((player) => {
+      const years = effectiveSeasons(player).map((season) => season.year);
+      return new Set(years).size === years.length;
+    }),
+  );
+
+  const pca = mlbPlayers.find(
+    (player) => player.name === "Pete Crow-Armstrong",
+  );
+  const pcaCurrent = pca?.seasons.find(
+    (season) => season.year === database.meta.baseYear,
+  );
+  const pcaExtension = pca?.seasons.find(
+    (season) => season.year === database.meta.baseYear + 1,
+  );
+  assert.ok(pcaCurrent?.salaryMode === "fixed");
+  assert.equal(pcaCurrent?.contractType, "prearb");
+  assert.ok((pcaCurrent?.war ?? 99) < (pcaExtension?.war ?? 0));
+  assert.ok((pcaCurrent?.annualSalary ?? 99) < (pcaExtension?.salary ?? 0));
+
   const bobby = database.players.find(
     (player) => player.name === "Bobby Witt Jr." && player.kind === "mlb",
   );
