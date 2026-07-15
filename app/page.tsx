@@ -12,6 +12,7 @@ import { decodeTradeState, encodeTradeState } from "../lib/trade-share.mjs";
 import {
   MAX_CASH_AMOUNT,
   normalizeCashAmount,
+  packageConsolidation,
   packageValue,
 } from "../lib/trade-package.mjs";
 
@@ -445,6 +446,13 @@ export default function Home() {
   const difference = leftTotal - rightTotal;
   const rangesOverlap = leftLow <= rightHigh && rightLow <= leftHigh;
   const verdict = rangesOverlap ? "Ranges overlap" : "Outside model range";
+  const consolidation = packageConsolidation(
+    leftIds,
+    leftCash,
+    rightIds,
+    rightCash,
+    values,
+  );
   const selected = players[selectedId];
   const protectedPackagePlayers = Array.from(
     new Set([...leftIds, ...rightIds]),
@@ -1328,6 +1336,23 @@ export default function Home() {
                     {tradeProtectionSummary} · surplus value is unchanged
                   </p>
                 )}
+                {consolidation && (
+                  <div className="package-shape-note">
+                    <span>Package shape</span>
+                    <strong>
+                      {teamName(
+                        consolidation.headlinerSide === "left"
+                          ? leftTeam
+                          : rightTeam,
+                      )} gives up the best player
+                    </strong>
+                    <p>
+                      The dollars are close, but the return is built from
+                      smaller pieces. Real clubs often ask for a stronger
+                      headliner or extra value in a consolidation trade.
+                    </p>
+                  </div>
+                )}
                 <div className="trade-actions">
                   <button onClick={swapTeams}>Swap teams</button>
                   <button className="share-trade" onClick={copyTradeLink}>
@@ -2145,6 +2170,10 @@ export default function Home() {
                   and 40-man pressure as a separate roster-leverage adjustment.
                   Cash or retained salary is a separate dollar-for-dollar deal
                   adjustment; CBT and payment timing remain outside the model.
+                  Package totals stay additive, but the trade verdict flags a
+                  close high-value offer that replaces one elite headliner with
+                  several materially smaller assets. That context never changes
+                  the displayed dollar values.
                 </p>
               </article>
             </div>

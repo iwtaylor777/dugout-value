@@ -1090,6 +1090,41 @@ footer p {
   }
 }
 
+.package-shape-note {
+  width: min(220px, 100%);
+  margin: 8px auto 2px;
+  padding: 10px 11px;
+  border: 1px solid rgba(213, 162, 79, 0.52);
+  border-radius: 6px;
+  background: #fff8e9;
+  color: var(--ink);
+  text-align: left;
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+.package-shape-note span,
+.package-shape-note strong {
+  display: block;
+}
+.package-shape-note span {
+  margin-bottom: 3px;
+  color: var(--red);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.package-shape-note strong {
+  color: var(--navy);
+  font-size: 11px;
+  line-height: 1.35;
+}
+.trade-verdict .package-shape-note p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
 /* Light ballpark character and interaction polish */
 body {
   font-family:

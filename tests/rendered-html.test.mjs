@@ -111,6 +111,8 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /Cash \/ salary relief/);
   assert.match(page, /setLeftCash/);
   assert.match(page, /packageValue/);
+  assert.match(page, /packageConsolidation/);
+  assert.match(page, /Package shape/);
   assert.match(page, /leftCash,/);
   assert.match(audit, /Navigate search with keyboard/);
   assert.match(audit, /Account for Rule 5 \/ 40-man pressure/);

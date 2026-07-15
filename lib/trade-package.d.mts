@@ -6,3 +6,16 @@ export function packageValue<T extends object>(
   values: Record<string, T | undefined>,
   field?: keyof T,
 ): number;
+export function packageConsolidation<T extends { total?: number }>(
+  leftIds: string[],
+  leftCash: unknown,
+  rightIds: string[],
+  rightCash: unknown,
+  values: Record<string, T | undefined>,
+): null | {
+  headlinerSide: "left" | "right";
+  headlinerId: string;
+  headlinerValue: number;
+  returningHeadlinerId: string;
+  returningHeadlinerValue: number;
+};

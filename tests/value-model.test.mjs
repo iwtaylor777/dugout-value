@@ -301,6 +301,15 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
   const mlbPlayers = database.players.filter(
     (player) => player.kind === "mlb",
   );
+  assert.equal(
+    mlbPlayers.find((player) => player.name === "Stephen Strasburg"),
+    undefined,
+  );
+  assert.ok(
+    mlbPlayers.every(
+      (player) => !player.source.projection.includes("Marcel + aging"),
+    ),
+  );
   const protectedPlayers = mlbPlayers.filter(
     (player) => player.tradeProtection !== "none",
   );

@@ -160,6 +160,14 @@ function marcelWar(rows) {
   return Number((weightedWar / totalWeight).toFixed(1));
 }
 
+function hasRecentPlayingRecord(rows) {
+  return rows.some(
+    (row) =>
+      Number(row.Season) >= BASE_YEAR - 1 &&
+      [row.G, row.PA, row.IP].some((value) => Number(value) > 0),
+  );
+}
+
 function salaryMode(type, arbYear) {
   const label = String(type ?? "").toUpperCase();
   if (label.includes("CLUB OPTION")) return "clubOption";
@@ -545,6 +553,11 @@ for (const id of projectionIds) {
   const history = historyById.get(id) ?? [];
   const latestHistory = history.sort((a, b) => b.Season - a.Season)[0];
   const contract = contracts.get(id);
+  const hasCurrentProjection = zipsById.has(id) || steamerById.has(id);
+  // Payroll pages also carry retired-player and dead-money obligations. Those
+  // are real club expenses, but they are not tradable baseball assets. Keep a
+  // Marcel fallback only for players with a 2025/26 playing record.
+  if (!hasCurrentProjection && !hasRecentPlayingRecord(history)) continue;
   const primary =
     zipsById.get(id) ??
     steamerById.get(id) ??

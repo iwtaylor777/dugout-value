@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   MAX_CASH_AMOUNT,
   normalizeCashAmount,
+  packageConsolidation,
   packageValue,
 } from "../lib/trade-package.mjs";
 
@@ -22,4 +23,57 @@ test("cash adds dollar-for-dollar to package totals and ranges", () => {
   assert.equal(packageValue(["playerA", "playerB"], 5, values), 22);
   assert.equal(packageValue(["playerA", "playerB"], 5, values, "low"), 15);
   assert.equal(packageValue(["playerA", "playerB"], 5, values, "high"), 29);
+});
+
+test("flags a close quantity-for-headliner trade without changing its totals", () => {
+  const values = {
+    star: { total: 100 },
+    prospectA: { total: 40 },
+    prospectB: { total: 35 },
+    prospectC: { total: 25 },
+  };
+
+  assert.deepEqual(
+    packageConsolidation(
+      ["star"],
+      0,
+      ["prospectA", "prospectB", "prospectC"],
+      0,
+      values,
+    ),
+    {
+      headlinerSide: "left",
+      headlinerId: "star",
+      headlinerValue: 100,
+      returningHeadlinerId: "prospectA",
+      returningHeadlinerValue: 40,
+    },
+  );
+  assert.equal(packageValue(["star"], 0, values), 100);
+  assert.equal(
+    packageValue(["prospectA", "prospectB", "prospectC"], 0, values),
+    100,
+  );
+});
+
+test("does not over-warn for one-for-one, modest, or clearly uneven trades", () => {
+  const values = {
+    star: { total: 100 },
+    peer: { total: 90 },
+    midA: { total: 30 },
+    midB: { total: 25 },
+    modest: { total: 40 },
+    smallA: { total: 22 },
+    smallB: { total: 18 },
+  };
+
+  assert.equal(packageConsolidation(["star"], 0, ["peer"], 10, values), null);
+  assert.equal(
+    packageConsolidation(["modest"], 0, ["smallA", "smallB"], 0, values),
+    null,
+  );
+  assert.equal(
+    packageConsolidation(["star"], 0, ["midA", "midB"], 0, values),
+    null,
+  );
 });

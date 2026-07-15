@@ -26,6 +26,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Trade center | Swap teams | Swaps teams and packages | Swap cash adjustments with their packages and clear stale search menus/queries |
 | Trade center | Copy a trade link / open a shared trade | Missing | Restore both teams, packages, cash adjustments, selected player, model settings, and any custom or edited player assumptions without requiring an account |
 | Trade center | Read the verdict | Works | Keep range overlap as the primary signal; avoid false precision |
+| Trade center | Compare one headliner with a quantity package | Additive dollars can imply that several lesser assets are interchangeable with one elite player | Preserve the transparent totals and add a separate package-shape warning when a close high-value trade lacks a comparable returning headliner |
 | Control years | Read yearly value | Always visible | Preserve; keep empty state useful |
 | Player editor | Edit custom identity | Works | Preserve; official records remain non-editable |
 | Player editor | Change rookie value basis | Works | Preserve projection/FV/blend choices |
@@ -60,6 +61,8 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Tradeability vs. value:** a no-trade clause changes whether a deal can happen, not the player’s projected wins or salary. Surface the consent constraint prominently, keep it editable, and do not bury an arbitrary penalty in the surplus number.
 - **Cash and salary relief:** treat entered cash or retained salary as a certain dollar-for-dollar package adjustment. Do not pretend the single total models CBT effects or payment timing; show it separately from control-year player value.
 - **Arbitration:** keep fWAR as the baseball-value input, but do not pretend arbitration panels price players like the free-agent market. First-year estimates use projected traditional statistics by role; saves and holds drive reliever pay, and a calibrated nonlinear tail accounts for record-setting hitter/starter cases. Later years use bounded raises from the prior salary. The source feed's league-minimum placeholders are never presented as player-specific estimates.
+- **Package shape:** keep player surplus additive and auditable. When a close high-value offer replaces one $50M+ headliner with multiple pieces whose best asset is at least 35% lower, show a consolidation warning without altering either package total.
+- **Dead money:** a payroll obligation is not automatically a tradable asset. Contract-only players receive a Marcel fallback only with a 2025/26 playing record; retired-player and dead-money rows stay out of the player picker and rankings.
 
 ## Loop results
 
@@ -75,3 +78,4 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Pass 10 — tradeability context:** separated contract value from permission to trade. RosterResource’s dedicated no-trade field feeds full/partial protection labels, with a small tested fallback for four primary-source omissions and 10-and-5 rights. Protected players are flagged in packages and rankings, missing source data is labeled as unconfirmed, and central surplus remains unchanged.
 - **Pass 11 — cash and salary relief:** added a compact package adjustment for cash considerations or retained salary. It flows through totals, ranges, swaps, resets, yearly comparison, and shared links while remaining visibly separate from player WAR and contract assumptions.
 - **Pass 12 — arbitration calibration:** tested the prior WAR-only formula against 84 actual 2026 first-year arbitration salaries. Role-specific traditional-stat models with an elite-performance tail reduced held-out error from roughly $1.46M overall to about $0.48M for hitters, $0.53M for starters, and $0.22M for relievers. Future Arb 1 estimates now use those inputs; later years retain conservative bounded raises, and every modeled salary is labeled in the editor.
+- **Pass 13 — market-shape and active-player audit:** benchmarked the top of the board against current public trade-value evidence without tuning to a proprietary list. Added a non-numeric consolidation warning for balanced quantity-for-quality packages, and removed retired/dead-money obligations that had no current projection or recent playing record from the tradable player universe.
