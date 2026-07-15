@@ -108,6 +108,9 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /decodeTradeState/);
   assert.match(page, /window\.history\.replaceState/);
   assert.match(page, /Tradeability/);
+  assert.match(page, /Availability/);
+  assert.match(page, /range widened, central WAR unchanged/);
+  assert.match(page, /RosterResource injury report/);
   assert.match(page, /surplus value is unchanged/);
   assert.match(page, /tradeProtection/);
   assert.match(page, /Cash \/ salary relief/);

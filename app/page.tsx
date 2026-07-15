@@ -31,6 +31,14 @@ type ProspectType = "Hitter" | "Pitcher";
 type RookieMode = "projection" | "blend" | "prospect";
 type ProspectRosterContext = "none" | "rule5" | "on40" | "crunch";
 type TradeProtection = "none" | "partial" | "full";
+type Availability = {
+  status: string;
+  injury: string;
+  latestUpdate: string;
+  eligibleDate?: string;
+  returnDate?: string;
+  riskAdjustment: number;
+};
 type Provenance = { projection: string; contract: string; refreshed: string };
 type ArbitrationMetrics = Partial<{
   pa: number;
@@ -91,6 +99,7 @@ type MLBPlayer = {
   source: Provenance;
   risk: number;
   tradeProtection?: TradeProtection;
+  availability?: Availability;
   seasons: MLBSeason[];
   contractScenario?: ContractScenario;
   platformWar?: number;
@@ -284,6 +293,10 @@ const tradeProtectionLabel = (player: MLBPlayer) =>
     partial: "Trade list applies",
     full: "Player approval required",
   })[player.tradeProtection ?? "none"] ?? "No listed protection";
+const availabilityLabel = (player: MLBPlayer) =>
+  player.availability
+    ? `${player.availability.status} · ${player.availability.injury}`
+    : "Active roster";
 const contractLabel = (player: MLBPlayer) => {
   const seasons = effectiveSeasons(player) as MLBSeason[];
   const firstPlayerDecision = seasons.find((season) =>
@@ -486,6 +499,20 @@ export default function Home() {
   ]
     .filter(Boolean)
     .join(" · ");
+  const unavailablePackagePlayers = Array.from(
+    new Set([...leftIds, ...rightIds]),
+  )
+    .map((id) => players[id])
+    .filter(
+      (player): player is MLBPlayer =>
+        player?.kind === "mlb" && Boolean(player.availability),
+    );
+  const availabilitySummary =
+    unavailablePackagePlayers.length === 1
+      ? `${unavailablePackagePlayers[0].name} is on the ${unavailablePackagePlayers[0].availability?.status}`
+      : unavailablePackagePlayers.length > 1
+        ? `${unavailablePackagePlayers.length} players in this trade are on the IL`
+        : "";
   const selectedSeasons =
     selected?.kind === "mlb"
       ? (effectiveSeasons(selected) as MLBSeason[])
@@ -500,6 +527,10 @@ export default function Home() {
         query
           ? `${player.name} ${player.team} ${displayPosition(player)} ${
               player.kind === "prospect" ? player.fv : "mlb"
+            } ${
+              player.kind === "mlb"
+                ? `${player.availability?.status ?? "active"} ${player.availability?.injury ?? ""}`
+                : ""
             }`
               .toLowerCase()
               .includes(query)
@@ -864,6 +895,9 @@ export default function Home() {
                       : ""
                   }`
                 : contractLabel(player)}
+              {player.kind === "mlb" && player.availability
+                ? ` · ${player.availability.status}`
+                : ""}
               {player.kind === "mlb" &&
               player.tradeProtection &&
               player.tradeProtection !== "none"
@@ -911,7 +945,9 @@ export default function Home() {
       .filter((player) =>
         query
           ? `${player.name} ${displayPosition(player)} ${
-              player.kind === "prospect" ? `${player.fv} fv prospect` : "mlb"
+              player.kind === "prospect"
+                ? `${player.fv} fv prospect`
+                : `mlb ${player.availability?.status ?? "active"} ${player.availability?.injury ?? ""}`
             }`
               .toLowerCase()
               .includes(query)
@@ -1339,6 +1375,11 @@ export default function Home() {
                     {tradeProtectionSummary} · surplus value is unchanged
                   </p>
                 )}
+                {availabilitySummary && (
+                  <p className="trade-caveat availability-caveat">
+                    {availabilitySummary} · range widened, central WAR unchanged
+                  </p>
+                )}
                 {consolidation && (
                   <div className="package-shape-note">
                     <span>Package shape</span>
@@ -1563,6 +1604,23 @@ export default function Home() {
                       {(selected.tradeProtection ?? "none") === "none"
                         ? "No clause is listed in the contract feed; confirm 10-and-5 rights before a real deal."
                         : "A consent constraint, not a discount to the player’s underlying baseball value."}
+                    </small>
+                  </div>
+                )}
+                {selected.kind === "mlb" && selected.availability && (
+                  <div className="availability-card">
+                    <div>
+                      <span>Availability</span>
+                      <strong>{availabilityLabel(selected)}</strong>
+                    </div>
+                    <b>+{selected.availability.riskAdjustment} risk</b>
+                    <small>
+                      {selected.availability.latestUpdate}
+                      {selected.availability.eligibleDate
+                        ? ` · Eligible ${selected.availability.eligibleDate}`
+                        : ""}
+                      . Steamer RoS already handles expected missed time, so
+                      this widens the range without cutting central WAR again.
                     </small>
                   </div>
                 )}
@@ -2100,6 +2158,9 @@ export default function Home() {
                         player.tradeProtection !== "none"
                           ? ` · ${tradeProtectionLabel(player)}`
                           : ""}
+                        {player.kind === "mlb" && player.availability
+                          ? ` · ${player.availability.status}`
+                          : ""}
                       </small>
                     </div>
                     <span className={`type-pill ${player.kind}`}>
@@ -2182,6 +2243,10 @@ export default function Home() {
                   and 40-man pressure as a separate roster-leverage adjustment.
                   Cash or retained salary is a separate dollar-for-dollar deal
                   adjustment; CBT and payment timing remain outside the model.
+                  Current IL status, injury description, and return update come
+                  from RosterResource. They seed a wider uncertainty range but
+                  never reduce central WAR again after the RoS projection has
+                  already accounted for expected missed time.
                   Package totals stay additive, but the trade verdict flags a
                   close high-value offer that replaces one elite headliner with
                   several materially smaller assets. That context never changes
@@ -2204,6 +2269,13 @@ export default function Home() {
                 rel="noreferrer"
               >
                 RosterResource contracts ↗
+              </a>
+              <a
+                href="https://www.fangraphs.com/roster-resource/injury-report/dodgers"
+                target="_blank"
+                rel="noreferrer"
+              >
+                RosterResource injury report ↗
               </a>
               <a
                 href="https://www.fangraphs.com/prospects/the-board/2025-graduates"

@@ -60,6 +60,8 @@ const records = database.players
       prospectRisk: player.kind === "prospect" ? player.riskLabel ?? null : null,
       tradeProtection:
         player.kind === "mlb" ? player.tradeProtection ?? "none" : null,
+      availability:
+        player.kind === "mlb" ? player.availability?.status ?? null : null,
       rosterContext:
         player.kind === "prospect" ? player.rosterContext ?? "none" : null,
       expectedIncentives:
@@ -115,6 +117,7 @@ const report = {
     firstArbitrationWithMetrics: firstArbitrationSeasons.filter(
       ({ priorSeason }) => priorSeason?.arbMetrics,
     ).length,
+    mlbOnInjuredList: records.filter((player) => player.availability).length,
   },
   bounds: {
     maximum: records[0],
@@ -148,6 +151,12 @@ const report = {
       records.filter((player) => player.tradeProtection === protection).length,
     ]),
   ),
+  availabilityCounts: Object.fromEntries(
+    ["7-Day IL", "10-Day IL", "15-Day IL", "60-Day IL"].map((status) => [
+      status,
+      records.filter((player) => player.availability === status).length,
+    ]),
+  ),
 };
 
 if (jsonOutput) {
@@ -171,6 +180,8 @@ if (jsonOutput) {
   console.table(report.prospectContextCounts);
   console.log("MLB trade protection");
   console.table(report.tradeProtectionCounts);
+  console.log("MLB availability");
+  console.table(report.availabilityCounts);
   console.log("Bounds");
   console.table([report.bounds.maximum, report.bounds.minimum]);
 }

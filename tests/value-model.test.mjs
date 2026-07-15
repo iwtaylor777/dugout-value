@@ -349,6 +349,41 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
   const protectedPlayers = mlbPlayers.filter(
     (player) => player.tradeProtection !== "none",
   );
+  const injuredPlayers = mlbPlayers.filter((player) => player.availability);
+  assert.ok(injuredPlayers.length > 180);
+  assert.ok(
+    injuredPlayers.every(
+      (player) =>
+        player.availability.riskAdjustment > 0 &&
+        player.availability.status !== "Activated",
+    ),
+  );
+  assert.equal(
+    injuredPlayers.find((player) => player.name === "Corbin Burnes")
+      ?.availability?.status,
+    "60-Day IL",
+  );
+  const injuredExample = injuredPlayers.find(
+    (player) => player.name === "Corbin Burnes",
+  );
+  assert.ok(injuredExample?.availability);
+  const injuredValue = valuePlayer(injuredExample, initialSettings, database);
+  const sameProjectionWithoutHealthRisk = valuePlayer(
+    {
+      ...injuredExample,
+      risk:
+        injuredExample.risk - injuredExample.availability.riskAdjustment,
+      availability: undefined,
+    },
+    initialSettings,
+    database,
+  );
+  assert.equal(injuredValue.total, sameProjectionWithoutHealthRisk.total);
+  assert.ok(
+    injuredValue.high - injuredValue.low >
+      sameProjectionWithoutHealthRisk.high -
+        sameProjectionWithoutHealthRisk.low,
+  );
   assert.ok(protectedPlayers.length > 40);
   assert.ok(
     [

@@ -4,12 +4,18 @@ import {
   prospectRosterContext,
 } from "../lib/prospect-context.mjs";
 import { tradeProtectionForPlayer } from "../lib/contract-context.mjs";
+import {
+  activeAvailabilityByMlbId,
+  availabilityRiskAdjustment,
+} from "../lib/availability-context.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
 const boardUrl = "https://www.fangraphs.com/prospects/the-board/";
 const graduatesUrl =
   "https://www.fangraphs.com/prospects/the-board/2025-graduates";
+const injuryReportUrl =
+  "https://www.fangraphs.com/roster-resource/injury-report/dodgers";
 const projectionUrl = (type, stats) =>
   `https://www.fangraphs.com/projections?pos=all&stats=${stats}&type=${type}`;
 const historyUrl = (stats) =>
@@ -431,6 +437,7 @@ const [
   pitcherHistory,
   boardQueries,
   graduateQueries,
+  injuryQueries,
 ] = await Promise.all([
   loadProjection("zips"),
   loadProjection("zipsp1"),
@@ -441,17 +448,24 @@ const [
   loadHistory("pit"),
   getNextData(boardUrl),
   getNextData(graduatesUrl),
+  getNextData(injuryReportUrl),
 ]);
 
 const boardRows = queryData(boardQueries, "prospects/the-board");
 const graduateRows = queryData(graduateQueries, "prospects/the-board");
 const teamRows = queryData(boardQueries, "useTeamInfoBySeason");
+const injuryRows = queryData(
+  injuryQueries,
+  "roster-resource/injury-report/data",
+);
 if (
   !Array.isArray(boardRows) ||
   !Array.isArray(graduateRows) ||
-  !Array.isArray(teamRows)
+  !Array.isArray(teamRows) ||
+  !Array.isArray(injuryRows)
 )
-  throw new Error("The Board payload is incomplete");
+  throw new Error("The Board or injury-report payload is incomplete");
+const availabilityById = activeAvailabilityByMlbId(injuryRows, BASE_YEAR);
 
 const contractRecords = new Map();
 for (const [abbr, slug] of Object.entries(teamSlugs)) {
@@ -604,6 +618,22 @@ for (const id of projectionIds) {
       "",
   );
   const lastProspect = lastProspectByFgId.get(fgId);
+  const injuryRecord = availabilityById.get(id);
+  const availabilityRisk = injuryRecord
+    ? availabilityRiskAdjustment(injuryRecord)
+    : 0;
+  const availability = injuryRecord
+    ? {
+        status: String(injuryRecord.status),
+        injury: String(injuryRecord.injurySurgery || "Injury not specified"),
+        latestUpdate: String(
+          injuryRecord.latestUpdate || "No current timetable listed",
+        ),
+        eligibleDate: injuryRecord.eligibledate || undefined,
+        returnDate: injuryRecord.returndate || undefined,
+        riskAdjustment: availabilityRisk,
+      }
+    : undefined;
   const contractNote =
     matchedContract.notes || fullContractNote(matchedContract.summary);
   const tradeProtection = tradeProtectionForPlayer(id, contractNote);
@@ -835,6 +865,7 @@ for (const id of projectionIds) {
         expectedIncentives.size ? "expected playing-time incentives" : null,
         contractScenario ? "conditional option paths" : null,
         tradeProtection !== "none" ? "trade protection" : null,
+        availability ? "injury status" : null,
         seasons.some((season) => season.salaryMode.startsWith("arb"))
           ? "role-specific arbitration estimates"
           : null,
@@ -843,8 +874,9 @@ for (const id of projectionIds) {
         .join(" · "),
       refreshed: snapshotLabel,
     },
-    risk: isTwoWay ? 14 : isPitcher ? 12 : 7,
+    risk: (isTwoWay ? 14 : isPitcher ? 12 : 7) + availabilityRisk,
     tradeProtection,
+    availability,
     seasons,
     contractScenario,
     platformWar: Number((ytdWar + Number(rosProjection?.WAR || 0)).toFixed(1)),
@@ -920,6 +952,7 @@ const output = {
     sources: [
       "FanGraphs projections",
       "FanGraphs RosterResource",
+      "FanGraphs RosterResource injury report",
       "FanGraphs The Board",
     ],
   },
