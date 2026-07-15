@@ -20,6 +20,10 @@ export function isReliever(player: {
   position: string;
   role?: "position" | "starter" | "reliever" | "two-way";
 }): boolean;
+export function prospectRankAdjustment(
+  player: { fv?: string; rank?: number | null },
+  database: unknown,
+): number;
 export function estimateFirstArbitrationSalary(
   player: unknown,
   metrics: Record<string, number> | undefined,

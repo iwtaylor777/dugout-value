@@ -15,6 +15,7 @@ import {
   initialSettings,
   isReliever,
   marketValueForSeason,
+  prospectRankAdjustment,
   valuePlayer,
 } from "../lib/value-model.mjs";
 
@@ -212,6 +213,41 @@ test("prospect scouting risk widens the range without moving the median", () => 
   assert.ok(highRisk.low < lowRisk.low);
   assert.ok(highRisk.high > lowRisk.high);
   assert.ok(highRisk.rangeUncertainty > lowRisk.rangeUncertainty);
+});
+
+test("ordinal rank breaks FV ties without overruling the scouting tier", () => {
+  const topOfTier = database.players.find(
+    (player) =>
+      player.kind === "prospect" &&
+      player.fv === "50" &&
+      player.prospectType === "Hitter" &&
+      player.rosterContext === "none" &&
+      player.rank === 33,
+  );
+  const bottomOfTier = database.players.find(
+    (player) =>
+      player.kind === "prospect" &&
+      player.fv === "50" &&
+      player.prospectType === "Hitter" &&
+      player.rosterContext === "none" &&
+      player.rank === 120,
+  );
+  assert.ok(topOfTier);
+  assert.ok(bottomOfTier);
+
+  const topValue = valuePlayer(topOfTier, initialSettings, database);
+  const bottomValue = valuePlayer(bottomOfTier, initialSettings, database);
+  assert.ok(topValue.total > bottomValue.total);
+  assert.ok(topValue.total / bottomValue.total < 1.12);
+  assert.ok(Math.abs(prospectRankAdjustment(topOfTier, database)) <= 0.05);
+  assert.ok(Math.abs(prospectRankAdjustment(bottomOfTier, database)) <= 0.05);
+
+  const unranked = { ...topOfTier, rank: null };
+  assert.equal(prospectRankAdjustment(unranked, database), 0);
+  assert.equal(
+    valuePlayer(unranked, initialSettings, database).total,
+    45,
+  );
 });
 
 test("prospect roster context follows option status and Rule 5 timing", () => {

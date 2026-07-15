@@ -138,6 +138,7 @@ type ValueResult = {
   rookieAdjustment?: number;
   horizonRisk?: number;
   rangeUncertainty?: number;
+  prospectRankAdjustment?: number;
   rows: Array<{
     year: number;
     war: number;
@@ -186,6 +187,8 @@ const prospectValues = modelProspectValues as Record<
 
 const money = (value: number) =>
   `${value < 0 ? "−" : ""}$${Math.abs(value).toFixed(1)}M`;
+const signedPercent = (value: number) =>
+  `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(1)}%`;
 const deepCopy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -1608,6 +1611,9 @@ export default function Home() {
                       </span>
                       <span>
                         Last FV {money(values[selected.id]?.prospectTotal ?? 0)}
+                        {values[selected.id]?.prospectRankAdjustment
+                          ? ` · rank ${signedPercent(values[selected.id]?.prospectRankAdjustment ?? 0)}`
+                          : ""}
                       </span>
                     </div>
                   </div>
@@ -1988,6 +1994,9 @@ export default function Home() {
                       {values[selected.id]?.rangeUncertainty
                         ? ` · ±${values[selected.id]?.rangeUncertainty?.toFixed(0)}%`
                         : ""}
+                      {values[selected.id]?.prospectRankAdjustment
+                        ? ` · Board rank ${signedPercent(values[selected.id]?.prospectRankAdjustment ?? 0)}`
+                        : ""}
                     </p>
                   </>
                 )}
@@ -2166,7 +2175,10 @@ export default function Home() {
                   the salary estimate. Trade protection is shown as a consent
                   constraint but never quietly discounted from surplus. Young MLB players can retain recent FV
                   value. The Board&apos;s risk label changes a prospect&apos;s range,
-                  not its median; signing year and option status identify Rule 5
+                  not its median. Its overall rank makes only a small, bounded
+                  adjustment within the same FV tier, so No. 35 and No. 120 are
+                  no longer treated as identical assets without overruling the
+                  scouting grade. Signing year and option status identify Rule 5
                   and 40-man pressure as a separate roster-leverage adjustment.
                   Cash or retained salary is a separate dollar-for-dollar deal
                   adjustment; CBT and payment timing remain outside the model.
