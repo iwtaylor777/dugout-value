@@ -68,6 +68,17 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const seasonStart = new Date("2026-03-25T12:00:00Z");
 const seasonEnd = new Date("2026-09-27T12:00:00Z");
 const snapshotDate = new Date();
+const snapshotParts = Object.fromEntries(
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .formatToParts(snapshotDate)
+    .map((part) => [part.type, part.value]),
+);
+const snapshotLabel = `${snapshotParts.year}-${snapshotParts.month}-${snapshotParts.day}`;
 const seasonRemainingFraction = Math.max(
   0,
   Math.min(1, (seasonEnd - snapshotDate) / (seasonEnd - seasonStart)),
@@ -261,6 +272,54 @@ function projectedPlayingTime(
   return (
     longRange * Math.pow(isPitcher ? 0.93 : 0.96, yearsBeyondExplicit)
   );
+}
+
+function arbitrationMetrics(role, rows, projection, scale = 1) {
+  const sources = [...rows, projection].filter(Boolean);
+  if (!sources.length) return undefined;
+  const total = (key) =>
+    sources.reduce((sum, row) => sum + (Number(row?.[key]) || 0), 0) *
+    scale;
+  const war = total("WAR");
+  if (role === "position") {
+    const atBats = total("AB");
+    const hits = total("H");
+    return {
+      pa: Number(total("PA").toFixed(1)),
+      hr: Number(total("HR").toFixed(1)),
+      rbi: Number(total("RBI").toFixed(1)),
+      sb: Number(total("SB").toFixed(1)),
+      avg: Number(
+        (atBats ? hits / atBats : Number(projection?.AVG) || 0).toFixed(3),
+      ),
+      war: Number(war.toFixed(1)),
+    };
+  }
+  const innings = total("IP");
+  const earnedRuns = total("ER");
+  const common = {
+    ip: Number(innings.toFixed(1)),
+    era: Number(
+      (innings
+        ? (earnedRuns * 9) / innings
+        : Number(projection?.ERA) || 4.5
+      ).toFixed(2),
+    ),
+    so: Number(total("SO").toFixed(1)),
+    war: Number(war.toFixed(1)),
+  };
+  if (role === "reliever")
+    return {
+      ...common,
+      g: Number(total("G").toFixed(1)),
+      sv: Number(total("SV").toFixed(1)),
+      hld: Number(total("HLD").toFixed(1)),
+    };
+  return {
+    ...common,
+    gs: Number(total("GS").toFixed(1)),
+    w: Number(total("W").toFixed(1)),
+  };
 }
 
 function playingTimeProbability(expected, threshold, metric) {
@@ -570,6 +629,27 @@ for (const id of projectionIds) {
         )
       : Number(futureWar.toFixed(1));
   };
+  const currentRoleHistory = history.filter(
+    (row) =>
+      Number(row.Season) === BASE_YEAR &&
+      (role === "position" ? row._stats === "bat" : row._stats === "pit"),
+  );
+  const projectedArbitrationMetrics = (season) => {
+    if (role === "two-way") return undefined;
+    if (season === BASE_YEAR)
+      return arbitrationMetrics(role, currentRoleHistory, rosProjection);
+    const explicitProjection =
+      season === BASE_YEAR + 1
+        ? zips2027ById.get(id)
+        : zips2028ById.get(id);
+    const yearsBeyondExplicit = Math.max(0, season - (BASE_YEAR + 2));
+    return arbitrationMetrics(
+      role,
+      [],
+      explicitProjection,
+      Math.pow(isPitcher ? 0.93 : 0.96, yearsBeyondExplicit),
+    );
+  };
   let seasons = contractYears.map((year) => {
     const season = Number(year.Season);
     const yearSummary = year._contractSummary ?? matchedContract.summary;
@@ -596,6 +676,7 @@ for (const id of projectionIds) {
     return {
       year: season,
       war: projectedWarForSeason(season),
+      arbMetrics: projectedArbitrationMetrics(season),
       salary:
         season === BASE_YEAR
           ? Number(
@@ -741,10 +822,13 @@ for (const id of projectionIds) {
         expectedIncentives.size ? "expected playing-time incentives" : null,
         contractScenario ? "conditional option paths" : null,
         tradeProtection !== "none" ? "trade protection" : null,
+        seasons.some((season) => season.salaryMode.startsWith("arb"))
+          ? "role-specific arbitration estimates"
+          : null,
       ]
         .filter(Boolean)
         .join(" · "),
-      refreshed: new Date().toISOString().slice(0, 10),
+      refreshed: snapshotLabel,
     },
     risk: isTwoWay ? 14 : isPitcher ? 12 : 7,
     tradeProtection,
@@ -788,7 +872,7 @@ const prospects = boardRows
     source: {
       projection: "FanGraphs The Board",
       contract: "FV, ETA, scouting risk & roster status",
-      refreshed: new Date().toISOString().slice(0, 10),
+      refreshed: snapshotLabel,
     },
     prospectType: String(row.positionDB || row.Position).includes("P")
       ? "Pitcher"
@@ -814,7 +898,7 @@ const players = [...mlb, ...prospects].sort(
 );
 const output = {
   meta: {
-    refreshed: new Date().toISOString().slice(0, 10),
+    refreshed: snapshotLabel,
     baseYear: BASE_YEAR,
     mlbCount: mlb.length,
     prospectCount: prospects.length,

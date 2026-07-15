@@ -31,6 +31,22 @@ type RookieMode = "projection" | "blend" | "prospect";
 type ProspectRosterContext = "none" | "rule5" | "on40" | "crunch";
 type TradeProtection = "none" | "partial" | "full";
 type Provenance = { projection: string; contract: string; refreshed: string };
+type ArbitrationMetrics = Partial<{
+  pa: number;
+  hr: number;
+  rbi: number;
+  sb: number;
+  avg: number;
+  ip: number;
+  gs: number;
+  g: number;
+  w: number;
+  sv: number;
+  hld: number;
+  era: number;
+  so: number;
+  war: number;
+}>;
 type MLBSeason = {
   year: number;
   war: number;
@@ -42,6 +58,7 @@ type MLBSeason = {
   ros?: boolean;
   optionBuyout?: number;
   optionProbability?: number;
+  arbMetrics?: ArbitrationMetrics;
 };
 type LastProspect = {
   fv: string;
@@ -1581,7 +1598,8 @@ export default function Home() {
                         selectedSeasons[0]?.salary ??
                         0,
                     )}
-                    ) and uses platform-performance raises.
+                    ). Arb 1 uses projected role-specific counting stats;
+                    later years use conservative raises from the prior salary.
                   </p>
                 )}
                 {selected.kind === "mlb" ? (
@@ -1755,7 +1773,14 @@ export default function Home() {
                               </span>
                             ) : (
                               <span className="modelled-pay">
-                                {money(row?.salary ?? 0)}
+                                <strong>{money(row?.salary ?? 0)}</strong>
+                                <small>
+                                  {season.salaryMode === "arb1"
+                                    ? "stats model"
+                                    : season.salaryMode.startsWith("arb")
+                                      ? "bounded raise"
+                                      : "league minimum"}
+                                </small>
                               </span>
                             )}
                             <strong>{money(row?.surplus ?? 0)}</strong>
@@ -2106,7 +2131,10 @@ export default function Home() {
                 <b>03</b>
                 <h3>Contracts, scouting, and roster pressure</h3>
                 <p>
-                  Arbitration follows platform performance; options and
+                  First-year arbitration uses role-specific projected counting
+                  stats, including saves and holds for relievers, plus a
+                  calibrated tail for record-level seasons. Later years use
+                  conservative raises from the prior salary; options and
                   deferrals use their economic terms, and opt-outs remove future
                   upside without erasing downside. Playing-time escalators use
                   projected odds; mutually exclusive award bonuses stay out of
@@ -2149,6 +2177,13 @@ export default function Home() {
                 rel="noreferrer"
               >
                 MLB arbitration rules ↗
+              </a>
+              <a
+                href="https://www.mlbtraderumors.com/2011/10/mlb-trade-rumors-arbitration-projections.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Arbitration model research ↗
               </a>
               <a
                 href="https://blogs.fangraphs.com/what-are-teams-paying-for-a-win-in-free-agency-2026-edition/"

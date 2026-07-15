@@ -750,9 +750,20 @@ a:focus-visible {
     serif;
 }
 .modelled-pay {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
   font-size: 10px;
   text-align: center;
   color: var(--red-dark);
+}
+.modelled-pay strong {
+  font-size: inherit;
+}
+.modelled-pay small {
+  color: var(--muted);
+  font-size: 7px;
+  line-height: 1.1;
 }
 .salary-input-wrap {
   display: flex;

@@ -11,11 +11,61 @@ import {
 } from "../lib/contract-context.mjs";
 import {
   effectiveSeasons,
+  estimateFirstArbitrationSalary,
   initialSettings,
   isReliever,
   marketValueForSeason,
   valuePlayer,
 } from "../lib/value-model.mjs";
+
+test("first-year arbitration follows role-specific counting stats", () => {
+  const hitter = { position: "OF", role: "position" };
+  const lowVolume = estimateFirstArbitrationSalary(hitter, {
+    pa: 250,
+    hr: 8,
+    rbi: 35,
+    sb: 4,
+    avg: 0.25,
+    war: 2,
+  });
+  const everydayPower = estimateFirstArbitrationSalary(hitter, {
+    pa: 650,
+    hr: 30,
+    rbi: 95,
+    sb: 4,
+    avg: 0.25,
+    war: 2,
+  });
+  assert.ok(everydayPower > lowVolume + 2);
+
+  const reliever = { position: "P", role: "reliever" };
+  const setup = estimateFirstArbitrationSalary(reliever, {
+    ip: 65,
+    g: 65,
+    sv: 0,
+    hld: 20,
+    era: 3,
+    so: 75,
+  });
+  const closer = estimateFirstArbitrationSalary(reliever, {
+    ip: 65,
+    g: 65,
+    sv: 35,
+    hld: 0,
+    era: 3,
+    so: 75,
+  });
+  assert.ok(closer > setup + 1);
+});
+
+test("first-year arbitration has a restrained WAR fallback", () => {
+  const starter = { position: "P", role: "starter" };
+  assert.ok(estimateFirstArbitrationSalary(starter, { war: 5 }) < 10);
+  assert.ok(estimateFirstArbitrationSalary(starter, { war: 5 }) > 7);
+  assert.ok(
+    estimateFirstArbitrationSalary(starter, { war: 0 }) >= 0.8,
+  );
+});
 
 const database = JSON.parse(
   await readFile(new URL("../app/data/player-database.json", import.meta.url)),
@@ -331,6 +381,17 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
   );
   const duranRows = valuePlayer(duran, initialSettings, database).rows;
   assert.ok(duranRows.find((row) => row.year === 2027).salary < 15);
+
+  const firstArbitrationSeasons = mlbPlayers.flatMap((player) => {
+    const seasons = effectiveSeasons(player);
+    return seasons
+      .map((season, index) => ({ season, prior: seasons[index - 1] }))
+      .filter(({ season }) => season.salaryMode === "arb1");
+  });
+  assert.ok(firstArbitrationSeasons.length > 250);
+  assert.ok(
+    firstArbitrationSeasons.every(({ prior }) => prior?.arbMetrics),
+  );
 
   const merrill = database.players.find(
     (player) => player.name === "Jackson Merrill" && player.kind === "mlb",

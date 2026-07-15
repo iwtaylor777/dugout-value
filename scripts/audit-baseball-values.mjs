@@ -81,6 +81,18 @@ const records = database.players
     };
   })
   .sort((left, right) => right.value - left.value);
+const arbitrationSeasons = database.players
+  .filter((player) => player.kind === "mlb")
+  .flatMap((player) =>
+    effectiveSeasons(player).map((season, index, seasons) => ({
+      season,
+      priorSeason: seasons[index - 1],
+    })),
+  )
+  .filter(({ season }) => String(season.salaryMode).startsWith("arb"));
+const firstArbitrationSeasons = arbitrationSeasons.filter(
+  ({ season }) => season.salaryMode === "arb1",
+);
 
 const report = {
   generatedFrom: database.meta.refreshed,
@@ -97,6 +109,11 @@ const report = {
         effectiveSeasons(player).some(
           (season) => season.year === database.meta.baseYear,
         ),
+    ).length,
+    arbitrationSeasons: arbitrationSeasons.length,
+    firstArbitrationSeasons: firstArbitrationSeasons.length,
+    firstArbitrationWithMetrics: firstArbitrationSeasons.filter(
+      ({ priorSeason }) => priorSeason?.arbMetrics,
     ).length,
   },
   bounds: {

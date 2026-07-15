@@ -20,6 +20,11 @@ export function isReliever(player: {
   position: string;
   role?: "position" | "starter" | "reliever" | "two-way";
 }): boolean;
+export function estimateFirstArbitrationSalary(
+  player: unknown,
+  metrics: Record<string, number> | undefined,
+  inflation?: number,
+): number;
 export function effectiveSeasons<T extends { seasons: unknown[] }>(
   player: T & {
     contractScenario?: {
