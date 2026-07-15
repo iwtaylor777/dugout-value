@@ -36,6 +36,8 @@ test("server-renders the trade builder", async () => {
   assert.match(html, /Value rankings/);
   assert.match(html, /Value by control year/);
   assert.match(html, /Neutral · no discount/);
+  assert.match(html, /Deadline lens/);
+  assert.match(html, /Off · baseline value/);
   assert.match(html, /30<!-- -->% above/);
   assert.match(html, /role="combobox"/);
   assert.match(html, /Cash sent \/ salary retained by/);
@@ -99,6 +101,10 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(model, /timingPreference: 0/);
   assert.match(model, /starPremium: 30/);
   assert.match(model, /starThreshold: 2/);
+  assert.match(model, /deadlineBoost: 0/);
+  assert.match(page, /raises only the market value of remaining 2026/);
+  assert.match(page, /It does not change salary, option costs, future/);
+  assert.match(page, /not the buyer&apos;s negotiating power/);
   assert.match(model, /player\.role === "reliever"/);
   assert.match(page, /rosterContext/);
   assert.match(page, /Scouting risk/);

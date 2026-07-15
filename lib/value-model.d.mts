@@ -5,6 +5,7 @@ export type ModelSettingsShape = {
   timingPreference: number;
   starPremium: number;
   starThreshold: number;
+  deadlineBoost: number;
   relieverPremium: number;
   inflation: number;
   minimumSalary: number;

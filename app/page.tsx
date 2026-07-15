@@ -153,6 +153,7 @@ type ModelSettings = {
   timingPreference: number;
   starPremium: number;
   starThreshold: number;
+  deadlineBoost: number;
   relieverPremium: number;
   inflation: number;
   minimumSalary: number;
@@ -166,6 +167,7 @@ type ValueResult = {
   projectionTotal?: number;
   prospectTotal?: number;
   rookieAdjustment?: number;
+  deadlineAdjustment?: number;
   horizonRisk?: number;
   rangeUncertainty?: number;
   prospectRankAdjustment?: number;
@@ -175,6 +177,7 @@ type ValueResult = {
     market: number;
     salary: number;
     surplus: number;
+    deadlineAdjustment?: number;
   }>;
 };
 type Database = {
@@ -294,6 +297,7 @@ const sharedSettings = (value: unknown): ModelSettings => {
     timingPreference: [0, 100],
     starPremium: [0, 200],
     starThreshold: [0, 10],
+    deadlineBoost: [0, 50],
     relieverPremium: [0, 200],
     inflation: [0, 100],
     minimumSalary: [0, 10],
@@ -366,12 +370,14 @@ function NumericField({
   onChange,
   step = 0.1,
   min,
+  max,
   label,
 }: {
   value: number;
   onChange: (value: number) => void;
   step?: number;
   min?: number;
+  max?: number;
   label: string;
 }) {
   return (
@@ -382,6 +388,7 @@ function NumericField({
       value={value}
       step={step}
       min={min}
+      max={max}
       onChange={(event) => onChange(Number(event.target.value))}
     />
   );
@@ -1602,7 +1609,28 @@ export default function Home() {
                 : `Win now · ${settings.timingPreference}% / year`}
             </strong>
           </div>
-          <button onClick={() => setShowSettings((value) => !value)}>
+          <button
+            type="button"
+            className={`deadline-toggle ${settings.deadlineBoost > 0 ? "is-active" : ""}`}
+            aria-pressed={settings.deadlineBoost > 0}
+            onClick={() =>
+              setSettings({
+                ...settings,
+                deadlineBoost: settings.deadlineBoost > 0 ? 0 : 15,
+              })
+            }
+          >
+            <span>Deadline lens</span>
+            <strong>
+              {settings.deadlineBoost > 0
+                ? `On · +${shortNumber(settings.deadlineBoost)}% RoS`
+                : "Off · baseline value"}
+            </strong>
+          </button>
+          <button
+            className="assumptions-toggle"
+            onClick={() => setShowSettings((value) => !value)}
+          >
             {showSettings ? "Close assumptions" : "Edit assumptions"}
           </button>
         </section>
@@ -1634,6 +1662,31 @@ export default function Home() {
                 >
                   Win-now behavior
                   <small>8% less per future year</small>
+                </button>
+              </div>
+            </div>
+            <div className="timing-presets deadline-presets">
+              <span>Deadline market lens</span>
+              <div>
+                <button
+                  type="button"
+                  className={settings.deadlineBoost === 0 ? "is-active" : ""}
+                  onClick={() =>
+                    setSettings({ ...settings, deadlineBoost: 0 })
+                  }
+                >
+                  Baseline value
+                  <small>No deadline adjustment</small>
+                </button>
+                <button
+                  type="button"
+                  className={settings.deadlineBoost > 0 ? "is-active" : ""}
+                  onClick={() =>
+                    setSettings({ ...settings, deadlineBoost: 15 })
+                  }
+                >
+                  Deadline market
+                  <small>+15% to 2026 RoS production</small>
                 </button>
               </div>
             </div>
@@ -1721,6 +1774,19 @@ export default function Home() {
               <em>%</em>
             </label>
             <label>
+              <span>Custom deadline boost</span>
+              <NumericField
+                label="Custom deadline boost"
+                value={settings.deadlineBoost}
+                min={0}
+                max={50}
+                onChange={(value) =>
+                  setSettings({ ...settings, deadlineBoost: value })
+                }
+              />
+              <em>%</em>
+            </label>
+            <label>
               <span>WAR-price inflation</span>
               <NumericField
                 label="WAR inflation"
@@ -1749,7 +1815,10 @@ export default function Home() {
               wins use the base rate and additional wins receive the star
               premium. FanGraphs pitcher WAR already includes a leverage
               adjustment, so the extra reliever premium stays an optional team
-              preference rather than a hidden assumption.
+              preference rather than a hidden assumption. The deadline lens is
+              off by default and raises only the market value of remaining 2026
+              production. It does not change salary, option costs, future
+              seasons, or prospect values.
             </p>
           </section>
         )}
@@ -2154,6 +2223,26 @@ export default function Home() {
                     ). Arb 1 uses projected role-specific counting stats;
                     later years use conservative raises from the prior salary.
                   </p>
+                )}
+                {selected.kind === "mlb" && settings.deadlineBoost > 0 && (
+                  <div className="deadline-value-card">
+                    <div>
+                      <span>Deadline lens</span>
+                      <strong>
+                        {money(values[selected.id]?.deadlineAdjustment ?? 0)} added
+                      </strong>
+                    </div>
+                    <b>+{shortNumber(settings.deadlineBoost)}% RoS field value</b>
+                    <small>
+                      Baseline {money(
+                        (values[selected.id]?.total ?? 0) -
+                          (values[selected.id]?.deadlineAdjustment ?? 0),
+                      )} → deadline {money(values[selected.id]?.total ?? 0)}.
+                      This represents extra willingness to pay for current wins,
+                      not the buyer&apos;s negotiating power. Salary, future control,
+                      and option costs are unchanged.
+                    </small>
+                  </div>
                 )}
                 {selected.kind === "mlb" ? (
                   <>
@@ -2776,6 +2865,29 @@ export default function Home() {
                       starter a star. Both the premium and its net-WAR cutoff are
                       editable. The default reliever premium is zero because
                       FanGraphs pitcher WAR already recognizes leverage.
+                    </p>
+                    <div className="risk-explainer">
+                      <span>What does the optional deadline lens do?</span>
+                      <strong>It changes the price of current wins, not the player&apos;s entire contract.</strong>
+                      <p>
+                        The lens is off by default. When enabled at its 15%
+                        preset, it increases only the market value of projected
+                        2026 rest-of-season production. Remaining salary,
+                        buyouts, future control years, and prospects do not get
+                        multiplied. That avoids making an underwater contract
+                        more negative or pretending a 2029 win is more valuable
+                        because the trade happens in July 2026.
+                      </p>
+                    </div>
+                    <p>
+                      Here, contention leverage means that one more win can be
+                      especially useful to a team near the playoff bubble, which
+                      can increase willingness to pay. It does not mean the buyer
+                      has negotiating leverage. A buyer with several substitute
+                      targets may bargain the price down; a seller with several
+                      bidders may push it up. Because public history does not
+                      support one stable league-wide percentage, 15% is an
+                      editable scenario rather than a hidden model default.
                     </p>
                   </section>
 

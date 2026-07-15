@@ -167,6 +167,119 @@ test("the star premium threshold is explicit and editable", () => {
   assert.ok(earlierPremium > laterPremium);
 });
 
+test("deadline boost applies only to rest-of-season field value", () => {
+  const player = { position: "SP", role: "starter" };
+  const rosSeason = {
+    year: database.meta.baseYear,
+    war: 1.4,
+    salary: 12.3,
+    salaryMode: "fixed",
+    ros: true,
+  };
+  const futureSeason = {
+    year: database.meta.baseYear + 1,
+    war: 2.1,
+    salary: 20,
+    salaryMode: "fixed",
+    ros: false,
+  };
+  const baselineSettings = { ...initialSettings, deadlineBoost: 0 };
+  const deadlineSettings = { ...initialSettings, deadlineBoost: 15 };
+
+  const baselineRos = marketValueForSeason(
+    player,
+    rosSeason,
+    baselineSettings,
+    database,
+  );
+  const deadlineRos = marketValueForSeason(
+    player,
+    rosSeason,
+    deadlineSettings,
+    database,
+  );
+  assert.ok(Math.abs(deadlineRos - baselineRos * 1.15) < 1e-9);
+  assert.equal(
+    marketValueForSeason(player, futureSeason, deadlineSettings, database),
+    marketValueForSeason(player, futureSeason, baselineSettings, database),
+  );
+});
+
+test("deadline adjustment raises current MLB surplus without changing salary", () => {
+  const player = {
+    id: "test-deadline",
+    kind: "mlb",
+    name: "Deadline Player",
+    team: "SEA",
+    position: "SP",
+    role: "starter",
+    risk: 0,
+    seasons: [
+      {
+        year: database.meta.baseYear,
+        war: 1.4,
+        salary: 12.3,
+        salaryMode: "fixed",
+        ros: true,
+      },
+      {
+        year: database.meta.baseYear + 1,
+        war: 2.1,
+        salary: 20,
+        salaryMode: "fixed",
+        ros: false,
+      },
+    ],
+  };
+  const baseline = valuePlayer(
+    player,
+    { ...initialSettings, deadlineBoost: 0 },
+    database,
+  );
+  const deadline = valuePlayer(
+    player,
+    { ...initialSettings, deadlineBoost: 15 },
+    database,
+  );
+
+  assert.ok(deadline.total > baseline.total);
+  assert.ok(
+    Math.abs(deadline.deadlineAdjustment - (deadline.total - baseline.total)) <
+      1e-9,
+  );
+  assert.equal(deadline.rows[0].salary, baseline.rows[0].salary);
+  assert.equal(deadline.rows[1].market, baseline.rows[1].market);
+  assert.equal(deadline.rows[1].deadlineAdjustment, 0);
+});
+
+test("deadline boost leaves prospect value unchanged", () => {
+  const prospect = {
+    id: "test-deadline-prospect",
+    kind: "prospect",
+    name: "Future Player",
+    team: "SEA",
+    position: "SS",
+    prospectType: "Hitter",
+    fv: "50",
+    eta: database.meta.baseYear + 2,
+    adjustment: 0,
+    rosterContext: "none",
+  };
+  const baseline = valuePlayer(
+    prospect,
+    { ...initialSettings, deadlineBoost: 0 },
+    database,
+  );
+  const deadline = valuePlayer(
+    prospect,
+    { ...initialSettings, deadlineBoost: 15 },
+    database,
+  );
+
+  assert.equal(deadline.total, baseline.total);
+  assert.equal(deadline.deadlineAdjustment, 0);
+});
+
 test("player options preserve downside but do not invent club upside", () => {
   const player = {
     id: "test-option",
