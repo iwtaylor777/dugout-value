@@ -12,6 +12,7 @@ export type DiscoveryMlbPlayer = {
   name: string;
   team: string;
   position: string;
+  depthPosition?: string;
   role?: "position" | "starter" | "reliever" | "two-way";
   age: number;
   custom?: boolean;

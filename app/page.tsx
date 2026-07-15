@@ -107,6 +107,7 @@ type MLBPlayer = {
   name: string;
   team: string;
   position: string;
+  depthPosition?: string;
   role?: "position" | "starter" | "reliever" | "two-way";
   age: number;
   source: Provenance;
@@ -2924,17 +2925,22 @@ export default function Home() {
                     <h3>Find the need first, then search the market</h3>
                     <p>
                       The Trade Finder ranks each team against the league at the
-                      same position rather than comparing unlike raw totals. Its
-                      need score is 45% season-to-date fWAR rank and 55% Steamer
-                      rest-of-season fWAR rank. Outfield, rotation, and bullpen
-                      are treated as multi-player units. A candidate’s estimated
-                      upgrade is his rest-of-season WAR above the buyer’s final
-                      current starting slot at that position. Ordering then
-                      applies a transparent deadline-fit signal: rentals and
-                      veterans rise, while long-term core players, injured
-                      players, and players with full trade protection fall. It
-                      is a plausibility screen, not a report that anyone is on
-                      the market.
+                      same position rather than comparing unlike raw totals.
+                      Current team and position assignments come from
+                      RosterResource depth charts, not a player&apos;s legacy
+                      projection-page label. The model keeps that current
+                      assignment separate from the other positions a player is
+                      eligible to play, so a utility player cannot count as the
+                      incumbent in several holes at once. Its need score is 45%
+                      season-to-date fWAR rank and 55% Steamer rest-of-season
+                      fWAR rank. Outfield, rotation, and bullpen are treated as
+                      multi-player units. A candidate’s estimated upgrade is his
+                      rest-of-season WAR above the buyer’s final current starting
+                      slot at that position. Ordering then applies a transparent
+                      deadline-fit signal: rentals and veterans rise, while
+                      long-term core players, injured players, and players with
+                      full trade protection fall. It is a plausibility screen,
+                      not a report that anyone is on the market.
                     </p>
                     <p>
                       Seller pools come from a user-selected FanGraphs playoff-
@@ -3005,6 +3011,13 @@ export default function Home() {
                 rel="noreferrer"
               >
                 RosterResource contracts ↗
+              </a>
+              <a
+                href="https://www.fangraphs.com/roster-resource/depth-charts/red-sox"
+                target="_blank"
+                rel="noreferrer"
+              >
+                RosterResource depth charts ↗
               </a>
               <a
                 href="https://www.fangraphs.com/roster-resource/injury-report/dodgers"

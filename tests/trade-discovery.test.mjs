@@ -4,7 +4,9 @@ import test from "node:test";
 import {
   findTradeTargets,
   generateOfferPackages,
+  incumbentRestOfSeasonWar,
   playerFitsPosition,
+  primaryPositionGroup,
   rankTeamNeeds,
   restOfSeasonWar,
   seasonToDateWar,
@@ -19,12 +21,14 @@ const mlb = ({
   ros = 0,
   age = 27,
   salaryMode = "prearb",
+  depthPosition,
 }) => ({
   id,
   kind: "mlb",
   name: id,
   team,
   position,
+  depthPosition,
   role,
   age,
   platformWar: ytd + ros,
@@ -60,6 +64,61 @@ test("the seller snapshot covers every MLB organization", async () => {
   );
 });
 
+test("the live depth-chart snapshot assigns every team-position bucket", async () => {
+  const database = JSON.parse(
+    await readFile(
+      new URL("../app/data/player-database.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const majorLeaguers = database.players.filter(
+    (player) => player.kind === "mlb",
+  );
+  const teamIds = new Set(database.teams.map((team) => team.abbr));
+
+  assert.ok(majorLeaguers.every((player) => teamIds.has(player.team)));
+  assert.ok(majorLeaguers.every((player) => player.depthPosition));
+  assert.equal(new Set(majorLeaguers.map((player) => player.id)).size, majorLeaguers.length);
+
+  for (const team of database.teams) {
+    const needs = rankTeamNeeds(
+      database.players,
+      database.teams,
+      team.abbr,
+      database.meta.baseYear,
+    );
+    assert.ok(
+      needs.every((need) => need.playerCount > 0),
+      `${team.abbr} contains an empty Trade Finder position bucket`,
+    );
+  }
+});
+
+test("the Red Sox first-base bucket includes Willson Contreras", async () => {
+  const database = JSON.parse(
+    await readFile(
+      new URL("../app/data/player-database.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const contreras = database.players.find(
+    (player) => player.kind === "mlb" && player.name === "Willson Contreras",
+  );
+  const firstBase = rankTeamNeeds(
+    database.players,
+    database.teams,
+    "BOS",
+    database.meta.baseYear,
+  ).find((need) => need.id === "1B");
+
+  assert.equal(contreras?.team, "BOS");
+  assert.equal(contreras?.position, "1B");
+  assert.equal(contreras?.depthPosition, "1B");
+  assert.ok(firstBase.seasonToDateWar > 2);
+  assert.ok(firstBase.restOfSeasonWar > 1);
+  assert.equal(firstBase.needLabel, "Relative strength");
+});
+
 test("separates season-to-date WAR from the explicit rest-of-season projection", () => {
   const player = mlb({
     id: "catcher",
@@ -86,6 +145,55 @@ test("ranks a hole relative to other teams at the same position", () => {
   assert.equal(needs[0].seasonToDateRank, 3);
   assert.equal(needs[0].restOfSeasonRank, 3);
   assert.equal(needs[0].needLabel, "Clear need");
+});
+
+test("current depth assignment outranks a stale projection position", () => {
+  const convertedFirstBaseman = mlb({
+    id: "converted-first-baseman",
+    team: "BOS",
+    position: "C",
+    depthPosition: "1B",
+    ytd: 2.8,
+    ros: 1.1,
+  });
+
+  assert.equal(playerFitsPosition(convertedFirstBaseman, "C"), true);
+  assert.equal(primaryPositionGroup(convertedFirstBaseman), "1B");
+  const needs = rankTeamNeeds(
+    [
+      convertedFirstBaseman,
+      mlb({ id: "other-1b", team: "NYY", position: "1B", ytd: 1, ros: 0.5 }),
+    ],
+    ["BOS", "NYY"],
+    "BOS",
+    2026,
+  );
+  const firstBase = needs.find((need) => need.id === "1B");
+
+  assert.equal(firstBase.seasonToDateWar, 2.8);
+  assert.equal(firstBase.restOfSeasonWar, 1.1);
+});
+
+test("incumbent value uses the assigned position instead of double-counting utility players", () => {
+  const players = [
+    mlb({
+      id: "utility-starter",
+      team: "BUY",
+      position: "1B/2B",
+      depthPosition: "2B",
+      ros: 1.2,
+    }),
+    mlb({
+      id: "assigned-first-baseman",
+      team: "BUY",
+      position: "1B",
+      depthPosition: "1B",
+      ros: 0.3,
+    }),
+  ];
+
+  assert.equal(incumbentRestOfSeasonWar(players, "BUY", "1B", 2026), 0.3);
+  assert.equal(incumbentRestOfSeasonWar(players, "BUY", "2B", 2026), 1.2);
 });
 
 test("targets upgrades from low-odds clubs and excludes contenders", () => {

@@ -8,6 +8,7 @@ import {
   activeAvailabilityByMlbId,
   availabilityRiskAdjustment,
 } from "../lib/availability-context.mjs";
+import { rosterAssignmentsFromDepthChart } from "../lib/roster-position.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
@@ -268,6 +269,36 @@ function pitcherRole(row) {
   return starts / games < 0.35 ? "reliever" : "starter";
 }
 
+function depthChartContract(assignment) {
+  if (!assignment?.activeRoster) return null;
+  const completedService = Math.max(0, Math.floor(assignment.serviceTime || 0));
+  const remainingYears = Math.max(1, 6 - completedService);
+  return {
+    summary: {
+      playerName: assignment.playerName,
+      playerId: assignment.playerId,
+      age: assignment.age,
+    },
+    summaries: [],
+    years: Array.from({ length: remainingYears }, (_, index) => {
+      const serviceYear = completedService + index;
+      const arbitrationYear = Math.max(0, serviceYear - 2);
+      return {
+        Season: BASE_YEAR + index,
+        Type:
+          arbitrationYear > 0
+            ? `ARB ${Math.min(4, arbitrationYear)}`
+            : "PRE-ARB",
+        ArbYear: Math.min(4, arbitrationYear),
+        Salary: 780000,
+      };
+    }),
+    incentives: [],
+    notes: "",
+    team: assignment.team,
+  };
+}
+
 function projectedPlayingTime(
   metric,
   triggerYear,
@@ -478,12 +509,28 @@ if (
 const availabilityById = activeAvailabilityByMlbId(injuryRows, BASE_YEAR);
 
 const contractRecords = new Map();
+const depthAssignments = new Map();
 for (const [abbr, slug] of Object.entries(teamSlugs)) {
-  console.log(`Loading ${abbr} payroll…`);
-  const queries = await getNextData(
-    `https://www.fangraphs.com/roster-resource/payroll/${slug}`,
+  console.log(`Loading ${abbr} payroll and depth chart…`);
+  const [payrollQueries, depthQueries] = await Promise.all([
+    getNextData(`https://www.fangraphs.com/roster-resource/payroll/${slug}`),
+    getNextData(
+      `https://www.fangraphs.com/roster-resource/depth-charts/${slug}`,
+    ),
+  ]);
+  const payroll = queryData(
+    payrollQueries,
+    "roster-resource/payroll2020/data",
   );
-  const payroll = queryData(queries, "roster-resource/payroll2020/data");
+  const depthChart = queryData(depthQueries, "depth-charts-all");
+  for (const [id, assignment] of rosterAssignmentsFromDepthChart(
+    depthChart?.dataRoster,
+    abbr,
+  )) {
+    const existing = depthAssignments.get(id);
+    if (!existing || assignment.priority >= existing.priority)
+      depthAssignments.set(id, assignment);
+  }
   for (const contract of payroll?.dataContract ?? []) {
     const summary = contract.contractSummary;
     const id = String(summary?.MLBAMID ?? "");
@@ -570,21 +617,43 @@ const projectionIds = new Set([
   ...zipsById.keys(),
   ...steamerById.keys(),
   ...contracts.keys(),
+  ...[...depthAssignments.entries()]
+    .filter(([, assignment]) => assignment.activeRoster)
+    .map(([id]) => id),
 ]);
 const mlb = [];
 
 for (const id of projectionIds) {
   const history = historyById.get(id) ?? [];
   const latestHistory = history.sort((a, b) => b.Season - a.Season)[0];
-  const contract = contracts.get(id);
+  const depthAssignment = depthAssignments.get(id);
+  const contract = contracts.get(id) ?? depthChartContract(depthAssignment);
   const hasCurrentProjection = zipsById.has(id) || steamerById.has(id);
   // Payroll pages also carry retired-player and dead-money obligations. Those
   // are real club expenses, but they are not tradable baseball assets. Keep a
   // Marcel fallback only for players with a 2025/26 playing record.
-  if (!hasCurrentProjection && !hasRecentPlayingRecord(history)) continue;
+  if (
+    !hasCurrentProjection &&
+    !hasRecentPlayingRecord(history) &&
+    !depthAssignment?.activeRoster
+  )
+    continue;
   const primary =
     zipsById.get(id) ??
     steamerById.get(id) ??
+    (depthAssignment?.activeRoster
+      ? {
+          xMLBAMID: id,
+          playerid: depthAssignment.playerId,
+          PlayerName: depthAssignment.playerName,
+          Team: depthAssignment.team,
+          positionDB: depthAssignment.eligiblePosition,
+          WAR: depthAssignment.actualWar + depthAssignment.projectedWar,
+          _stats: ["SP", "RP"].includes(depthAssignment.depthPosition)
+            ? "pit"
+            : "bat",
+        }
+      : null) ??
     (contract
       ? {
           xMLBAMID: id,
@@ -598,18 +667,27 @@ for (const id of projectionIds) {
       : null);
   if (!primary) continue;
   const backup = steamerById.get(id);
-  const team = normalizeTeam(primary?.Team || backup?.Team);
-  if (!teamSlugs[team]) continue;
   const matchedContract =
     contract ??
     contracts.get(String(primary?.xMLBAMID || backup?.xMLBAMID || ""));
   // Keep the major-league library aligned to current RosterResource payroll/control pages.
   // The full minor-league universe is supplied separately by The Board.
   if (!matchedContract) continue;
+  const team = normalizeTeam(
+    depthAssignment?.team ||
+      primary?.Team ||
+      backup?.Team ||
+      matchedContract.team,
+  );
+  if (!teamSlugs[team]) continue;
   const age = Number(matchedContract.summary?.age) || null;
   const isPitcher = primary?._stats === "pit";
   const isTwoWay = primary?._stats === "twp";
-  const rosProjection = steamerRosById.get(id);
+  const rosProjection =
+    steamerRosById.get(id) ??
+    (depthAssignment
+      ? { WAR: depthAssignment.projectedWar }
+      : undefined);
   const contractYears = matchedContract.years.length
     ? matchedContract.years
     : [{ Season: BASE_YEAR, Type: "PRE-ARB", Salary: 780000, ArbYear: 0 }];
@@ -617,7 +695,9 @@ for (const id of projectionIds) {
     ? "ZiPS"
     : steamerById.has(id)
       ? "Steamer"
-      : "Marcel + aging";
+      : depthAssignment?.activeRoster
+        ? "RosterResource + Marcel aging"
+        : "Marcel + aging";
   const currentWar = Number(primary?.WAR ?? backup?.WAR ?? 0);
   const future2027 = Number(zips2027ById.get(id)?.WAR);
   const future2028 = Number(zips2028ById.get(id)?.WAR);
@@ -652,7 +732,11 @@ for (const id of projectionIds) {
   const role = isTwoWay
     ? "two-way"
     : isPitcher
-      ? pitcherRole(primary ?? backup ?? rosProjection)
+      ? depthAssignment?.depthPosition === "RP"
+        ? "reliever"
+        : depthAssignment?.depthPosition === "SP"
+          ? "starter"
+          : pitcherRole(primary ?? backup ?? rosProjection)
       : "position";
   const expectedIncentives = expectedPlayingTimeIncentives(
     matchedContract.incentives,
@@ -699,7 +783,7 @@ for (const id of projectionIds) {
     return arbitrationMetrics(
       role,
       [],
-      explicitProjection,
+      explicitProjection ?? primary ?? backup ?? rosProjection,
       Math.pow(isPitcher ? 0.93 : 0.96, yearsBeyondExplicit),
     );
   };
@@ -854,9 +938,12 @@ for (const id of projectionIds) {
       };
     }
   }
-  const ytdWar = history
+  const historyYtdWar = history
     .filter((row) => Number(row.Season) === BASE_YEAR)
     .reduce((sum, row) => sum + (Number(row.WAR) || 0), 0);
+  const ytdWar = history.some((row) => Number(row.Season) === BASE_YEAR)
+    ? historyYtdWar
+    : (depthAssignment?.actualWar ?? 0);
   mlb.push({
     id: `mlb-${primary?.xMLBAMID || primary?.playerid}`,
     kind: "mlb",
@@ -864,7 +951,16 @@ for (const id of projectionIds) {
     team,
     position: isTwoWay
       ? "TWP"
-      : primary?.positionDB || primary?.minpos || (isPitcher ? "P" : "UTIL"),
+      : depthAssignment?.eligiblePosition ||
+        primary?.positionDB ||
+        primary?.minpos ||
+        (isPitcher ? "P" : "UTIL"),
+    depthPosition: isTwoWay
+      ? "TWP"
+      : depthAssignment?.depthPosition ||
+        primary?.positionDB ||
+        primary?.minpos ||
+        (isPitcher ? "P" : "UTIL"),
     role,
     age: age ? Math.floor(age) : isPitcher ? 28 : 27,
     source: {

@@ -58,6 +58,8 @@ test("keeps rankings, search, and the yearly chart in the client", async () => {
   assert.match(page, /findTradeTargets/);
   assert.match(page, /generateOfferPackages/);
   assert.match(page, /45% season-to-date fWAR/);
+  assert.match(page, /Current team and position assignments come from/);
+  assert.match(page, /RosterResource depth charts/);
   assert.match(page, /FanGraphs odds/);
   assert.match(page, /Open in trade builder/);
   assert.match(page, /setRankingTeam/);
