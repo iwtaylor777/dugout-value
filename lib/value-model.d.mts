@@ -4,6 +4,7 @@ export type ModelSettingsShape = {
   relieverRosterWar: number;
   timingPreference: number;
   starPremium: number;
+  starThreshold: number;
   relieverPremium: number;
   inflation: number;
   minimumSalary: number;

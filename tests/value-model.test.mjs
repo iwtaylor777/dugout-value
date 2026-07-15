@@ -146,6 +146,27 @@ test("role-aware roster burden gives relievers the intended baseline", () => {
   );
 });
 
+test("the star premium threshold is explicit and editable", () => {
+  const season = { year: 2027, war: 4, ros: false };
+  const player = { position: "SS", role: "position" };
+  const earlierPremium = marketValueForSeason(
+    player,
+    season,
+    { ...initialSettings, inflation: 0, starThreshold: 2 },
+    database,
+  );
+  const laterPremium = marketValueForSeason(
+    player,
+    season,
+    { ...initialSettings, inflation: 0, starThreshold: 3 },
+    database,
+  );
+
+  assert.ok(Math.abs(earlierPremium - 47.4) < 1e-9);
+  assert.ok(Math.abs(laterPremium - 43.8) < 1e-9);
+  assert.ok(earlierPremium > laterPremium);
+});
+
 test("player options preserve downside but do not invent club upside", () => {
   const player = {
     id: "test-option",

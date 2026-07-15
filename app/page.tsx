@@ -151,6 +151,7 @@ type ModelSettings = {
   relieverRosterWar: number;
   timingPreference: number;
   starPremium: number;
+  starThreshold: number;
   relieverPremium: number;
   inflation: number;
   minimumSalary: number;
@@ -291,6 +292,7 @@ const sharedSettings = (value: unknown): ModelSettings => {
     relieverRosterWar: [0, 10],
     timingPreference: [0, 100],
     starPremium: [0, 200],
+    starThreshold: [0, 10],
     relieverPremium: [0, 200],
     inflation: [0, 100],
     minimumSalary: [0, 10],
@@ -1576,7 +1578,8 @@ export default function Home() {
           <div>
             <span>Market curve</span>
             <strong>
-              ${settings.dollarsPerWar}M + {settings.starPremium}% star premium
+              ${settings.dollarsPerWar}M + {settings.starPremium}% above{" "}
+              {settings.starThreshold} net WAR
             </strong>
           </div>
           <div>
@@ -1645,7 +1648,7 @@ export default function Home() {
               />
             </label>
             <label>
-              <span>Star premium after 2 net WAR</span>
+              <span>Star premium</span>
               <NumericField
                 label="Star premium"
                 value={settings.starPremium}
@@ -1655,6 +1658,18 @@ export default function Home() {
                 }
               />
               <em>%</em>
+            </label>
+            <label>
+              <span>Premium starts after</span>
+              <NumericField
+                label="Net WAR before the star premium begins"
+                value={settings.starThreshold}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, starThreshold: value })
+                }
+              />
+              <em>net WAR</em>
             </label>
             <label>
               <span>Position player / SP burden</span>
@@ -2730,12 +2745,36 @@ export default function Home() {
                     </p>
                     <p>
                       Wins above that burden are priced at $12 million per WAR.
-                      The first two net wins use that base price; additional wins
-                      receive a restrained 30% star premium because elite
-                      production is harder to replace than average production.
-                      The default reliever premium is zero because FanGraphs
-                      pitcher WAR already recognizes leverage. All of these
-                      assumptions are editable in the tool.
+                      The first two net wins use that base price; each additional
+                      win is priced 30% higher, at $15.6 million. Because the
+                      roster burden comes first, the default premium begins at
+                      2.5 projected WAR for a full-season position player or
+                      starter—not at 2.0 raw WAR. The cutoff is prorated along
+                      with the burden for the rest of 2026.
+                    </p>
+                    <div className="risk-explainer">
+                      <span>Why a 30% premium after two net WAR?</span>
+                      <strong>The public market supports a curve; 30% is a conservative calibration, not a discovered constant.</strong>
+                      <p>
+                        A 2026 free-agent study found players projected for at
+                        least two WAR were paid roughly 42% more per win among
+                        starters and 54% more among hitters than the groups below
+                        two WAR. That comparison also captures playing-time
+                        certainty, scarcity, and a small top tier, so Dugout
+                        Value does not import the full gap. It applies a smaller
+                        premium only to the marginal wins above the cutoff,
+                        producing a smooth curve with no value cliff.
+                      </p>
+                    </div>
+                    <p>
+                      Two net WAR is the default because its 2.5-WAR raw
+                      equivalent sits above the study&apos;s two-WAR split without
+                      waiting until 3.5 raw WAR, where a three-net-WAR cutoff
+                      would begin. In other words, it rewards clearly
+                      above-average regulars without labeling every useful
+                      starter a star. Both the premium and its net-WAR cutoff are
+                      editable. The default reliever premium is zero because
+                      FanGraphs pitcher WAR already recognizes leverage.
                     </p>
                   </section>
 
@@ -2814,13 +2853,15 @@ export default function Home() {
                       uncertainty is capped at 45%.
                     </p>
                     <div className="risk-explainer">
-                      <span>What “+8 risk” meant</span>
-                      <strong>Eight risk points widen each side of the range by four percentage points.</strong>
+                      <span>How to read the range</span>
+                      <strong>The center is the estimate. The low and high values show how uncertain that estimate is.</strong>
                       <p>
-                        If a player had a ±20% range before the injury context,
-                        the same central value would show roughly ±24% afterward.
-                        It is not an 8% discount, an $8 million deduction, or a
-                        change to projected WAR.
+                        A $40 million central value with a ±25% range appears as
+                        $30 million–$50 million. Increasing player uncertainty
+                        widens those endpoints but leaves the $40 million center
+                        and the projected WAR unchanged. In the editor, two
+                        player-uncertainty points add one percentage point to
+                        each side of the range.
                       </p>
                     </div>
                     <p>
@@ -2847,10 +2888,27 @@ export default function Home() {
                       Player central values and entered cash or retained salary
                       add directly. Package ranges do not simply add every
                       player&apos;s best and worst outcome. The model keeps 40% of
-                      uncertainty shared—because every projection system can be
-                      wrong in the same direction—while diversifying the
-                      remaining player-specific risk.
+                      player-value errors correlated as shared model risk while
+                      diversifying the remaining player-specific risk.
                     </p>
+                    <div className="risk-explainer">
+                      <span>What shared package uncertainty means</span>
+                      <strong>It is a correlation assumption for the range—not a 40% chance of failure or a 40% value haircut.</strong>
+                      <p>
+                        Projection systems can miss every player in the same
+                        direction because the run environment, aging curve, or
+                        price of a win was wrong. That is shared risk. Injuries
+                        and individual development are more diversifiable. For
+                        example, two $20 million players with ±$5 million
+                        individual ranges form a $40 million package. Adding the
+                        endpoints would give $30 million–$50 million; treating
+                        every outcome as independent would give about $33
+                        million–$47 million. Keeping a 40% shared component lands
+                        between them, at roughly $32 million–$48 million. The
+                        package center remains $40 million, and cash adds without
+                        uncertainty.
+                      </p>
+                    </div>
                     <p>
                       Range overlap is the primary trade signal. A separate
                       package-shape warning appears when otherwise-close totals
@@ -2914,10 +2972,10 @@ export default function Home() {
                     <dl>
                       <div><dt>$12M</dt><dd>Base price per net WAR</dd></div>
                       <div><dt>0.5 / 0.2</dt><dd>Roster burden by role</dd></div>
-                      <div><dt>+30%</dt><dd>Premium above two net WAR</dd></div>
+                      <div><dt>+30%</dt><dd>Marginal premium above two net WAR</dd></div>
                       <div><dt>0%</dt><dd>Future-year discount</dd></div>
                       <div><dt>3%</dt><dd>Annual market inflation</dd></div>
-                      <div><dt>40%</dt><dd>Shared package uncertainty</dd></div>
+                      <div><dt>40%</dt><dd>Assumed error correlation in package ranges</dd></div>
                     </dl>
                   </div>
                   <div className="method-signal-key">
@@ -2982,6 +3040,13 @@ export default function Home() {
                 rel="noreferrer"
               >
                 2026 free-agent win prices ↗
+              </a>
+              <a
+                href="https://baseballprojection.substack.com/p/measuring-the-cost-of-free-agents"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Free-agent price curve study ↗
               </a>
               <a
                 href="https://www.mlb.com/glossary/transactions/rule-5-draft"

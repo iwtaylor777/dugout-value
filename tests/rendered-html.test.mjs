@@ -36,7 +36,7 @@ test("server-renders the trade builder", async () => {
   assert.match(html, /Value rankings/);
   assert.match(html, /Value by control year/);
   assert.match(html, /Neutral · no discount/);
-  assert.match(html, /30<!-- -->% star premium/);
+  assert.match(html, /30<!-- -->% above/);
   assert.match(html, /role="combobox"/);
   assert.match(html, /Cash sent \/ salary retained by/);
   assert.match(html, /Trade comparison scoreboard/);
@@ -96,6 +96,7 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(model, /relieverRosterWar: 0\.2/);
   assert.match(model, /timingPreference: 0/);
   assert.match(model, /starPremium: 30/);
+  assert.match(model, /starThreshold: 2/);
   assert.match(model, /player\.role === "reliever"/);
   assert.match(page, /rosterContext/);
   assert.match(page, /Scouting risk/);
@@ -125,13 +126,17 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /Reset to source/);
   assert.doesNotMatch(page, /window\.confirm/);
   assert.match(page, /So what is a baseball player actually worth\?/);
-  assert.match(page, /Eight risk points widen each side of the range by four percentage points/);
+  assert.match(page, /The center is the estimate/);
+  assert.doesNotMatch(page, /What “\+8 risk” meant/);
+  assert.match(page, /30% is a conservative calibration/);
+  assert.match(page, /Both the premium and its net-WAR cutoff are/);
   assert.match(page, /Moves the central value/);
   assert.match(page, /Moves only the range/);
   assert.match(page, /setLeftCash/);
   assert.match(page, /packageConsolidation/);
   assert.match(page, /packageRange/);
-  assert.match(page, /keeps 40% of\s+uncertainty shared/);
+  assert.match(page, /keeps 40% of\s+player-value errors correlated/);
+  assert.match(page, /not a 40% chance of failure or a 40% value haircut/);
   assert.match(page, /Package shape/);
   assert.match(page, /leftCash,/);
   assert.match(audit, /Navigate search with keyboard/);
