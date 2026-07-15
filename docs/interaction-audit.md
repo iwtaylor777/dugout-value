@@ -12,7 +12,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Assumptions | Open or close model settings | Works, but terminology is finance-heavy | Use baseball language and make the active valuation lens obvious |
 | Assumptions | Edit market inputs | Recalculates immediately | Keep immediate feedback; guard against misleading labels and invalid negative values |
 | Assumptions | Choose neutral or win-now timing | Not available as an intuitive action | Add a clear lens; neutral timing is the default |
-| Team package | Change a team | Clearing a populated side can be destructive | Warn before clearing that package; preserve the other side and its selection |
+| Team package | Change a team | A confirmation interrupts a frequent, easily reversible setup action | Change immediately, clear only that package, and preserve the other side and its selection |
 | Team package | Focus player search | Opens high-value suggestions | Keep suggestions ranked and scoped to the selected organization |
 | Team package | Browse initial search suggestions | The first 12 names can look like the complete organization | Label them as top suggestions and invite typing to search the full organization |
 | Team package | Type a partial name / position / FV | Works | Keep partial matching and a useful no-results message |
@@ -32,7 +32,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Player editor | Edit custom identity | Works | Preserve; official records remain non-editable |
 | Player editor | Change or undo an official estimate | Edits recalculate immediately but can become indistinguishable from source data | Mark edited players as Adjusted and provide a one-click Reset to source action |
 | Player editor | Change rookie value basis | Works | Preserve projection/FV/blend choices |
-| Player editor | Change risk | Works | Preserve immediate range update |
+| Player editor | Change risk | The “+8 risk” shorthand looks like an 8% or $8M penalty | Label risk as points, explain that two points widen each side of the range by one percentage point, and state that central value is unchanged |
 | Player editor | Add/edit a control year | Works | Keep salary-mode behavior and calculated surplus readable |
 | Player editor | Read a contract with an opt-out | Later guaranteed years look like unconditional club control | Stop crediting upside after the first opt-out while retaining downside if the player stays |
 | Player editor | Compare mutually exclusive contract paths | Complex club/player/mutual branches can be silently combined or reduced to one misleading estimate | Default to the conservative unilateral path; let the user switch one complete branch at a time and immediately update the table, chart, and value |
@@ -89,3 +89,4 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Pass 14 — prospect tier calibration:** measured the Board snapshot's large same-grade ties, then used its published ordinal rank as a bounded ±5% within-tier tiebreaker. FV, player type, roster pressure, and user scouting adjustments remain more influential; recent graduates receive the same calibration when their last prospect rank is blended into MLB projections.
 - **Pass 15 — current availability:** audited all 269 active RosterResource IL records and found no duplicate active entries; 203 joined to the current MLB trade-value universe. Added status, injury, eligibility/update context, package and ranking flags, and a bounded source-driven uncertainty increase without double-counting lost playing time in the central projection.
 - **Pass 16 — trade scoreboard and edit trust:** moved the comparison out of the cramped center rail into a full-width scoreboard beneath both packages, clarified the direction of cash/retained salary, labeled abbreviated search suggestions, protected populated packages from accidental team changes, and made every official-player override visible and reversible.
+- **Pass 17 — plain-language methodology:** removed the team-change interruption and deadline badge, replaced the ambiguous injury-risk shorthand with its actual range effect, and expanded Method into a readable article that separates central-value inputs, uncertainty inputs, and context-only warnings.

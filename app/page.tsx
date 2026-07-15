@@ -198,6 +198,8 @@ const money = (value: number) =>
   `${value < 0 ? "−" : ""}$${Math.abs(value).toFixed(1)}M`;
 const signedPercent = (value: number) =>
   `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(1)}%`;
+const shortNumber = (value: number) =>
+  Number(value.toFixed(1)).toLocaleString("en-US");
 const deepCopy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 const isAdjusted = (player?: Player) =>
   Boolean(
@@ -683,14 +685,6 @@ export default function Home() {
       return;
     const clearedIds = side === "left" ? leftIds : rightIds;
     const retainedIds = side === "left" ? rightIds : leftIds;
-    const clearedCash = side === "left" ? leftCash : rightCash;
-    if (
-      (clearedIds.length > 0 || clearedCash > 0) &&
-      !window.confirm(
-        `Changing ${teamName(side === "left" ? leftTeam : rightTeam)} will clear that package. Continue?`,
-      )
-    )
-      return;
     if (side === "left") {
       setLeftTeam(team);
       setLeftIds([]);
@@ -1160,15 +1154,6 @@ export default function Home() {
                 ? "Put together a deal, see how the value lines up, and tune any assumption."
                 : "A just-for-fun leaguewide ranking from the same transparent model."}
             </p>
-          </div>
-          <div className="snapshot">
-            <strong>2026 deadline model</strong>
-            <small>
-              {(
-                database.meta.mlbCount + database.meta.prospectCount
-              ).toLocaleString()}{" "}
-              players · Updated {prettyDate(database.meta.refreshed)}
-            </small>
           </div>
         </section>
         <div
@@ -1677,14 +1662,23 @@ export default function Home() {
                       <span>Availability</span>
                       <strong>{availabilityLabel(selected)}</strong>
                     </div>
-                    <b>+{selected.availability.riskAdjustment} risk</b>
+                    <b>
+                      Range ±
+                      {shortNumber(
+                        selected.availability.riskAdjustment / 2,
+                      )}{" "}
+                      pts
+                    </b>
                     <small>
                       {selected.availability.latestUpdate}
                       {selected.availability.eligibleDate
                         ? ` · Eligible ${selected.availability.eligibleDate}`
                         : ""}
-                      . Steamer RoS already handles expected missed time, so
-                      this widens the range without cutting central WAR again.
+                      . This injury adds {selected.availability.riskAdjustment}{" "}
+                      risk points; every two points widen each side of the
+                      value range by one percentage point, up to the model cap.
+                      Central value stays unchanged because Steamer RoS already
+                      accounts for expected missed time.
                     </small>
                   </div>
                 )}
@@ -1799,7 +1793,7 @@ export default function Home() {
                     )}
                     <div className="risk-field">
                       <label htmlFor="risk">
-                        Player-specific risk <strong>{selected.risk}%</strong>
+                        Player uncertainty <strong>{selected.risk} points</strong>
                       </label>
                       <input
                         id="risk"
@@ -1815,6 +1809,11 @@ export default function Home() {
                           )
                         }
                       />
+                      <small>
+                        Two points add one percentage point to each side of the
+                        value range. This changes the range, never the central
+                        value.
+                      </small>
                     </div>
                     <div className="projection-title">
                       <div>
@@ -2258,71 +2257,261 @@ export default function Home() {
             id="methodology"
             tabIndex={-1}
           >
-            <div className="section-title">
-              <div>
-                <span>Open model</span>
-                <h2>How Dugout Value thinks</h2>
+            <div className="method-article">
+              <header className="method-hero">
+                <div>
+                  <span className="method-kicker">Dugout Value methodology</span>
+                  <h2>So what is a baseball player actually worth?</h2>
+                  <p className="method-deck">
+                    A trade model should answer a different question than a
+                    player ranking. It is not simply asking who is better. It is
+                    asking how many wins a club is likely to receive, what those
+                    wins would cost to buy, and how much salary and uncertainty
+                    come with them.
+                  </p>
+                  <p className="method-byline">
+                    Model snapshot · {(
+                      database.meta.mlbCount + database.meta.prospectCount
+                    ).toLocaleString()} players · Data updated {prettyDate(database.meta.refreshed)}
+                  </p>
+                </div>
+                <button type="button" onClick={() => setShowMethod(false)}>
+                  Back to the tool
+                </button>
+              </header>
+
+              <div className="method-short-version">
+                <span>The short version</span>
+                <p>
+                  <strong>Trade value is expected on-field value minus expected cost.</strong>{" "}
+                  Dugout Value estimates that surplus for every remaining year
+                  of club control, then shows a range around the answer because
+                  projections, health, development, and contracts are never
+                  certain.
+                </p>
               </div>
-              <button onClick={() => setShowMethod(false)}>Close</button>
-            </div>
-            <div className="method-grid">
-              <article>
-                <b>01</b>
-                <h3>Rest-of-season first</h3>
-                <p>
-                  2026 uses Steamer RoS fWAR and only the unpaid share of the
-                  current salary. Explicit 2027–28 ZiPS is used before the aging
-                  fallback, and two-way WAR is combined across roles.
-                </p>
-              </article>
-              <article>
-                <b>02</b>
-                <h3>Market curve, not one flat price</h3>
-                <p>
-                  The model subtracts a smaller roster burden for relievers,
-                  prices the first two net wins at the base rate, and gives
-                  additional wins a restrained star premium. Future seasons
-                  count equally by default; the optional win-now lens describes
-                  team behavior rather than financial time value.
-                </p>
-              </article>
-              <article>
-                <b>03</b>
-                <h3>Contracts, scouting, and roster pressure</h3>
-                <p>
-                  First-year arbitration uses role-specific projected counting
-                  stats, including saves and holds for relievers, plus a
-                  calibrated tail for record-level seasons. Later years use
-                  conservative raises from the prior salary; options and
-                  deferrals use their economic terms, and opt-outs remove future
-                  upside without erasing downside. Playing-time escalators use
-                  projected odds; mutually exclusive award bonuses stay out of
-                  the salary estimate. Trade protection is shown as a consent
-                  constraint but never quietly discounted from surplus. Young MLB players can retain recent FV
-                  value. The Board&apos;s risk label changes a prospect&apos;s range,
-                  not its median. Its overall rank makes only a small, bounded
-                  adjustment within the same FV tier, so No. 35 and No. 120 are
-                  no longer treated as identical assets without overruling the
-                  scouting grade. Signing year and option status identify Rule 5
-                  and 40-man pressure as a separate roster-leverage adjustment.
-                  Cash or retained salary is a separate dollar-for-dollar deal
-                  adjustment; CBT and payment timing remain outside the model.
-                  Current IL status, injury description, and return update come
-                  from RosterResource. They seed a wider uncertainty range but
-                  never reduce central WAR again after the RoS projection has
-                  already accounted for expected missed time.
-                  Package totals stay additive, but the trade verdict flags a
-                  close high-value offer that replaces one elite headliner with
-                  several materially smaller assets. That context never changes
-                  the displayed dollar values. Package ranges keep 40% shared
-                  model risk while diversifying the remaining player-specific
-                  uncertainty, rather than assuming every player hits the same
-                  upside or downside at once.
-                </p>
-              </article>
+
+              <div className="method-layout">
+                <article className="method-story">
+                  <section>
+                    <span className="method-step">01 · The basic idea</span>
+                    <h3>Surplus value, not player quality</h3>
+                    <p>
+                      A five-win player making a market salary can be more useful
+                      than valuable in trade. A three-win player earning close to
+                      the league minimum can carry enormous trade value. Dugout
+                      Value works one control year at a time: estimate the wins,
+                      convert them to a public-market price, subtract the salary
+                      obligation, and add the seasons together.
+                    </p>
+                    <div className="method-formula">
+                      <span>For each control year</span>
+                      <strong>Market value of projected fWAR − expected salary = surplus value</strong>
+                    </div>
+                    <p>
+                      The result is stated in millions of dollars so contracts,
+                      prospects, and cash considerations can share one scale. It
+                      is a comparison tool—not a prediction of the exact return a
+                      general manager will accept.
+                    </p>
+                  </section>
+
+                  <section>
+                    <span className="method-step">02 · Projecting major leaguers</span>
+                    <h3>Start with the season that still has to be played</h3>
+                    <p>
+                      For 2026, the model uses FanGraphs Steamer rest-of-season
+                      fWAR and only the unpaid portion of the current salary.
+                      That prevents already-produced wins and already-paid salary
+                      from inflating a deadline valuation. Explicit future ZiPS
+                      projections are used when available; otherwise a simple
+                      Marcel-style aging fallback extends the projection. Two-way
+                      value is combined across hitting and pitching.
+                    </p>
+                    <p>
+                      Not every fraction of a win is scarce. The default model
+                      treats 0.5 WAR for a position player or starter—and 0.2 WAR
+                      for a reliever—as the annual roster opportunity cost. That
+                      is the value a club should be able to find simply by using
+                      the roster spot. For a partial season, the burden is scaled
+                      to the time remaining.
+                    </p>
+                    <p>
+                      Wins above that burden are priced at $12 million per WAR.
+                      The first two net wins use that base price; additional wins
+                      receive a restrained 30% star premium because elite
+                      production is harder to replace than average production.
+                      The default reliever premium is zero because FanGraphs
+                      pitcher WAR already recognizes leverage. All of these
+                      assumptions are editable in the tool.
+                    </p>
+                  </section>
+
+                  <section>
+                    <span className="method-step">03 · Contracts and arbitration</span>
+                    <h3>Control is valuable only at the right price</h3>
+                    <p>
+                      Guaranteed salaries are taken from RosterResource. Club,
+                      player, mutual, vesting, and injury-conditional options are
+                      not treated as identical. A club option preserves upside
+                      while limiting downside to its buyout. A player option does
+                      the reverse. A mutual option is valued as its buyout unless
+                      both sides have a realistic reason to exercise it, and a
+                      vesting option is probability-weighted. Opt-outs remove
+                      future club upside without pretending the player must leave
+                      if the contract turns unfavorable.
+                    </p>
+                    <p>
+                      Arbitration is modeled separately from the free-agent
+                      market. First-year estimates use the traditional statistics
+                      panels tend to reward: playing time, power, run production,
+                      and steals for hitters; innings, starts, wins, ERA, and
+                      strikeouts for starters; and appearances, saves, and holds
+                      for relievers. Later arbitration years use conservative,
+                      performance-bounded raises from the prior salary rather
+                      than implausibly doubling pay every season.
+                    </p>
+                    <p>
+                      Playing-time escalators are probability-weighted. Mutually
+                      exclusive award bonuses are not stacked together. When a
+                      contract has truly different future paths, the editor shows
+                      one complete scenario at a time. Trade protection is shown
+                      as a permission constraint, not buried as a value haircut.
+                    </p>
+                  </section>
+
+                  <section>
+                    <span className="method-step">04 · Prospects and recent graduates</span>
+                    <h3>Let scouting speak where projections are weakest</h3>
+                    <p>
+                      Prospect central values begin with FanGraphs Future Value
+                      tiers and the historical surplus produced by hitters and
+                      pitchers in each tier. FV remains the main signal. Overall
+                      Board rank is used only as a small tiebreaker within the
+                      same FV grade, ranging from +5% to −5%; an ordinal list
+                      never overrules the scouting grade.
+                    </p>
+                    <p>
+                      Roster pressure is kept separate from talent. The editable
+                      scenarios apply a 15% Rule 5 adjustment, a 10% 40-man
+                      adjustment, or a 40% severe-crunch adjustment. These
+                      describe negotiating leverage and roster cost, not a claim
+                      that the player became worse. Prospect ETA does not reduce
+                      the central value under the neutral default, but it does
+                      widen the range.
+                    </p>
+                    <p>
+                      Very young major leaguers can still be valued partly from
+                      their most recent prospect grade. Projection-only, FV-only,
+                      and blended views are available. In the blend, the scouting
+                      share is capped at 80% and fades quickly as the report ages
+                      and the player accumulates service time. This keeps one
+                      quiet debut from instantly erasing years of scouting while
+                      still allowing major-league performance to take over.
+                    </p>
+                  </section>
+
+                  <section>
+                    <span className="method-step">05 · Risk and ranges</span>
+                    <h3>The middle is an estimate; the range is the honesty</h3>
+                    <p>
+                      MLB ranges begin with 10% model uncertainty. Every two
+                      player-risk points add one percentage point to each side of
+                      the range. Long-dated control adds up to another 15 points,
+                      based on how far into the future the surplus sits. Total MLB
+                      uncertainty is capped at 45%.
+                    </p>
+                    <div className="risk-explainer">
+                      <span>What “+8 risk” meant</span>
+                      <strong>Eight risk points widen each side of the range by four percentage points.</strong>
+                      <p>
+                        If a player had a ±20% range before the injury context,
+                        the same central value would show roughly ±24% afterward.
+                        It is not an 8% discount, an $8 million deduction, or a
+                        change to projected WAR.
+                      </p>
+                    </div>
+                    <p>
+                      Current IL status can add 4–14 of those risk points,
+                      depending on the injured-list category and public language
+                      such as surgery, no timetable, or a season-ending injury.
+                      The adjustment widens the range only. Steamer RoS already
+                      reflects expected missed 2026 playing time, so cutting the
+                      central projection again would double-count the injury.
+                    </p>
+                    <p>
+                      Prospects use a separate range: 18%, 24%, or 32% to start
+                      for low, medium, or high scouting risk, plus 3.5 points for
+                      each year to ETA and five additional points for pitchers,
+                      capped at 65%. These inputs change uncertainty, not the FV
+                      median.
+                    </p>
+                  </section>
+
+                  <section>
+                    <span className="method-step">06 · Building a package</span>
+                    <h3>Add the assets, then check the shape of the deal</h3>
+                    <p>
+                      Player central values and entered cash or retained salary
+                      add directly. Package ranges do not simply add every
+                      player&apos;s best and worst outcome. The model keeps 40% of
+                      uncertainty shared—because every projection system can be
+                      wrong in the same direction—while diversifying the
+                      remaining player-specific risk.
+                    </p>
+                    <p>
+                      Range overlap is the primary trade signal. A separate
+                      package-shape warning appears when otherwise-close totals
+                      exchange one $50 million-plus headliner for several pieces
+                      whose best player is at least 35% lower in value. The
+                      warning does not change either total; it simply recognizes
+                      that elite talent usually carries a consolidation premium.
+                    </p>
+                  </section>
+
+                  <section>
+                    <span className="method-step">07 · What the model cannot know</span>
+                    <h3>A starting point, not a front office in a browser</h3>
+                    <p>
+                      Public data cannot see a club&apos;s private medical review,
+                      pitch-design work, makeup evaluations, player-development
+                      plan, payroll budget, competitive window, or the leverage
+                      created by other bidders. CBT effects, payment timing,
+                      positional fit, and transaction-specific option language
+                      can also matter. The best use of Dugout Value is to make
+                      assumptions visible, spot obviously uneven proposals, and
+                      show exactly which baseball disagreement is driving the
+                      result.
+                    </p>
+                  </section>
+                </article>
+
+                <aside className="method-sidebar" aria-label="Model quick reference">
+                  <div>
+                    <span>Default model card</span>
+                    <dl>
+                      <div><dt>$12M</dt><dd>Base price per net WAR</dd></div>
+                      <div><dt>0.5 / 0.2</dt><dd>Roster burden by role</dd></div>
+                      <div><dt>+30%</dt><dd>Premium above two net WAR</dd></div>
+                      <div><dt>0%</dt><dd>Future-year discount</dd></div>
+                      <div><dt>3%</dt><dd>Annual market inflation</dd></div>
+                      <div><dt>40%</dt><dd>Shared package uncertainty</dd></div>
+                    </dl>
+                  </div>
+                  <div className="method-signal-key">
+                    <span>What changes what?</span>
+                    <h4>Moves the central value</h4>
+                    <p>WAR, salary, contract options, FV, roster pressure, cash, and the optional timing lens.</p>
+                    <h4>Moves only the range</h4>
+                    <p>Player risk, injury context, forecast horizon, scouting risk, ETA, and pitcher uncertainty.</p>
+                    <h4>Adds context only</h4>
+                    <p>Trade protection and the quantity-for-quality package warning.</p>
+                  </div>
+                </aside>
+              </div>
             </div>
             <div className="source-list">
-              <span>Built-in sources</span>
+              <span>Read the source material</span>
               <a
                 href="https://www.fangraphs.com/projections?type=steamerr&amp;stats=bat&amp;pos=all"
                 target="_blank"

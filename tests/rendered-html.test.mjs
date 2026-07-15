@@ -97,7 +97,7 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /Board rank/);
   assert.match(model, /prospectRankAdjustment/);
   assert.match(page, /Club control through/);
-  assert.match(page, /Playing-time escalators use/);
+  assert.match(page, /Playing-time escalators are/);
   assert.match(page, /extra long-range uncertainty/);
   assert.match(page, /Contract path/);
   assert.match(page, /selected\.contractScenario\.options/);
@@ -116,11 +116,15 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /tradeProtection/);
   assert.match(page, /Cash sent \/ salary retained by/);
   assert.match(page, /Reset to source/);
-  assert.match(page, /Changing .* will clear that package/);
+  assert.doesNotMatch(page, /window\.confirm/);
+  assert.match(page, /So what is a baseball player actually worth\?/);
+  assert.match(page, /Eight risk points widen each side of the range by four percentage points/);
+  assert.match(page, /Moves the central value/);
+  assert.match(page, /Moves only the range/);
   assert.match(page, /setLeftCash/);
   assert.match(page, /packageConsolidation/);
   assert.match(page, /packageRange/);
-  assert.match(page, /Package ranges keep 40% shared/);
+  assert.match(page, /keeps 40% of\s+uncertainty shared/);
   assert.match(page, /Package shape/);
   assert.match(page, /leftCash,/);
   assert.match(audit, /Navigate search with keyboard/);
