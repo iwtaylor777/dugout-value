@@ -11,11 +11,17 @@ import {
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
+const PLAYOFF_ODDS_OUT = new URL(
+  "../app/data/playoff-odds.json",
+  import.meta.url,
+);
 const boardUrl = "https://www.fangraphs.com/prospects/the-board/";
 const graduatesUrl =
   "https://www.fangraphs.com/prospects/the-board/2025-graduates";
 const injuryReportUrl =
   "https://www.fangraphs.com/roster-resource/injury-report/dodgers";
+const playoffOddsUrl =
+  "https://www.fangraphs.com/standings/playoff-odds/fg/mlb";
 const projectionUrl = (type, stats) =>
   `https://www.fangraphs.com/projections?pos=all&stats=${stats}&type=${type}`;
 const historyUrl = (stats) =>
@@ -438,6 +444,7 @@ const [
   boardQueries,
   graduateQueries,
   injuryQueries,
+  playoffOddsQueries,
 ] = await Promise.all([
   loadProjection("zips"),
   loadProjection("zipsp1"),
@@ -449,6 +456,7 @@ const [
   getNextData(boardUrl),
   getNextData(graduatesUrl),
   getNextData(injuryReportUrl),
+  getNextData(playoffOddsUrl),
 ]);
 
 const boardRows = queryData(boardQueries, "prospects/the-board");
@@ -458,13 +466,15 @@ const injuryRows = queryData(
   injuryQueries,
   "roster-resource/injury-report/data",
 );
+const playoffOddsRows = queryData(playoffOddsQueries, "playoff-odds");
 if (
   !Array.isArray(boardRows) ||
   !Array.isArray(graduateRows) ||
   !Array.isArray(teamRows) ||
-  !Array.isArray(injuryRows)
+  !Array.isArray(injuryRows) ||
+  !Array.isArray(playoffOddsRows)
 )
-  throw new Error("The Board or injury-report payload is incomplete");
+  throw new Error("The Board, injury-report, or playoff-odds payload is incomplete");
 const availabilityById = activeAvailabilityByMlbId(injuryRows, BASE_YEAR);
 
 const contractRecords = new Map();
@@ -879,6 +889,7 @@ for (const id of projectionIds) {
     availability,
     seasons,
     contractScenario,
+    seasonToDateWar: Number(ytdWar.toFixed(1)),
     platformWar: Number((ytdWar + Number(rosProjection?.WAR || 0)).toFixed(1)),
     rookieMode:
       lastProspect && Number(lastProspect.servicetime || 99) < 1
@@ -941,6 +952,14 @@ const players = [...mlb, ...prospects].sort(
     a.kind.localeCompare(b.kind) ||
     a.name.localeCompare(b.name),
 );
+const playoffOdds = {};
+for (const row of playoffOddsRows) {
+  const team = normalizeTeam(row.abbName);
+  if (!teamSlugs[team] || playoffOdds[team] !== undefined) continue;
+  playoffOdds[team] = Number(
+    (100 * (Number(row.endData?.poffTitle) || 0)).toFixed(1),
+  );
+}
 const output = {
   meta: {
     refreshed: snapshotLabel,
@@ -954,14 +973,23 @@ const output = {
       "FanGraphs RosterResource",
       "FanGraphs RosterResource injury report",
       "FanGraphs The Board",
+      "FanGraphs playoff odds",
     ],
   },
   teams,
   players,
 };
+const playoffOddsOutput = {
+  refreshed: snapshotLabel,
+  source: "FanGraphs Playoff Odds",
+  sourceUrl: playoffOddsUrl,
+  mode: "FanGraphs projections",
+  odds: playoffOdds,
+};
 
 await mkdir(new URL("../app/data/", import.meta.url), { recursive: true });
 await writeFile(OUT, `${JSON.stringify(output)}\n`);
+await writeFile(PLAYOFF_ODDS_OUT, `${JSON.stringify(playoffOddsOutput, null, 2)}\n`);
 console.log(
   `Wrote ${players.length} players (${mlb.length} MLB, ${prospects.length} prospects) to ${OUT.pathname}`,
 );

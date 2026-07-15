@@ -32,6 +32,7 @@ test("server-renders the trade builder", async () => {
   assert.match(html, /<title>Dugout Value/);
   assert.match(html, /Deadline trade lab/);
   assert.match(html, /Trade builder/);
+  assert.match(html, /Trade finder/);
   assert.match(html, /Value rankings/);
   assert.match(html, /Value by control year/);
   assert.match(html, /Neutral · no discount/);
@@ -53,6 +54,12 @@ test("keeps rankings, search, and the yearly chart in the client", async () => {
   );
 
   assert.match(page, /Overall trade value rankings/);
+  assert.match(page, /Turn a roster hole into a short list/);
+  assert.match(page, /findTradeTargets/);
+  assert.match(page, /generateOfferPackages/);
+  assert.match(page, /45% season-to-date fWAR/);
+  assert.match(page, /FanGraphs odds/);
+  assert.match(page, /Open in trade builder/);
   assert.match(page, /setRankingTeam/);
   assert.match(page, /className="picker-menu"/);
   assert.match(page, /event\.key === "Enter"/);
@@ -133,4 +140,6 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(audit, /Copy a trade link \/ open a shared trade/);
   assert.match(audit, /Review trade protection/);
   assert.match(audit, /Add cash or retained salary/);
+  assert.match(audit, /Choose a roster need/);
+  assert.match(audit, /Open a suggested offer/);
 });

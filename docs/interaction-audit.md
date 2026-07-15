@@ -8,7 +8,8 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Header | Open Method | Reveals content below the fold but leaves the user in place | Reveal Method and scroll it into view |
 | Header | Load example | Restores data but can leave the user on Rankings | Restore example, switch to Trade Builder, close stray menus, clear cash adjustments, and clear a stale shared-trade token |
 | Header | Start a new trade | Clears the packages | Also reset searches, cash, selection, panels, shared-trade state, and return to Trade Builder |
-| Navigation | Switch Trade Builder / Rankings | Works | Preserve each view’s useful filter/package state; support visible focus |
+| Navigation | Switch Trade Builder / Trade Finder / Rankings | Works | Preserve each view’s useful filters, target, and package state; support visible focus |
+| Navigation | Open Trade Finder | Missing | Preserve the selected club, need, seller threshold, and target while moving between tabs |
 | Assumptions | Open or close model settings | Works, but terminology is finance-heavy | Use baseball language and make the active valuation lens obvious |
 | Assumptions | Edit market inputs | Recalculates immediately | Keep immediate feedback; guard against misleading labels and invalid negative values |
 | Assumptions | Choose neutral or win-now timing | Not available as an intuitive action | Add a clear lens; neutral timing is the default |
@@ -44,6 +45,12 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Prospect editor | Account for Rule 5 / 40-man pressure | Missing | Add a transparent context adjustment without pretending it is intrinsic talent |
 | Rankings | Search, filter team, filter player type | Works | Preserve filters and stable model ordering |
 | Rankings | Open a ranked player | Switches views but can feel disconnected | Label clearly and bring the editor into view on narrow screens |
+| Trade Finder | Select a favorite team | Missing | Re-rank all position groups and preselect the club’s clearest relative need |
+| Trade Finder | Choose a roster need | Missing | Compare season-to-date and rest-of-season fWAR only against the same position group across MLB |
+| Trade Finder | Widen or narrow the seller pool | Missing | Use current source-backed playoff odds and make the threshold explicit |
+| Trade Finder | Choose a target | Missing | Rank candidates by estimated rest-of-season improvement plus a transparent deadline-fit signal for control, age, health, and trade protection; show the underlying inputs and never claim a player is available |
+| Trade Finder | Compare suggested offers | Missing | Produce multiple package shapes from positive-value prospects and young cost-controlled MLB players without trading from the selected hole |
+| Trade Finder | Open a suggested offer | Missing | Load both clubs, the target, and the proposed package into Trade Builder for full editing rather than treating a suggestion as final |
 | Method | Close Method | Works | Preserve |
 | Method | Open source links | Works in a new tab | Preserve source labeling and safe link behavior |
 | Responsive | Use all primary actions on a phone | Layout adapts | Keep controls at least comfortably tappable and avoid clipped search results |
@@ -70,6 +77,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Package shape:** keep player surplus additive and auditable. When a close high-value offer replaces one $50M+ headliner with multiple pieces whose best asset is at least 35% lower, show a consolidation warning without altering either package total.
 - **Package uncertainty:** keep central package value fully additive, but do not add every player’s extreme range endpoint as if all assets boom or bust together. Preserve a conservative 40% shared model-risk component and diversify the remaining player-specific uncertainty across the package.
 - **Dead money:** a payroll obligation is not automatically a tradable asset. Contract-only players receive a Marcel fallback only with a 2025/26 playing record; retired-player and dead-money rows stay out of the player picker and rankings.
+- **Trade discovery:** rank needs within position—never by comparing raw catcher WAR with a whole outfield or pitching staff. Weight season-to-date rank 45% and forward-looking Steamer RoS rank 55%. Use FanGraphs playoff odds only to define the seller pool, then combine estimated RoS WAR gained above the buyer’s marginal starter with a visible deadline-fit signal that favors shorter control and discounts young core players, current IL players, and full trade protection. Offer concepts are transparent central-value matches, not rumors or predictions of club intent.
 
 ## Loop results
 
@@ -90,3 +98,4 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Pass 15 — current availability:** audited all 269 active RosterResource IL records and found no duplicate active entries; 203 joined to the current MLB trade-value universe. Added status, injury, eligibility/update context, package and ranking flags, and a bounded source-driven uncertainty increase without double-counting lost playing time in the central projection.
 - **Pass 16 — trade scoreboard and edit trust:** moved the comparison out of the cramped center rail into a full-width scoreboard beneath both packages, clarified the direction of cash/retained salary, labeled abbreviated search suggestions, protected populated packages from accidental team changes, and made every official-player override visible and reversible.
 - **Pass 17 — plain-language methodology:** removed the team-change interruption and deadline badge, replaced the ambiguous injury-risk shorthand with its actual range effect, and expanded Method into a readable article that separates central-value inputs, uncertainty inputs, and context-only warnings.
+- **Pass 18 — trade discovery:** added a team-first Trade Finder that diagnoses league-relative position-group needs, filters candidate sellers by current FanGraphs playoff odds, estimates marginal RoS upgrades, generates three distinct value-matched offer shapes, and hands any suggestion to the editable Trade Builder.

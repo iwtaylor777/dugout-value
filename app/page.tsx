@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import databaseJson from "./data/player-database.json";
+import playoffOddsJson from "./data/playoff-odds.json";
 import {
   effectiveSeasons,
   initialSettings as modelInitialSettings,
@@ -15,6 +16,18 @@ import {
   packageConsolidation,
   packageRange,
 } from "../lib/trade-package.mjs";
+import {
+  DISCOVERY_POSITIONS,
+  findTradeTargets,
+  generateOfferPackages,
+  rankTeamNeeds,
+} from "../lib/trade-discovery.mjs";
+import type {
+  DiscoveryOffer,
+  DiscoveryOfferAsset,
+  DiscoveryPosition,
+  DiscoveryTarget,
+} from "../lib/trade-discovery.mjs";
 
 type SalaryMode =
   | "fixed"
@@ -102,6 +115,7 @@ type MLBPlayer = {
   availability?: Availability;
   seasons: MLBSeason[];
   contractScenario?: ContractScenario;
+  seasonToDateWar?: number;
   platformWar?: number;
   rookieMode?: RookieMode;
   lastProspect?: LastProspect | null;
@@ -125,6 +139,11 @@ type ProspectPlayer = {
   custom?: boolean;
 };
 type Player = MLBPlayer | ProspectPlayer;
+type PositionDisplayPlayer = {
+  kind: "mlb" | "prospect";
+  position: string;
+  role?: "position" | "starter" | "reliever" | "two-way";
+};
 type Team = { abbr: string; name: string };
 type ModelSettings = {
   dollarsPerWar: number;
@@ -169,6 +188,14 @@ type Database = {
   players: Player[];
 };
 type ShareStatus = "idle" | "loaded" | "copied" | "error";
+type ActiveTab = "trade" | "discover" | "rankings";
+type PlayoffOddsData = {
+  refreshed: string;
+  source: string;
+  sourceUrl: string;
+  mode: string;
+  odds: Record<string, number>;
+};
 type SharedTradeState = {
   v: 1;
   snapshot?: string;
@@ -184,6 +211,7 @@ type SharedTradeState = {
 };
 
 const database = databaseJson as unknown as Database;
+const playoffOddsData = playoffOddsJson as PlayoffOddsData;
 const BASE_YEAR = database.meta.baseYear;
 const initialPlayers = Object.fromEntries(
   database.players.map((player) => [player.id, player]),
@@ -193,6 +221,12 @@ const prospectValues = modelProspectValues as Record<
   string,
   Record<ProspectType, { value: number; war: number; star: number }>
 >;
+const INITIAL_DISCOVERY_POSITION = (rankTeamNeeds(
+  database.players,
+  database.teams,
+  "SEA",
+  BASE_YEAR,
+)[0]?.id ?? "SP") as DiscoveryPosition;
 
 const money = (value: number) =>
   `${value < 0 ? "−" : ""}$${Math.abs(value).toFixed(1)}M`;
@@ -281,7 +315,7 @@ const prettyDate = (date: string) =>
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(`${date}T12:00:00Z`));
-const displayPosition = (player: Player) =>
+const displayPosition = (player: PositionDisplayPlayer) =>
   player.kind === "mlb" && player.position === "P"
     ? player.role === "reliever"
       ? "RP"
@@ -368,13 +402,19 @@ export default function Home() {
   const [rightSearch, setRightSearch] = useState("");
   const [openPicker, setOpenPicker] = useState<"left" | "right" | null>(null);
   const [pickerIndex, setPickerIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<"trade" | "rankings">("trade");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("trade");
   const [rankingType, setRankingType] = useState<"all" | "mlb" | "prospect">(
     "all",
   );
   const [rankingTeam, setRankingTeam] = useState("ALL");
   const [rankingSearch, setRankingSearch] = useState("");
   const [shareStatus, setShareStatus] = useState<ShareStatus>("idle");
+  const [discoveryTeam, setDiscoveryTeam] = useState("SEA");
+  const [discoveryPosition, setDiscoveryPosition] =
+    useState<DiscoveryPosition>(INITIAL_DISCOVERY_POSITION);
+  const [sellerThreshold, setSellerThreshold] = useState(35);
+  const [selectedDiscoveryTargetId, setSelectedDiscoveryTargetId] =
+    useState("");
 
   useEffect(() => {
     const payload = new URLSearchParams(window.location.search).get("trade");
@@ -461,6 +501,63 @@ export default function Home() {
         ]),
       ),
     [players, settings],
+  );
+  const playerList = useMemo(() => Object.values(players), [players]);
+  const discoveryNeeds = useMemo(
+    () =>
+      rankTeamNeeds(
+        playerList,
+        database.teams,
+        discoveryTeam,
+        BASE_YEAR,
+      ),
+    [discoveryTeam, playerList],
+  );
+  const selectedDiscoveryNeed =
+    discoveryNeeds.find((need) => need.id === discoveryPosition) ??
+    discoveryNeeds[0];
+  const discoveryTargets = useMemo(
+    () =>
+      findTradeTargets({
+        players: playerList,
+        values,
+        buyerTeam: discoveryTeam,
+        position: discoveryPosition,
+        playoffOdds: playoffOddsData.odds,
+        sellerThreshold,
+        baseYear: BASE_YEAR,
+      }),
+    [
+      discoveryPosition,
+      discoveryTeam,
+      playerList,
+      sellerThreshold,
+      values,
+    ],
+  );
+  const activeDiscoveryTarget =
+    discoveryTargets.find(
+      (target) => target.id === selectedDiscoveryTargetId,
+    ) ?? discoveryTargets[0];
+  const discoveryOffers = useMemo(
+    () =>
+      activeDiscoveryTarget
+        ? generateOfferPackages({
+            players: playerList,
+            values,
+            buyerTeam: discoveryTeam,
+            holePosition: discoveryPosition,
+            targetValue: activeDiscoveryTarget.tradeValue,
+            baseYear: BASE_YEAR,
+          })
+        : [],
+    [
+      activeDiscoveryTarget,
+      discoveryPosition,
+      discoveryTeam,
+      playerList,
+      values,
+    ],
   );
   const leftPackage = packageRange(leftIds, leftCash, values);
   const rightPackage = packageRange(rightIds, rightCash, values);
@@ -794,6 +891,39 @@ export default function Home() {
     setShareStatus("idle");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const changeDiscoveryTeam = (team: string) => {
+    const topNeed = rankTeamNeeds(
+      playerList,
+      database.teams,
+      team,
+      BASE_YEAR,
+    )[0]?.id as DiscoveryPosition | undefined;
+    setDiscoveryTeam(team);
+    if (topNeed) setDiscoveryPosition(topNeed);
+    setSelectedDiscoveryTargetId("");
+  };
+  const loadDiscoveryOffer = (
+    target: DiscoveryTarget,
+    offer: DiscoveryOffer,
+  ) => {
+    clearSharedTradeUrl();
+    setLeftTeam(discoveryTeam);
+    setLeftIds(offer.assetIds);
+    setLeftCash(0);
+    setRightTeam(target.player.team);
+    setRightIds([target.id]);
+    setRightCash(0);
+    setSelectedId(target.id);
+    setLeftSearch("");
+    setRightSearch("");
+    setOpenPicker(null);
+    setPickerIndex(0);
+    setShowSettings(false);
+    setShowMethod(false);
+    setShareStatus("idle");
+    setActiveTab("trade");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   const openMethod = () => {
     setShowMethod(true);
     window.setTimeout(() => {
@@ -1123,6 +1253,249 @@ export default function Home() {
     );
   };
 
+  const renderDiscovery = () => (
+    <section className="discovery-panel" aria-label="Trade discovery tool">
+      <header className="discovery-heading">
+        <div>
+          <span>Trade finder</span>
+          <h2>Turn a roster hole into a short list</h2>
+          <p>
+            Pick a club, choose one of its weakest position groups, and compare
+            upgrades from likely sellers. Then open a value-matched offer in the
+            trade builder.
+          </p>
+        </div>
+        <b>Deadline board</b>
+      </header>
+
+      <div className="discovery-controls">
+        <label>
+          <span>Your team</span>
+          <select
+            value={discoveryTeam}
+            onChange={(event) => changeDiscoveryTeam(event.target.value)}
+          >
+            {database.teams.map((team) => (
+              <option key={team.abbr} value={team.abbr}>
+                {team.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Seller pool</span>
+          <select
+            value={sellerThreshold}
+            onChange={(event) => {
+              setSellerThreshold(Number(event.target.value));
+              setSelectedDiscoveryTargetId("");
+            }}
+          >
+            <option value="20">Strong sellers · 20% odds or lower</option>
+            <option value="35">Likely sellers · 35% odds or lower</option>
+            <option value="50">Wider market · 50% odds or lower</option>
+          </select>
+        </label>
+        <div className="discovery-source">
+          <span>Market context</span>
+          <strong>{playoffOddsData.mode}</strong>
+          <a href={playoffOddsData.sourceUrl} target="_blank" rel="noreferrer">
+            FanGraphs odds · {prettyDate(playoffOddsData.refreshed)} ↗
+          </a>
+        </div>
+      </div>
+
+      <div className="discovery-explainer">
+        <span>How needs are ranked</span>
+        <p>
+          Each of the {DISCOVERY_POSITIONS.length} position groups is compared
+          with the same position on every other club: 45% season-to-date fWAR
+          rank and 55% Steamer rest-of-season fWAR rank. Rotation, bullpen, and
+          outfield are evaluated as multi-player units. Targets balance the
+          projected upgrade with a deadline-fit signal based on control, age,
+          health, and trade protection; it never claims a player is available.
+        </p>
+      </div>
+
+      <div className="discovery-columns">
+        <section className="need-board">
+          <div className="discovery-section-title">
+            <span>1</span>
+            <div>
+              <h3>Choose a need</h3>
+              <p>{teamName(discoveryTeam)} position-group rankings</p>
+            </div>
+          </div>
+          <div className="need-list">
+            {discoveryNeeds.map((need) => (
+              <button
+                type="button"
+                key={need.id}
+                className={need.id === discoveryPosition ? "is-active" : ""}
+                aria-pressed={need.id === discoveryPosition}
+                onClick={() => {
+                  setDiscoveryPosition(need.id as DiscoveryPosition);
+                  setSelectedDiscoveryTargetId("");
+                }}
+              >
+                <span className="need-identity">
+                  <strong>{need.shortLabel}</strong>
+                  <small>{need.label}</small>
+                </span>
+                <span className="need-metric">
+                  <b>{need.seasonToDateWar.toFixed(1)}</b>
+                  <small>
+                    S2D · {need.seasonToDateRank} of {database.teams.length}
+                  </small>
+                </span>
+                <span className="need-metric">
+                  <b>{need.restOfSeasonWar.toFixed(1)}</b>
+                  <small>
+                    RoS · {need.restOfSeasonRank} of {database.teams.length}
+                  </small>
+                </span>
+                <span className={`need-status ${need.needScore >= 72 ? "urgent" : ""}`}>
+                  {need.needLabel}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="target-board">
+          <div className="discovery-section-title">
+            <span>2</span>
+            <div>
+              <h3>{selectedDiscoveryNeed?.label ?? discoveryPosition} targets</h3>
+              <p>
+                RoS improvement, adjusted for a transparent deadline-availability signal
+              </p>
+            </div>
+          </div>
+          <div className="target-list">
+            {discoveryTargets.map((target) => {
+              return (
+                <button
+                  type="button"
+                  key={target.id}
+                  className={
+                    target.id === activeDiscoveryTarget?.id ? "is-active" : ""
+                  }
+                  aria-pressed={target.id === activeDiscoveryTarget?.id}
+                  onClick={() => setSelectedDiscoveryTargetId(target.id)}
+                >
+                  <span className="target-player">
+                    <strong>{target.player.name}</strong>
+                    <small>
+                      {teamName(target.player.team)} · {displayPosition(target.player)} ·
+                      {target.deadlineLabel} through {target.controlThrough}
+                    </small>
+                    {(target.player.availability ||
+                      target.player.tradeProtection === "full") && (
+                      <em>
+                        {target.player.availability
+                          ? target.player.availability.status
+                          : "Player approval required"}
+                      </em>
+                    )}
+                  </span>
+                  <span className="target-upgrade">
+                    <strong>+{target.improvement.toFixed(1)} WAR</strong>
+                    <small>estimated RoS upgrade</small>
+                  </span>
+                  <span className="target-market">
+                    <b>{shortNumber(target.playoffOdds)}%</b>
+                    <small>playoff odds</small>
+                  </span>
+                  <span className="target-value">
+                    <b>{money(target.tradeValue)}</b>
+                    <small>trade value</small>
+                  </span>
+                </button>
+              );
+            })}
+            {!discoveryTargets.length && (
+              <div className="discovery-empty">
+                <strong>No clear upgrades in this seller pool.</strong>
+                <p>Try a wider playoff-odds threshold or another position.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+
+      {activeDiscoveryTarget && (
+        <section className="offer-board">
+          <div className="discovery-section-title">
+            <span>3</span>
+            <div>
+              <h3>Possible offers for {activeDiscoveryTarget.player.name}</h3>
+              <p>
+                Alternative package shapes matched to a {money(activeDiscoveryTarget.tradeValue)} central value
+              </p>
+            </div>
+          </div>
+          <div className="offer-grid">
+            {discoveryOffers.map((offer, index) => (
+              <article key={`${offer.label}-${index}`}>
+                <div className="offer-heading">
+                  <span>{offer.label}</span>
+                  <strong>{money(offer.total)}</strong>
+                </div>
+                <ul>
+                  {offer.assets.map((asset: DiscoveryOfferAsset) => (
+                    <li key={asset.id}>
+                      <span>
+                        <strong>{asset.player.name}</strong>
+                        <small>
+                          {asset.player.kind === "prospect"
+                            ? `${asset.player.fv} FV · ${displayPosition(asset.player)}`
+                            : `${displayPosition(asset.player)} · MLB`}
+                        </small>
+                      </span>
+                      <b>{money(asset.value)}</b>
+                    </li>
+                  ))}
+                </ul>
+                <p>
+                  {offer.salaryRelief
+                    ? "The target has non-positive surplus value; retained salary or cash would determine the final shape."
+                    : offer.gap === 0
+                      ? "Central model values match exactly."
+                      : `${money(Math.abs(offer.gap))} ${offer.gap > 0 ? "above" : "below"} the target’s central value.`}
+                </p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    loadDiscoveryOffer(activeDiscoveryTarget, offer)
+                  }
+                >
+                  Open in trade builder
+                </button>
+              </article>
+            ))}
+            {!discoveryOffers.length && (
+              <div className="offer-empty">
+                <strong>No compact value match.</strong>
+                <p>
+                  This farm system cannot build a one-to-three-player package
+                  within 30% of the target’s central value. Try another target
+                  or construct a larger framework manually.
+                </p>
+              </div>
+            )}
+          </div>
+          <small className="offer-disclaimer">
+            Starting points, not rumors. Packages use positive-value prospects
+            and cost-controlled MLB players, avoid trading an incumbent from the
+            selected hole, and show only one-to-three-player combinations within
+            30% of the current model—not a club’s private preferences.
+          </small>
+        </section>
+      )}
+    </section>
+  );
+
   return (
     <main>
       <header className="masthead">
@@ -1148,11 +1521,19 @@ export default function Home() {
         <section className="intro">
           <div>
             <p className="kicker">Deadline trade lab</p>
-            <h1>{activeTab === "trade" ? "Build a trade" : "The big board"}</h1>
+            <h1>
+              {activeTab === "trade"
+                ? "Build a trade"
+                : activeTab === "discover"
+                  ? "Find an upgrade"
+                  : "The big board"}
+            </h1>
             <p className="lede">
               {activeTab === "trade"
                 ? "Put together a deal, see how the value lines up, and tune any assumption."
-                : "A just-for-fun leaguewide ranking from the same transparent model."}
+                : activeTab === "discover"
+                  ? "Start with a team need, search likely sellers, and test a value-matched offer."
+                  : "A just-for-fun leaguewide ranking from the same transparent model."}
             </p>
           </div>
         </section>
@@ -1169,6 +1550,15 @@ export default function Home() {
             onClick={() => setActiveTab("trade")}
           >
             Trade builder
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === "discover"}
+            className={activeTab === "discover" ? "is-active" : ""}
+            onClick={() => setActiveTab("discover")}
+          >
+            Trade finder
           </button>
           <button
             type="button"
@@ -2135,6 +2525,8 @@ export default function Home() {
           </aside>
         </section>
           </>
+        ) : activeTab === "discover" ? (
+          renderDiscovery()
         ) : (
           <section
             className="rankings-panel"
@@ -2470,7 +2862,37 @@ export default function Home() {
                   </section>
 
                   <section>
-                    <span className="method-step">07 · What the model cannot know</span>
+                    <span className="method-step">07 · Discovering a trade</span>
+                    <h3>Find the need first, then search the market</h3>
+                    <p>
+                      The Trade Finder ranks each team against the league at the
+                      same position rather than comparing unlike raw totals. Its
+                      need score is 45% season-to-date fWAR rank and 55% Steamer
+                      rest-of-season fWAR rank. Outfield, rotation, and bullpen
+                      are treated as multi-player units. A candidate’s estimated
+                      upgrade is his rest-of-season WAR above the buyer’s final
+                      current starting slot at that position. Ordering then
+                      applies a transparent deadline-fit signal: rentals and
+                      veterans rise, while long-term core players, injured
+                      players, and players with full trade protection fall. It
+                      is a plausibility screen, not a report that anyone is on
+                      the market.
+                    </p>
+                    <p>
+                      Seller pools come from a user-selected FanGraphs playoff-
+                      odds threshold. Offer concepts use the buyer’s positive-
+                      value prospects and young cost-controlled major leaguers,
+                      exclude MLB incumbents from the selected hole, and search
+                      for one-to-three-player packages within 30% of the target’s
+                      central trade value. If none exists, the tool says so
+                      rather than inventing a return. These are transparent
+                      starting points, not reporting, rumors, or a claim that
+                      either club would accept.
+                    </p>
+                  </section>
+
+                  <section>
+                    <span className="method-step">08 · What the model cannot know</span>
                     <h3>A starting point, not a front office in a browser</h3>
                     <p>
                       Public data cannot see a club&apos;s private medical review,
@@ -2567,6 +2989,13 @@ export default function Home() {
                 rel="noreferrer"
               >
                 MLB Rule 5 rules ↗
+              </a>
+              <a
+                href={playoffOddsData.sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                FanGraphs playoff odds ↗
               </a>
             </div>
           </section>
