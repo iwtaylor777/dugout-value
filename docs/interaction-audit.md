@@ -12,8 +12,9 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Assumptions | Open or close model settings | Works, but terminology is finance-heavy | Use baseball language and make the active valuation lens obvious |
 | Assumptions | Edit market inputs | Recalculates immediately | Keep immediate feedback; guard against misleading labels and invalid negative values |
 | Assumptions | Choose neutral or win-now timing | Not available as an intuitive action | Add a clear lens; neutral timing is the default |
-| Team package | Change a team | Clears that side, but also clears an unrelated selected player | Clear only the changed package and preserve the other side’s selection |
+| Team package | Change a team | Clearing a populated side can be destructive | Warn before clearing that package; preserve the other side and its selection |
 | Team package | Focus player search | Opens high-value suggestions | Keep suggestions ranked and scoped to the selected organization |
+| Team package | Browse initial search suggestions | The first 12 names can look like the complete organization | Label them as top suggestions and invite typing to search the full organization |
 | Team package | Type a partial name / position / FV | Works | Keep partial matching and a useful no-results message |
 | Team package | Search for a pitcher by SP/RP | Source data labels every pitcher as “P” | Derive role from projected starts/games; search and display the familiar role |
 | Team package | Navigate search with keyboard | Enter works only for the first result | Add Up/Down highlighting, Enter selection, and Escape dismissal |
@@ -29,6 +30,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 | Trade center | Compare one headliner with a quantity package | Additive dollars can imply that several lesser assets are interchangeable with one elite player | Preserve the transparent totals and add a separate package-shape warning when a close high-value trade lacks a comparable returning headliner |
 | Control years | Read yearly value | Always visible | Preserve; keep empty state useful |
 | Player editor | Edit custom identity | Works | Preserve; official records remain non-editable |
+| Player editor | Change or undo an official estimate | Edits recalculate immediately but can become indistinguishable from source data | Mark edited players as Adjusted and provide a one-click Reset to source action |
 | Player editor | Change rookie value basis | Works | Preserve projection/FV/blend choices |
 | Player editor | Change risk | Works | Preserve immediate range update |
 | Player editor | Add/edit a control year | Works | Keep salary-mode behavior and calculated surplus readable |
@@ -66,6 +68,7 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Cash and salary relief:** treat entered cash or retained salary as a certain dollar-for-dollar package adjustment. Do not pretend the single total models CBT effects or payment timing; show it separately from control-year player value.
 - **Arbitration:** keep fWAR as the baseball-value input, but do not pretend arbitration panels price players like the free-agent market. First-year estimates use projected traditional statistics by role; saves and holds drive reliever pay, and a calibrated nonlinear tail accounts for record-setting hitter/starter cases. Later years use bounded raises from the prior salary. The source feed's league-minimum placeholders are never presented as player-specific estimates.
 - **Package shape:** keep player surplus additive and auditable. When a close high-value offer replaces one $50M+ headliner with multiple pieces whose best asset is at least 35% lower, show a consolidation warning without altering either package total.
+- **Package uncertainty:** keep central package value fully additive, but do not add every player’s extreme range endpoint as if all assets boom or bust together. Preserve a conservative 40% shared model-risk component and diversify the remaining player-specific uncertainty across the package.
 - **Dead money:** a payroll obligation is not automatically a tradable asset. Contract-only players receive a Marcel fallback only with a 2025/26 playing record; retired-player and dead-money rows stay out of the player picker and rankings.
 
 ## Loop results
@@ -85,3 +88,4 @@ This is the working checklist for the July 2026 interaction pass. Each action is
 - **Pass 13 — market-shape and active-player audit:** benchmarked the top of the board against current public trade-value evidence without tuning to a proprietary list. Added a non-numeric consolidation warning for balanced quantity-for-quality packages, and removed retired/dead-money obligations that had no current projection or recent playing record from the tradable player universe.
 - **Pass 14 — prospect tier calibration:** measured the Board snapshot's large same-grade ties, then used its published ordinal rank as a bounded ±5% within-tier tiebreaker. FV, player type, roster pressure, and user scouting adjustments remain more influential; recent graduates receive the same calibration when their last prospect rank is blended into MLB projections.
 - **Pass 15 — current availability:** audited all 269 active RosterResource IL records and found no duplicate active entries; 203 joined to the current MLB trade-value universe. Added status, injury, eligibility/update context, package and ranking flags, and a bounded source-driven uncertainty increase without double-counting lost playing time in the central projection.
+- **Pass 16 — trade scoreboard and edit trust:** moved the comparison out of the cramped center rail into a full-width scoreboard beneath both packages, clarified the direction of cash/retained salary, labeled abbreviated search suggestions, protected populated packages from accidental team changes, and made every official-player override visible and reversible.

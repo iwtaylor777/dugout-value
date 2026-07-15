@@ -13,7 +13,7 @@ import {
   MAX_CASH_AMOUNT,
   normalizeCashAmount,
   packageConsolidation,
-  packageValue,
+  packageRange,
 } from "../lib/trade-package.mjs";
 
 type SalaryMode =
@@ -199,6 +199,13 @@ const money = (value: number) =>
 const signedPercent = (value: number) =>
   `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(1)}%`;
 const deepCopy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
+const isAdjusted = (player?: Player) =>
+  Boolean(
+    player &&
+      !player.custom &&
+      initialPlayers[player.id] &&
+      JSON.stringify(player) !== JSON.stringify(initialPlayers[player.id]),
+  );
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
 const isFiniteNumber = (value: unknown): value is number =>
@@ -453,12 +460,10 @@ export default function Home() {
       ),
     [players, settings],
   );
-  const leftTotal = packageValue(leftIds, leftCash, values, "total");
-  const rightTotal = packageValue(rightIds, rightCash, values, "total");
-  const leftLow = packageValue(leftIds, leftCash, values, "low");
-  const leftHigh = packageValue(leftIds, leftCash, values, "high");
-  const rightLow = packageValue(rightIds, rightCash, values, "low");
-  const rightHigh = packageValue(rightIds, rightCash, values, "high");
+  const leftPackage = packageRange(leftIds, leftCash, values);
+  const rightPackage = packageRange(rightIds, rightCash, values);
+  const { total: leftTotal, low: leftLow, high: leftHigh } = leftPackage;
+  const { total: rightTotal, low: rightLow, high: rightHigh } = rightPackage;
   const difference = leftTotal - rightTotal;
   const rangesOverlap = leftLow <= rightHigh && rightLow <= leftHigh;
   const verdict = rangesOverlap ? "Ranges overlap" : "Outside model range";
@@ -470,6 +475,7 @@ export default function Home() {
     values,
   );
   const selected = players[selectedId];
+  const selectedAdjusted = isAdjusted(selected);
   const protectedPackagePlayers = Array.from(
     new Set([...leftIds, ...rightIds]),
   )
@@ -677,6 +683,14 @@ export default function Home() {
       return;
     const clearedIds = side === "left" ? leftIds : rightIds;
     const retainedIds = side === "left" ? rightIds : leftIds;
+    const clearedCash = side === "left" ? leftCash : rightCash;
+    if (
+      (clearedIds.length > 0 || clearedCash > 0) &&
+      !window.confirm(
+        `Changing ${teamName(side === "left" ? leftTeam : rightTeam)} will clear that package. Continue?`,
+      )
+    )
+      return;
     if (side === "left") {
       setLeftTeam(team);
       setLeftIds([]);
@@ -863,6 +877,7 @@ export default function Home() {
     const player = players[id],
       result = values[id];
     if (!player || !result) return null;
+    const adjusted = isAdjusted(player);
     return (
       <article
         className={`player-card ${selectedId === id ? "is-selected" : ""}`}
@@ -881,7 +896,10 @@ export default function Home() {
               .join("")}
           </span>
           <span className="player-copy">
-            <strong>{player.name}</strong>
+            <span className="player-name-row">
+              <strong>{player.name}</strong>
+              {adjusted && <b className="adjusted-badge">Adjusted</b>}
+            </span>
             <small>
               {displayPosition(player)} · Age {player.age} ·{" "}
               {player.kind === "prospect"
@@ -999,7 +1017,7 @@ export default function Home() {
           )}
         </div>
         <label className={`cash-adjustment ${cash > 0 ? "has-cash" : ""}`}>
-          <span>Cash / salary relief</span>
+          <span>Cash sent / salary retained by {team}</span>
           <span className="cash-input">
             <b>$</b>
             <input
@@ -1071,6 +1089,9 @@ export default function Home() {
                 id={`${side}-player-results`}
                 role="listbox"
               >
+                <span className="picker-heading">
+                  {query ? "Search results" : "Top suggestions · type to search all"}
+                </span>
                 {matches.length ? (
                   matches.map((player, index) => (
                     <button
@@ -1358,27 +1379,58 @@ export default function Home() {
                 ids: leftIds,
                 total: leftTotal,
               })}
-              <div className="trade-verdict">
-                <span
-                  className={`verdict-stamp ${rangesOverlap ? "balanced" : ""}`}
-                >
-                  {verdict}
-                </span>
-                <strong>Gap: {money(Math.abs(difference))}</strong>
-                <p>
-                  {difference === 0
-                    ? "Even estimates"
-                    : `${difference > 0 ? teamName(leftTeam) : teamName(rightTeam)} sends more estimated value`}
-                </p>
-                {tradeProtectionSummary && (
-                  <p className="trade-caveat">
-                    {tradeProtectionSummary} · surplus value is unchanged
-                  </p>
-                )}
-                {availabilitySummary && (
-                  <p className="trade-caveat availability-caveat">
-                    {availabilitySummary} · range widened, central WAR unchanged
-                  </p>
+              {renderTeamSide({
+                side: "right",
+                team: rightTeam,
+                ids: rightIds,
+                total: rightTotal,
+              })}
+              <div
+                className="trade-verdict"
+                aria-label="Trade comparison scoreboard"
+              >
+                <div className="scoreboard-line">
+                  <div className="scoreboard-team">
+                    <span>{leftTeam} sends</span>
+                    <strong>{money(leftTotal)}</strong>
+                    <small>
+                      Range {money(leftLow)}–{money(leftHigh)}
+                    </small>
+                  </div>
+                  <div className="scoreboard-center">
+                    <span
+                      className={`verdict-stamp ${rangesOverlap ? "balanced" : ""}`}
+                    >
+                      {verdict}
+                    </span>
+                    <strong>Gap: {money(Math.abs(difference))}</strong>
+                    <p>
+                      {difference === 0
+                        ? "Even estimates"
+                        : `${difference > 0 ? teamName(leftTeam) : teamName(rightTeam)} sends more estimated value`}
+                    </p>
+                  </div>
+                  <div className="scoreboard-team scoreboard-team-right">
+                    <span>{rightTeam} sends</span>
+                    <strong>{money(rightTotal)}</strong>
+                    <small>
+                      Range {money(rightLow)}–{money(rightHigh)}
+                    </small>
+                  </div>
+                </div>
+                {(tradeProtectionSummary || availabilitySummary) && (
+                  <div className="scoreboard-context">
+                    {tradeProtectionSummary && (
+                      <p className="trade-caveat">
+                        {tradeProtectionSummary} · surplus value is unchanged
+                      </p>
+                    )}
+                    {availabilitySummary && (
+                      <p className="trade-caveat availability-caveat">
+                        {availabilitySummary} · range widened, central WAR unchanged
+                      </p>
+                    )}
+                  </div>
                 )}
                 {consolidation && (
                   <div className="package-shape-note">
@@ -1397,28 +1449,24 @@ export default function Home() {
                     </p>
                   </div>
                 )}
-                <div className="trade-actions">
-                  <button onClick={swapTeams}>Swap teams</button>
-                  <button className="share-trade" onClick={copyTradeLink}>
-                    Copy trade link
-                  </button>
+                <div className="scoreboard-actions">
+                  <div className="trade-actions">
+                    <button onClick={swapTeams}>Swap teams</button>
+                    <button className="share-trade" onClick={copyTradeLink}>
+                      Copy trade link
+                    </button>
+                  </div>
+                  <small className="share-status" aria-live="polite">
+                    {shareStatus === "loaded"
+                      ? "Shared trade loaded"
+                      : shareStatus === "copied"
+                        ? "Link copied"
+                        : shareStatus === "error"
+                          ? "Couldn’t copy link"
+                          : "Includes edited assumptions"}
+                  </small>
                 </div>
-                <small className="share-status" aria-live="polite">
-                  {shareStatus === "loaded"
-                    ? "Shared trade loaded"
-                    : shareStatus === "copied"
-                      ? "Link copied"
-                      : shareStatus === "error"
-                        ? "Couldn’t copy link"
-                        : "Includes edited assumptions"}
-                </small>
               </div>
-              {renderTeamSide({
-                side: "right",
-                team: rightTeam,
-                ids: rightIds,
-                total: rightTotal,
-              })}
             </div>
             <section className="year-ledger">
               <div className="section-title">
@@ -1500,6 +1548,22 @@ export default function Home() {
                     <span>Adjust valuation</span>
                     <h2>{selected.name}</h2>
                   </div>
+                  {selectedAdjusted && (
+                    <div className="editor-adjustment">
+                      <b>Adjusted</b>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPlayers((current) => ({
+                            ...current,
+                            [selected.id]: deepCopy(initialPlayers[selected.id]),
+                          }))
+                        }
+                      >
+                        Reset to source
+                      </button>
+                    </div>
+                  )}
                 </div>
                 {selected.custom ? (
                   <div className="form-grid two-col">
@@ -2250,7 +2314,10 @@ export default function Home() {
                   Package totals stay additive, but the trade verdict flags a
                   close high-value offer that replaces one elite headliner with
                   several materially smaller assets. That context never changes
-                  the displayed dollar values.
+                  the displayed dollar values. Package ranges keep 40% shared
+                  model risk while diversifying the remaining player-specific
+                  uncertainty, rather than assuming every player hits the same
+                  upside or downside at once.
                 </p>
               </article>
             </div>
