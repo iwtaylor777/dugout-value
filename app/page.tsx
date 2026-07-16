@@ -69,9 +69,33 @@ type ArbitrationMetrics = Partial<{
   so: number;
   war: number;
 }>;
+type TalentProviderChange = {
+  name: string;
+  unitLabel: string;
+  baselineRate: number;
+  updatedRate: number;
+  changeRate: number;
+};
+type TalentUpdate = {
+  method: string;
+  unitLabel: string;
+  rateChange: number | null;
+  capped: boolean;
+  providers: TalentProviderChange[];
+};
+type ThreeYearProjectionSeason = {
+  year: number;
+  war: number;
+  projectionBaselineWar?: number;
+  inSeasonAdjustment?: number;
+  signalPersistence?: number;
+};
 type MLBSeason = {
   year: number;
   war: number;
+  projectionBaselineWar?: number;
+  inSeasonAdjustment?: number;
+  signalPersistence?: number;
   salary: number;
   annualSalary?: number;
   expectedIncentives?: number;
@@ -116,6 +140,8 @@ type MLBPlayer = {
   availability?: Availability;
   seasons: MLBSeason[];
   contractScenario?: ContractScenario;
+  talentUpdate?: TalentUpdate;
+  threeYearProjection?: ThreeYearProjectionSeason[];
   seasonToDateWar?: number;
   platformWar?: number;
   rookieMode?: RookieMode;
@@ -193,7 +219,14 @@ type Database = {
   players: Player[];
 };
 type ShareStatus = "idle" | "loaded" | "copied" | "error";
-type ActiveTab = "trade" | "discover" | "rankings";
+type ActiveTab = "trade" | "discover" | "projections" | "rankings";
+type ProjectionRoleFilter =
+  | "all"
+  | "position"
+  | "starter"
+  | "reliever"
+  | "two-way";
+type ProjectionSort = "total" | "2026" | "2027" | "2028" | "change" | "name";
 type PlayoffOddsData = {
   refreshed: string;
   source: string;
@@ -218,6 +251,7 @@ type SharedTradeState = {
 const database = databaseJson as unknown as Database;
 const playoffOddsData = playoffOddsJson as PlayoffOddsData;
 const BASE_YEAR = database.meta.baseYear;
+const PROJECTION_YEARS = [BASE_YEAR, BASE_YEAR + 1, BASE_YEAR + 2];
 const initialPlayers = Object.fromEntries(
   database.players.map((player) => [player.id, player]),
 );
@@ -237,6 +271,8 @@ const money = (value: number) =>
   `${value < 0 ? "−" : ""}$${Math.abs(value).toFixed(1)}M`;
 const signedPercent = (value: number) =>
   `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(1)}%`;
+const signedWar = (value: number, digits = 1) =>
+  `${value >= 0 ? "+" : "−"}${Math.abs(value).toFixed(digits)}`;
 const shortNumber = (value: number) =>
   Number(value.toFixed(1)).toLocaleString("en-US");
 const deepCopy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -330,6 +366,8 @@ const displayPosition = (player: PositionDisplayPlayer) =>
         ? "SP"
         : "P"
     : player.position;
+const projectionRoleFor = (player: MLBPlayer): Exclude<ProjectionRoleFilter, "all"> =>
+  player.role ?? (player.position === "P" ? "starter" : "position");
 const rosterContextLabel = (player: ProspectPlayer) =>
   ({
     none: "",
@@ -418,6 +456,12 @@ export default function Home() {
   );
   const [rankingTeam, setRankingTeam] = useState("ALL");
   const [rankingSearch, setRankingSearch] = useState("");
+  const [projectionTeam, setProjectionTeam] = useState("ALL");
+  const [projectionRole, setProjectionRole] =
+    useState<ProjectionRoleFilter>("all");
+  const [projectionSearch, setProjectionSearch] = useState("");
+  const [projectionSort, setProjectionSort] =
+    useState<ProjectionSort>("total");
   const [shareStatus, setShareStatus] = useState<ShareStatus>("idle");
   const [discoveryTeam, setDiscoveryTeam] = useState("SEA");
   const [discoveryPosition, setDiscoveryPosition] =
@@ -654,6 +698,67 @@ export default function Home() {
       .sort((a, b) => (values[b.id]?.total ?? 0) - (values[a.id]?.total ?? 0))
       .slice(0, 100);
   }, [players, rankingSearch, rankingTeam, rankingType, values]);
+  const projectedPlayers = useMemo(() => {
+    const query = projectionSearch.trim().toLowerCase();
+    return Object.values(players)
+      .filter(
+        (player): player is MLBPlayer =>
+          player.kind === "mlb" &&
+          !player.custom &&
+          player.threeYearProjection?.length === PROJECTION_YEARS.length,
+      )
+      .filter(
+        (player) =>
+          projectionTeam === "ALL" || player.team === projectionTeam,
+      )
+      .filter(
+        (player) =>
+          projectionRole === "all" ||
+          projectionRoleFor(player) === projectionRole,
+      )
+      .filter((player) =>
+        query
+          ? `${player.name} ${player.team} ${displayPosition(player)}`
+              .toLowerCase()
+              .includes(query)
+          : true,
+      )
+      .map((player) => {
+        const seasons = Object.fromEntries(
+          (player.threeYearProjection ?? []).map((season) => [
+            season.year,
+            season,
+          ]),
+        ) as Record<number, ThreeYearProjectionSeason>;
+        const total = PROJECTION_YEARS.reduce(
+          (sum, year) => sum + Number(seasons[year]?.war ?? 0),
+          0,
+        );
+        const change = PROJECTION_YEARS.slice(1).reduce(
+          (sum, year) =>
+            sum + Number(seasons[year]?.inSeasonAdjustment ?? 0),
+          0,
+        );
+        return { player, seasons, total, change };
+      })
+      .sort((left, right) => {
+        if (projectionSort === "name")
+          return left.player.name.localeCompare(right.player.name);
+        if (projectionSort === "change") return right.change - left.change;
+        if (projectionSort === "total") return right.total - left.total;
+        const year = Number(projectionSort);
+        return (
+          Number(right.seasons[year]?.war ?? 0) -
+          Number(left.seasons[year]?.war ?? 0)
+        );
+      });
+  }, [
+    players,
+    projectionRole,
+    projectionSearch,
+    projectionSort,
+    projectionTeam,
+  ]);
   const allYears = Array.from(
     new Set(
       [...leftIds, ...rightIds].flatMap(
@@ -1536,14 +1641,18 @@ export default function Home() {
                 ? "Build a trade"
                 : activeTab === "discover"
                   ? "Find an upgrade"
-                  : "The big board"}
+                  : activeTab === "projections"
+                    ? "Project the league"
+                    : "The big board"}
             </h1>
             <p className="lede">
               {activeTab === "trade"
                 ? "Put together a deal, see how the value lines up, and tune any assumption."
                 : activeTab === "discover"
                   ? "Start with a team need, search likely sellers, and test a value-matched offer."
-                  : "A just-for-fun leaguewide ranking from the same transparent model."}
+                  : activeTab === "projections"
+                    ? "Search our updated three-year fWAR view and see exactly what changed in season."
+                    : "A just-for-fun leaguewide ranking from the same transparent model."}
             </p>
           </div>
         </section>
@@ -1573,6 +1682,15 @@ export default function Home() {
           <button
             type="button"
             role="tab"
+            aria-selected={activeTab === "projections"}
+            className={activeTab === "projections" ? "is-active" : ""}
+            onClick={() => setActiveTab("projections")}
+          >
+            3-year projections
+          </button>
+          <button
+            type="button"
+            role="tab"
             aria-selected={activeTab === "rankings"}
             className={activeTab === "rankings" ? "is-active" : ""}
             onClick={() => setActiveTab("rankings")}
@@ -1592,7 +1710,7 @@ export default function Home() {
           </div>
           <div>
             <span>2026 valuation</span>
-            <strong>Steamer RoS + remaining salary</strong>
+            <strong>Depth Charts RoS + remaining salary</strong>
           </div>
           <div>
             <span>Roster burden</span>
@@ -2152,8 +2270,8 @@ export default function Home() {
                       . This injury adds {selected.availability.riskAdjustment}{" "}
                       risk points; every two points widen each side of the
                       value range by one percentage point, up to the model cap.
-                      Central value stays unchanged because Steamer RoS already
-                      accounts for expected missed time.
+                      Central value stays unchanged because Depth Charts RoS
+                      already accounts for expected missed time.
                     </small>
                   </div>
                 )}
@@ -2314,8 +2432,8 @@ export default function Home() {
                       <div>
                         <span>fWAR by control year</span>
                         <small>
-                          2026 is RoS; explicit future ZiPS is used before the
-                          aging fallback.
+                          2026 is Depth Charts RoS; future ZiPS is updated with
+                          today&apos;s ZiPS/Steamer talent signal.
                         </small>
                       </div>
                       <button
@@ -2324,6 +2442,96 @@ export default function Home() {
                         + Year
                       </button>
                     </div>
+                    {selected.talentUpdate &&
+                      selectedSeasons.some(
+                        (season) =>
+                          season.projectionBaselineWar !== undefined,
+                      ) && (
+                        <div className="talent-update-card">
+                          <div className="talent-update-head">
+                            <div>
+                              <span>In-season talent bridge</span>
+                              <strong>
+                                {selected.talentUpdate.rateChange === null
+                                  ? "Hitting + pitching updated separately"
+                                  : `${signedWar(selected.talentUpdate.rateChange)} fWAR / ${selected.talentUpdate.unitLabel}`}
+                              </strong>
+                            </div>
+                            <small>Not season-to-date WAR</small>
+                          </div>
+                          <p>
+                            The model carries forward the change in projected
+                            talent rate—not the wins already produced.
+                          </p>
+                          <div className="talent-update-years">
+                            {selectedSeasons
+                              .filter(
+                                (season) =>
+                                  season.projectionBaselineWar !== undefined,
+                              )
+                              .slice(0, 3)
+                              .map((season) => {
+                                const baseline =
+                                  season.projectionBaselineWar ?? season.war;
+                                const adjustment =
+                                  season.inSeasonAdjustment ?? 0;
+                                return (
+                                  <div key={season.year}>
+                                    <span>{season.year}</span>
+                                    <b>{baseline.toFixed(1)} ZiPS</b>
+                                    <i>{signedWar(adjustment)} update</i>
+                                    <strong>
+                                      {(baseline + adjustment).toFixed(1)} fWAR
+                                    </strong>
+                                  </div>
+                                );
+                              })}
+                          </div>
+                          <details>
+                            <summary>How was this adjustment built?</summary>
+                            <p>
+                              Each projection system is compared only with
+                              itself: today&apos;s ZiPS RoS rate versus preseason
+                              ZiPS, and today&apos;s neutral-playing-time Steamer
+                              Update rate versus preseason Steamer. The
+                              available changes—normally both—are averaged,
+                              applied to the future workload, and 85% is carried
+                              into next season. The carried signal then decays
+                              by 15% per additional year.
+                            </p>
+                            <div className="talent-provider-list">
+                              {selected.talentUpdate.providers.map(
+                                (provider) => (
+                                  <div key={provider.name}>
+                                    <span>{provider.name}</span>
+                                    <strong>
+                                      {provider.baselineRate.toFixed(1)} →{" "}
+                                      {provider.updatedRate.toFixed(1)}
+                                    </strong>
+                                    <small>
+                                      fWAR / {provider.unitLabel} ·{" "}
+                                      {signedWar(provider.changeRate)}
+                                    </small>
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                            {selected.talentUpdate.capped && (
+                              <p>
+                                A safety cap limited an extreme rate change;
+                                the editable fWAR fields remain available for a
+                                different judgment.
+                              </p>
+                            )}
+                          </details>
+                          {selectedAdjusted && (
+                            <small>
+                              This is the source breakdown; your edited fWAR is
+                              what the trade value currently uses.
+                            </small>
+                          )}
+                        </div>
+                      )}
                     <div className="projection-table">
                       <div className="projection-row projection-head">
                         <span>Year</span>
@@ -2632,6 +2840,170 @@ export default function Home() {
           </>
         ) : activeTab === "discover" ? (
           renderDiscovery()
+        ) : activeTab === "projections" ? (
+          <section
+            className="projections-panel"
+            aria-label="Updated three-year player projections"
+          >
+            <div className="rankings-heading projections-heading">
+              <div>
+                <span>2026–2028 forecast board</span>
+                <h2>Updated three-year projections</h2>
+                <p>
+                  2026 is FanGraphs Depth Charts rest-of-season fWAR. The 2027
+                  and 2028 columns begin with published ZiPS, then carry forward
+                  the available ZiPS and Steamer in-season talent changes.
+                </p>
+              </div>
+              <strong>
+                {projectedPlayers.length}{" "}
+                {projectedPlayers.length === 1 ? "player" : "players"}
+              </strong>
+            </div>
+            <div className="projection-board-note">
+              <div>
+                <span>What the small line means</span>
+                <strong>Published ZiPS baseline + rolling update</strong>
+              </div>
+              <p>
+                This is a projection table, not a value ranking. Salary,
+                service time, roster burden, and contract control are not part
+                of these fWAR totals.
+              </p>
+            </div>
+            <div className="projection-filters">
+              <label>
+                <span>Find a player</span>
+                <input
+                  value={projectionSearch}
+                  onChange={(event) => setProjectionSearch(event.target.value)}
+                  placeholder="Name, team, or position…"
+                />
+              </label>
+              <label>
+                <span>Team</span>
+                <select
+                  value={projectionTeam}
+                  onChange={(event) => setProjectionTeam(event.target.value)}
+                >
+                  <option value="ALL">All teams</option>
+                  {database.teams.map((team) => (
+                    <option value={team.abbr} key={team.abbr}>
+                      {team.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Role</span>
+                <select
+                  value={projectionRole}
+                  onChange={(event) =>
+                    setProjectionRole(
+                      event.target.value as ProjectionRoleFilter,
+                    )
+                  }
+                >
+                  <option value="all">All roles</option>
+                  <option value="position">Position players</option>
+                  <option value="starter">Starting pitchers</option>
+                  <option value="reliever">Relief pitchers</option>
+                  <option value="two-way">Two-way players</option>
+                </select>
+              </label>
+              <label>
+                <span>Sort by</span>
+                <select
+                  value={projectionSort}
+                  onChange={(event) =>
+                    setProjectionSort(event.target.value as ProjectionSort)
+                  }
+                >
+                  <option value="total">2026–28 total fWAR</option>
+                  <option value="2026">2026 RoS fWAR</option>
+                  <option value="2027">2027 fWAR</option>
+                  <option value="2028">2028 fWAR</option>
+                  <option value="change">Largest in-season risers</option>
+                  <option value="name">Player name</option>
+                </select>
+              </label>
+            </div>
+            <div className="three-year-table-wrap">
+              <div className="three-year-table">
+                <div className="three-year-row three-year-head">
+                  <span>Player</span>
+                  <span>2026 RoS</span>
+                  <span>2027</span>
+                  <span>2028</span>
+                  <span>2026–28</span>
+                  <span>Talent signal</span>
+                  <span />
+                </div>
+                {projectedPlayers.map(
+                  ({ player, seasons, total, change }) => (
+                    <article className="three-year-row" key={player.id}>
+                      <div className="projection-player">
+                        <strong>{player.name}</strong>
+                        <small>
+                          {teamName(player.team)} · {displayPosition(player)} ·
+                          Age {player.age}
+                        </small>
+                      </div>
+                      {PROJECTION_YEARS.map((year) => {
+                        const season = seasons[year];
+                        const adjustment = season?.inSeasonAdjustment ?? 0;
+                        return (
+                          <div className="projection-war-cell" key={year}>
+                            <strong>{season?.war.toFixed(1) ?? "—"}</strong>
+                            {year === BASE_YEAR ? (
+                              <small>Depth Charts RoS</small>
+                            ) : (
+                              <small>
+                                {season?.projectionBaselineWar?.toFixed(1) ??
+                                  "—"}{" "}
+                                ZiPS · {signedWar(adjustment)}
+                              </small>
+                            )}
+                          </div>
+                        );
+                      })}
+                      <strong className="projection-total">
+                        {total.toFixed(1)}
+                        <small>fWAR</small>
+                      </strong>
+                      <div
+                        className={`projection-signal ${change > 0 ? "positive" : change < 0 ? "negative" : ""}`}
+                      >
+                        <strong>
+                          {player.talentUpdate?.rateChange === null
+                            ? "Split update"
+                            : player.talentUpdate
+                              ? `${signedWar(player.talentUpdate.rateChange)} / ${player.talentUpdate.unitLabel}`
+                              : "No update"}
+                        </strong>
+                        <small>
+                          {change === 0
+                            ? "future curve unchanged"
+                            : `${signedWar(change)} WAR across 2027–28`}
+                        </small>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openPlayerEditor(player.id, true)}
+                      >
+                        Open model
+                      </button>
+                    </article>
+                  ),
+                )}
+                {!projectedPlayers.length && (
+                  <p className="ranking-empty">
+                    No players match those projection filters.
+                  </p>
+                )}
+              </div>
+            </div>
+          </section>
         ) : (
           <section
             className="rankings-panel"
@@ -2817,13 +3189,52 @@ export default function Home() {
                     <span className="method-step">02 · Projecting major leaguers</span>
                     <h3>Start with the season that still has to be played</h3>
                     <p>
-                      For 2026, the model uses FanGraphs Steamer rest-of-season
-                      fWAR and only the unpaid portion of the current salary.
-                      That prevents already-produced wins and already-paid salary
-                      from inflating a deadline valuation. Explicit future ZiPS
-                      projections are used when available; otherwise a simple
-                      Marcel-style aging fallback extends the projection. Two-way
-                      value is combined across hitting and pitching.
+                      For 2026, the model uses FanGraphs Depth Charts
+                      rest-of-season fWAR and only the unpaid portion of the
+                      current salary. Depth Charts combines ZiPS and Steamer
+                      talent estimates with playing time set by FanGraphs staff.
+                      That prevents already-produced wins and already-paid
+                      salary from inflating a deadline valuation.
+                    </p>
+                    <div className="risk-explainer">
+                      <span>How does this season change 2027 and beyond?</span>
+                      <strong>Update the estimate of talent, not the ledger of wins.</strong>
+                      <p>
+                        The future curve begins with the current published ZiPS
+                        2027 and 2028 forecasts. For each player, Dugout Value
+                        compares ZiPS RoS with preseason ZiPS and the
+                        neutral-playing-time Steamer Update with preseason
+                        Steamer after normalizing each to 600 PA, 180 starter
+                        innings, or 65 relief innings. It averages the available
+                        model-to-model changes—normally both—and applies the
+                        result to the future projected workload. A tiny RoS
+                        workload is discarded so a season-ending injury cannot
+                        look like a collapse in true talent. When only one valid
+                        model pair exists, the player card shows that provider
+                        alone.
+                      </p>
+                      <p>
+                        The bridge carries 85% of that consensus change into
+                        the next season and 85% of the remaining signal into
+                        each later year. This is deliberately more conservative
+                        than treating every current-season gain as permanent.
+                        The updated ZiPS and Steamer models have already decided
+                        how much to learn from strikeouts, walks, contact
+                        quality, velocity, defense, and other inputs, so raw
+                        season-to-date WAR is never added to a future forecast.
+                      </p>
+                    </div>
+                    <p>
+                      The 85% bridge and 15% annual decay are transparent
+                      calibration choices, not official ZiPS settings. They
+                      reduce the risk of permanently carrying a short-term role,
+                      health, or defensive signal across an entire contract.
+                      The player card shows the published ZiPS baseline, each
+                      model&apos;s rate change, the adjustment, and the final fWAR.
+                      If a future ZiPS row is unavailable, a simple Marcel-style
+                      aging fallback extends the curve. Two-way players are
+                      updated separately as hitters and pitchers before the
+                      values are combined.
                     </p>
                     <p>
                       Not every fraction of a win is scarce. The default model
@@ -2981,9 +3392,10 @@ export default function Home() {
                       Current IL status can add 4–14 of those risk points,
                       depending on the injured-list category and public language
                       such as surgery, no timetable, or a season-ending injury.
-                      The adjustment widens the range only. Steamer RoS already
-                      reflects expected missed 2026 playing time, so cutting the
-                      central projection again would double-count the injury.
+                      The adjustment widens the range only. Depth Charts RoS
+                      already reflects expected missed 2026 playing time, so
+                      cutting the central projection again would double-count
+                      the injury.
                     </p>
                     <p>
                       Prospects use a separate range: 18%, 24%, or 32% to start
@@ -3111,11 +3523,32 @@ export default function Home() {
             <div className="source-list">
               <span>Read the source material</span>
               <a
-                href="https://www.fangraphs.com/projections?type=steamerr&amp;stats=bat&amp;pos=all"
+                href="https://www.fangraphs.com/projections?type=rfangraphsdc&amp;stats=bat&amp;pos=all"
                 target="_blank"
                 rel="noreferrer"
               >
-                FanGraphs RoS projections ↗
+                FanGraphs Depth Charts RoS ↗
+              </a>
+              <a
+                href="https://www.fangraphs.com/projections?type=rzips&amp;stats=bat&amp;pos=all"
+                target="_blank"
+                rel="noreferrer"
+              >
+                FanGraphs ZiPS RoS ↗
+              </a>
+              <a
+                href="https://www.fangraphs.com/projections?type=steamer600u&amp;stats=bat&amp;pos=all"
+                target="_blank"
+                rel="noreferrer"
+              >
+                FanGraphs Steamer Update ↗
+              </a>
+              <a
+                href="https://www.fangraphs.com/projections?type=zipsp1&amp;stats=bat&amp;pos=all"
+                target="_blank"
+                rel="noreferrer"
+              >
+                FanGraphs ZiPS 2027 ↗
               </a>
               <a
                 href="https://www.fangraphs.com/roster-resource/payroll/mariners"
