@@ -34,7 +34,9 @@ test("server-renders the trade builder", async () => {
   assert.match(html, /Trade builder/);
   assert.match(html, /Trade finder/);
   assert.match(html, /Value rankings/);
+  assert.match(html, /3-year projections/);
   assert.match(html, /Value by control year/);
+  assert.match(html, /Depth Charts RoS \+ remaining salary/);
   assert.match(html, /Neutral · no discount/);
   assert.match(html, /Deadline lens/);
   assert.match(html, /Off · baseline value/);
@@ -56,6 +58,11 @@ test("keeps rankings, search, and the yearly chart in the client", async () => {
   );
 
   assert.match(page, /Overall trade value rankings/);
+  assert.match(page, /Updated three-year projections/);
+  assert.match(page, /2026–2028 forecast board/);
+  assert.match(page, /Largest in-season risers/);
+  assert.match(page, /projectionBaselineWar/);
+  assert.match(page, /threeYearProjection/);
   assert.match(page, /Turn a roster hole into a short list/);
   assert.match(page, /findTradeTargets/);
   assert.match(page, /generateOfferPackages/);
@@ -138,6 +145,12 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.doesNotMatch(page, /What “\+8 risk” meant/);
   assert.match(page, /30% is a conservative calibration/);
   assert.match(page, /Both the premium and its net-WAR cutoff are/);
+  assert.match(page, /In-season talent bridge/);
+  assert.match(page, /Not season-to-date WAR/);
+  assert.match(page, /today&apos;s ZiPS RoS rate versus preseason/);
+  assert.match(page, /neutral-playing-time Steamer/);
+  assert.match(page, /The bridge carries 85%/);
+  assert.match(page, /A tiny RoS\s+workload is/);
   assert.match(page, /Moves the central value/);
   assert.match(page, /Moves only the range/);
   assert.match(page, /setLeftCash/);

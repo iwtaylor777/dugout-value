@@ -9,6 +9,11 @@ import {
   availabilityRiskAdjustment,
 } from "../lib/availability-context.mjs";
 import { rosterAssignmentsFromDepthChart } from "../lib/roster-position.mjs";
+import {
+  applyInSeasonTalentUpdate,
+  buildInSeasonTalentUpdate,
+  signalPersistence,
+} from "../lib/in-season-projection.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
@@ -428,7 +433,7 @@ function projectionMap(rows) {
     const id = String(row.xMLBAMID || row.playerid);
     const existing = map.get(id);
     if (!existing) {
-      map.set(id, row);
+      map.set(id, { ...row, _components: [row] });
       continue;
     }
     map.set(id, {
@@ -437,9 +442,17 @@ function projectionMap(rows) {
       positionDB: "TWP",
       minpos: "TWP",
       _stats: "twp",
+      _components: [...(existing._components ?? [existing]), row],
     });
   }
   return map;
+}
+
+function projectionComponent(row, stats) {
+  if (!row) return undefined;
+  return (row._components ?? [row]).find(
+    (component) => component._stats === stats,
+  );
 }
 
 function prospectGrade(value) {
@@ -469,7 +482,10 @@ const [
   zips2027,
   zips2028,
   steamer,
+  zipsRos,
   steamerRos,
+  steamerNeutralUpdated,
+  depthChartsRos,
   hitterHistory,
   pitcherHistory,
   boardQueries,
@@ -481,7 +497,10 @@ const [
   loadProjection("zipsp1"),
   loadProjection("zipsp2"),
   loadProjection("steamer"),
+  loadProjection("rzips"),
   loadProjection("steamerr"),
+  loadProjection("steamer600u"),
+  loadProjection("rfangraphsdc"),
   loadHistory("bat"),
   loadHistory("pit"),
   getNextData(boardUrl),
@@ -595,7 +614,10 @@ const contracts = new Map(
 );
 
 const steamerById = projectionMap(steamer);
+const zipsRosById = projectionMap(zipsRos);
 const steamerRosById = projectionMap(steamerRos);
+const steamerNeutralUpdatedById = projectionMap(steamerNeutralUpdated);
+const depthChartsRosById = projectionMap(depthChartsRos);
 const zipsById = projectionMap(zips);
 const zips2027ById = projectionMap(zips2027);
 const zips2028ById = projectionMap(zips2028);
@@ -684,7 +706,9 @@ for (const id of projectionIds) {
   const isPitcher = primary?._stats === "pit";
   const isTwoWay = primary?._stats === "twp";
   const rosProjection =
+    depthChartsRosById.get(id) ??
     steamerRosById.get(id) ??
+    zipsRosById.get(id) ??
     (depthAssignment
       ? { WAR: depthAssignment.projectedWar }
       : undefined);
@@ -738,6 +762,62 @@ for (const id of projectionIds) {
           ? "starter"
           : pitcherRole(primary ?? backup ?? rosProjection)
       : "position";
+  const updatePart = (partRole, stats, label) => {
+    const update = buildInSeasonTalentUpdate({
+      role: partRole,
+      providers: [
+        {
+          name: "ZiPS",
+          preseason: projectionComponent(zipsById.get(id), stats),
+          updated: projectionComponent(zipsRosById.get(id), stats),
+        },
+        {
+          name: "Steamer update",
+          preseason: projectionComponent(steamerById.get(id), stats),
+          updated: projectionComponent(
+            steamerNeutralUpdatedById.get(id),
+            stats,
+          ),
+        },
+      ],
+    });
+    return update ? { role: partRole, stats, label, update } : null;
+  };
+  const pitcherUpdateRole = pitcherRole(
+    projectionComponent(zipsById.get(id), "pit") ??
+      projectionComponent(steamerById.get(id), "pit") ??
+      projectionComponent(zipsRosById.get(id), "pit") ??
+      projectionComponent(steamerRosById.get(id), "pit"),
+  );
+  const updateParts = (
+    isTwoWay
+      ? [
+          updatePart("position", "bat", "Hitting"),
+          updatePart(pitcherUpdateRole, "pit", "Pitching"),
+        ]
+      : [updatePart(role, isPitcher ? "pit" : "bat", null)]
+  ).filter(Boolean);
+  const talentUpdate = updateParts.length
+    ? {
+        method: "Rolling talent update v1",
+        unitLabel:
+          updateParts.length === 1
+            ? updateParts[0].update.unitLabel
+            : "hitting and pitching rates",
+        rateChange:
+          updateParts.length === 1 ? updateParts[0].update.rateChange : null,
+        capped: updateParts.some((part) => part.update.capped),
+        providers: updateParts.flatMap((part) =>
+          part.update.providers.map((provider) => ({
+            ...provider,
+            name: part.label
+              ? `${provider.name} ${part.label.toLowerCase()}`
+              : provider.name,
+            unitLabel: part.update.unitLabel,
+          })),
+        ),
+      }
+    : undefined;
   const expectedIncentives = expectedPlayingTimeIncentives(
     matchedContract.incentives,
     {
@@ -749,7 +829,7 @@ for (const id of projectionIds) {
       isPitcher,
     },
   );
-  const projectedWarForSeason = (season) => {
+  const projectedWarDetail = (season) => {
     const futureWar =
       season === 2027 && Number.isFinite(future2027)
         ? future2027
@@ -758,14 +838,67 @@ for (const id of projectionIds) {
           : season > 2028 && Number.isFinite(future2028)
             ? ageWar(future2028, age ? age + 2 : null, isPitcher, season - 2028)
             : ageWar(currentWar, age, isPitcher, season - BASE_YEAR);
-    return season === BASE_YEAR
-      ? Number(
+    if (season === BASE_YEAR) {
+      return {
+        war: Number(
           Number(
             rosProjection?.WAR ?? currentWar * seasonRemainingFraction,
           ).toFixed(1),
-        )
-      : Number(futureWar.toFixed(1));
+        ),
+      };
+    }
+
+    const explicitFutureProjection =
+      season === BASE_YEAR + 1
+        ? zips2027ById.get(id)
+        : zips2028ById.get(id);
+    const futureProjectionForWorkload =
+      explicitFutureProjection ?? primary ?? backup;
+    const yearsBeyondExplicit = Math.max(0, season - (BASE_YEAR + 2));
+    const adjustment = updateParts.reduce((sum, part) => {
+      const component = projectionComponent(
+        futureProjectionForWorkload,
+        part.stats,
+      );
+      const workloadScale = Math.pow(
+        part.role === "position" ? 0.96 : 0.93,
+        yearsBeyondExplicit,
+      );
+      const scaledComponent = component
+        ? {
+            ...component,
+            PA:
+              Number(component.PA) > 0
+                ? Number(component.PA) * workloadScale
+                : component.PA,
+            IP:
+              Number(component.IP) > 0
+                ? Number(component.IP) * workloadScale
+                : component.IP,
+          }
+        : undefined;
+      return (
+        sum +
+        applyInSeasonTalentUpdate({
+          baselineWar: 0,
+          futureProjection: scaledComponent,
+          role: part.role,
+          year: season,
+          baseYear: BASE_YEAR,
+          update: part.update,
+        }).adjustment
+      );
+    }, 0);
+    const baselineWar = Number(futureWar.toFixed(1));
+    const war = Number((futureWar + adjustment).toFixed(1));
+    return {
+      war,
+      baselineWar,
+      inSeasonAdjustment: Number((war - baselineWar).toFixed(1)),
+      signalPersistence: Number(signalPersistence(season, BASE_YEAR).toFixed(3)),
+    };
   };
+  const projectedWarForSeason = (season) => projectedWarDetail(season).war;
   const currentRoleHistory = history.filter(
     (row) =>
       Number(row.Season) === BASE_YEAR &&
@@ -780,15 +913,19 @@ for (const id of projectionIds) {
         ? zips2027ById.get(id)
         : zips2028ById.get(id);
     const yearsBeyondExplicit = Math.max(0, season - (BASE_YEAR + 2));
-    return arbitrationMetrics(
+    const metrics = arbitrationMetrics(
       role,
       [],
       explicitProjection ?? primary ?? backup ?? rosProjection,
       Math.pow(isPitcher ? 0.93 : 0.96, yearsBeyondExplicit),
     );
+    return metrics
+      ? { ...metrics, war: projectedWarForSeason(season) }
+      : metrics;
   };
   let seasons = contractYears.map((year) => {
     const season = Number(year.Season);
+    const projection = projectedWarDetail(season);
     const yearSummary = year._contractSummary ?? matchedContract.summary;
     const yearHasDeferrals = /deferr/i.test(fullContractNote(yearSummary));
     const economicAnnual = yearHasDeferrals
@@ -812,7 +949,10 @@ for (const id of projectionIds) {
         : listedOptionMode;
     return {
       year: season,
-      war: projectedWarForSeason(season),
+      war: projection.war,
+      projectionBaselineWar: projection.baselineWar,
+      inSeasonAdjustment: projection.inSeasonAdjustment,
+      signalPersistence: projection.signalPersistence,
       arbMetrics: projectedArbitrationMetrics(season),
       salary:
         season === BASE_YEAR
@@ -864,10 +1004,14 @@ for (const id of projectionIds) {
     const fixedBlock = (terms) =>
       Array.from({ length: terms.years }, (_, index) => {
         const year = firstFallbackYear + index;
+        const projection = projectedWarDetail(year);
         const salary = Number((terms.total / terms.years).toFixed(2));
         return {
           year,
-          war: projectedWarForSeason(year),
+          war: projection.war,
+          projectionBaselineWar: projection.baselineWar,
+          inSeasonAdjustment: projection.inSeasonAdjustment,
+          signalPersistence: projection.signalPersistence,
           salary,
           annualSalary: salary,
           salaryMode: "fixed",
@@ -964,7 +1108,13 @@ for (const id of projectionIds) {
     role,
     age: age ? Math.floor(age) : isPitcher ? 28 : 27,
     source: {
-      projection: `Steamer RoS (2026) · ${source} future`,
+      projection: [
+        "FanGraphs Depth Charts RoS (2026)",
+        `${source} future`,
+        talentUpdate ? "ZiPS/Steamer rolling talent update" : null,
+      ]
+        .filter(Boolean)
+        .join(" · "),
       contract: [
         "FanGraphs RosterResource",
         hasDeferrals ? "economic AAV" : null,
@@ -985,6 +1135,19 @@ for (const id of projectionIds) {
     availability,
     seasons,
     contractScenario,
+    talentUpdate,
+    threeYearProjection: [BASE_YEAR, BASE_YEAR + 1, BASE_YEAR + 2].map(
+      (year) => {
+        const projection = projectedWarDetail(year);
+        return {
+          year,
+          war: projection.war,
+          projectionBaselineWar: projection.baselineWar,
+          inSeasonAdjustment: projection.inSeasonAdjustment,
+          signalPersistence: projection.signalPersistence,
+        };
+      },
+    ),
     seasonToDateWar: Number(ytdWar.toFixed(1)),
     platformWar: Number((ytdWar + Number(rosProjection?.WAR || 0)).toFixed(1)),
     rookieMode:
@@ -1062,7 +1225,11 @@ const output = {
     baseYear: BASE_YEAR,
     mlbCount: mlb.length,
     prospectCount: prospects.length,
-    projectionPriority: ["ZiPS", "Steamer", "Marcel + aging"],
+    projectionPriority: [
+      "FanGraphs Depth Charts RoS",
+      "ZiPS future + ZiPS/Steamer rolling talent update",
+      "Marcel + aging",
+    ],
     seasonRemainingFraction: Number(seasonRemainingFraction.toFixed(4)),
     sources: [
       "FanGraphs projections",

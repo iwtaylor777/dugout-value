@@ -76,6 +76,20 @@ const records = database.players
                 .toFixed(2),
             )
           : 0,
+      talentRateChange:
+        player.kind === "mlb" && player.talentUpdate?.rateChange !== null
+          ? Number(player.talentUpdate?.rateChange ?? 0)
+          : null,
+      nextSeasonWarAdjustment:
+        player.kind === "mlb"
+          ? Number(
+              seasons.find(
+                (season) => season.year === database.meta.baseYear + 1,
+              )?.inSeasonAdjustment ?? 0,
+            )
+          : null,
+      talentUpdateCapped:
+        player.kind === "mlb" ? Boolean(player.talentUpdate?.capped) : false,
       horizonRisk: Number((result.horizonRisk ?? 0).toFixed(2)),
       value: Number(result.total.toFixed(2)),
       low: Number(result.low.toFixed(2)),
@@ -118,6 +132,16 @@ const report = {
       ({ priorSeason }) => priorSeason?.arbMetrics,
     ).length,
     mlbOnInjuredList: records.filter((player) => player.availability).length,
+    mlbWithTalentUpdate: records.filter(
+      (player) => player.kind === "mlb" && player.talentRateChange !== null,
+    ).length,
+    mlbWithThreeYearProjection: database.players.filter(
+      (player) =>
+        player.kind === "mlb" && player.threeYearProjection?.length === 3,
+    ).length,
+    cappedTalentUpdates: records.filter(
+      (player) => player.talentUpdateCapped,
+    ).length,
   },
   bounds: {
     maximum: records[0],
@@ -130,6 +154,20 @@ const report = {
     .slice(0, 25),
   topRelievers: records
     .filter((player) => player.subtype === "Reliever")
+    .slice(0, 20),
+  largestPositiveTalentUpdates: records
+    .filter((player) => player.nextSeasonWarAdjustment > 0)
+    .toSorted(
+      (left, right) =>
+        right.nextSeasonWarAdjustment - left.nextSeasonWarAdjustment,
+    )
+    .slice(0, 20),
+  largestNegativeTalentUpdates: records
+    .filter((player) => player.nextSeasonWarAdjustment < 0)
+    .toSorted(
+      (left, right) =>
+        left.nextSeasonWarAdjustment - right.nextSeasonWarAdjustment,
+    )
     .slice(0, 20),
   contractsWithExpectedIncentives: records
     .filter((player) => player.expectedIncentives > 0)
@@ -172,6 +210,10 @@ if (jsonOutput) {
   console.table(report.topProspects);
   console.log("Top relievers");
   console.table(report.topRelievers);
+  console.log("Largest positive next-season talent updates");
+  console.table(report.largestPositiveTalentUpdates);
+  console.log("Largest negative next-season talent updates");
+  console.table(report.largestNegativeTalentUpdates);
   console.log("Contracts with modeled playing-time incentives");
   console.table(report.contractsWithExpectedIncentives);
   console.log("Contracts with conditional paths");
