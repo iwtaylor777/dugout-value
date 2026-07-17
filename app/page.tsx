@@ -2495,7 +2495,7 @@ export default function Home() {
                               ZiPS, and today&apos;s neutral-playing-time Steamer
                               Update rate versus preseason Steamer. The
                               available changes—normally both—are averaged,
-                              applied to the future workload, and 85% is carried
+                              applied to the future workload, and 50% is carried
                               into next season. The carried signal then decays
                               by 15% per additional year.
                             </p>
@@ -3214,7 +3214,7 @@ export default function Home() {
                         alone.
                       </p>
                       <p>
-                        The bridge carries 85% of that consensus change into
+                        The bridge carries 50% of that consensus change into
                         the next season and 85% of the remaining signal into
                         each later year. This is deliberately more conservative
                         than treating every current-season gain as permanent.
@@ -3225,10 +3225,13 @@ export default function Home() {
                       </p>
                     </div>
                     <p>
-                      The 85% bridge and 15% annual decay are transparent
-                      calibration choices, not official ZiPS settings. They
-                      reduce the risk of permanently carrying a short-term role,
-                      health, or defensive signal across an entire contract.
+                      The 50% bridge and 15% annual decay are transparent
+                      calibration choices, not official ZiPS settings. A
+                      historical holdout found that a half-strength bridge was
+                      safer than carrying nearly the entire in-season change.
+                      These settings reduce the risk of permanently carrying a
+                      short-term role, health, or defensive signal across an
+                      entire contract.
                       The player card shows the published ZiPS baseline, each
                       model&apos;s rate change, the adjustment, and the final fWAR.
                       If a future ZiPS row is unavailable, a simple Marcel-style
