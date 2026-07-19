@@ -3325,9 +3325,16 @@ export default function Home() {
                       panels tend to reward: playing time, power, run production,
                       and steals for hitters; innings, starts, wins, ERA, and
                       strikeouts for starters; and appearances, saves, and holds
-                      for relievers. Later arbitration years use conservative,
-                      performance-bounded raises from the prior salary rather
-                      than implausibly doubling pay every season.
+                      for relievers. For later years, we re-estimate what the
+                      player&apos;s latest platform season would earn, then compare it
+                      with players at the same arbitration stage. The 2026 data
+                      supports factors of about 1.3× for a second award and 2.3×
+                      for a third award relative to a comparable first-year case.
+                      The prior salary remains a guardrail—the model allows the
+                      decline permitted by the CBA rather than inventing an
+                      automatic raise. Fourth-award estimates extend that curve
+                      conservatively; only Super Two players reach that stage,
+                      so the public comparison sample is thinner.
                     </p>
                     <p>
                       Playing-time escalators are probability-weighted. Mutually
