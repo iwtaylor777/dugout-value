@@ -2338,8 +2338,10 @@ export default function Home() {
                         selectedSeasons[0]?.salary ??
                         0,
                     )}
-                    ). Arb 1 uses projected role-specific counting stats;
-                    later years use conservative raises from the prior salary.
+                    ). Every arbitration year prices the latest full-season
+                    platform stats against the player&apos;s arbitration class. The
+                    prior salary supplies the CBA reduction floor, not an
+                    automatic raise.
                   </p>
                 )}
                 {selected.kind === "mlb" && settings.deadlineBoost > 0 && (
@@ -2631,9 +2633,9 @@ export default function Home() {
                                 <strong>{money(row?.salary ?? 0)}</strong>
                                 <small>
                                   {season.salaryMode === "arb1"
-                                    ? "stats model"
+                                    ? "platform stats"
                                     : season.salaryMode.startsWith("arb")
-                                      ? "bounded raise"
+                                      ? "arb-class model"
                                       : "league minimum"}
                                 </small>
                               </span>
