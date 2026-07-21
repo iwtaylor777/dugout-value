@@ -1,0 +1,14 @@
+node_modules
+.next
+.vinext
+.wrangler
+.git
+
+analysis
+coverage
+docs
+outputs
+work
+
+.env*
+*.log
