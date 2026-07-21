@@ -14,7 +14,7 @@ test("normalizes talent to role-appropriate workloads", () => {
   assert.equal(projectionRate({ WAR: 1, IP: 65 }, "reliever"), 1);
 });
 
-test("uses model-to-model changes rather than season-to-date WAR", () => {
+test("uses projection-to-projection changes rather than season-to-date WAR", () => {
   const update = buildInSeasonTalentUpdate({
     role: "position",
     providers: [
@@ -38,7 +38,7 @@ test("uses model-to-model changes rather than season-to-date WAR", () => {
   assert.equal(update.providers[1].changeRate, 1);
 });
 
-test("reproduces the audited James Wood in-season bridge", () => {
+test("carries half of a valid ZiPS rate change into the next season", () => {
   const update = buildInSeasonTalentUpdate({
     role: "position",
     providers: [
@@ -46,11 +46,6 @@ test("reproduces the audited James Wood in-season bridge", () => {
         name: "ZiPS",
         preseason: { WAR: 2.76516, PA: 650 },
         updated: { WAR: 1.84697, PA: 274 },
-      },
-      {
-        name: "Steamer",
-        preseason: { WAR: 3.00964, PA: 597.537 },
-        updated: { WAR: 1.7163, PA: 277.761 },
       },
     ],
   });
@@ -63,10 +58,46 @@ test("reproduces the audited James Wood in-season bridge", () => {
     update,
   });
 
-  assert.equal(update.providerCount, 2);
-  assert.ok(update.rateChange > 1 && update.rateChange < 1.2);
-  assert.ok(projection.adjustment > 0.5 && projection.adjustment < 0.7);
-  assert.ok(projection.finalWar > 3.4 && projection.finalWar < 3.7);
+  assert.equal(update.providerCount, 1);
+  assert.ok(update.rateChange > 1.4 && update.rateChange < 1.6);
+  assert.ok(projection.adjustment > 0.75 && projection.adjustment < 0.9);
+  assert.ok(projection.finalWar > 3.7 && projection.finalWar < 3.9);
+});
+
+test("does not mistake Hunter Goodman-style role changes for declining offense", () => {
+  const update = buildInSeasonTalentUpdate({
+    role: "position",
+    providers: [
+      {
+        name: "ZiPS",
+        preseason: {
+          WAR: 2.25759,
+          PA: 570,
+          Off: -1.26445,
+        },
+        updated: {
+          WAR: 0.759199,
+          PA: 216,
+          Off: 0.91842,
+        },
+      },
+    ],
+  });
+  const projection = applyInSeasonTalentUpdate({
+    baselineWar: 2.10489,
+    futureProjection: { PA: 594 },
+    role: "position",
+    year: 2027,
+    baseYear: 2026,
+    update,
+  });
+
+  assert.equal(update.providers[0].roleGuarded, true);
+  assert.ok(update.providers[0].rawChangeRate < -0.25);
+  assert.ok(update.providers[0].offenseChangeRate > 0.35);
+  assert.ok(update.rateChange > 0 && update.rateChange < 0.1);
+  assert.ok(projection.adjustment > 0 && projection.adjustment < 0.05);
+  assert.ok(projection.finalWar > 2.1);
 });
 
 test("future carry decays smoothly without reversing the signal", () => {
@@ -157,7 +188,7 @@ test("James Wood uses today's official baseline plus a visible talent update", a
 
   assert.equal(wood.name, "James Wood");
   assert.match(wood.source.projection, /rolling talent update/);
-  assert.equal(wood.talentUpdate.providers.length, 2);
+  assert.equal(wood.talentUpdate.providers.length, 1);
   assert.ok(nextSeason.inSeasonAdjustment > 0);
   assert.equal(
     nextSeason.war,

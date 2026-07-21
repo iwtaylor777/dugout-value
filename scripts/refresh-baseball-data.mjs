@@ -484,7 +484,6 @@ const [
   steamer,
   zipsRos,
   steamerRos,
-  steamerNeutralUpdated,
   depthChartsRos,
   hitterHistory,
   pitcherHistory,
@@ -499,7 +498,6 @@ const [
   loadProjection("steamer"),
   loadProjection("rzips"),
   loadProjection("steamerr"),
-  loadProjection("steamer600u"),
   loadProjection("rfangraphsdc"),
   loadHistory("bat"),
   loadHistory("pit"),
@@ -616,7 +614,6 @@ const contracts = new Map(
 const steamerById = projectionMap(steamer);
 const zipsRosById = projectionMap(zipsRos);
 const steamerRosById = projectionMap(steamerRos);
-const steamerNeutralUpdatedById = projectionMap(steamerNeutralUpdated);
 const depthChartsRosById = projectionMap(depthChartsRos);
 const zipsById = projectionMap(zips);
 const zips2027ById = projectionMap(zips2027);
@@ -763,23 +760,27 @@ for (const id of projectionIds) {
           : pitcherRole(primary ?? backup ?? rosProjection)
       : "position";
   const updatePart = (partRole, stats, label) => {
+    const preseason = projectionComponent(zipsById.get(id), stats);
+    const updated = projectionComponent(zipsRosById.get(id), stats);
+    // WAR per inning is not directly portable across starting and relief roles.
+    // When ZiPS changes the projected role, leave the published future ZiPS
+    // baseline alone instead of presenting the role change as a talent change.
+    const incompatiblePitcherRoles =
+      stats === "pit" &&
+      preseason &&
+      updated &&
+      pitcherRole(preseason) !== pitcherRole(updated);
     const update = buildInSeasonTalentUpdate({
       role: partRole,
-      providers: [
+      providers: incompatiblePitcherRoles
+        ? []
+        : [
         {
           name: "ZiPS",
-          preseason: projectionComponent(zipsById.get(id), stats),
-          updated: projectionComponent(zipsRosById.get(id), stats),
+          preseason,
+          updated,
         },
-        {
-          name: "Steamer update",
-          preseason: projectionComponent(steamerById.get(id), stats),
-          updated: projectionComponent(
-            steamerNeutralUpdatedById.get(id),
-            stats,
-          ),
-        },
-      ],
+          ],
     });
     return update ? { role: partRole, stats, label, update } : null;
   };
@@ -799,7 +800,7 @@ for (const id of projectionIds) {
   ).filter(Boolean);
   const talentUpdate = updateParts.length
     ? {
-        method: "Rolling talent update v1",
+        method: "Role-aware rolling talent update v2",
         unitLabel:
           updateParts.length === 1
             ? updateParts[0].update.unitLabel
@@ -807,6 +808,7 @@ for (const id of projectionIds) {
         rateChange:
           updateParts.length === 1 ? updateParts[0].update.rateChange : null,
         capped: updateParts.some((part) => part.update.capped),
+        roleGuarded: updateParts.some((part) => part.update.roleGuarded),
         providers: updateParts.flatMap((part) =>
           part.update.providers.map((provider) => ({
             ...provider,
@@ -1111,7 +1113,7 @@ for (const id of projectionIds) {
       projection: [
         "FanGraphs Depth Charts RoS (2026)",
         `${source} future`,
-        talentUpdate ? "ZiPS/Steamer rolling talent update" : null,
+        talentUpdate ? "ZiPS role-aware rolling talent update" : null,
       ]
         .filter(Boolean)
         .join(" · "),
@@ -1227,7 +1229,7 @@ const output = {
     prospectCount: prospects.length,
     projectionPriority: [
       "FanGraphs Depth Charts RoS",
-      "ZiPS future + ZiPS/Steamer rolling talent update",
+      "ZiPS future + ZiPS role-aware rolling talent update",
       "Marcel + aging",
     ],
     seasonRemainingFraction: Number(seasonRemainingFraction.toFixed(4)),

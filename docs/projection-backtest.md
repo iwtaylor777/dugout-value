@@ -1,6 +1,6 @@
 # In-season projection backtest
 
-Last run: July 16, 2026
+Last run: July 21, 2026
 
 ## Decision
 
@@ -10,20 +10,34 @@ the pre-set uncertainty gate and it performed worse than published future ZiPS
 on the following-season holdout.
 
 The production model keeps published ZiPS as the anchor. The transparent
-in-season bridge was reduced from 85% to 50% of the consensus ZiPS/Steamer rate
-change. This is a conservative shrinkage choice, not a claim that 50% is the
-statistically proven optimum.
+in-season bridge carries 50% of the change from preseason ZiPS to current ZiPS
+RoS. For hitters, a role guard now dampens a contradictory defense/position
+signal when it is larger than the offensive signal. This is a conservative
+shrinkage choice, not a claim that 50% is the statistically proven optimum.
+
+The previous production version averaged ZiPS and Steamer changes. That blend
+has been removed from the future-year adjustment because the historical test
+validates a ZiPS-to-ZiPS change, while the available archived Steamer pages do
+not support the same leakage-safe following-season test. Steamer remains part
+of FanGraphs Depth Charts for the current rest-of-season forecast.
 
 ## What production actually uses
 
 - The current season uses FanGraphs Depth Charts rest-of-season fWAR. Depth
   Charts blends ZiPS and Steamer talent with FanGraphs playing-time estimates.
 - The next two seasons begin with published future ZiPS.
-- A player's ZiPS rest-of-season rate is compared with preseason ZiPS, and the
-  neutral-playing-time Steamer Update rate is compared with preseason Steamer.
-  Available changes are averaged.
-- Half of that consensus change is carried into the next season. The retained
-  signal decays by another 15% in each later season.
+- A player's ZiPS rest-of-season rate is compared with preseason ZiPS at a
+  common workload: 600 PA, 180 starter innings, or 65 relief innings.
+- If ZiPS changes a pitcher from a starting role to a relief role or vice
+  versa, no custom adjustment is made. The published future ZiPS row remains
+  the forecast because WAR per inning is not directly portable across roles.
+- For hitters, the total WAR-rate change is separated into offense and
+  non-offense. When those pieces have opposite signs and the non-offensive
+  change is larger, the non-offensive piece gets half weight. This is designed
+  to keep a new defensive or positional-role assumption from overwhelming an
+  improving or declining offensive projection.
+- Half of the resulting ZiPS change is carried into the next season. The
+  retained signal decays by another 15% in each later season.
 
 This means the site is not simply adding season-to-date WAR to an old forecast,
 and it is not replacing ZiPS with an internal black box.
@@ -78,13 +92,22 @@ contained 504 player-checkpoints.
 | Model | RMSE change vs. future ZiPS | MAE change vs. future ZiPS |
 | --- | ---: | ---: |
 | 85% ZiPS signal carry | 0.30% worse | 0.34% worse |
-| 50% ZiPS signal carry | 1.35% better | 1.68% better |
+| 50% total ZiPS signal carry | 1.34% better | 1.69% better |
+| 50% role-aware ZiPS carry | 1.41% better | 1.82% better |
 | Ridge correction | 3.32% worse | 6.31% worse |
 
-The 50% carry's clustered 95% interval ranged from **0.96% worse to 3.50%
-better**. It is directionally encouraging but not decisive. The ridge result is
-clear enough to reject deployment; the carry result supports shrinking the
-custom adjustment and continuing to let published future ZiPS dominate.
+The role-aware carry's player-clustered 95% interval ranged from about **0.8%
+worse to 3.6% better**. Its advantage over the unguarded 50% carry was also not
+statistically decisive. In the 109-player subgroup where offense and
+non-offense disagreed and non-offense was larger, however, the guard improved
+both RMSE and MAE while the unguarded version made MAE slightly worse. That is
+the exact failure mode the rule is intended to address.
+
+A second challenger used season-to-date WAR as a directional veto. It improved
+pooled RMSE by another tenth of a percentage point but reduced the MAE gain and
+did not improve both checkpoints. It was not deployed. Current ZiPS already
+incorporates the season's underlying performance; adding raw WAR would give a
+noisy accounting statistic a second vote.
 
 ## Limits and next test
 
@@ -92,9 +115,9 @@ custom adjustment and continuing to let published future ZiPS dominate.
   complete enough for the same leakage-safe design.
 - The following-season test has only one fully independent target season
   (2025). That is not enough to lock a custom model into production.
-- Some archived Steamer pages were truncated by the archive, so the historical
-  following-season carry test validates the ZiPS half of the live consensus
-  bridge rather than reproducing every production input exactly.
+- Some archived Steamer pages were truncated by the archive. This is why the
+  production future-year adjustment now uses only the tested ZiPS-to-ZiPS
+  signal instead of an unvalidated equal-weight Steamer overlay.
 - Requiring 100 PA in the target season evaluates rate accuracy among players
   who actually played; it does not test injury or roster-survival probability.
 

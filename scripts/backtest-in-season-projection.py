@@ -35,6 +35,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 USER_AGENT = "DugoutValueProjectionAudit/1.0 (historical model validation)"
+RUNS_PER_WIN = 10.0
 @dataclass(frozen=True)
 class Snapshot:
     key: str
@@ -305,6 +306,8 @@ def load_leaderboard(
         cache_dir / f"{snapshot.key}-{label}.json",
         refresh,
     )
+    if raw[:2] == b"\x1f\x8b":
+        raw = gzip.decompress(raw)
     payload = json.loads(raw)
     if not isinstance(payload.get("data"), list):
         raise ValueError(f"FanGraphs leaderboard failed for {snapshot.key} {label}")
@@ -390,10 +393,23 @@ def build_snapshot_frame(
             "split": snapshot.split,
             "playerid": pid,
             "player": projection_name(projection),
+            "position_db": str(
+                projection.get("positionDB")
+                or projection.get("position")
+                or projection.get("Pos")
+                or projection.get("minpos")
+                or ""
+            ),
             "projected_pa": projected_pa,
             "ytd_pa": ytd_pa,
             "future_pa": future_pa,
             "zips_rate": zips_rate,
+            "zips_off_rate": safe_rate(
+                number(projection, "Off"), projected_pa, 600
+            ),
+            "zips_def_rate": safe_rate(
+                number(projection, "Def"), projected_pa, 600
+            ),
             "ytd_rate": ytd_rate,
             "future_rate": future_rate,
             "target_correction": future_rate - zips_rate,
@@ -473,6 +489,12 @@ def build_future_audit_frame(
         if baseline_pa < 75 or future_pa < 75 or actual_pa < 100:
             continue
         baseline_rate = safe_rate(number(baseline, "WAR"), baseline_pa, 600)
+        baseline_off_rate = safe_rate(
+            number(baseline, "Off"), baseline_pa, 600
+        )
+        baseline_def_rate = safe_rate(
+            number(baseline, "Def"), baseline_pa, 600
+        )
         future_zips_rate = safe_rate(number(future, "WAR"), future_pa, 600)
         actual_rate = safe_rate(number(actual, "WAR"), actual_pa, 600)
         if not all(
@@ -481,6 +503,9 @@ def build_future_audit_frame(
         ):
             continue
         zips_signal_rate = current["zips_rate"] - baseline_rate
+        offense_signal_rate = (
+            current["zips_off_rate"] - baseline_off_rate
+        ) / RUNS_PER_WIN
         record = dict(current)
         record.update(
             {
@@ -488,11 +513,23 @@ def build_future_audit_frame(
                 "future_split": audit.split,
                 "target_season": audit.target_season,
                 "baseline_zips_rate": baseline_rate,
+                "baseline_off_rate": baseline_off_rate,
+                "baseline_def_rate": baseline_def_rate,
                 "future_zips_rate": future_zips_rate,
                 "next_actual_rate": actual_rate,
                 "next_actual_pa": actual_pa,
                 "zips_signal_rate": zips_signal_rate,
                 "signal_rate": zips_signal_rate,
+                "offense_signal_rate": offense_signal_rate,
+                "nonoffense_signal_rate": (
+                    zips_signal_rate - offense_signal_rate
+                ),
+                "future_anchor_signal_rate": (
+                    current["zips_rate"] - future_zips_rate
+                ),
+                "ytd_baseline_signal_rate": (
+                    current["ytd_rate"] - baseline_rate
+                ),
                 "next_target_correction": actual_rate - future_zips_rate,
             }
         )
@@ -665,6 +702,172 @@ def carry_sensitivity(
             }
         )
     return learned, pd.DataFrame(rows)
+
+
+def component_signal_sensitivity(
+    train: pd.DataFrame, test: pd.DataFrame
+) -> tuple[dict[str, float], pd.DataFrame]:
+    signals = ("offense_signal_rate", "nonoffense_signal_rate")
+    fit = train.dropna(subset=[*signals, "next_target_correction"]).copy()
+    evaluated = test.dropna(
+        subset=[
+            *signals,
+            "future_anchor_signal_rate",
+            "ytd_baseline_signal_rate",
+            "next_actual_rate",
+        ]
+    ).copy()
+    fit_weights = np.minimum(fit["next_actual_pa"].to_numpy(), 600)
+    design = fit.loc[:, signals].to_numpy()
+    target = fit["next_target_correction"].to_numpy()
+    root_weights = np.sqrt(fit_weights)[:, None]
+    coefficients = np.linalg.lstsq(
+        design * root_weights,
+        target * root_weights[:, 0],
+        rcond=None,
+    )[0]
+    learned = dict(zip(signals, coefficients, strict=True))
+
+    actual = evaluated["next_actual_rate"].to_numpy()
+    baseline = evaluated["future_zips_rate"].to_numpy()
+    weights = np.minimum(evaluated["next_actual_pa"].to_numpy(), 600)
+    offense = evaluated["offense_signal_rate"].to_numpy()
+    nonoffense = evaluated["nonoffense_signal_rate"].to_numpy()
+    future_anchor = evaluated["future_anchor_signal_rate"].to_numpy()
+    ytd_signal = evaluated["ytd_baseline_signal_rate"].to_numpy()
+    conflict_dominant = (offense * nonoffense < 0) & (
+        np.abs(nonoffense) > np.abs(offense)
+    )
+    guarded_signal = offense + np.where(
+        conflict_dominant, 0.5 * nonoffense, nonoffense
+    )
+    guarded_agreement_signal = np.where(
+        guarded_signal * ytd_signal < 0,
+        0,
+        guarded_signal,
+    )
+    softened_agreement_signal = np.where(
+        guarded_signal * ytd_signal < 0,
+        0.5 * guarded_signal,
+        guarded_signal,
+    )
+    variants = (
+        ("published future ZiPS", baseline),
+        ("50% total WAR signal", baseline + 0.5 * (offense + nonoffense)),
+        ("50% offense only", baseline + 0.5 * offense),
+        ("75% offense only", baseline + 0.75 * offense),
+        ("100% offense only", baseline + offense),
+        (
+            "50% offense + 10% non-offense",
+            baseline + 0.5 * offense + 0.1 * nonoffense,
+        ),
+        (
+            "50% offense + 25% non-offense",
+            baseline + 0.5 * offense + 0.25 * nonoffense,
+        ),
+        (
+            "50% guarded total signal",
+            baseline + 0.5 * guarded_signal,
+        ),
+        (
+            "50% guarded + YTD direction",
+            baseline + 0.5 * guarded_agreement_signal,
+        ),
+        (
+            "50% guarded + soft YTD direction",
+            baseline + 0.5 * softened_agreement_signal,
+        ),
+        ("50% current-vs-future anchor", baseline + 0.5 * future_anchor),
+        (
+            "2023-trained component carry",
+            baseline
+            + learned["offense_signal_rate"] * offense
+            + learned["nonoffense_signal_rate"] * nonoffense,
+        ),
+    )
+    baseline_rmse = math.sqrt(
+        float(np.average(np.square(actual - baseline), weights=weights))
+    )
+    baseline_mae = float(np.average(np.abs(actual - baseline), weights=weights))
+    rows = []
+    for label, prediction in variants:
+        rmse = math.sqrt(
+            float(np.average(np.square(actual - prediction), weights=weights))
+        )
+        mae = float(np.average(np.abs(actual - prediction), weights=weights))
+        rows.append(
+            {
+                "variant": label,
+                "n": len(evaluated),
+                "rmse_rate": rmse,
+                "rmse_improvement_pct": 100
+                * (baseline_rmse - rmse)
+                / baseline_rmse,
+                "mae_rate": mae,
+                "mae_improvement_pct": 100
+                * (baseline_mae - mae)
+                / baseline_mae,
+            }
+        )
+    return learned, pd.DataFrame(rows)
+
+
+def component_signal_bootstrap(
+    frame: pd.DataFrame, iterations: int, seed: int = 20260721
+) -> dict[str, dict[str, float]]:
+    clean = frame.dropna(
+        subset=[
+            "offense_signal_rate",
+            "nonoffense_signal_rate",
+            "future_zips_rate",
+            "next_actual_rate",
+        ]
+    )
+    rng = random.Random(seed)
+    ids = sorted(clean["playerid"].unique())
+    by_id = {pid: clean[clean["playerid"] == pid] for pid in ids}
+    values = {"total50": [], "guarded50": [], "guarded_minus_total": []}
+    for _ in range(iterations):
+        sample = pd.concat([by_id[rng.choice(ids)] for _ in ids], ignore_index=True)
+        actual = sample["next_actual_rate"].to_numpy()
+        baseline = sample["future_zips_rate"].to_numpy()
+        offense = sample["offense_signal_rate"].to_numpy()
+        nonoffense = sample["nonoffense_signal_rate"].to_numpy()
+        conflict_dominant = (offense * nonoffense < 0) & (
+            np.abs(nonoffense) > np.abs(offense)
+        )
+        guarded = offense + np.where(
+            conflict_dominant, 0.5 * nonoffense, nonoffense
+        )
+        weights = np.minimum(sample["next_actual_pa"].to_numpy(), 600)
+
+        def rmse(prediction: np.ndarray) -> float:
+            return math.sqrt(
+                float(np.average(np.square(actual - prediction), weights=weights))
+            )
+
+        baseline_rmse = rmse(baseline)
+        total_rmse = rmse(baseline + 0.5 * (offense + nonoffense))
+        guarded_rmse = rmse(baseline + 0.5 * guarded)
+        total_improvement = 100 * (baseline_rmse - total_rmse) / baseline_rmse
+        guarded_improvement = (
+            100 * (baseline_rmse - guarded_rmse) / baseline_rmse
+        )
+        values["total50"].append(total_improvement)
+        values["guarded50"].append(guarded_improvement)
+        values["guarded_minus_total"].append(
+            guarded_improvement - total_improvement
+        )
+    result = {}
+    for key, observations in values.items():
+        array = np.asarray(observations)
+        result[key] = {
+            "low": float(np.percentile(array, 2.5)),
+            "median": float(np.percentile(array, 50)),
+            "high": float(np.percentile(array, 97.5)),
+            "probability_positive": float(np.mean(array > 0)),
+        }
+    return result
 
 
 def future_clustered_bootstrap(
@@ -975,6 +1178,86 @@ def main() -> None:
         f"(2023-trained no-intercept coefficient: {learned_carry:.3f})"
     )
     print_frame(carry_grid)
+    component_carry, component_grid = component_signal_sensitivity(
+        future_train, future_test
+    )
+    print(
+        "\nFollowing-season component-signal sensitivity "
+        f"(2023-trained coefficients: {component_carry})"
+    )
+    print_frame(component_grid)
+    checkpoint_rows = []
+    for checkpoint in ("2024-05-15", "2024-08-25"):
+        _, checkpoint_grid = component_signal_sensitivity(
+            future_train,
+            future_test[future_test["future_audit"] == checkpoint],
+        )
+        chosen = checkpoint_grid[
+            checkpoint_grid["variant"].isin(
+                (
+                    "published future ZiPS",
+                    "50% total WAR signal",
+                    "50% guarded total signal",
+                    "50% guarded + YTD direction",
+                    "50% guarded + soft YTD direction",
+                )
+            )
+        ].copy()
+        chosen.insert(0, "checkpoint", checkpoint)
+        checkpoint_rows.append(chosen)
+    print("\nFollowing-season guarded signal by checkpoint")
+    print_frame(pd.concat(checkpoint_rows, ignore_index=True))
+    print("\nFollowing-season guarded-signal player-clustered bootstrap")
+    print(
+        json.dumps(
+            component_signal_bootstrap(future_test, args.bootstrap),
+            indent=2,
+        )
+    )
+    conflict = (
+        future_test["offense_signal_rate"]
+        * future_test["nonoffense_signal_rate"]
+        < 0
+    )
+    nonoffense_dominates = (
+        future_test["nonoffense_signal_rate"].abs()
+        > future_test["offense_signal_rate"].abs()
+    )
+    subgroup_rows = []
+    for subgroup, frame in (
+        ("catchers", future_test[future_test["position_db"].str.contains("C")]),
+        ("signal conflict", future_test[conflict]),
+        (
+            "conflict + non-offense dominates",
+            future_test[conflict & nonoffense_dominates],
+        ),
+        (
+            "large non-offense change",
+            future_test[
+                future_test["nonoffense_signal_rate"].abs()
+                >= future_test["nonoffense_signal_rate"].abs().quantile(0.75)
+            ],
+        ),
+    ):
+        if frame.empty:
+            continue
+        _, subgroup_grid = component_signal_sensitivity(future_train, frame)
+        chosen = subgroup_grid[
+            subgroup_grid["variant"].isin(
+                (
+                    "published future ZiPS",
+                    "50% total WAR signal",
+                    "50% offense only",
+                    "50% offense + 10% non-offense",
+                    "50% offense + 25% non-offense",
+                    "50% guarded total signal",
+                )
+            )
+        ].copy()
+        chosen.insert(0, "subgroup", subgroup)
+        subgroup_rows.append(chosen)
+    print("\nFollowing-season component-signal subgroups")
+    print_frame(pd.concat(subgroup_rows, ignore_index=True))
     future_metrics = pd.DataFrame(
         [
             future_metric_row(future_test, "all 2024 -> 2025 holdout"),

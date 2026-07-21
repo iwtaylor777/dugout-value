@@ -75,12 +75,17 @@ type TalentProviderChange = {
   baselineRate: number;
   updatedRate: number;
   changeRate: number;
+  rawChangeRate?: number;
+  offenseChangeRate?: number | null;
+  nonoffenseChangeRate?: number | null;
+  roleGuarded?: boolean;
 };
 type TalentUpdate = {
   method: string;
   unitLabel: string;
   rateChange: number | null;
   capped: boolean;
+  roleGuarded?: boolean;
   providers: TalentProviderChange[];
 };
 type ThreeYearProjectionSeason = {
@@ -2436,7 +2441,7 @@ export default function Home() {
                         <span>fWAR by control year</span>
                         <small>
                           2026 is Depth Charts RoS; future ZiPS is updated with
-                          today&apos;s ZiPS/Steamer talent signal.
+                          today&apos;s role-aware ZiPS signal.
                         </small>
                       </div>
                       <button
@@ -2493,14 +2498,12 @@ export default function Home() {
                           <details>
                             <summary>How was this adjustment built?</summary>
                             <p>
-                              Each projection system is compared only with
-                              itself: today&apos;s ZiPS RoS rate versus preseason
-                              ZiPS, and today&apos;s neutral-playing-time Steamer
-                              Update rate versus preseason Steamer. The
-                              available changes—normally both—are averaged,
-                              applied to the future workload, and 50% is carried
-                              into next season. The carried signal then decays
-                              by 15% per additional year.
+                              Today&apos;s ZiPS RoS rate is compared with preseason
+                              ZiPS. For hitters, an opposing change in projected
+                              defense or role is damped when it would overwhelm
+                              the offensive update. The result is applied to the
+                              future workload, 50% is carried into next season,
+                              and that signal decays by 15% per additional year.
                             </p>
                             <div className="talent-provider-list">
                               {selected.talentUpdate.providers.map(
@@ -2515,6 +2518,15 @@ export default function Home() {
                                       fWAR / {provider.unitLabel} ·{" "}
                                       {signedWar(provider.changeRate)}
                                     </small>
+                                    {provider.roleGuarded && (
+                                      <small>
+                                        Role/defense swing damped · raw{" "}
+                                        {signedWar(
+                                          provider.rawChangeRate ??
+                                            provider.changeRate,
+                                        )}
+                                      </small>
+                                    )}
                                   </div>
                                 ),
                               )}
@@ -2855,7 +2867,8 @@ export default function Home() {
                 <p>
                   2026 is FanGraphs Depth Charts rest-of-season fWAR. The 2027
                   and 2028 columns begin with published ZiPS, then carry forward
-                  the available ZiPS and Steamer in-season talent changes.
+                  a conservative, role-aware share of the ZiPS in-season talent
+                  change.
                 </p>
               </div>
               <strong>
@@ -3205,26 +3218,36 @@ export default function Home() {
                       <p>
                         The future curve begins with the current published ZiPS
                         2027 and 2028 forecasts. For each player, Dugout Value
-                        compares ZiPS RoS with preseason ZiPS and the
-                        neutral-playing-time Steamer Update with preseason
-                        Steamer after normalizing each to 600 PA, 180 starter
-                        innings, or 65 relief innings. It averages the available
-                        model-to-model changes—normally both—and applies the
-                        result to the future projected workload. A tiny RoS
-                        workload is discarded so a season-ending injury cannot
-                        look like a collapse in true talent. When only one valid
-                        model pair exists, the player card shows that provider
-                        alone.
+                        compares ZiPS RoS with preseason ZiPS after normalizing
+                        both to 600 PA, 180 starter innings, or 65 relief
+                        innings. That measures how ZiPS itself has changed its
+                        view of the player. A tiny RoS workload is discarded so
+                        a season-ending injury cannot look like a collapse in
+                        true talent.
                       </p>
                       <p>
-                        The bridge carries 50% of that consensus change into
-                        the next season and 85% of the remaining signal into
-                        each later year. This is deliberately more conservative
-                        than treating every current-season gain as permanent.
-                        The updated ZiPS and Steamer models have already decided
-                        how much to learn from strikeouts, walks, contact
-                        quality, velocity, defense, and other inputs, so raw
-                        season-to-date WAR is never added to a future forecast.
+                        If a pitcher&apos;s ZiPS role changes between starting and
+                        relieving, no custom bridge is applied. WAR per inning
+                        is not directly comparable across those roles, so the
+                        published future ZiPS forecast is the safer estimate.
+                      </p>
+                      <p>
+                        For hitters, the bridge also separates the offensive
+                        change from the rest of the WAR change. If offense moves
+                        one way but a larger defense or positional-role change
+                        moves the other way, the contradictory non-offensive
+                        portion receives half weight. This keeps a shift between
+                        catcher, first base, and DH usage from masquerading as a
+                        major change in hitting talent. Otherwise the full ZiPS
+                        signal is used.
+                      </p>
+                      <p>
+                        The bridge carries 50% of the resulting change into the
+                        next season and 85% of the remaining signal into each
+                        later year. ZiPS has already decided how much to learn
+                        from strikeouts, walks, contact quality, velocity,
+                        defense, and other inputs, so raw season-to-date WAR is
+                        never added to a future forecast.
                       </p>
                     </div>
                     <p>
@@ -3235,8 +3258,9 @@ export default function Home() {
                       These settings reduce the risk of permanently carrying a
                       short-term role, health, or defensive signal across an
                       entire contract.
-                      The player card shows the published ZiPS baseline, each
-                      model&apos;s rate change, the adjustment, and the final fWAR.
+                      The player card shows the published ZiPS baseline, the
+                      ZiPS rate change, any role guard, the adjustment, and the
+                      final fWAR.
                       If a future ZiPS row is unavailable, a simple Marcel-style
                       aging fallback extends the curve. Two-way players are
                       updated separately as hitters and pitchers before the
@@ -3553,13 +3577,6 @@ export default function Home() {
                 rel="noreferrer"
               >
                 FanGraphs ZiPS RoS ↗
-              </a>
-              <a
-                href="https://www.fangraphs.com/projections?type=steamer600u&amp;stats=bat&amp;pos=all"
-                target="_blank"
-                rel="noreferrer"
-              >
-                FanGraphs Steamer Update ↗
               </a>
               <a
                 href="https://www.fangraphs.com/projections?type=zipsp1&amp;stats=bat&amp;pos=all"

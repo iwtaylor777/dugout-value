@@ -147,8 +147,9 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /Both the premium and its net-WAR cutoff are/);
   assert.match(page, /In-season talent bridge/);
   assert.match(page, /Not season-to-date WAR/);
-  assert.match(page, /today&apos;s ZiPS RoS rate versus preseason/);
-  assert.match(page, /neutral-playing-time Steamer/);
+  assert.match(page, /Today&apos;s ZiPS RoS rate is compared with preseason/);
+  assert.match(page, /contradictory non-offensive/);
+  assert.match(page, /ZiPS role changes between starting and\s+relieving/);
   assert.match(page, /The bridge carries 50%/);
   assert.match(page, /A tiny RoS\s+workload is/);
   assert.match(page, /Moves the central value/);
