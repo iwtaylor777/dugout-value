@@ -11,6 +11,7 @@ import {
 } from "../lib/contract-context.mjs";
 import {
   effectiveSeasons,
+  estimateArbitrationSalary,
   estimateFirstArbitrationSalary,
   initialSettings,
   isReliever,
@@ -68,6 +69,77 @@ test("first-year arbitration has a restrained WAR fallback", () => {
   );
 });
 
+test("later arbitration years blend class value with the prior salary path", () => {
+  const hitter = { position: "OF", role: "position" };
+  const metrics = {
+    pa: 650,
+    hr: 30,
+    rbi: 95,
+    sb: 15,
+    avg: 0.28,
+    war: 5,
+  };
+  const arb1 = estimateArbitrationSalary(hitter, "arb1", metrics);
+  const arb2 = estimateArbitrationSalary(hitter, "arb2", metrics, arb1);
+  const arb3 = estimateArbitrationSalary(hitter, "arb3", metrics, arb2);
+
+  assert.ok(arb2 > arb1 * 1.25);
+  assert.ok(arb3 > 15);
+  assert.ok(arb3 <= 36);
+});
+
+test("a higher prior award raises every repeat-eligible estimate", () => {
+  const hitter = { position: "SS", role: "position" };
+  const metrics = {
+    pa: 650,
+    hr: 30,
+    rbi: 85,
+    sb: 20,
+    avg: 0.255,
+    war: 4,
+  };
+  const lowerPath = estimateArbitrationSalary(
+    hitter,
+    "arb2",
+    metrics,
+    4.15,
+    1.03,
+    1.03,
+  );
+  const higherPath = estimateArbitrationSalary(
+    hitter,
+    "arb2",
+    metrics,
+    6,
+    1.03,
+    1.03,
+  );
+
+  assert.ok(lowerPath > 8);
+  assert.ok(higherPath > lowerPath + 1);
+});
+
+test("later arbitration can flatten after a down year instead of forcing a large raise", () => {
+  const hitter = { position: "OF", role: "position" };
+  const downYear = {
+    pa: 550,
+    hr: 10,
+    rbi: 55,
+    sb: 10,
+    avg: 0.245,
+    war: 1,
+  };
+  const salary = estimateArbitrationSalary(
+    hitter,
+    "arb3",
+    downYear,
+    8.4,
+  );
+
+  assert.ok(salary >= 6.72);
+  assert.ok(salary < 13);
+});
+
 const database = JSON.parse(
   await readFile(new URL("../app/data/player-database.json", import.meta.url)),
 );
@@ -78,6 +150,32 @@ const identity = (player) =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]/gi, "")
     .toLowerCase()}::${player.team}`;
+
+test("Wyatt Langford's projected arbitration ladder reflects star production", () => {
+  const langford = database.players.find(
+    (player) => player.name === "Wyatt Langford",
+  );
+  assert.ok(langford);
+  const rows = valuePlayer(langford, initialSettings, database).rows.filter(
+    (row) => row.year >= 2027,
+  );
+  assert.deepEqual(rows.map((row) => row.year), [2027, 2028, 2029]);
+  assert.ok(rows[1].salary > rows[0].salary);
+  assert.ok(rows[2].salary > 10);
+});
+
+test("Zach Neto's arbitration ladder carries his first award into later raises", () => {
+  const neto = database.players.find((player) => player.name === "Zach Neto");
+  assert.ok(neto);
+  const rows = valuePlayer(neto, initialSettings, database).rows.filter(
+    (row) => row.year >= 2027,
+  );
+
+  assert.equal(rows.length, 3);
+  assert.ok(rows[0].salary >= 8);
+  assert.ok(rows[1].salary >= 13);
+  assert.ok(rows[2].salary >= 19);
+});
 
 test("contract notes distinguish full, partial, and absent trade protection", () => {
   assert.equal(

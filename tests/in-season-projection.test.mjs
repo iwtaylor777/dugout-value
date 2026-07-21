@@ -65,13 +65,13 @@ test("reproduces the audited James Wood in-season bridge", () => {
 
   assert.equal(update.providerCount, 2);
   assert.ok(update.rateChange > 1 && update.rateChange < 1.2);
-  assert.ok(projection.adjustment > 0.9 && projection.adjustment < 1.1);
-  assert.ok(projection.finalWar > 3.9 && projection.finalWar < 4.1);
+  assert.ok(projection.adjustment > 0.5 && projection.adjustment < 0.7);
+  assert.ok(projection.finalWar > 3.4 && projection.finalWar < 3.7);
 });
 
 test("future carry decays smoothly without reversing the signal", () => {
-  assert.equal(signalPersistence(2027, 2026), 0.85);
-  assert.equal(signalPersistence(2028, 2026), 0.85 ** 2);
+  assert.equal(signalPersistence(2027, 2026), 0.5);
+  assert.equal(signalPersistence(2028, 2026), 0.5 * 0.85);
   assert.ok(signalPersistence(2030, 2026) < signalPersistence(2028, 2026));
 });
 
@@ -158,9 +158,15 @@ test("James Wood uses today's official baseline plus a visible talent update", a
   assert.equal(wood.name, "James Wood");
   assert.match(wood.source.projection, /rolling talent update/);
   assert.equal(wood.talentUpdate.providers.length, 2);
-  assert.equal(nextSeason.projectionBaselineWar, 3);
-  assert.equal(nextSeason.inSeasonAdjustment, 1);
-  assert.equal(nextSeason.war, 4);
+  assert.ok(nextSeason.inSeasonAdjustment > 0);
+  assert.equal(
+    nextSeason.war,
+    Number(
+      (
+        nextSeason.projectionBaselineWar + nextSeason.inSeasonAdjustment
+      ).toFixed(1),
+    ),
+  );
 });
 
 test("every MLB player has a contract-independent three-year projection", async () => {

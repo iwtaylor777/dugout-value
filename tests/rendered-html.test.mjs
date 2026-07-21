@@ -149,7 +149,7 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /Not season-to-date WAR/);
   assert.match(page, /today&apos;s ZiPS RoS rate versus preseason/);
   assert.match(page, /neutral-playing-time Steamer/);
-  assert.match(page, /The bridge carries 85%/);
+  assert.match(page, /The bridge carries 50%/);
   assert.match(page, /A tiny RoS\s+workload is/);
   assert.match(page, /Moves the central value/);
   assert.match(page, /Moves only the range/);
@@ -158,6 +158,9 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /packageRange/);
   assert.match(page, /keeps 40% of\s+player-value errors correlated/);
   assert.match(page, /not a 40% chance of failure or a 40% value haircut/);
+  assert.match(page, /previous award\s+into a performance-based raise path/);
+  assert.match(page, /platform \+ prior pay/);
+  assert.match(page, /new collective bargaining agreement/);
   assert.match(page, /Package shape/);
   assert.match(page, /leftCash,/);
   assert.match(audit, /Navigate search with keyboard/);

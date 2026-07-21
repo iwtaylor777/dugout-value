@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { estimateFirstArbitrationSalary } from "../lib/value-model.mjs";
 
 const BASE_YEAR = 2026;
 const database = JSON.parse(
@@ -161,6 +162,37 @@ const pitchingById = new Map(
   pitching.map((row) => [String(row.xMLBAMID), row]),
 );
 const groups = { position: [], starter: [], reliever: [] };
+const ladderGroups = { arb1: [], arb2: [], arb3: [] };
+
+function productionMetrics(player, stats) {
+  if (player.role === "position")
+    return {
+      pa: Number(stats.PA) || 0,
+      hr: Number(stats.HR) || 0,
+      rbi: Number(stats.RBI) || 0,
+      sb: Number(stats.SB) || 0,
+      avg: Number(stats.AVG) || 0,
+      war: Number(stats.WAR) || 0,
+    };
+  const common = {
+    ip: Number(stats.IP) || 0,
+    era: Number(stats.ERA) || 4.5,
+    so: Number(stats.SO) || 0,
+    war: Number(stats.WAR) || 0,
+  };
+  if (player.role === "reliever")
+    return {
+      ...common,
+      g: Number(stats.G) || 0,
+      sv: Number(stats.SV) || 0,
+      hld: Number(stats.HLD) || 0,
+    };
+  return {
+    ...common,
+    gs: Number(stats.GS) || 0,
+    w: Number(stats.W) || 0,
+  };
+}
 
 for (const player of database.players.filter((item) => item.kind === "mlb")) {
   const nextSeason = player.seasons.find(
@@ -172,17 +204,61 @@ for (const player of database.players.filter((item) => item.kind === "mlb")) {
     (season) => season.year === BASE_YEAR,
   );
   const priorArbYear = Number(nextSeason?.salaryMode.slice(3)) - 1;
-  if (!currentSeason || priorArbYear !== 1) continue;
+  if (!currentSeason) continue;
   const id = player.id.replace(/^mlb-/, "");
   const stats =
     player.role === "position"
       ? battingById.get(id)
       : pitchingById.get(id);
   if (!stats || !groups[player.role]) continue;
+  const currentArbYear = priorArbYear;
+  const ladderGroup = ladderGroups[`arb${currentArbYear}`];
+  if (ladderGroup) {
+    const metrics = productionMetrics(player, stats);
+    const firstYearEquivalent = estimateFirstArbitrationSalary(
+      player,
+      metrics,
+    );
+    ladderGroup.push({
+      name: player.name,
+      role: player.role,
+      salary: currentSeason.annualSalary,
+      firstYearEquivalent,
+      ratio: currentSeason.annualSalary / firstYearEquivalent,
+      stats,
+    });
+  }
+  if (priorArbYear !== 1) continue;
   groups[player.role].push({
     name: player.name,
     salary: currentSeason.annualSalary,
     stats,
+  });
+}
+
+const median = (values) => {
+  const sorted = [...values].sort((left, right) => left - right);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2
+    ? sorted[middle]
+    : (sorted[middle - 1] + sorted[middle]) / 2;
+};
+
+console.log("\nDirect arbitration-year ladder calibration");
+for (const [arbYear, rows] of Object.entries(ladderGroups)) {
+  const ratio = median(rows.map((row) => row.ratio));
+  const directMae =
+    rows.reduce(
+      (sum, row) =>
+        sum + Math.abs(row.salary - row.firstYearEquivalent * ratio),
+      0,
+    ) / rows.length;
+  console.log({
+    arbYear,
+    salaries: rows.length,
+    medianRatio: Number(ratio.toFixed(3)),
+    directMae: Number(directMae.toFixed(3)),
+    salaryMedian: Number(median(rows.map((row) => row.salary)).toFixed(3)),
   });
 }
 

@@ -2338,8 +2338,11 @@ export default function Home() {
                         selectedSeasons[0]?.salary ??
                         0,
                     )}
-                    ). Arb 1 uses projected role-specific counting stats;
-                    later years use conservative raises from the prior salary.
+                    ). Every arbitration year prices the latest full-season
+                    platform stats against the player&apos;s arbitration class. For
+                    repeat-eligible players, it also carries the previous award
+                    into a performance-based raise path; neither input controls
+                    the estimate by itself.
                   </p>
                 )}
                 {selected.kind === "mlb" && settings.deadlineBoost > 0 && (
@@ -2495,7 +2498,7 @@ export default function Home() {
                               ZiPS, and today&apos;s neutral-playing-time Steamer
                               Update rate versus preseason Steamer. The
                               available changes—normally both—are averaged,
-                              applied to the future workload, and 85% is carried
+                              applied to the future workload, and 50% is carried
                               into next season. The carried signal then decays
                               by 15% per additional year.
                             </p>
@@ -2631,9 +2634,9 @@ export default function Home() {
                                 <strong>{money(row?.salary ?? 0)}</strong>
                                 <small>
                                   {season.salaryMode === "arb1"
-                                    ? "stats model"
+                                    ? "platform stats"
                                     : season.salaryMode.startsWith("arb")
-                                      ? "bounded raise"
+                                      ? "platform + prior pay"
                                       : "league minimum"}
                                 </small>
                               </span>
@@ -3214,7 +3217,7 @@ export default function Home() {
                         alone.
                       </p>
                       <p>
-                        The bridge carries 85% of that consensus change into
+                        The bridge carries 50% of that consensus change into
                         the next season and 85% of the remaining signal into
                         each later year. This is deliberately more conservative
                         than treating every current-season gain as permanent.
@@ -3225,10 +3228,13 @@ export default function Home() {
                       </p>
                     </div>
                     <p>
-                      The 85% bridge and 15% annual decay are transparent
-                      calibration choices, not official ZiPS settings. They
-                      reduce the risk of permanently carrying a short-term role,
-                      health, or defensive signal across an entire contract.
+                      The 50% bridge and 15% annual decay are transparent
+                      calibration choices, not official ZiPS settings. A
+                      historical holdout found that a half-strength bridge was
+                      safer than carrying nearly the entire in-season change.
+                      These settings reduce the risk of permanently carrying a
+                      short-term role, health, or defensive signal across an
+                      entire contract.
                       The player card shows the published ZiPS baseline, each
                       model&apos;s rate change, the adjustment, and the final fWAR.
                       If a future ZiPS row is unavailable, a simple Marcel-style
@@ -3322,9 +3328,21 @@ export default function Home() {
                       panels tend to reward: playing time, power, run production,
                       and steals for hitters; innings, starts, wins, ERA, and
                       strikeouts for starters; and appearances, saves, and holds
-                      for relievers. Later arbitration years use conservative,
-                      performance-bounded raises from the prior salary rather
-                      than implausibly doubling pay every season.
+                      for relievers. For later years, we re-estimate what the
+                      player&apos;s latest platform season would earn, then compare it
+                      with players at the same arbitration stage. For repeat
+                      eligibles, a second estimate starts with the previous
+                      salary and adds a role- and performance-based raise. The
+                      final number blends those two views. That reflects both
+                      same-service comparables and the CBA&apos;s explicit instruction
+                      to consider past compensation, without blindly compounding
+                      a fixed percentage. A poor platform year can still flatten
+                      the salary, while a strong early award lifts the later path.
+                      Fourth-award estimates remain less certain because only
+                      Super Two players reach that stage. The 2027-and-later
+                      estimates assume the current arbitration structure
+                      continues; a new collective bargaining agreement could
+                      change those rules and would require another recalibration.
                     </p>
                     <p>
                       Playing-time escalators are probability-weighted. Mutually
