@@ -158,6 +158,9 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(page, /packageRange/);
   assert.match(page, /keeps 40% of\s+player-value errors correlated/);
   assert.match(page, /not a 40% chance of failure or a 40% value haircut/);
+  assert.match(page, /previous award\s+into a performance-based raise path/);
+  assert.match(page, /platform \+ prior pay/);
+  assert.match(page, /new collective bargaining agreement/);
   assert.match(page, /Package shape/);
   assert.match(page, /leftCash,/);
   assert.match(audit, /Navigate search with keyboard/);

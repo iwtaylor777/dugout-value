@@ -31,6 +31,14 @@ export function estimateFirstArbitrationSalary(
   metrics: Record<string, number> | undefined,
   inflation?: number,
 ): number;
+export function estimateArbitrationSalary(
+  player: unknown,
+  salaryMode: "arb1" | "arb2" | "arb3" | "arb4",
+  metrics: Record<string, number> | undefined,
+  priorSalary?: number,
+  inflation?: number,
+  annualInflation?: number,
+): number;
 export function effectiveSeasons<T extends { seasons: unknown[] }>(
   player: T & {
     contractScenario?: {

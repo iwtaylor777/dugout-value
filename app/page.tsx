@@ -2339,9 +2339,10 @@ export default function Home() {
                         0,
                     )}
                     ). Every arbitration year prices the latest full-season
-                    platform stats against the player&apos;s arbitration class. The
-                    prior salary supplies the CBA reduction floor, not an
-                    automatic raise.
+                    platform stats against the player&apos;s arbitration class. For
+                    repeat-eligible players, it also carries the previous award
+                    into a performance-based raise path; neither input controls
+                    the estimate by itself.
                   </p>
                 )}
                 {selected.kind === "mlb" && settings.deadlineBoost > 0 && (
@@ -2635,7 +2636,7 @@ export default function Home() {
                                   {season.salaryMode === "arb1"
                                     ? "platform stats"
                                     : season.salaryMode.startsWith("arb")
-                                      ? "arb-class model"
+                                      ? "platform + prior pay"
                                       : "league minimum"}
                                 </small>
                               </span>
@@ -3329,14 +3330,19 @@ export default function Home() {
                       strikeouts for starters; and appearances, saves, and holds
                       for relievers. For later years, we re-estimate what the
                       player&apos;s latest platform season would earn, then compare it
-                      with players at the same arbitration stage. The 2026 data
-                      supports factors of about 1.3× for a second award and 2.3×
-                      for a third award relative to a comparable first-year case.
-                      The prior salary remains a guardrail—the model allows the
-                      decline permitted by the CBA rather than inventing an
-                      automatic raise. Fourth-award estimates extend that curve
-                      conservatively; only Super Two players reach that stage,
-                      so the public comparison sample is thinner.
+                      with players at the same arbitration stage. For repeat
+                      eligibles, a second estimate starts with the previous
+                      salary and adds a role- and performance-based raise. The
+                      final number blends those two views. That reflects both
+                      same-service comparables and the CBA&apos;s explicit instruction
+                      to consider past compensation, without blindly compounding
+                      a fixed percentage. A poor platform year can still flatten
+                      the salary, while a strong early award lifts the later path.
+                      Fourth-award estimates remain less certain because only
+                      Super Two players reach that stage. The 2027-and-later
+                      estimates assume the current arbitration structure
+                      continues; a new collective bargaining agreement could
+                      change those rules and would require another recalibration.
                     </p>
                     <p>
                       Playing-time escalators are probability-weighted. Mutually

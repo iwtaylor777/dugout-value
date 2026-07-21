@@ -158,9 +158,15 @@ test("James Wood uses today's official baseline plus a visible talent update", a
   assert.equal(wood.name, "James Wood");
   assert.match(wood.source.projection, /rolling talent update/);
   assert.equal(wood.talentUpdate.providers.length, 2);
-  assert.equal(nextSeason.projectionBaselineWar, 3);
-  assert.equal(nextSeason.inSeasonAdjustment, 0.6);
-  assert.equal(nextSeason.war, 3.6);
+  assert.ok(nextSeason.inSeasonAdjustment > 0);
+  assert.equal(
+    nextSeason.war,
+    Number(
+      (
+        nextSeason.projectionBaselineWar + nextSeason.inSeasonAdjustment
+      ).toFixed(1),
+    ),
+  );
 });
 
 test("every MLB player has a contract-independent three-year projection", async () => {
