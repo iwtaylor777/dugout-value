@@ -6,6 +6,8 @@ export type ModelSettingsShape = {
   starPremium: number;
   starThreshold: number;
   deadlineBoost: number;
+  postseasonStarterBaselineWar: number;
+  postseasonEquivalentSeason: number;
   relieverPremium: number;
   inflation: number;
   minimumSalary: number;
@@ -48,6 +50,12 @@ export function effectiveSeasons<T extends { seasons: unknown[] }>(
   },
 ): unknown[];
 export function marketValueForSeason(
+  player: unknown,
+  season: unknown,
+  settings: ModelSettingsShape,
+  database: unknown,
+): number;
+export function postseasonRotationValueForSeason(
   player: unknown,
   season: unknown,
   settings: ModelSettingsShape,

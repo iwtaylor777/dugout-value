@@ -185,6 +185,8 @@ type ModelSettings = {
   starPremium: number;
   starThreshold: number;
   deadlineBoost: number;
+  postseasonStarterBaselineWar: number;
+  postseasonEquivalentSeason: number;
   relieverPremium: number;
   inflation: number;
   minimumSalary: number;
@@ -199,6 +201,8 @@ type ValueResult = {
   prospectTotal?: number;
   rookieAdjustment?: number;
   deadlineAdjustment?: number;
+  deadlineCurrentWinAdjustment?: number;
+  octoberAdjustment?: number;
   horizonRisk?: number;
   rangeUncertainty?: number;
   prospectRankAdjustment?: number;
@@ -209,6 +213,8 @@ type ValueResult = {
     salary: number;
     surplus: number;
     deadlineAdjustment?: number;
+    deadlineCurrentWinAdjustment?: number;
+    octoberAdjustment?: number;
   }>;
 };
 type Database = {
@@ -339,6 +345,8 @@ const sharedSettings = (value: unknown): ModelSettings => {
     starPremium: [0, 200],
     starThreshold: [0, 10],
     deadlineBoost: [0, 50],
+    postseasonStarterBaselineWar: [0, 10],
+    postseasonEquivalentSeason: [0, 100],
     relieverPremium: [0, 200],
     inflation: [0, 100],
     minimumSalary: [0, 10],
@@ -1746,7 +1754,7 @@ export default function Home() {
             <span>Deadline lens</span>
             <strong>
               {settings.deadlineBoost > 0
-                ? `On · +${shortNumber(settings.deadlineBoost)}% RoS`
+                ? "On · current wins + October"
                 : "Off · baseline value"}
             </strong>
           </button>
@@ -1809,7 +1817,7 @@ export default function Home() {
                   }
                 >
                   Deadline market
-                  <small>+15% to 2026 RoS production</small>
+                  <small>Current wins + October SP value</small>
                 </button>
               </div>
             </div>
@@ -1910,6 +1918,38 @@ export default function Home() {
               <em>%</em>
             </label>
             <label>
+              <span>October SP benchmark</span>
+              <NumericField
+                label="Net displaced starter baseline"
+                value={settings.postseasonStarterBaselineWar}
+                min={0}
+                max={10}
+                onChange={(value) =>
+                  setSettings({
+                    ...settings,
+                    postseasonStarterBaselineWar: value,
+                  })
+                }
+              />
+              <em>WAR / 180</em>
+            </label>
+            <label>
+              <span>October workload equivalent</span>
+              <NumericField
+                label="Postseason equivalent share of a season"
+                value={settings.postseasonEquivalentSeason}
+                min={0}
+                max={100}
+                onChange={(value) =>
+                  setSettings({
+                    ...settings,
+                    postseasonEquivalentSeason: value,
+                  })
+                }
+              />
+              <em>% season</em>
+            </label>
+            <label>
               <span>WAR-price inflation</span>
               <NumericField
                 label="WAR inflation"
@@ -1939,9 +1979,10 @@ export default function Home() {
               premium. FanGraphs pitcher WAR already includes a leverage
               adjustment, so the extra reliever premium stays an optional team
               preference rather than a hidden assumption. The deadline lens is
-              off by default and raises only the market value of remaining 2026
-              production. It does not change salary, option costs, future
-              seasons, or prospect values.
+              off by default. It raises the market value of remaining 2026
+              production and gives top starters an October rotation term above
+              a two-WAR net benchmark. It does not change salary, option costs,
+              future seasons, or prospect values.
             </p>
           </section>
         )}
@@ -2358,15 +2399,22 @@ export default function Home() {
                         {money(values[selected.id]?.deadlineAdjustment ?? 0)} added
                       </strong>
                     </div>
-                    <b>+{shortNumber(settings.deadlineBoost)}% RoS field value</b>
+                    <b>
+                      +{shortNumber(settings.deadlineBoost)}% current wins
+                      {(values[selected.id]?.octoberAdjustment ?? 0) > 0
+                        ? ` · ${money(values[selected.id]?.octoberAdjustment ?? 0)} October rotation value`
+                        : ""}
+                    </b>
                     <small>
                       Baseline {money(
                         (values[selected.id]?.total ?? 0) -
                           (values[selected.id]?.deadlineAdjustment ?? 0),
                       )} → deadline {money(values[selected.id]?.total ?? 0)}.
                       This represents extra willingness to pay for current wins,
-                      not the buyer&apos;s negotiating power. Salary, future control,
-                      and option costs are unchanged.
+                      not the buyer&apos;s negotiating power.
+                      {(values[selected.id]?.octoberAdjustment ?? 0) > 0
+                        ? ` ${money(values[selected.id]?.deadlineCurrentWinAdjustment ?? 0)} comes from the general deadline market and ${money(values[selected.id]?.octoberAdjustment ?? 0)} from concentrated playoff usage above a ${shortNumber(settings.postseasonStarterBaselineWar)}-WAR net rotation benchmark.`
+                        : ""} Salary, future control, and option costs are unchanged.
                     </small>
                   </div>
                 )}
@@ -3309,7 +3357,7 @@ export default function Home() {
                     </p>
                     <div className="risk-explainer">
                       <span>What does the optional deadline lens do?</span>
-                      <strong>It changes the price of current wins, not the player&apos;s entire contract.</strong>
+                      <strong>It prices current wins and concentrated October roles, not the player&apos;s entire contract.</strong>
                       <p>
                         The lens is off by default. When enabled at its 15%
                         preset, it increases only the market value of projected
@@ -3318,6 +3366,26 @@ export default function Home() {
                         multiplied. That avoids making an underwater contract
                         more negative or pretending a 2029 win is more valuable
                         because the trade happens in July 2026.
+                      </p>
+                      <p>
+                        A frontline starter also receives an October rotation
+                        term. The model converts his rest-of-season projection
+                        to a full-season WAR pace, subtracts a two-WAR net
+                        playoff-rotation benchmark, and prices 25% of the
+                        difference at the star-WAR rate. The two-WAR benchmark
+                        represents the fourth starter an ace is most likely to
+                        displace, with some of that pitcher&apos;s value retained in
+                        a shorter bullpen role. It is not a claim that the
+                        displaced pitcher disappears.
+                      </p>
+                      <p>
+                        The 25% season equivalent is a transparent market
+                        calibration for expected postseason workload plus the
+                        extra leverage of short series. It is not a literal
+                        innings forecast or a guarantee that the acquiring team
+                        reaches October. Both inputs are editable, and the
+                        player card separates this October term from the general
+                        deadline adjustment.
                       </p>
                     </div>
                     <p>

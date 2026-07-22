@@ -109,9 +109,18 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(model, /starPremium: 30/);
   assert.match(model, /starThreshold: 2/);
   assert.match(model, /deadlineBoost: 0/);
-  assert.match(page, /raises only the market value of remaining 2026/);
-  assert.match(page, /It does not change salary, option costs, future/);
+  assert.match(model, /postseasonStarterBaselineWar: 2/);
+  assert.match(model, /postseasonEquivalentSeason: 25/);
+  assert.match(
+    page,
+    /increases only the market value of projected\s+2026 rest-of-season production/,
+  );
+  assert.match(page, /It does not change salary, option costs,/);
   assert.match(page, /not the buyer&apos;s negotiating power/);
+  assert.match(page, /two-WAR net\s+playoff-rotation benchmark/);
+  assert.match(page, /fourth starter an ace is most likely to\s+displace/);
+  assert.match(page, /shorter bullpen role/);
+  assert.match(page, /player card separates this October term/);
   assert.match(model, /player\.role === "reliever"/);
   assert.match(page, /rosterContext/);
   assert.match(page, /Scouting risk/);

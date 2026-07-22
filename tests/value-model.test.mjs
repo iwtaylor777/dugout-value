@@ -16,6 +16,7 @@ import {
   initialSettings,
   isReliever,
   marketValueForSeason,
+  postseasonRotationValueForSeason,
   prospectRankAdjustment,
   valuePlayer,
 } from "../lib/value-model.mjs";
@@ -266,7 +267,7 @@ test("the star premium threshold is explicit and editable", () => {
 });
 
 test("deadline boost applies only to rest-of-season field value", () => {
-  const player = { position: "SP", role: "starter" };
+  const player = { position: "SS", role: "position" };
   const rosSeason = {
     year: database.meta.baseYear,
     war: 1.4,
@@ -300,6 +301,104 @@ test("deadline boost applies only to rest-of-season field value", () => {
   assert.equal(
     marketValueForSeason(player, futureSeason, deadlineSettings, database),
     marketValueForSeason(player, futureSeason, baselineSettings, database),
+  );
+});
+
+test("October rotation value uses a two-WAR net fourth-starter benchmark", () => {
+  const share = database.meta.seasonRemainingFraction;
+  const ace = { position: "SP", role: "starter" };
+  const reliever = { position: "RP", role: "reliever" };
+  const deadlineSettings = {
+    ...initialSettings,
+    deadlineBoost: 15,
+    inflation: 0,
+  };
+  const aceSeason = {
+    year: database.meta.baseYear,
+    war: 5.8 * share,
+    salary: 0,
+    salaryMode: "fixed",
+    ros: true,
+  };
+  const replacementSeason = {
+    ...aceSeason,
+    war: 2 * share,
+  };
+  const futureAceSeason = {
+    ...aceSeason,
+    year: database.meta.baseYear + 1,
+    ros: false,
+  };
+  const expected = (5.8 - 2) * 0.25 * 12 * 1.3;
+
+  assert.ok(
+    Math.abs(
+      postseasonRotationValueForSeason(
+        ace,
+        aceSeason,
+        deadlineSettings,
+        database,
+      ) - expected,
+    ) < 1e-9,
+  );
+  assert.equal(
+    postseasonRotationValueForSeason(
+      ace,
+      replacementSeason,
+      deadlineSettings,
+      database,
+    ),
+    0,
+  );
+  assert.equal(
+    postseasonRotationValueForSeason(
+      reliever,
+      aceSeason,
+      deadlineSettings,
+      database,
+    ),
+    0,
+  );
+  assert.equal(
+    postseasonRotationValueForSeason(
+      ace,
+      futureAceSeason,
+      deadlineSettings,
+      database,
+    ),
+    0,
+  );
+});
+
+test("Skubal's deadline value separates current-win and October premiums", () => {
+  const skubal = database.players.find(
+    (player) => player.name === "Tarik Skubal",
+  );
+  assert.ok(skubal);
+  const baseline = valuePlayer(
+    skubal,
+    { ...initialSettings, deadlineBoost: 0 },
+    database,
+  );
+  const deadline = valuePlayer(
+    skubal,
+    { ...initialSettings, deadlineBoost: 15 },
+    database,
+  );
+
+  assert.ok(Math.abs(baseline.total - 18.0535) < 1e-4);
+  assert.ok(deadline.deadlineCurrentWinAdjustment > 4);
+  assert.ok(deadline.deadlineCurrentWinAdjustment < 4.2);
+  assert.ok(deadline.octoberAdjustment > 14.5);
+  assert.ok(deadline.octoberAdjustment < 15);
+  assert.ok(deadline.total > 36.5);
+  assert.ok(deadline.total < 37.5);
+  assert.ok(
+    Math.abs(
+      deadline.deadlineAdjustment -
+        deadline.deadlineCurrentWinAdjustment -
+        deadline.octoberAdjustment,
+    ) < 1e-9,
   );
 });
 
