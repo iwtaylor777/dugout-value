@@ -88,6 +88,22 @@ type TalentUpdate = {
   roleGuarded?: boolean;
   providers: TalentProviderChange[];
 };
+type AgingModel = {
+  method: string;
+  role: "position" | "starter" | "reliever";
+  profile:
+    | "up-the-middle"
+    | "catcher"
+    | "corner"
+    | "starter"
+    | "reliever"
+    | "two-way";
+  unitLabel: string;
+  baseAge: number;
+  rateTrend: number | null;
+  workloadRetention: number | null;
+  anchorYear: number;
+};
 type ThreeYearProjectionSeason = {
   year: number;
   war: number;
@@ -146,6 +162,7 @@ type MLBPlayer = {
   seasons: MLBSeason[];
   contractScenario?: ContractScenario;
   talentUpdate?: TalentUpdate;
+  agingModel?: AgingModel;
   threeYearProjection?: ThreeYearProjectionSeason[];
   seasonToDateWar?: number;
   platformWar?: number;
@@ -266,7 +283,12 @@ const PROJECTION_YEARS = [BASE_YEAR, BASE_YEAR + 1, BASE_YEAR + 2];
 const initialPlayers = Object.fromEntries(
   database.players.map((player) => [player.id, player]),
 );
-const initialSettings = modelInitialSettings as ModelSettings;
+const initialSettings = Object.freeze({
+  ...modelInitialSettings,
+  // Deadline context is the most useful starting point in late July. The
+  // baseline remains one click away and the valuation library stays neutral.
+  deadlineBoost: 15,
+}) as ModelSettings;
 const prospectValues = modelProspectValues as Record<
   string,
   Record<ProspectType, { value: number; war: number; star: number }>
@@ -1979,10 +2001,11 @@ export default function Home() {
               premium. FanGraphs pitcher WAR already includes a leverage
               adjustment, so the extra reliever premium stays an optional team
               preference rather than a hidden assumption. The deadline lens is
-              off by default. It raises the market value of remaining 2026
-              production and gives top starters an October rotation term above
-              a two-WAR net benchmark. It does not change salary, option costs,
-              future seasons, or prospect values.
+              on by default during deadline season. It raises the market value
+              of remaining 2026 production and gives top starters an October
+              rotation term above a two-WAR net benchmark. Switch to Baseline
+              market for the neutral view. Neither setting changes salary,
+              option costs, future seasons, or prospect values.
             </p>
           </section>
         )}
@@ -2593,6 +2616,44 @@ export default function Home() {
                               what the trade value currently uses.
                             </small>
                           )}
+                        </div>
+                      )}
+                    {selected.agingModel &&
+                      selectedSeasons.some(
+                        (season) => season.year > selected.agingModel!.anchorYear,
+                      ) && (
+                        <div className="talent-update-card">
+                          <div className="talent-update-head">
+                            <div>
+                              <span>Long-range aging</span>
+                              <strong>
+                                ZiPS anchored · {selected.agingModel.profile}
+                              </strong>
+                            </div>
+                            <small>
+                              Starts after {selected.agingModel.anchorYear}
+                            </small>
+                          </div>
+                          <p>
+                            Direct ZiPS seasons stay unchanged. Later years age
+                            projected production rate and playing time
+                            separately, using a capped portion of ZiPS&apos;s recent
+                            player-specific slope plus a nonlinear age and role
+                            curve.
+                          </p>
+                          <details>
+                            <summary>What is player-specific here?</summary>
+                            <p>
+                              {selected.agingModel.profile === "two-way"
+                                ? "Hitting and pitching are aged separately with their own ZiPS rates, workloads, and role curves, then recombined."
+                                : `The model reads the change between the last two ZiPS seasons in both fWAR per ${selected.agingModel.unitLabel}${selected.agingModel.rateTrend === null ? "" : ` (${signedWar(selected.agingModel.rateTrend)})`}${selected.agingModel.workloadRetention === null ? "." : ` and projected workload (${Math.round(selected.agingModel.workloadRetention * 100)}% retained).`}`}
+                              {" "}That signal receives 35% weight in the first
+                              added year and fades quickly. The population
+                              curve carries the rest, steepening in the
+                              mid-to-late 30s and distinguishing position
+                              players, starters, and relievers.
+                            </p>
+                          </details>
                         </div>
                       )}
                     <div className="projection-table">
@@ -3309,11 +3370,40 @@ export default function Home() {
                       The player card shows the published ZiPS baseline, the
                       ZiPS rate change, any role guard, the adjustment, and the
                       final fWAR.
-                      If a future ZiPS row is unavailable, a simple Marcel-style
-                      aging fallback extends the curve. Two-way players are
-                      updated separately as hitters and pitchers before the
-                      values are combined.
+                      Two-way players are updated separately as hitters and
+                      pitchers before the values are combined.
                     </p>
+                    <div className="risk-explainer">
+                      <span>How are years beyond public ZiPS aged?</span>
+                      <strong>Follow the player&apos;s ZiPS shape, then fade toward an empirical curve.</strong>
+                      <p>
+                        Public 2027 and 2028 ZiPS forecasts are used as-is. For
+                        later contract years, the model converts the final two
+                        ZiPS seasons to a common rate: 600 PA for position
+                        players, 180 innings for starters, or 65 innings for
+                        relievers. It gives 35% weight to that capped,
+                        player-specific rate trend in the first added season;
+                        the weight then falls by 40% each year.
+                      </p>
+                      <p>
+                        The remaining weight comes from a recent empirical age
+                        curve. Production and workload decline separately, the
+                        decline becomes gradually steeper after age 35, and
+                        catchers and up-the-middle defenders receive a modest
+                        extra rate adjustment. This avoids both a sudden aging
+                        cliff and the old flat subtraction that treated every
+                        hitter and pitcher alike.
+                      </p>
+                      <p>
+                        The curve is intentionally conservative about player
+                        typing. ZiPS already builds individualized curves from
+                        historical comparables, so Dugout Value uses ZiPS&apos;s
+                        own projected slope rather than inventing a scouting
+                        category from one season of results. If no second ZiPS
+                        season is available, the role-and-age curve carries the
+                        forecast by itself.
+                      </p>
+                    </div>
                     <p>
                       Not every fraction of a win is scarce. The default model
                       treats 0.5 WAR for a position player or starter—and 0.2 WAR
@@ -3359,8 +3449,9 @@ export default function Home() {
                       <span>What does the optional deadline lens do?</span>
                       <strong>It prices current wins and concentrated October roles, not the player&apos;s entire contract.</strong>
                       <p>
-                        The lens is off by default. When enabled at its 15%
-                        preset, it increases only the market value of projected
+                        During peak deadline season, the site opens with the 15%
+                        lens enabled; Baseline market turns it off in one click.
+                        The lens increases only the market value of projected
                         2026 rest-of-season production. Remaining salary,
                         buyouts, future control years, and prospects do not get
                         multiplied. That avoids making an underwater contract
@@ -3615,6 +3706,7 @@ export default function Home() {
                       <div><dt>+30%</dt><dd>Marginal premium above two net WAR</dd></div>
                       <div><dt>0%</dt><dd>Future-year discount</dd></div>
                       <div><dt>3%</dt><dd>Annual market inflation</dd></div>
+                      <div><dt>On</dt><dd>Deadline lens in late July</dd></div>
                       <div><dt>40%</dt><dd>Assumed error correlation in package ranges</dd></div>
                     </dl>
                   </div>
@@ -3701,6 +3793,20 @@ export default function Home() {
                 rel="noreferrer"
               >
                 2026 free-agent win prices ↗
+              </a>
+              <a
+                href="https://blogs.fangraphs.com/the-2021-zips-projections-an-introduction/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                ZiPS methodology ↗
+              </a>
+              <a
+                href="https://blogs.fangraphs.com/francisco-lindor-is-already-a-plausible-hall-of-famer/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Published Lindor career curve ↗
               </a>
               <a
                 href="https://baseballprojection.substack.com/p/measuring-the-cost-of-free-agents"

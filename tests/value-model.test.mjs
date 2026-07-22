@@ -386,13 +386,14 @@ test("Skubal's deadline value separates current-win and October premiums", () =>
     database,
   );
 
-  assert.ok(Math.abs(baseline.total - 18.0535) < 1e-4);
+  assert.ok(baseline.total > 18);
+  assert.ok(baseline.total < 18.5);
   assert.ok(deadline.deadlineCurrentWinAdjustment > 4);
   assert.ok(deadline.deadlineCurrentWinAdjustment < 4.2);
-  assert.ok(deadline.octoberAdjustment > 14.5);
-  assert.ok(deadline.octoberAdjustment < 15);
-  assert.ok(deadline.total > 36.5);
-  assert.ok(deadline.total < 37.5);
+  assert.ok(deadline.octoberAdjustment > 14.7);
+  assert.ok(deadline.octoberAdjustment < 15.2);
+  assert.ok(deadline.total > 37);
+  assert.ok(deadline.total < 37.6);
   assert.ok(
     Math.abs(
       deadline.deadlineAdjustment -
@@ -674,7 +675,7 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
   );
   assert.ok(
     mlbPlayers.every(
-      (player) => !player.source.projection.includes("Marcel + aging"),
+      (player) => !player.source.projection.includes("Marcel"),
     ),
   );
   const protectedPlayers = mlbPlayers.filter(

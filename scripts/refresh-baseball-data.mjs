@@ -14,6 +14,10 @@ import {
   buildInSeasonTalentUpdate,
   signalPersistence,
 } from "../lib/in-season-projection.mjs";
+import {
+  agingProjectionSummary,
+  projectWithAging,
+} from "../lib/aging-curve.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
@@ -144,26 +148,6 @@ async function loadProjection(type) {
     rows.push(...data.map((row) => ({ ...row, _stats: stats })));
   }
   return rows;
-}
-
-function ageWar(war, age, isPitcher, yearsOut) {
-  let projected = Number(war) || 0;
-  let currentAge = Number.isFinite(age) ? age : isPitcher ? 28 : 27;
-  for (let year = 0; year < yearsOut; year += 1) {
-    currentAge += 1;
-    if (isPitcher)
-      projected += currentAge <= 26 ? 0 : currentAge <= 29 ? -0.15 : -0.3;
-    else
-      projected +=
-        currentAge <= 26
-          ? 0.15
-          : currentAge === 27
-            ? 0
-            : currentAge <= 31
-              ? -0.25
-              : -0.4;
-  }
-  return Math.max(-0.5, Number(projected.toFixed(1)));
 }
 
 function marcelWar(rows) {
@@ -717,8 +701,8 @@ for (const id of projectionIds) {
     : steamerById.has(id)
       ? "Steamer"
       : depthAssignment?.activeRoster
-        ? "RosterResource + Marcel aging"
-        : "Marcel + aging";
+        ? "RosterResource + Marcel + role-aware aging"
+        : "Marcel + role-aware aging";
   const currentWar = Number(primary?.WAR ?? backup?.WAR ?? 0);
   const future2027 = Number(zips2027ById.get(id)?.WAR);
   const future2028 = Number(zips2028ById.get(id)?.WAR);
@@ -831,15 +815,109 @@ for (const id of projectionIds) {
       isPitcher,
     },
   );
+  const future2027Projection = zips2027ById.get(id);
+  const future2028Projection = zips2028ById.get(id);
+  const agingAnchorYear = Number.isFinite(future2028)
+    ? BASE_YEAR + 2
+    : Number.isFinite(future2027)
+      ? BASE_YEAR + 1
+      : BASE_YEAR;
+  const agingAnchorProjection =
+    agingAnchorYear === BASE_YEAR + 2
+      ? future2028Projection
+      : agingAnchorYear === BASE_YEAR + 1
+        ? future2027Projection
+        : primary ?? backup;
+  const agingPriorProjection =
+    agingAnchorYear === BASE_YEAR + 2
+      ? future2027Projection
+      : agingAnchorYear === BASE_YEAR + 1
+        ? primary ?? backup
+        : undefined;
+  const agingBaseAge = age
+    ? Math.floor(age) + (agingAnchorYear - BASE_YEAR)
+    : isPitcher
+      ? 28
+      : 27;
+  const agingPosition =
+    depthAssignment?.depthPosition ||
+    agingAnchorProjection?.positionDB ||
+    agingAnchorProjection?.minpos ||
+    primary?.positionDB;
+  const agingProjectionForSeason = (season) => {
+    const yearsOut = Math.max(0, season - agingAnchorYear);
+    if (!isTwoWay)
+      return projectWithAging({
+        baseProjection: agingAnchorProjection,
+        priorProjection: agingPriorProjection,
+        baseAge: agingBaseAge,
+        role,
+        position: agingPosition,
+        yearsOut,
+      });
+    if (yearsOut === 0)
+      return {
+        war: Number(agingAnchorProjection?.WAR) || 0,
+        workloadScale: 1,
+      };
+    const parts = ["bat", "pit"]
+      .map((stats) => {
+        const baseComponent = projectionComponent(
+          agingAnchorProjection,
+          stats,
+        );
+        if (!baseComponent) return null;
+        const partRole =
+          stats === "bat" ? "position" : pitcherRole(baseComponent);
+        return projectWithAging({
+          baseProjection: baseComponent,
+          priorProjection: projectionComponent(agingPriorProjection, stats),
+          baseAge: agingBaseAge,
+          role: partRole,
+          position:
+            stats === "bat"
+              ? baseComponent.positionDB || baseComponent.minpos
+              : partRole === "starter"
+                ? "SP"
+                : "RP",
+          yearsOut,
+        });
+      })
+      .filter(Boolean);
+    return {
+      war: Number(
+        parts.reduce((sum, part) => sum + part.war, 0).toFixed(1),
+      ),
+      workloadScale: 1,
+    };
+  };
+  const agingModel = isTwoWay
+    ? {
+        method: "ZiPS-anchored nonlinear aging v2",
+        role: "position",
+        profile: "two-way",
+        unitLabel: "hitting and pitching workloads",
+        baseAge: agingBaseAge,
+        rateTrend: null,
+        workloadRetention: null,
+      }
+    : agingProjectionSummary({
+        baseProjection: agingAnchorProjection,
+        priorProjection: agingPriorProjection,
+        baseAge: agingBaseAge,
+        role,
+        position: agingPosition,
+      });
   const projectedWarDetail = (season) => {
+    const agedProjection = agingProjectionForSeason(season);
     const futureWar =
-      season === 2027 && Number.isFinite(future2027)
+      season === BASE_YEAR + 1 && Number.isFinite(future2027)
         ? future2027
-        : season === 2028 && Number.isFinite(future2028)
+        : season === BASE_YEAR + 2 && Number.isFinite(future2028)
           ? future2028
-          : season > 2028 && Number.isFinite(future2028)
-            ? ageWar(future2028, age ? age + 2 : null, isPitcher, season - 2028)
-            : ageWar(currentWar, age, isPitcher, season - BASE_YEAR);
+          : season > agingAnchorYear
+            ? agedProjection.war
+            : currentWar;
     if (season === BASE_YEAR) {
       return {
         war: Number(
@@ -862,10 +940,13 @@ for (const id of projectionIds) {
         futureProjectionForWorkload,
         part.stats,
       );
-      const workloadScale = Math.pow(
-        part.role === "position" ? 0.96 : 0.93,
-        yearsBeyondExplicit,
-      );
+      const workloadScale =
+        !isTwoWay && season > agingAnchorYear
+          ? agedProjection.workloadScale
+          : Math.pow(
+              part.role === "position" ? 0.96 : 0.93,
+              yearsBeyondExplicit,
+            );
       const scaledComponent = component
         ? {
             ...component,
@@ -914,12 +995,19 @@ for (const id of projectionIds) {
       season === BASE_YEAR + 1
         ? zips2027ById.get(id)
         : zips2028ById.get(id);
-    const yearsBeyondExplicit = Math.max(0, season - (BASE_YEAR + 2));
+    const agingWorkloadScale =
+      season > agingAnchorYear
+        ? agingProjectionForSeason(season).workloadScale
+        : 1;
     const metrics = arbitrationMetrics(
       role,
       [],
-      explicitProjection ?? primary ?? backup ?? rosProjection,
-      Math.pow(isPitcher ? 0.93 : 0.96, yearsBeyondExplicit),
+      explicitProjection ??
+        agingAnchorProjection ??
+        primary ??
+        backup ??
+        rosProjection,
+      agingWorkloadScale,
     );
     return metrics
       ? { ...metrics, war: projectedWarForSeason(season) }
@@ -1138,6 +1226,10 @@ for (const id of projectionIds) {
     seasons,
     contractScenario,
     talentUpdate,
+    agingModel: {
+      ...agingModel,
+      anchorYear: agingAnchorYear,
+    },
     threeYearProjection: [BASE_YEAR, BASE_YEAR + 1, BASE_YEAR + 2].map(
       (year) => {
         const projection = projectedWarDetail(year);
@@ -1230,7 +1322,7 @@ const output = {
     projectionPriority: [
       "FanGraphs Depth Charts RoS",
       "ZiPS future + ZiPS role-aware rolling talent update",
-      "Marcel + aging",
+      "ZiPS-anchored nonlinear aging + Marcel fallback",
     ],
     seasonRemainingFraction: Number(seasonRemainingFraction.toFixed(4)),
     sources: [

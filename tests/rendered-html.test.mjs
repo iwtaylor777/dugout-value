@@ -39,7 +39,7 @@ test("server-renders the trade builder", async () => {
   assert.match(html, /Depth Charts RoS \+ remaining salary/);
   assert.match(html, /Neutral · no discount/);
   assert.match(html, /Deadline lens/);
-  assert.match(html, /Off · baseline value/);
+  assert.match(html, /On · current wins \+ October/);
   assert.match(html, /30<!-- -->% above/);
   assert.match(html, /role="combobox"/);
   assert.match(html, /Cash sent \/ salary retained by/);
@@ -109,18 +109,28 @@ test("keeps the audited navigation and model behavior explicit", async () => {
   assert.match(model, /starPremium: 30/);
   assert.match(model, /starThreshold: 2/);
   assert.match(model, /deadlineBoost: 0/);
+  assert.match(page, /deadlineBoost: 15/);
   assert.match(model, /postseasonStarterBaselineWar: 2/);
   assert.match(model, /postseasonEquivalentSeason: 25/);
   assert.match(
     page,
     /increases only the market value of projected\s+2026 rest-of-season production/,
   );
-  assert.match(page, /It does not change salary, option costs,/);
+  assert.match(page, /Neither setting changes salary,/);
   assert.match(page, /not the buyer&apos;s negotiating power/);
   assert.match(page, /two-WAR net\s+playoff-rotation benchmark/);
   assert.match(page, /fourth starter an ace is most likely to\s+displace/);
   assert.match(page, /shorter bullpen role/);
   assert.match(page, /player card separates this October term/);
+  assert.match(page, /on by default during deadline season/);
+  assert.match(page, /How are years beyond public ZiPS aged\?/);
+  assert.match(page, /Public 2027 and 2028 ZiPS forecasts are used as-is/);
+  assert.match(
+    page,
+    /age\s+projected production rate and playing time\s+separately/,
+  );
+  assert.match(page, /gives 35% weight to that capped/);
+  assert.match(page, /Hitting and pitching are aged separately/);
   assert.match(model, /player\.role === "reliever"/);
   assert.match(page, /rosterContext/);
   assert.match(page, /Scouting risk/);

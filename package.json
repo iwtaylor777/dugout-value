@@ -13,6 +13,7 @@
     "data:refresh": "node scripts/refresh-baseball-data.mjs",
     "audit:values": "node scripts/audit-baseball-values.mjs",
     "audit:arbitration": "node scripts/calibrate-arbitration.mjs",
+    "audit:aging": "node scripts/audit-aging-curve.mjs",
     "test": "npm run build && node --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate"
