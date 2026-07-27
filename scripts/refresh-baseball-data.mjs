@@ -18,6 +18,7 @@ import {
   agingProjectionSummary,
   projectWithAging,
 } from "../lib/aging-curve.mjs";
+import { loadTradeValueZiPS } from "../lib/fangraphs-trade-value-zips.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
@@ -439,6 +440,25 @@ function projectionComponent(row, stats) {
   );
 }
 
+function projectionWithPublishedWar(row, war) {
+  const publishedWar = Number(war);
+  if (!Number.isFinite(publishedWar)) return row;
+  if (!row?._components?.length) return { ...(row ?? {}), WAR: publishedWar };
+  const componentWar = row._components.reduce(
+    (sum, component) => sum + (Number(component.WAR) || 0),
+    0,
+  );
+  const scale = componentWar ? publishedWar / componentWar : 1;
+  return {
+    ...row,
+    WAR: publishedWar,
+    _components: row._components.map((component) => ({
+      ...component,
+      WAR: Number(((Number(component.WAR) || 0) * scale).toFixed(4)),
+    })),
+  };
+}
+
 function prospectGrade(value) {
   const raw = String(value ?? "40").replace(".0", "");
   if (
@@ -475,6 +495,7 @@ const [
   graduateQueries,
   injuryQueries,
   playoffOddsQueries,
+  tradeValueZips,
 ] = await Promise.all([
   loadProjection("zips"),
   loadProjection("zipsp1"),
@@ -489,6 +510,7 @@ const [
   getNextData(graduatesUrl),
   getNextData(injuryReportUrl),
   getNextData(playoffOddsUrl),
+  loadTradeValueZiPS(),
 ]);
 
 const boardRows = queryData(boardQueries, "prospects/the-board");
@@ -602,6 +624,9 @@ const depthChartsRosById = projectionMap(depthChartsRos);
 const zipsById = projectionMap(zips);
 const zips2027ById = projectionMap(zips2027);
 const zips2028ById = projectionMap(zips2028);
+const tradeValueZipsByFgId = new Map(
+  tradeValueZips.map((player) => [String(player.fgId), player]),
+);
 const lastProspectByFgId = new Map();
 for (const row of [...boardRows, ...graduateRows]) {
   const fgId = String(row.PlayerId || row.UPID || "");
@@ -704,14 +729,50 @@ for (const id of projectionIds) {
         ? "RosterResource + Marcel + role-aware aging"
         : "Marcel + role-aware aging";
   const currentWar = Number(primary?.WAR ?? backup?.WAR ?? 0);
-  const future2027 = Number(zips2027ById.get(id)?.WAR);
-  const future2028 = Number(zips2028ById.get(id)?.WAR);
   const fgId = String(
     primary?.playerid ||
       backup?.playerid ||
       matchedContract.summary?.playerId ||
       "",
   );
+  const tradeValueProjection = tradeValueZipsByFgId.get(fgId);
+  const publishedZiPSWarForSeason = (season) => {
+    const war = Number(tradeValueProjection?.projections?.[season]);
+    return Number.isFinite(war) ? war : null;
+  };
+  const publishedZiPSYears = Object.keys(
+    tradeValueProjection?.projections ?? {},
+  )
+    .map(Number)
+    .filter((season) => Number.isFinite(publishedZiPSWarForSeason(season)))
+    .sort((left, right) => left - right);
+  const publicFutureProjectionForSeason = (season) =>
+    season === BASE_YEAR + 1
+      ? zips2027ById.get(id)
+      : season === BASE_YEAR + 2
+        ? zips2028ById.get(id)
+        : undefined;
+  const explicitFutureProjectionForSeason = (season) => {
+    const publishedWar = publishedZiPSWarForSeason(season);
+    if (publishedWar !== null)
+      return projectionWithPublishedWar(
+        publicFutureProjectionForSeason(season) ??
+          zips2028ById.get(id) ??
+          zips2027ById.get(id) ??
+          primary ??
+          backup,
+        publishedWar,
+      );
+    return publicFutureProjectionForSeason(season);
+  };
+  const future2027Projection = explicitFutureProjectionForSeason(
+    BASE_YEAR + 1,
+  );
+  const future2028Projection = explicitFutureProjectionForSeason(
+    BASE_YEAR + 2,
+  );
+  const future2027 = Number(future2027Projection?.WAR);
+  const future2028 = Number(future2028Projection?.WAR);
   const lastProspect = lastProspectByFgId.get(fgId);
   const injuryRecord = availabilityById.get(id);
   const availabilityRisk = injuryRecord
@@ -774,14 +835,16 @@ for (const id of projectionIds) {
       projectionComponent(zipsRosById.get(id), "pit") ??
       projectionComponent(steamerRosById.get(id), "pit"),
   );
-  const updateParts = (
-    isTwoWay
-      ? [
-          updatePart("position", "bat", "Hitting"),
-          updatePart(pitcherUpdateRole, "pit", "Pitching"),
-        ]
-      : [updatePart(role, isPitcher ? "pit" : "bat", null)]
-  ).filter(Boolean);
+  const updateParts = tradeValueProjection
+    ? []
+    : (
+        isTwoWay
+          ? [
+              updatePart("position", "bat", "Hitting"),
+              updatePart(pitcherUpdateRole, "pit", "Pitching"),
+            ]
+          : [updatePart(role, isPitcher ? "pit" : "bat", null)]
+      ).filter(Boolean);
   const talentUpdate = updateParts.length
     ? {
         method: "Role-aware rolling talent update v2",
@@ -809,31 +872,35 @@ for (const id of projectionIds) {
     {
       history,
       rosProjection,
-      future2027: zips2027ById.get(id),
-      future2028: zips2028ById.get(id),
+      future2027: future2027Projection,
+      future2028: future2028Projection,
       fallback: primary ?? backup,
       isPitcher,
     },
   );
-  const future2027Projection = zips2027ById.get(id);
-  const future2028Projection = zips2028ById.get(id);
-  const agingAnchorYear = Number.isFinite(future2028)
-    ? BASE_YEAR + 2
-    : Number.isFinite(future2027)
-      ? BASE_YEAR + 1
-      : BASE_YEAR;
+  const agingAnchorYear = publishedZiPSYears.at(-1) ??
+    (Number.isFinite(future2028)
+      ? BASE_YEAR + 2
+      : Number.isFinite(future2027)
+        ? BASE_YEAR + 1
+        : BASE_YEAR);
   const agingAnchorProjection =
-    agingAnchorYear === BASE_YEAR + 2
-      ? future2028Projection
-      : agingAnchorYear === BASE_YEAR + 1
-        ? future2027Projection
-        : primary ?? backup;
+    agingAnchorYear === BASE_YEAR
+      ? primary ?? backup
+      : explicitFutureProjectionForSeason(agingAnchorYear) ??
+        future2028Projection ??
+        future2027Projection ??
+        primary ??
+        backup;
   const agingPriorProjection =
-    agingAnchorYear === BASE_YEAR + 2
-      ? future2027Projection
+    agingAnchorYear === BASE_YEAR
+      ? undefined
       : agingAnchorYear === BASE_YEAR + 1
         ? primary ?? backup
-        : undefined;
+        : explicitFutureProjectionForSeason(agingAnchorYear - 1) ??
+          future2027Projection ??
+          primary ??
+          backup;
   const agingBaseAge = age
     ? Math.floor(age) + (agingAnchorYear - BASE_YEAR)
     : isPitcher
@@ -910,14 +977,17 @@ for (const id of projectionIds) {
       });
   const projectedWarDetail = (season) => {
     const agedProjection = agingProjectionForSeason(season);
+    const explicitFutureProjection =
+      season > BASE_YEAR
+        ? explicitFutureProjectionForSeason(season)
+        : undefined;
+    const explicitFutureWar = Number(explicitFutureProjection?.WAR);
     const futureWar =
-      season === BASE_YEAR + 1 && Number.isFinite(future2027)
-        ? future2027
-        : season === BASE_YEAR + 2 && Number.isFinite(future2028)
-          ? future2028
-          : season > agingAnchorYear
-            ? agedProjection.war
-            : currentWar;
+      Number.isFinite(explicitFutureWar)
+        ? explicitFutureWar
+        : season > agingAnchorYear
+          ? agedProjection.war
+          : currentWar;
     if (season === BASE_YEAR) {
       return {
         war: Number(
@@ -928,10 +998,6 @@ for (const id of projectionIds) {
       };
     }
 
-    const explicitFutureProjection =
-      season === BASE_YEAR + 1
-        ? zips2027ById.get(id)
-        : zips2028ById.get(id);
     const futureProjectionForWorkload =
       explicitFutureProjection ?? primary ?? backup;
     const yearsBeyondExplicit = Math.max(0, season - (BASE_YEAR + 2));
@@ -991,10 +1057,7 @@ for (const id of projectionIds) {
     if (role === "two-way") return undefined;
     if (season === BASE_YEAR)
       return arbitrationMetrics(role, currentRoleHistory, rosProjection);
-    const explicitProjection =
-      season === BASE_YEAR + 1
-        ? zips2027ById.get(id)
-        : zips2028ById.get(id);
+    const explicitProjection = explicitFutureProjectionForSeason(season);
     const agingWorkloadScale =
       season > agingAnchorYear
         ? agingProjectionForSeason(season).workloadScale
@@ -1200,7 +1263,9 @@ for (const id of projectionIds) {
     source: {
       projection: [
         "FanGraphs Depth Charts RoS (2026)",
-        `${source} future`,
+        tradeValueProjection
+          ? "ZiPS Trade Value Series update (2027–31)"
+          : `${source} future`,
         talentUpdate ? "ZiPS role-aware rolling talent update" : null,
       ]
         .filter(Boolean)
@@ -1226,6 +1291,15 @@ for (const id of projectionIds) {
     seasons,
     contractScenario,
     talentUpdate,
+    futureProjectionUpdate: tradeValueProjection
+      ? {
+          provider: "ZiPS",
+          series: "FanGraphs 2026 Trade Value Series",
+          rank: tradeValueProjection.rank,
+          sourceUrl: tradeValueProjection.sourceUrl,
+          projections: tradeValueProjection.projections,
+        }
+      : undefined,
     agingModel: {
       ...agingModel,
       anchorYear: agingAnchorYear,
@@ -1271,28 +1345,44 @@ const prospects = boardRows
       row.playerName &&
       !mlbIdentities.has(normalizeIdentity(row.playerName, row.Team)),
   )
-  .map((row) => ({
-    id: `prospect-${row.PlayerId || row.ID}`,
-    kind: "prospect",
-    name: row.playerName,
-    team: normalizeTeam(row.Team),
-    position: row.positionDB || row.Position || "—",
-    age: Math.floor(Number(row.Age) || 20),
-    source: {
-      projection: "FanGraphs The Board",
-      contract: "FV, ETA, scouting risk & roster status",
-      refreshed: snapshotLabel,
-    },
-    prospectType: String(row.positionDB || row.Position).includes("P")
-      ? "Pitcher"
-      : "Hitter",
-    fv: prospectGrade(row.cFV || row.FV_Current),
-    eta: Number(row.cETA || row.ETA_Current) || BASE_YEAR + 1,
-    adjustment: 0,
-    rosterContext: prospectRosterContext(row, BASE_YEAR),
-    rank: Number(row.Ovr_Rank) || null,
-    riskLabel: normalizeProspectRisk(row.cRisk || row.Variance),
-  }));
+  .map((row) => {
+    const tradeValueProjection = tradeValueZipsByFgId.get(
+      String(row.PlayerId || row.UPID || ""),
+    );
+    return {
+      id: `prospect-${row.PlayerId || row.ID}`,
+      kind: "prospect",
+      name: row.playerName,
+      team: normalizeTeam(row.Team),
+      position: row.positionDB || row.Position || "—",
+      age: Math.floor(Number(row.Age) || 20),
+      source: {
+        projection: tradeValueProjection
+          ? "FanGraphs The Board · ZiPS Trade Value Series update"
+          : "FanGraphs The Board",
+        contract: "FV, ETA, scouting risk & roster status",
+        refreshed: snapshotLabel,
+      },
+      prospectType: String(row.positionDB || row.Position).includes("P")
+        ? "Pitcher"
+        : "Hitter",
+      fv: prospectGrade(row.cFV || row.FV_Current),
+      eta: Number(row.cETA || row.ETA_Current) || BASE_YEAR + 1,
+      adjustment: 0,
+      rosterContext: prospectRosterContext(row, BASE_YEAR),
+      rank: Number(row.Ovr_Rank) || null,
+      riskLabel: normalizeProspectRisk(row.cRisk || row.Variance),
+      futureProjectionUpdate: tradeValueProjection
+        ? {
+            provider: "ZiPS",
+            series: "FanGraphs 2026 Trade Value Series",
+            rank: tradeValueProjection.rank,
+            sourceUrl: tradeValueProjection.sourceUrl,
+            projections: tradeValueProjection.projections,
+          }
+        : undefined,
+    };
+  });
 
 const teams = teamRows
   .map((team) => ({ abbr: normalizeTeam(team.AbbName), name: team.FullName }))
@@ -1321,12 +1411,14 @@ const output = {
     prospectCount: prospects.length,
     projectionPriority: [
       "FanGraphs Depth Charts RoS",
+      "FanGraphs 2026 Trade Value Series ZiPS update where published",
       "ZiPS future + ZiPS role-aware rolling talent update",
       "ZiPS-anchored nonlinear aging + Marcel fallback",
     ],
     seasonRemainingFraction: Number(seasonRemainingFraction.toFixed(4)),
     sources: [
       "FanGraphs projections",
+      "FanGraphs 2026 Trade Value Series",
       "FanGraphs RosterResource",
       "FanGraphs RosterResource injury report",
       "FanGraphs The Board",

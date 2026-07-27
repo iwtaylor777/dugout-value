@@ -172,7 +172,7 @@ test("the refreshed database keeps every displayed bridge internally consistent"
   }
 });
 
-test("James Wood uses today's official baseline plus a visible talent update", async () => {
+test("James Wood uses the newly published future ZiPS without a second proxy update", async () => {
   const database = JSON.parse(
     await readFile(
       new URL("../app/data/player-database.json", import.meta.url),
@@ -187,9 +187,11 @@ test("James Wood uses today's official baseline plus a visible talent update", a
   );
 
   assert.equal(wood.name, "James Wood");
-  assert.match(wood.source.projection, /rolling talent update/);
-  assert.equal(wood.talentUpdate.providers.length, 1);
-  assert.ok(nextSeason.inSeasonAdjustment > 0);
+  assert.match(wood.source.projection, /Trade Value Series update/);
+  assert.equal(wood.futureProjectionUpdate.rank, 7);
+  assert.equal(wood.talentUpdate, undefined);
+  assert.equal(nextSeason.war, 4.8);
+  assert.equal(nextSeason.inSeasonAdjustment, 0);
   assert.equal(
     nextSeason.war,
     Number(

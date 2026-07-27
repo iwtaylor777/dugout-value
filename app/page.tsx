@@ -146,6 +146,13 @@ type ContractScenario = {
   note: string;
   options: ContractScenarioOption[];
 };
+type FutureProjectionUpdate = {
+  provider: "ZiPS";
+  series: string;
+  rank: number;
+  sourceUrl: string;
+  projections: Record<string, number>;
+};
 type MLBPlayer = {
   id: string;
   kind: "mlb";
@@ -162,6 +169,7 @@ type MLBPlayer = {
   seasons: MLBSeason[];
   contractScenario?: ContractScenario;
   talentUpdate?: TalentUpdate;
+  futureProjectionUpdate?: FutureProjectionUpdate;
   agingModel?: AgingModel;
   threeYearProjection?: ThreeYearProjectionSeason[];
   seasonToDateWar?: number;
@@ -185,6 +193,7 @@ type ProspectPlayer = {
   rosterContext?: ProspectRosterContext;
   riskLabel?: string | null;
   rank?: number | null;
+  futureProjectionUpdate?: FutureProjectionUpdate;
   custom?: boolean;
 };
 type Player = MLBPlayer | ProspectPlayer;
@@ -3082,6 +3091,8 @@ export default function Home() {
                             <strong>{season?.war.toFixed(1) ?? "—"}</strong>
                             {year === BASE_YEAR ? (
                               <small>Depth Charts RoS</small>
+                            ) : player.futureProjectionUpdate ? (
+                              <small>Updated ZiPS</small>
                             ) : (
                               <small>
                                 {season?.projectionBaselineWar?.toFixed(1) ??
@@ -3100,14 +3111,18 @@ export default function Home() {
                         className={`projection-signal ${change > 0 ? "positive" : change < 0 ? "negative" : ""}`}
                       >
                         <strong>
-                          {player.talentUpdate?.rateChange === null
+                          {player.futureProjectionUpdate
+                            ? "Official ZiPS"
+                            : player.talentUpdate?.rateChange === null
                             ? "Split update"
                             : player.talentUpdate
                               ? `${signedWar(player.talentUpdate.rateChange)} / ${player.talentUpdate.unitLabel}`
                               : "No update"}
                         </strong>
                         <small>
-                          {change === 0
+                          {player.futureProjectionUpdate
+                            ? `FanGraphs Trade Value #${player.futureProjectionUpdate.rank}`
+                            : change === 0
                             ? "future curve unchanged"
                             : `${signedWar(change)} WAR across 2027–28`}
                         </small>
