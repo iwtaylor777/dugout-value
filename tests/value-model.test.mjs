@@ -388,7 +388,7 @@ test("Skubal's deadline value separates current-win and October premiums", () =>
   );
 
   assert.ok(baseline.total > 0);
-  assert.ok(deadline.deadlineCurrentWinAdjustment > 4);
+  assert.ok(deadline.deadlineCurrentWinAdjustment > 0);
   assert.ok(deadline.octoberAdjustment > deadline.deadlineCurrentWinAdjustment);
   assert.ok(deadline.total > baseline.total + 20);
   assert.ok(

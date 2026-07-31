@@ -19,6 +19,7 @@ import {
   projectWithAging,
 } from "../lib/aging-curve.mjs";
 import { loadTradeValueZiPS } from "../lib/fangraphs-trade-value-zips.mjs";
+import { loadSoxProspects } from "../lib/soxprospects.mjs";
 
 const BASE_YEAR = 2026;
 const OUT = new URL("../app/data/player-database.json", import.meta.url);
@@ -496,6 +497,7 @@ const [
   injuryQueries,
   playoffOddsQueries,
   tradeValueZips,
+  soxProspectsData,
 ] = await Promise.all([
   loadProjection("zips"),
   loadProjection("zipsp1"),
@@ -511,6 +513,7 @@ const [
   getNextData(injuryReportUrl),
   getNextData(playoffOddsUrl),
   loadTradeValueZiPS(),
+  loadSoxProspects(),
 ]);
 
 const boardRows = queryData(boardQueries, "prospects/the-board");
@@ -626,6 +629,12 @@ const zips2027ById = projectionMap(zips2027);
 const zips2028ById = projectionMap(zips2028);
 const tradeValueZipsByFgId = new Map(
   tradeValueZips.map((player) => [String(player.fgId), player]),
+);
+const soxProspectsByIdentity = new Map(
+  soxProspectsData.prospects.map((player) => [
+    normalizeIdentity(player.name, "BOS"),
+    player,
+  ]),
 );
 const lastProspectByFgId = new Map();
 for (const row of [...boardRows, ...graduateRows]) {
@@ -1384,12 +1393,108 @@ const prospects = boardRows
     };
   });
 
+function soxProspectRisk(player) {
+  const spread = Number(player.ceiling) - Number(player.floor);
+  if (spread >= 4) return "High";
+  if (spread >= 2.5) return "Med";
+  return "Low";
+}
+
+function withSoxProspectsGrade(player) {
+  if (player.team !== "BOS") return player;
+  const rating = soxProspectsByIdentity.get(
+    normalizeIdentity(player.name, player.team),
+  );
+  if (!rating) return player;
+  const soxProspects = {
+    grade: rating.grade,
+    fv: rating.fv,
+    organizationRank: rating.rank,
+    floor: rating.floor,
+    ceiling: rating.ceiling,
+    rankingsDate: soxProspectsData.rankingsDate,
+    sourceUrl: soxProspectsData.sourceUrl,
+  };
+  if (player.kind === "mlb") {
+    return {
+      ...player,
+      rookieMode: player.rookieMode === "projection" ? "blend" : player.rookieMode,
+      lastProspect: {
+        fv: prospectGrade(rating.fv),
+        rank: player.lastProspect?.rank ?? null,
+        year: BASE_YEAR,
+        serviceTime: player.lastProspect?.serviceTime ?? 0,
+        risk: player.lastProspect?.risk ?? soxProspectRisk(rating),
+      },
+      soxProspects,
+    };
+  }
+  return {
+    ...player,
+    fv: prospectGrade(rating.fv),
+    source: {
+      ...player.source,
+      projection: player.rank
+        ? "SoxProspects current grade · FanGraphs The Board rank"
+        : "SoxProspects current grade",
+      contract: "FV from SoxProspects · ETA, scouting risk & roster status",
+    },
+    soxProspects,
+  };
+}
+
+const gradedMlb = mlb.map(withSoxProspectsGrade);
+const gradedProspects = prospects.map(withSoxProspectsGrade);
+const existingIdentities = new Set(
+  [...gradedMlb, ...gradedProspects].map((player) =>
+    normalizeIdentity(player.name, player.team),
+  ),
+);
+const soxOnlyProspects = soxProspectsData.prospects
+  .filter(
+    (player) => !existingIdentities.has(normalizeIdentity(player.name, "BOS")),
+  )
+  .map((player) => ({
+    id: `prospect-sox-${player.slug}`,
+    kind: "prospect",
+    name: player.name,
+    team: "BOS",
+    position: /(?:^|\/)(?:LHP|RHP|P)(?:$|\/)/.test(player.position)
+      ? "P"
+      : player.position,
+    age: player.age ?? 20,
+    source: {
+      projection: "SoxProspects current grade",
+      contract: "FV, ETA, scouting risk & roster status",
+      refreshed: snapshotLabel,
+    },
+    prospectType: /(?:^|\/)(?:LHP|RHP|P)(?:$|\/)/.test(player.position)
+      ? "Pitcher"
+      : "Hitter",
+    fv: prospectGrade(player.fv),
+    eta: player.eta ?? BASE_YEAR + 1,
+    adjustment: 0,
+    rosterContext: "none",
+    rank: null,
+    riskLabel: soxProspectRisk(player),
+    soxProspects: {
+      grade: player.grade,
+      fv: player.fv,
+      organizationRank: player.rank,
+      floor: player.floor,
+      ceiling: player.ceiling,
+      rankingsDate: soxProspectsData.rankingsDate,
+      sourceUrl: soxProspectsData.sourceUrl,
+    },
+  }));
+const finalProspects = [...gradedProspects, ...soxOnlyProspects];
+
 const teams = teamRows
   .map((team) => ({ abbr: normalizeTeam(team.AbbName), name: team.FullName }))
   .filter((team) => teamSlugs[team.abbr])
   .sort((a, b) => a.name.localeCompare(b.name));
 
-const players = [...mlb, ...prospects].sort(
+const players = [...gradedMlb, ...finalProspects].sort(
   (a, b) =>
     a.team.localeCompare(b.team) ||
     a.kind.localeCompare(b.kind) ||
@@ -1407,8 +1512,8 @@ const output = {
   meta: {
     refreshed: snapshotLabel,
     baseYear: BASE_YEAR,
-    mlbCount: mlb.length,
-    prospectCount: prospects.length,
+    mlbCount: gradedMlb.length,
+    prospectCount: finalProspects.length,
     projectionPriority: [
       "FanGraphs Depth Charts RoS",
       "FanGraphs 2026 Trade Value Series ZiPS update where published",
@@ -1422,8 +1527,15 @@ const output = {
       "FanGraphs RosterResource",
       "FanGraphs RosterResource injury report",
       "FanGraphs The Board",
+      "SoxProspects current projection grades",
       "FanGraphs playoff odds",
     ],
+    soxProspects: {
+      rankingsDate: soxProspectsData.rankingsDate,
+      gradedPlayers: soxProspectsData.prospects.length,
+      addedPlayers: soxOnlyProspects.length,
+      sourceUrl: soxProspectsData.sourceUrl,
+    },
   },
   teams,
   players,
@@ -1440,5 +1552,5 @@ await mkdir(new URL("../app/data/", import.meta.url), { recursive: true });
 await writeFile(OUT, `${JSON.stringify(output)}\n`);
 await writeFile(PLAYOFF_ODDS_OUT, `${JSON.stringify(playoffOddsOutput, null, 2)}\n`);
 console.log(
-  `Wrote ${players.length} players (${mlb.length} MLB, ${prospects.length} prospects) to ${OUT.pathname}`,
+  `Wrote ${players.length} players (${gradedMlb.length} MLB, ${finalProspects.length} prospects) to ${OUT.pathname}`,
 );
