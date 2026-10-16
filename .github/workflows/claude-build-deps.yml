@@ -15,14 +15,30 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm ci --no-audit --no-fund
-      - run: tar czf node_modules-linux-x64.tgz node_modules
+      - name: Install
+        run: |
+          set +e
+          npm ci --no-audit --no-fund > ci.log 2>&1
+          echo "npm ci exit $?" >> ci.log
+          tail -40 ci.log
+          if [ -d node_modules ]; then tar czf node_modules-linux-x64.tgz node_modules; fi
+          ls -la >> ci.log
+          true
       - name: Publish temporary prerelease
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete claude-build-deps -y --cleanup-tag || true
-          gh release create claude-build-deps node_modules-linux-x64.tgz \
+          gh release delete claude-build-deps -y --cleanup-tag 2>&1 || true
+          FILES="ci.log"
+          [ -f node_modules-linux-x64.tgz ] && FILES="$FILES node_modules-linux-x64.tgz"
+          gh release create claude-build-deps $FILES \
             --prerelease --target "${{ github.sha }}" \
             --title "Temporary build dependencies (claude/site-review)" \
-            --notes "Temporary artifact for a review session. Safe to delete."
+            --notes "Temporary artifact for a review session. Safe to delete." 2>&1 | tee release.log
+      - name: Fallback log push
+        if: failure()
+        run: |
+          git config user.email actions@github.com; git config user.name actions
+          git checkout -b claude/site-review-logs
+          git add -f ci.log release.log 2>/dev/null || git add -f ci.log
+          git commit -m "logs" && git push -f origin claude/site-review-logs
