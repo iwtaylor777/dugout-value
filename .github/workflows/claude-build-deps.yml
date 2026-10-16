@@ -1,0 +1,28 @@
+# Temporary helper for an AI-assisted review session. It installs dependencies on a
+# Linux runner and publishes them as a prerelease asset so a sandbox without npm
+# access can build the site. Safe to delete along with the claude/* branch.
+name: claude-build-deps
+on:
+  push:
+    branches: ['claude/**']
+permissions:
+  contents: write
+jobs:
+  deps:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund
+      - run: tar czf node_modules-linux-x64.tgz node_modules
+      - name: Publish temporary prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete claude-build-deps -y --cleanup-tag || true
+          gh release create claude-build-deps node_modules-linux-x64.tgz \
+            --prerelease --target "${{ github.sha }}" \
+            --title "Temporary build dependencies (claude/site-review)" \
+            --notes "Temporary artifact for a review session. Safe to delete."
