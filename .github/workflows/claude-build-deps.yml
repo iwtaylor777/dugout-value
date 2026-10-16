@@ -18,8 +18,8 @@ jobs:
       - name: Install
         run: |
           set +e
-          npm ci --no-audit --no-fund > ci.log 2>&1
-          echo "npm ci exit $?" >> ci.log
+          npm ci --no-audit --no-fund > ci.log 2>&1 || npm install --no-audit --no-fund >> ci.log 2>&1
+          echo "install exit $?" >> ci.log
           tail -40 ci.log
           if [ -d node_modules ]; then tar czf node_modules-linux-x64.tgz node_modules; fi
           ls -la >> ci.log
