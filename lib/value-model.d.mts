@@ -9,6 +9,8 @@ export type ModelSettingsShape = {
   postseasonStarterBaselineWar: number;
   postseasonEquivalentSeason: number;
   relieverPremium: number;
+  /** The reliever premium applies only to seasons projected above this WAR. Missing is treated as 0. */
+  relieverPremiumMinWar?: number;
   inflation: number;
   minimumSalary: number;
   valuationView: ValuationView;

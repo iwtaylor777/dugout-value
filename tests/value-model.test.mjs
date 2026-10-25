@@ -24,6 +24,10 @@ import {
 // The July 31 view keeps rest-of-2026 seasons in value; deadline tests use it.
 const archivedDatabase = JSON.parse(await readFile(new URL("../public/research/snapshots/2026-10-17/app/data/player-database.json", import.meta.url)));
 const deadlineView = { ...initialSettings, valuationView: "deadline" };
+// The prices in force through model 2026-10-17.1. A few tests below assert fixed dollar
+// thresholds that were set under them; they pin these prices so the assertions stay as strict
+// as before instead of being loosened for the 2026-10-25.1 defaults.
+const october17Prices = { dollarsPerWar: 12, starPremium: 30 };
 
 test("first-year arbitration follows role-specific counting stats", () => {
   const hitter = { position: "OF", role: "position" };
@@ -242,12 +246,46 @@ test("role-aware roster burden gives relievers the intended baseline", () => {
   assert.equal(isReliever(starter), false);
   assert.equal(
     marketValueForSeason(reliever, season, neutralSettings, database),
-    9.600000000000001,
+    13.200000000000001, // 0.8 net WAR x $11M x 1.5 (a 1.0-WAR reliever clears the 0.8 cutoff)
   );
   assert.equal(
     marketValueForSeason(starter, season, neutralSettings, database),
-    6,
+    5.5, // 0.5 net WAR x $11M
   );
+});
+
+test("the 2026-10-25.1 defaults price a win at $11M with a 20% star premium", () => {
+  assert.equal(initialSettings.dollarsPerWar, 11);
+  assert.equal(initialSettings.starPremium, 20);
+  assert.equal(initialSettings.relieverPremium, 50);
+  assert.equal(initialSettings.relieverPremiumMinWar, 0.8);
+  // The methods page compares these two seasons with FanGraphs' graduated scale.
+  const player = { position: "SS", role: "position" };
+  const flat = { ...initialSettings, inflation: 0 };
+  const price = (war) =>
+    marketValueForSeason(player, { year: 2027, war, ros: false }, flat, database);
+  assert.ok(Math.abs(price(4) - 41.8) < 1e-9);
+  assert.ok(Math.abs(price(6) - 68.2) < 1e-9);
+});
+
+test("the reliever premium applies only above the projected-WAR cutoff", () => {
+  const reliever = { position: "RP", role: "reliever" };
+  const starter = { position: "SP", role: "starter" };
+  const flat = { ...initialSettings, inflation: 0, starPremium: 0 };
+  const value = (player, war, settings = flat) =>
+    marketValueForSeason(player, { year: 2027, war, ros: false }, settings, database);
+  const base = (war) => (war - initialSettings.relieverRosterWar) * initialSettings.dollarsPerWar;
+
+  // Exactly at the cutoff there is no premium; just above it there is +50%.
+  assert.ok(Math.abs(value(reliever, 0.8) - base(0.8)) < 1e-9);
+  assert.ok(Math.abs(value(reliever, 0.9) - base(0.9) * 1.5) < 1e-9);
+  // Starters never get it, however good.
+  assert.ok(Math.abs(value(starter, 3) - (3 - initialSettings.regularRosterWar) * initialSettings.dollarsPerWar) < 1e-9);
+  // The cutoff is editable, and a settings object that predates it means "every reliever".
+  assert.ok(Math.abs(value(reliever, 0.5, { ...flat, relieverPremiumMinWar: 0.4 }) - base(0.5) * 1.5) < 1e-9);
+  const { relieverPremiumMinWar: _omitted, ...legacy } = flat;
+  assert.ok(Math.abs(value(reliever, 0.5, legacy) - base(0.5) * 1.5) < 1e-9);
+  assert.ok(Math.abs(value(reliever, 0.5, { ...legacy, relieverPremium: 0 }) - base(0.5)) < 1e-9);
 });
 
 test("the star premium threshold is explicit and editable", () => {
@@ -266,8 +304,8 @@ test("the star premium threshold is explicit and editable", () => {
     database,
   );
 
-  assert.ok(Math.abs(earlierPremium - 47.4) < 1e-9);
-  assert.ok(Math.abs(laterPremium - 43.8) < 1e-9);
+  assert.ok(Math.abs(earlierPremium - 41.8) < 1e-9);
+  assert.ok(Math.abs(laterPremium - 39.6) < 1e-9);
   assert.ok(earlierPremium > laterPremium);
 });
 
@@ -335,7 +373,7 @@ test("October rotation value uses a two-WAR net fourth-starter benchmark", () =>
     year: database.meta.baseYear + 1,
     ros: false,
   };
-  const expected = (5.8 - 2) * 0.25 * 12 * 1.3;
+  const expected = (5.8 - 2) * 0.25 * 11 * 1.2;
 
   assert.ok(
     Math.abs(
@@ -384,12 +422,12 @@ test("Skubal's deadline value separates current-win and October premiums", () =>
   assert.ok(skubal);
   const baseline = valuePlayer(
     skubal,
-    { ...deadlineView, deadlineBoost: 0 },
+    { ...deadlineView, ...october17Prices, deadlineBoost: 0 },
     database,
   );
   const deadline = valuePlayer(
     skubal,
-    { ...deadlineView, deadlineBoost: 15 },
+    { ...deadlineView, ...october17Prices, deadlineBoost: 15 },
     database,
   );
 
@@ -578,7 +616,7 @@ test("ordinal rank breaks FV ties without overruling the scouting tier", () => {
   assert.equal(prospectRankAdjustment(unranked, database), 0);
   assert.equal(
     valuePlayer(unranked, initialSettings, database).total,
-    45,
+    41.25, // the FV 50 hitter value of 45 scales with dollarsPerWar / 12
   );
 });
 
@@ -849,14 +887,15 @@ test("mutually exclusive contract paths stay separate and conservative", () => {
     ["fallback", "club", "mutual"],
   );
   assert.equal(effectiveSeasons(julio).at(-1)?.year, 2034);
-  const fallbackValue = valuePlayer(julio, initialSettings, database).total;
+  const october17 = { ...initialSettings, ...october17Prices };
+  const fallbackValue = valuePlayer(julio, october17, database).total;
   assert.ok(fallbackValue > 100 && fallbackValue < 200);
 
   const clubScenario = structuredClone(julio);
   clubScenario.contractScenario.selectedId = "club";
   assert.equal(effectiveSeasons(clubScenario).at(-1)?.year, 2037);
   assert.ok(
-    valuePlayer(clubScenario, initialSettings, database).total >
+    valuePlayer(clubScenario, october17, database).total >
       fallbackValue + 30,
   );
 

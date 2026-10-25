@@ -165,7 +165,8 @@ test("an unversioned Soto link warns when the new option changes its value", asy
     encodeTradeState({
       v: 1,
       snapshot: database.meta.refreshed,
-      settings: { dollarsPerWar: 18 },
+      // A link saved under the October 17 defaults carries its star premium.
+      settings: { dollarsPerWar: 18, starPremium: 30 },
     }),
   );
   const settings = restoreSharedSettings(unversioned.settings, initialSettings);
@@ -192,4 +193,44 @@ test("only links that stored neither view nor discount are flagged as legacy", (
   );
   assert.equal(isLegacySettingsLink(current), false);
   assert.equal(isLegacySettingsLink(null), false);
+});
+
+test("links saved before the reliever cutoff existed keep pricing every reliever the same way", () => {
+  // A 2026-10-17.1 link carries its full settings but no relieverPremiumMinWar.
+  const { relieverPremiumMinWar: _added, ...october17 } = initialSettings;
+  const saved = {
+    ...october17,
+    dollarsPerWar: 12,
+    starPremium: 30,
+    relieverPremium: 25,
+    valuationView: "offseason",
+  };
+  const decoded = decodeTradeState(
+    encodeTradeState({ v: 1, modelVersion: "2026-10-17.1", settings: saved }),
+  );
+  assert.deepEqual(decoded.settings, saved);
+  assert.equal(isLegacySettingsLink(decoded), false);
+  const restored = restoreSharedSettings(decoded.settings, initialSettings);
+  // Saved values win; the missing cutoff means "no cutoff", not the new 0.8 default.
+  assert.equal(restored.dollarsPerWar, 12);
+  assert.equal(restored.starPremium, 30);
+  assert.equal(restored.relieverPremium, 25);
+  assert.equal(restored.relieverPremiumMinWar, 0);
+  assert.match(sharedModelWarning(decoded.modelVersion), /earlier or unknown model version/);
+  // Fully legacy links (no view, no discount) behave the same way.
+  assert.equal(
+    restoreSharedSettings(decodeTradeState(encodeTradeState({ v: 1, settings: {} })).settings, initialSettings)
+      .relieverPremiumMinWar,
+    0,
+  );
+});
+
+test("the reliever cutoff round-trips through a link and is clamped", () => {
+  const state = { v: 1, modelVersion: TRADE_SHARE_MODEL_VERSION, settings: { ...initialSettings, relieverPremiumMinWar: 1.2 } };
+  const decoded = decodeTradeState(encodeTradeState(state));
+  assert.equal(restoreSharedSettings(decoded.settings, initialSettings).relieverPremiumMinWar, 1.2);
+  assert.equal(sharedModelWarning(decoded.modelVersion), null);
+  assert.equal(restoreSharedSettings({ ...state.settings, relieverPremiumMinWar: 99 }, initialSettings).relieverPremiumMinWar, 10);
+  assert.equal(restoreSharedSettings({ ...state.settings, relieverPremiumMinWar: "0.5" }, initialSettings).relieverPremiumMinWar, initialSettings.relieverPremiumMinWar);
+  assert.equal(TRADE_SHARE_MODEL_VERSION, "2026-10-25.1");
 });
