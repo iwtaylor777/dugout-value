@@ -20,8 +20,8 @@ test("trade route presents the reviewed snapshot, the offseason default and the 
   assert.match(html, /<h1>Trade builder<\/h1>/);
   assert.match(html, /Tool data checked <!-- -->October 18, 2026/);
   assert.match(html, /Off · 2026 season complete/);
-  assert.match(html, /Pittsburgh Pirates give up \$13\.3M more at the midpoint/);
-  assert.match(html, /11\.4% of the larger side/);
+  assert.match(html, /Pittsburgh Pirates give up \$15\.0M more at the midpoint/);
+  assert.match(html, /15\.1% of the larger side/);
   assert.match(html, /The ranges overlap, so the gap is small next to the model’s allowances/);
   assert.match(html, /Why this result\?/);
   assert.match(html, /href="\/analysis\/how-to-read-value-ranges"/);
@@ -84,9 +84,28 @@ test("case studies and ledger entries render and reject unknown records", async 
     assert.equal(response.status, 200, path);
     const html = await response.text();
     assert.equal((html.match(/<main\b/g) ?? []).length, 1, path);
-    assert.match(html, /2026-10-17\.1/, path);
+    if (path.startsWith("/players")) {
+      // Case studies are computed live with the current defaults and say so.
+      assert.match(html, /2026-10-25\.1/, path);
+      assert.doesNotMatch(html, /2026-10-17\.1/, path);
+    } else {
+      // The ledger is a pinned October 17 record.
+      assert.match(html, /2026-10-17\.1/, path);
+    }
   }
   for (const path of ["/ledger/unknown-record", "/players/unknown-player"]) {
     assert.equal((await render(path)).status, 404, path);
   }
+});
+
+test("frozen article figures are dated to the model that made them and methods states the current defaults", async () => {
+  for (const slug of ["what-trade-value-measures", "how-to-read-value-ranges"]) {
+    const html = await (await render(`/analysis/${slug}`)).text();
+    assert.match(html, /model 2026-10-17\.1, the October 17 defaults of \$12 million per win and a 30% star premium/, slug);
+    assert.match(html, /current tools use model 2026-10-25\.1/, slug);
+  }
+  const methods = await (await render("/methods")).text();
+  assert.match(methods, /The default price is \$11 million a win, 20% higher for each net win past two/);
+  assert.match(methods, /A reliever projected for more than 0.8 wins in a season is priced 50% higher/);
+  assert.match(methods, /current tools use model 2026-10-25\.1/);
 });
