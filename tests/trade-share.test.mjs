@@ -197,7 +197,8 @@ test("only links that stored neither view nor discount are flagged as legacy", (
 
 test("links saved before the reliever cutoff existed keep pricing every reliever the same way", () => {
   // A 2026-10-17.1 link carries its full settings but no relieverPremiumMinWar.
-  const { relieverPremiumMinWar: _added, ...october17 } = initialSettings;
+  const october17 = { ...initialSettings };
+  delete october17.relieverPremiumMinWar;
   const saved = {
     ...october17,
     dollarsPerWar: 12,

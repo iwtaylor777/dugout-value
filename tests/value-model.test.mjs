@@ -283,7 +283,8 @@ test("the reliever premium applies only above the projected-WAR cutoff", () => {
   assert.ok(Math.abs(value(starter, 3) - (3 - initialSettings.regularRosterWar) * initialSettings.dollarsPerWar) < 1e-9);
   // The cutoff is editable, and a settings object that predates it means "every reliever".
   assert.ok(Math.abs(value(reliever, 0.5, { ...flat, relieverPremiumMinWar: 0.4 }) - base(0.5) * 1.5) < 1e-9);
-  const { relieverPremiumMinWar: _omitted, ...legacy } = flat;
+  const legacy = { ...flat };
+  delete legacy.relieverPremiumMinWar;
   assert.ok(Math.abs(value(reliever, 0.5, legacy) - base(0.5) * 1.5) < 1e-9);
   assert.ok(Math.abs(value(reliever, 0.5, { ...legacy, relieverPremium: 0 }) - base(0.5)) < 1e-9);
 });
