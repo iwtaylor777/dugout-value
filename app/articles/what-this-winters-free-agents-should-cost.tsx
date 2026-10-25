@@ -4,39 +4,39 @@ import { AUTHOR } from "./types";
 
 const FILES = "/research/fa-predictions-2026-27";
 
-/** Frozen predictions, in the order of the frozen file (model 2026-10-25.1). */
-const predictions: [string, string, number, number, number, string?][] = [
-  ["Tarik Skubal", "SP", 30, 10, 533.6, "AAV above any pitcher's record"],
-  ["Bo Bichette", "3B/SS/2B", 29, 6, 168.8, "Assumes he opts out"],
-  ["Teruaki Sato", "3B/OF", 28, 4, 95.2, "Posting fee, translated projection"],
-  ["Kris Bubic", "SP", 30, 4, 91.4],
-  ["Trent Grisham", "OF", 31, 4, 86.1],
-  ["Daulton Varsho", "OF", 31, 4, 76.7],
-  ["Jazz Chisholm Jr.", "2B/OF", 29, 4, 74.0],
-  ["Freddy Peralta", "SP", 31, 4, 68.4],
-  ["Gleyber Torres", "2B", 30, 4, 60.7],
-  ["Trevor Rogers", "SP", 29, 4, 60.2],
-  ["Foster Griffin", "RP", 32, 3, 57.9, "Projected in relief"],
-  ["Dustin May", "RP", 30, 3, 57.7, "Projected in relief"],
-  ["Brady Singer", "SP", 31, 4, 54.6],
-  ["Drew Rasmussen", "SP", 32, 4, 53.3],
-  ["Seiya Suzuki", "DH/OF", 33, 3, 47.3],
-  ["Adrian Morejon", "RP", 28, 3, 41.9],
-  ["Ian Happ", "OF", 33, 3, 40.5],
-  ["J.P. Crawford", "SS", 32, 3, 35.7],
-  ["Bryan Abreu", "RP", 30, 3, 33.7],
-  ["Hunter Harvey", "RP", 32, 3, 33.7],
-  ["Jack Flaherty", "SP", 32, 2, 28.8],
-  ["David Peterson", "SP", 32, 2, 28.8],
-  ["Shane Bieber", "SP", 32, 2, 26.5],
-  ["Brandon Woodruff", "SP", 34, 2, 26.5],
-  ["Casey Mize", "SP", 30, 2, 24.2],
-  ["Ha-Seong Kim", "SS", 32, 2, 23.1],
-  ["Clay Holmes", "SP", 34, 2, 23.1],
-  ["Jeff McNeil", "2B/3B/CF", 35, 2, 22.0],
-  ["TJ Friedl", "OF", 32, 2, 21.9],
-  ["Zac Gallen", "SP", 32, 2, 21.9],
-  ["Zack Littell", "SP", 32, 2, 21.9],
+/** Frozen predictions: name, position, 2027 age, years, total and AAV ($M), copied from predictions_frozen.json (model 2026-10-25.1). */
+const predictions: [string, string, number, number, number, number, string?][] = [
+  ["Tarik Skubal", "SP", 30, 10, 533.6, 53.4, "AAV above any pitcher's record"],
+  ["Bo Bichette", "3B/SS/2B", 29, 6, 168.8, 28.1, "Assumes he opts out"],
+  ["Teruaki Sato", "3B/OF", 28, 4, 95.2, 23.8, "Posting fee, translated projection"],
+  ["Kris Bubic", "SP", 30, 4, 91.4, 22.9],
+  ["Trent Grisham", "OF", 31, 4, 86.1, 21.5],
+  ["Daulton Varsho", "OF", 31, 4, 76.7, 19.2],
+  ["Jazz Chisholm Jr.", "2B/OF", 29, 4, 74.0, 18.5],
+  ["Freddy Peralta", "SP", 31, 4, 68.4, 17.1],
+  ["Gleyber Torres", "2B", 30, 4, 60.7, 15.2],
+  ["Trevor Rogers", "SP", 29, 4, 60.2, 15.1],
+  ["Foster Griffin", "RP", 32, 3, 57.9, 19.3, "Projected in relief"],
+  ["Dustin May", "RP", 30, 3, 57.7, 19.2, "Projected in relief"],
+  ["Brady Singer", "SP", 31, 4, 54.6, 13.6],
+  ["Drew Rasmussen", "SP", 32, 4, 53.3, 13.3],
+  ["Seiya Suzuki", "DH/OF", 33, 3, 47.3, 15.8],
+  ["Adrian Morejon", "RP", 28, 3, 41.9, 14],
+  ["Ian Happ", "OF", 33, 3, 40.5, 13.5],
+  ["J.P. Crawford", "SS", 32, 3, 35.7, 11.9],
+  ["Bryan Abreu", "RP", 30, 3, 33.7, 11.2],
+  ["Hunter Harvey", "RP", 32, 3, 33.7, 11.2],
+  ["Jack Flaherty", "SP", 32, 2, 28.8, 14.4],
+  ["David Peterson", "SP", 32, 2, 28.8, 14.4],
+  ["Shane Bieber", "SP", 32, 2, 26.5, 13.2],
+  ["Brandon Woodruff", "SP", 34, 2, 26.5, 13.3],
+  ["Casey Mize", "SP", 30, 2, 24.2, 12.1],
+  ["Ha-Seong Kim", "SS", 32, 2, 23.1, 11.5],
+  ["Clay Holmes", "SP", 34, 2, 23.1, 11.6],
+  ["Jeff McNeil", "2B/3B/CF", 35, 2, 22.0, 11],
+  ["TJ Friedl", "OF", 32, 2, 21.9, 11],
+  ["Zac Gallen", "SP", 32, 2, 21.9, 11],
+  ["Zack Littell", "SP", 32, 2, 21.9, 11],
 ];
 const money = (m: number) => (m >= 100 ? `$${m.toFixed(0)}M` : `$${m.toFixed(1)}M`);
 
@@ -71,8 +71,8 @@ export const article: Article = {
 
       <h2>The predictions</h2>
       <div className="article-table-wrap" tabIndex={0} role="region" aria-label="Free-agent contract predictions"><table><caption>Model 2026-10-25.1 contract predictions, frozen before free agency opened. Age is for the 2027 season.</caption><thead><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th><th scope="col">Age</th><th scope="col">Years</th><th scope="col">Total</th><th scope="col">AAV</th><th scope="col">Flag</th></tr></thead><tbody>
-        {predictions.map(([name, pos, age, years, total, flag], i) => (
-          <tr key={name}><td className="num">{i + 1}</td><th scope="row">{name}</th><td>{pos}</td><td className="num">{age}</td><td className="num">{years}</td><td className="num">{money(total)}</td><td className="num">{money(total / years)}</td><td>{flag ?? ""}</td></tr>
+        {predictions.map(([name, pos, age, years, total, aav, flag], i) => (
+          <tr key={name}><td className="num">{i + 1}</td><th scope="row">{name}</th><td>{pos}</td><td className="num">{age}</td><td className="num">{years}</td><td className="num">{money(total)}</td><td className="num">{money(aav)}</td><td>{flag ?? ""}</td></tr>
         ))}
       </tbody></table></div>
 
@@ -106,7 +106,7 @@ export const article: Article = {
         <li><strong>Projections:</strong> ZiPS for 2027–28 from the site’s database (refreshed October 18), extended with the site’s aging model.</li>
         <li><strong>Model:</strong> 2026-10-25.1. That is $11 million per WAR, a 20% premium above 2 WAR, 3% inflation and a 10% discount rate, with a 50% reliever premium above 0.8 projected WAR.</li>
         <li><strong>Term:</strong> consecutive seasons projected at 1.0 WAR or more (0.5 for relievers), capped by role, projected WAR and age. Players projected at 4.5 WAR or more can go to 10 years.</li>
-        <li><strong>Calibration:</strong> 2020–26 free-agent contracts from FanGraphs’ free-agent tracker. Projections at signing exist only for the 2026 class, so earlier years used a three-year WAR average.</li>
+        <li><strong>Calibration:</strong> 2020–26 free-agent contracts from FanGraphs’ free-agent tracker. Projections at signing exist only for the 2026 class, so earlier years used a weighted three-year WAR average.</li>
       </ul>
     </>
   ),
