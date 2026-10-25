@@ -233,5 +233,5 @@ test("the reliever cutoff round-trips through a link and is clamped", () => {
   assert.equal(sharedModelWarning(decoded.modelVersion), null);
   assert.equal(restoreSharedSettings({ ...state.settings, relieverPremiumMinWar: 99 }, initialSettings).relieverPremiumMinWar, 10);
   assert.equal(restoreSharedSettings({ ...state.settings, relieverPremiumMinWar: "0.5" }, initialSettings).relieverPremiumMinWar, initialSettings.relieverPremiumMinWar);
-  assert.equal(TRADE_SHARE_MODEL_VERSION, "2026-10-25.1");
+  assert.equal(TRADE_SHARE_MODEL_VERSION, "2026-10-25.2");
 });

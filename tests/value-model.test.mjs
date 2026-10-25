@@ -26,7 +26,7 @@ const archivedDatabase = JSON.parse(await readFile(new URL("../public/research/s
 const deadlineView = { ...initialSettings, valuationView: "deadline" };
 // The prices in force through model 2026-10-17.1. A few tests below assert fixed dollar
 // thresholds that were set under them; they pin these prices so the assertions stay as strict
-// as before instead of being loosened for the 2026-10-25.1 defaults.
+// as before instead of being loosened for the 2026-10-25.2 defaults.
 const october17Prices = { dollarsPerWar: 12, starPremium: 30 };
 
 test("first-year arbitration follows role-specific counting stats", () => {
@@ -246,17 +246,17 @@ test("role-aware roster burden gives relievers the intended baseline", () => {
   assert.equal(isReliever(starter), false);
   assert.equal(
     marketValueForSeason(reliever, season, neutralSettings, database),
-    13.200000000000001, // 0.8 net WAR x $11M x 1.5 (a 1.0-WAR reliever clears the 0.8 cutoff)
+    12.600000000000001, // 0.8 net WAR x $10.5M x 1.5 (a 1.0-WAR reliever clears the 0.8 cutoff)
   );
   assert.equal(
     marketValueForSeason(starter, season, neutralSettings, database),
-    5.5, // 0.5 net WAR x $11M
+    5.25, // 0.5 net WAR x $10.5M
   );
 });
 
-test("the 2026-10-25.1 defaults price a win at $11M with a 20% star premium", () => {
-  assert.equal(initialSettings.dollarsPerWar, 11);
-  assert.equal(initialSettings.starPremium, 20);
+test("the 2026-10-25.2 defaults price a win at $10.5M with a 10% star premium", () => {
+  assert.equal(initialSettings.dollarsPerWar, 10.5);
+  assert.equal(initialSettings.starPremium, 10);
   assert.equal(initialSettings.relieverPremium, 50);
   assert.equal(initialSettings.relieverPremiumMinWar, 0.8);
   // The methods page compares these two seasons with FanGraphs' graduated scale.
@@ -264,8 +264,8 @@ test("the 2026-10-25.1 defaults price a win at $11M with a 20% star premium", ()
   const flat = { ...initialSettings, inflation: 0 };
   const price = (war) =>
     marketValueForSeason(player, { year: 2027, war, ros: false }, flat, database);
-  assert.ok(Math.abs(price(4) - 41.8) < 1e-9);
-  assert.ok(Math.abs(price(6) - 68.2) < 1e-9);
+  assert.ok(Math.abs(price(4) - 38.325) < 1e-9);
+  assert.ok(Math.abs(price(6) - 61.425) < 1e-9);
 });
 
 test("the reliever premium applies only above the projected-WAR cutoff", () => {
@@ -305,8 +305,8 @@ test("the star premium threshold is explicit and editable", () => {
     database,
   );
 
-  assert.ok(Math.abs(earlierPremium - 41.8) < 1e-9);
-  assert.ok(Math.abs(laterPremium - 39.6) < 1e-9);
+  assert.ok(Math.abs(earlierPremium - 38.325) < 1e-9);
+  assert.ok(Math.abs(laterPremium - 37.275) < 1e-9);
   assert.ok(earlierPremium > laterPremium);
 });
 
@@ -374,7 +374,7 @@ test("October rotation value uses a two-WAR net fourth-starter benchmark", () =>
     year: database.meta.baseYear + 1,
     ros: false,
   };
-  const expected = (5.8 - 2) * 0.25 * 11 * 1.2;
+  const expected = (5.8 - 2) * 0.25 * 10.5 * 1.1;
 
   assert.ok(
     Math.abs(
@@ -617,7 +617,7 @@ test("ordinal rank breaks FV ties without overruling the scouting tier", () => {
   assert.equal(prospectRankAdjustment(unranked, database), 0);
   assert.equal(
     valuePlayer(unranked, initialSettings, database).total,
-    41.25, // the FV 50 hitter value of 45 scales with dollarsPerWar / 12
+    39.375, // the FV 50 hitter value of 45 scales with dollarsPerWar / 12
   );
 });
 
@@ -823,7 +823,7 @@ test("the archived July snapshot clears identity, reliever, opt-out, and arb che
       .filter((season) => season.year > 2030)
       .every((season) => season.contractType === "playerOption"),
   );
-  const bobbyValue = valuePlayer(bobby, initialSettings, database).total;
+  const bobbyValue = valuePlayer(bobby, { ...initialSettings, ...october17Prices }, database).total;
   assert.ok(bobbyValue > 150 && bobbyValue < 300);
 
   const mason = database.players.find(

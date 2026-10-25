@@ -4536,25 +4536,25 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       scaled to the time remaining.
                     </p>
                     <p>
-                      Wins above that allowance are priced at $11 million per
+                      Wins above that allowance are priced at $10.5 million per
                       WAR. The first two net wins use that base price; each
-                      additional win is priced 20% higher, at $13.2 million.
+                      additional win is priced 10% higher, at $11.55 million.
                       Because the roster-spot allowance comes first, the default
                       premium begins at 2.5 projected WAR for a full-season
                       position player or starter—not at 2.0 raw WAR. The cutoff
                       is prorated along with the allowance for the rest of 2026.
                     </p>
                     <div className="risk-explainer">
-                      <span>Why a 20% premium after two net WAR?</span>
-                      <strong>20% is a calibration choice, not a measured constant.</strong>
+                      <span>Why a 10% premium after two net WAR?</span>
+                      <strong>10% is a calibration choice, not a measured constant.</strong>
                       <p>
                         The premium applies only to the marginal wins above the
                         cutoff, which makes the price curve smooth, with no value
                         cliff. At default settings a 4-WAR season is priced about
-                        1% above FanGraphs’ 2026 graduated scale ($41.8 million
-                        against $41.5 million), and a 6-WAR season about 1%
-                        above it ($68.2 million against $67.5 million). The
-                        $11 million price and the 20% premium were set after a
+                        8% below FanGraphs’ 2026 graduated scale ($38.3 million
+                        against $41.5 million), and a 6-WAR season about 9%
+                        below it ($61.4 million against $67.5 million). The
+                        $10.5 million price and the 10% premium were set after a
                         calibration against 2020–26 free-agent contracts,{" "}
                         <Link href="/analysis/what-this-winters-free-agents-should-cost">
                           described with this winter’s free-agent predictions
@@ -4858,9 +4858,9 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   <div>
                     <span>Default model card</span>
                     <dl>
-                      <div><dt>$11M</dt><dd>Base price per net WAR</dd></div>
+                      <div><dt>$10.5M</dt><dd>Base price per net WAR</dd></div>
                       <div><dt>0.5 / 0.2</dt><dd>Roster-spot allowance by role</dd></div>
-                      <div><dt>+20%</dt><dd>Marginal premium above two net WAR</dd></div>
+                      <div><dt>+10%</dt><dd>Marginal premium above two net WAR</dd></div>
                       <div><dt>+50%</dt><dd>Reliever premium, seasons projected above 0.8 WAR</dd></div>
                       <div><dt>10%</dt><dd>Future-year discount, FanGraphs’ rate</dd></div>
                       <div><dt>2027 on</dt><dd>Offseason view: rest of 2026 excluded</dd></div>

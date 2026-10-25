@@ -86,7 +86,7 @@ test("case studies and ledger entries render and reject unknown records", async 
     assert.equal((html.match(/<main\b/g) ?? []).length, 1, path);
     if (path.startsWith("/players")) {
       // Case studies are computed live with the current defaults and say so.
-      assert.match(html, /2026-10-25\.1/, path);
+      assert.match(html, /2026-10-25\.2/, path);
       assert.doesNotMatch(html, /2026-10-17\.1/, path);
     } else {
       // The ledger is a pinned October 17 record.
@@ -102,10 +102,10 @@ test("frozen article figures are dated to the model that made them and methods s
   for (const slug of ["what-trade-value-measures", "how-to-read-value-ranges"]) {
     const html = await (await render(`/analysis/${slug}`)).text();
     assert.match(html, /model 2026-10-17\.1, the October 17 defaults of \$12 million per win and a 30% star premium/, slug);
-    assert.match(html, /current tools use model 2026-10-25\.1/, slug);
+    assert.match(html, /current tools use model 2026-10-25\.2/, slug);
   }
   const methods = await (await render("/methods")).text();
-  assert.match(methods, /The default price is \$11 million a win, 20% higher for each net win past two/);
+  assert.match(methods, /The default price is \$10.5 million a win, 10% higher for each net win past two/);
   assert.match(methods, /A reliever projected for more than 0.8 wins in a season is priced 50% higher/);
-  assert.match(methods, /current tools use model 2026-10-25\.1/);
+  assert.match(methods, /current tools use model 2026-10-25\.2/);
 });

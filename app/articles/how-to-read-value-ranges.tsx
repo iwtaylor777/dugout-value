@@ -22,7 +22,7 @@ export const article: Article = {
         Put Julio Rodríguez on one side of the trade builder and Paul Skenes on the other. At the midpoint, Skenes is worth $107.9 million and Rodríguez $103.7 million, so Pittsburgh gives up $4.2 million more than Seattle, 3.9% of the larger side. Their ranges, $87.0–128.7 million for Skenes and $86.1–121.3 million for Rodríguez, overlap from $87.0 million to $121.3 million. It’s tempting to call that a fair trade. The ranges can’t carry that much weight.
       </p>
       <p>
-        The numbers here use July 31, 2026 data in the Offseason view (2027 on). These figures use model 2026-10-17.1, the October 17 defaults of $12 million per win and a 30% star premium. The current tools use model 2026-10-25.1, so they will show different numbers.
+        The numbers here use July 31, 2026 data in the Offseason view (2027 on). These figures use model 2026-10-17.1, the October 17 defaults of $12 million per win and a 30% star premium. The current tools use model 2026-10-25.2, so they will show different numbers.
       </p>
 
       <h2>What the ranges are</h2>
