@@ -26,6 +26,10 @@ export async function verifySnapshot(directory, expectedSnapshotId) {
   const database = JSON.parse(await readFile(join(dir, "app/data/player-database.json"), "utf8"));
   const odds = JSON.parse(await readFile(join(dir, "app/data/playoff-odds.json"), "utf8"));
   if (database.meta?.refreshed !== manifest.sourceDataAsOf || odds.refreshed !== manifest.sourceDataAsOf) throw new Error(`Source-data date mismatch: manifest=${manifest.sourceDataAsOf}, player=${database.meta?.refreshed}, odds=${odds.refreshed}`);
+  // Archived snapshots are immutable: the version is checked against the trade-share
+  // copy bundled inside this snapshot (itself SHA-256 pinned above), never against the
+  // live lib/trade-share.mjs, so bumping the site's model version cannot invalidate an
+  // old archive. A snapshot whose manifest and bundled model disagree still fails.
   const tradeShareSource = await readFile(join(dir, "lib/trade-share.mjs"), "utf8");
   if (!tradeShareSource.includes(`TRADE_SHARE_MODEL_VERSION = "${manifest.modelVersion}"`)) throw new Error("Manifest model version does not match the bundled trade-share model.");
   return manifest;

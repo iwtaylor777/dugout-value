@@ -70,3 +70,22 @@ test("replay rejects an unknown player and refuses altered bundled code", async 
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test("an archived snapshot verifies against its own manifest version, not the live model version", async () => {
+  const { TRADE_SHARE_MODEL_VERSION } = await import("../lib/trade-share.mjs");
+  const manifest = JSON.parse(await readFile(new URL("manifest.json", snapshot), "utf8"));
+  assert.notEqual(manifest.modelVersion, TRADE_SHARE_MODEL_VERSION);
+  const directory = await mkdtemp(join(tmpdir(), "dugout-version-"));
+  try {
+    await cp(snapshot, directory, { recursive: true });
+    const manifestPath = join(directory, "manifest.json");
+    const edited = { ...manifest, modelVersion: TRADE_SHARE_MODEL_VERSION };
+    await writeFile(manifestPath, JSON.stringify(edited, null, 2));
+    await assert.rejects(
+      execFileAsync(process.execPath, ["scripts/verify-research-snapshot.mjs", "2026-10-17", "--dir", directory], { cwd: root }),
+      /Manifest model version does not match the bundled trade-share model/,
+    );
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
