@@ -1,21 +1,23 @@
-node_modules
-.next
-.vinext
-.wrangler
-.git
+# Paths are anchored to the repo root with a leading slash. Unanchored names match at any depth in Vercel's
+# Git builds, and a bare "analysis" once removed app/analysis (the route) and public/analysis (figures).
+/node_modules
+/.next
+/.vinext
+/.wrangler
+/.git
 
-analysis
-coverage
-docs
-outputs
-work
+/analysis
+/coverage
+/docs
+/outputs
+/work
 
-.env*
+/.env*
 *.log
 
-# Local-only folders that the site never reads (added Oct 24, 2026)
-Red Sox
-tmp
-output
-dist
-data/refresh-archives
+# Local-only folders that the site never reads
+/Red Sox
+/tmp
+/output
+/dist
+/data/refresh-archives
