@@ -10,7 +10,7 @@ export const article: Article = {
   category: "Research",
   title: "Swing decisions looked most valuable against elite relievers",
   summary:
-    "From 2022 to 2026, each standard deviation of swing-decision skill was worth about 5 extra wOBA points against the hardest-to-hit pitchers, most of them relievers.",
+    "From 2022 to 2026, each standard deviation of swing-decision skill was worth about 5 extra wOBA points against the hardest-to-hit pitchers, mostly relievers.",
   author: AUTHOR,
   published: "2026-10-24",
   dateLabel: "October 24, 2026",
