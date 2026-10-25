@@ -10,6 +10,7 @@ export const metadata: Metadata = pageMetadata({ title: "Research files and fore
 
 /** Each downloadable research bundle, described as a schema.org Dataset so data search can find it. */
 const datasets = [
+  datasetJsonLd({ name: "Free-agent contract predictions, 2026–27 offseason", description: "Frozen contract predictions (years, total and AAV) from trade model 2026-10-25.1 for the 30 most valuable MLB free agents plus Teruaki Sato, with the scoring protocol, input checksums and the calibration against 2020–26 free-agent contracts.", path: "/research#fa-predictions-2027", datePublished: "2026-10-25", files: [{ url: "/research/fa-predictions-2026-27.tar.gz", format: "application/gzip" }, { url: "/research/fa-predictions-2026-27/predictions_frozen.csv", format: "text/csv" }] }),
   datasetJsonLd({ name: "Decision skill against elite pitching: pre-registered study, exploratory follow-up and holdout test", description: "Protocols with checksums, results, chart data and independent verifications for a test of whether hitters' swing-decision skill pays more against elite pitchers (2021–26 regular seasons and postseasons).", path: "/research#paq-elite-pitching", datePublished: "2026-10-24", files: [{ url: "/research/paq-elite-pitching-2026-10-24.tar.gz", format: "application/gzip" }, { url: "/research/paq-elite-pitching-2026-10-24/holdout/results.json", format: "application/json" }] }),
   datasetJsonLd({ name: "Roster and minor-league opportunity test (June 2024 → June 2025 hitters)", description: "Training data, forecasts and replay code for a playing-time model fitted on 584 hitters' June 2024 snapshots and evaluated on 612 June 2025 forecasts, with AA/AAA workloads and dated active rosters.", path: "/research#playing-time-opportunity", datePublished: "2026-10-21", files: [{ url: "/research/playing-time-opportunity-2026-10-21.tar.gz", format: "application/gzip" }, { url: "/research/playing-time-opportunity-2026-10-21/results.json", format: "application/json" }] }),
   datasetJsonLd({ name: "Multi-season projection baselines", description: "Historical counts and replay code for a three-season projection baseline compared with ZiPS and FanGraphs Depth Charts.", path: "/research#projection-baselines", datePublished: "2026-10-21", files: [{ url: "/research/projection-baselines-2026-10-20.tar.gz", format: "application/gzip" }, { url: "/research/projection-baselines-2026-10-20/results.json", format: "application/json" }] }),
@@ -20,6 +21,16 @@ const datasets = [
 
 export default function ResearchFiles() {
   return <Publication active="analysis"><JsonLd data={[webPageJsonLd({ type: "CollectionPage", title: "Research files and forecast results", description: "Data and code for historical projection tests, frozen forecasts, and the dated trade-model archive.", path: "/research" }), breadcrumbJsonLd([["Research files", "/research"]]), ...datasets]}/><header className="section-intro"><h1>Research files</h1><p>Forecasts, outcomes, and code for checking the published results. The trade-model archive preserves the inputs and rules behind the October release.</p></header><div className="research-files">
+    <section id="fa-predictions-2027"><h2>Free-agent contract predictions, 2026–27</h2>
+      <p>Frozen October 25, 2026, before free agency opened. Years, total and AAV for the 30 most valuable MLB free agents the model expects to reach the market, plus Teruaki Sato, from trade model 2026-10-25.1. They will be scored against actual contracts through Opening Day 2027.</p>
+      <p><Link href="/analysis/what-this-winters-free-agents-should-cost">Read the predictions</Link>.</p>
+      <ul>
+        <li><a href="/research/fa-predictions-2026-27.tar.gz" download>Download the predictions, protocol, lock and calibration</a></li>
+        <li><a href="/research/fa-predictions-2026-27/PROTOCOL-FA-2027.md">Protocol</a> and <a href="/research/fa-predictions-2026-27/LOCK-FA-2027.json">its checksums and lock time</a></li>
+        <li><a href="/research/fa-predictions-2026-27/predictions_frozen.csv">Predictions (CSV)</a> and <a href="/research/fa-predictions-2026-27/predictions_frozen.json">with flags and exclusions (JSON)</a></li>
+      </ul>
+      <p>The MLB Trade Rumors free-agent list and FanGraphs free-agent tracker data are not redistributed; their checksums are in the lock file.</p>
+    </section>
     <section id="paq-elite-pitching"><h2>Decision skill against elite pitching: original study and holdout</h2>
       <p>Published October 24, 2026. The pre-registered plate-appearance quality study (locked October 23), the exploratory follow-up on 2022–26, and a holdout test locked before its data was downloaded: the 2021 regular season and the 2021–26 postseasons (2026 through October 23). The holdout failed its pass rule.</p>
       <p><Link href="/analysis/do-good-swing-decisions-beat-elite-relievers">Read the results</Link>. Exploratory results are labeled as such and are not confirmatory.</p>

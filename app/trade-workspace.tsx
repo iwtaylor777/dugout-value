@@ -4555,9 +4555,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                         against $41.5 million), and a 6-WAR season about 1%
                         above it ($68.2 million against $67.5 million). The
                         $11 million price and the 20% premium were set after a
-                        calibration against 2020–26 free-agent contracts; that
-                        calibration is not published on this site, and neither
-                        number has been checked against trades.
+                        calibration against 2020–26 free-agent contracts,{" "}
+                        <Link href="/analysis/what-this-winters-free-agents-should-cost">
+                          described with this winter’s free-agent predictions
+                        </Link>
+                        . Neither number has been checked against trades.
                       </p>
                     </div>
                     <p>
