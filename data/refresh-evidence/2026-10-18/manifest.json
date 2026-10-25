@@ -1,0 +1,31 @@
+{
+  "asOf": "2026-10-18",
+  "capturedOn": "2026-10-19",
+  "sources": [
+    {
+      "file": "mlb-transactions.json",
+      "url": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026",
+      "sha256": "70608c2b2602e3f737166bb0bd963867dac077089b955471d626a98f40b070c0"
+    },
+    {
+      "file": "prospect-transactions.json",
+      "url": "https://statsapi.mlb.com/api/v1/transactions?playerId=702516,835714,688883,689520,693311,692479,686633&startDate=01/01/2026&endDate=10/18/2026",
+      "sha256": "5d47749cfa67c230f28546ed98e0d1a9f67895b5d5290639e5eab72f10f3dee2"
+    },
+    {
+      "file": "crim-transactions.json",
+      "url": "https://statsapi.mlb.com/api/v1/transactions?playerId=688760&startDate=01/01/2026&endDate=10/18/2026",
+      "sha256": "cdd9e17d463034cb5fb009207637dceafe3dacb5dc39f9855446d20c04c0d1a3"
+    },
+    {
+      "file": "prospect-people.json",
+      "url": "https://statsapi.mlb.com/api/v1/people?personIds=702516,835714,688883,689520,693311,692479,686633&hydrate=currentTeam",
+      "sha256": "1c98e5e08dee22330dc077ed8ee195a586e29e6d4dd9a613639cb398658c8aeb"
+    },
+    {
+      "file": "schmidt-signing.html",
+      "url": "https://www.mlb.com/milb/news/guardians-unable-to-sign-second-round-draft-pick-logan-schmidt",
+      "sha256": "5eda8182ad676546d328d32b5424f2170fbe8e8c7e9dc8beeba55f18738bd22b"
+    }
+  ]
+}

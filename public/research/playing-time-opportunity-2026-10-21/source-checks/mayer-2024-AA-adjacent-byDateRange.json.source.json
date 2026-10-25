@@ -1,0 +1,9 @@
+{
+  "path": "mayer-2024-AA-adjacent-byDateRange.json",
+  "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&personId=691785&sportIds=12&season=2024&startDate=03%2F01%2F2024&endDate=06%2F01%2F2024&gameType=R&playerPool=ALL&limit=100",
+  "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&personId=691785&sportIds=12&season=2024&startDate=03%2F01%2F2024&endDate=06%2F01%2F2024&gameType=R&playerPool=ALL&limit=100",
+  "http_status": 200,
+  "sha256": "91d009807fe8c841508affaa51578bdd66c82f171f2faca0f42db7605be346d6",
+  "bytes": 1456,
+  "retrieved_at": "2026-10-21T17:15:23.474465+00:00"
+}

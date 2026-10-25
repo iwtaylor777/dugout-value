@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+__pycache__/
+*.py[cod]
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,3 +42,18 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# Attackability research: reproducible code/results are tracked; bulky inputs are not.
+/analysis/attackability/.venv/
+/analysis/attackability/data/raw/
+/analysis/attackability/data/processed/
+/analysis/attackability/cache/
+/analysis/attackability/results/coverage_predictions_*.csv.gz
+/analysis/attackability/results/attackability_predictions_*.csv.gz
+/analysis/attackability/results/holdout_predictions.csv.gz
+
+# Arsenal Synergy derived modeling table; rebuild from prepared Statcast data.
+/analysis/arsenal_synergy/data/
+
+# ShapeCast coordinate bridge; rebuilt from ignored Statcast source files.
+/analysis/deception_residual/data/

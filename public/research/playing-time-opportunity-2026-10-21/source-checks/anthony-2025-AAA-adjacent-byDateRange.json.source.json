@@ -1,0 +1,9 @@
+{
+  "path": "anthony-2025-AAA-adjacent-byDateRange.json",
+  "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&personId=701350&sportIds=11&season=2025&startDate=03%2F01%2F2025&endDate=06%2F01%2F2025&gameType=R&playerPool=ALL&limit=100",
+  "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&personId=701350&sportIds=11&season=2025&startDate=03%2F01%2F2025&endDate=06%2F01%2F2025&gameType=R&playerPool=ALL&limit=100",
+  "http_status": 200,
+  "sha256": "462f97e9c278d4d19d1c5d885e91a63d2303c61b4ab88a4affddce38a827065a",
+  "bytes": 1461,
+  "retrieved_at": "2026-10-21T17:15:24.135929+00:00"
+}

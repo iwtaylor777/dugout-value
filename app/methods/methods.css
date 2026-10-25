@@ -1,0 +1,13 @@
+/* Methods page: heading levels below the "Trade value model" group. Colors match publication.css. */
+.methods-layout .article-body h3 { font: 23px/1.25 Georgia, serif; letter-spacing: -.3px; margin: 0 0 14px; color: #172d3d; }
+.methods-layout .article-body > section.methods-group { margin-top: 38px; padding-top: 30px; border-top: 1px solid #cfc8b9; }
+.methods-layout .article-body > h2#trade-model { margin-top: 8px; }
+.methods-layout .article-body .methods-intro { font-size: 19px; line-height: 1.65; color: #213c49; }
+.methods-toc a.sub { padding-left: 14px; font-size: 11.5px; }
+.methods-toc a.top { font-weight: 600; color: #172d3d; }
+.methods-layout .article-table-wrap td, .methods-layout .article-table-wrap th { vertical-align: top; }
+.methods-layout .article-table-wrap td.wide { min-width: 200px; white-space: normal; }
+.methods-layout .article-table-wrap table { min-width: 0; }
+.methods-layout .article-table-wrap .contract-line { display: block; font: 400 11px/1.5 var(--font-geist-sans); color: #4d5b62; margin-top: 3px; }
+.methods-layout .article-table-wrap td.wide { min-width: 220px; }
+@media (max-width: 620px) { .methods-layout .article-table-wrap table { min-width: 560px; } }

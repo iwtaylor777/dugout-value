@@ -1,0 +1,77 @@
+{
+  "2024": {
+    "n": 584,
+    "feature_cutoff": "2024-05-31",
+    "target_start": "2024-06-01",
+    "target_end": "2024-09-30",
+    "selection_archive": "2024-04-10",
+    "elapsed_games": 57.4,
+    "remaining_games": 104.6,
+    "schedules": {
+      "1": {
+        "unique_scheduled": 868,
+        "completed_games": 861,
+        "cross_cutoff_suspensions": []
+      },
+      "11": {
+        "unique_scheduled": 825,
+        "completed_games": 817,
+        "cross_cutoff_suspensions": []
+      },
+      "12": {
+        "unique_scheduled": 735,
+        "completed_games": 728,
+        "cross_cutoff_suspensions": []
+      }
+    },
+    "identical_roster_duplicates": [],
+    "unknown_identities": 0,
+    "missing_source_requests": 0,
+    "active": 380,
+    "no_prior_mlb": 55,
+    "no_current_mlb": 98,
+    "zero_outcomes": 78,
+    "current_aa_or_aaa": 248,
+    "any_aa_or_aaa_history": 411
+  },
+  "2025": {
+    "n": 612,
+    "feature_cutoff": "2025-05-31",
+    "target_start": "2025-06-01",
+    "target_end": "2025-09-28",
+    "selection_archive": "2025-06-01",
+    "elapsed_games": 57.93333333333333,
+    "remaining_games": 104.06666666666666,
+    "schedules": {
+      "1": {
+        "unique_scheduled": 873,
+        "completed_games": 869,
+        "cross_cutoff_suspensions": []
+      },
+      "11": {
+        "unique_scheduled": 840,
+        "completed_games": 825,
+        "cross_cutoff_suspensions": []
+      },
+      "12": {
+        "unique_scheduled": 750,
+        "completed_games": 739,
+        "cross_cutoff_suspensions": []
+      }
+    },
+    "identical_roster_duplicates": [
+      {
+        "team": 142,
+        "mlbam_id": "668904"
+      }
+    ],
+    "unknown_identities": 0,
+    "missing_source_requests": 0,
+    "active": 389,
+    "no_prior_mlb": 86,
+    "no_current_mlb": 105,
+    "zero_outcomes": 77,
+    "current_aa_or_aaa": 289,
+    "any_aa_or_aaa_history": 446
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "capturedAt": "2026-10-17",
+  "modelVersion": "2026-10-17.1",
+  "playerDataAsOf": "2026-07-31",
+  "records": [
+    {
+      "slug": "devers-to-giants-2025",
+      "kind": "trade",
+      "date": "2025-06-15",
+      "title": "Rafael Devers to San Francisco",
+      "summary": "Boston sent Rafael Devers to San Francisco for Jordan Hicks, Kyle Harrison, James Tibbs III, and Jose Bello.",
+      "sentByBoston": [{"id":"mlb-646240","name":"Rafael Devers"}],
+      "sentBySanFrancisco": [
+        {"id":"mlb-663855","name":"Jordan Hicks"},
+        {"id":"mlb-690986","name":"Kyle Harrison"},
+        {"id":"prospect-sa3025333","name":"James Tibbs III"},
+        {"id":"prospect-sa3021530","name":"Jose Bello"}
+      ],
+      "sources": [
+        {"label":"MLB transaction log, June 15, 2025","url":"https://www.mlb.com/transactions/2025/06/15/redsox"},
+        {"label":"Red Sox announcement, June 16, 2025","url":"https://www.mlb.com/press-release/red-sox-trade-third-baseman-designated-hitter-rafael-devers-to-san-francisco-giants"}
+      ]
+    },
+    {
+      "slug": "soto-mets-contract-2024",
+      "kind": "contract",
+      "date": "2024-12-11",
+      "title": "Juan Soto signs with the Mets",
+      "summary": "The Mets finalized a 15-year, $765 million contract with Juan Soto. The contract has a player opt-out after 2029 that the Mets can void by adding $40 million to the final ten years.",
+      "player": {"id":"mlb-665742","name":"Juan Soto"},
+      "team": "New York Mets",
+      "years": 15,
+      "guaranteeMillion": 765,
+      "optionAfter": 2029,
+      "voidCostMillion": 40,
+      "sources": [
+        {"label":"Mets announcement, December 11, 2024","url":"https://www.mlb.com/amp/press-release/press-release-mets-sign-four-time-all-star-juan-soto.html"},
+        {"label":"MLB contract details, December 11, 2024","url":"https://www.mlb.com/news/juan-soto-agrees-to-contract-with-mets"}
+      ]
+    }
+  ]
+}

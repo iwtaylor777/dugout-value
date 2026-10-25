@@ -1,0 +1,9 @@
+{
+  "path": "anthony-2025-AAA-gamelog.json",
+  "url": "https://statsapi.mlb.com/api/v1/people/701350/stats?stats=gameLog&group=hitting&sportId=11&season=2025&gameType=R",
+  "resolved_url": "https://statsapi.mlb.com/api/v1/people/701350/stats?stats=gameLog&group=hitting&sportId=11&season=2025&gameType=R",
+  "http_status": 200,
+  "sha256": "67566a0b27246df6e910e319a8e67fbf0deabff3b0272ce743bed100cc60ba33",
+  "bytes": 76993,
+  "retrieved_at": "2026-10-21T17:15:24.545516+00:00"
+}

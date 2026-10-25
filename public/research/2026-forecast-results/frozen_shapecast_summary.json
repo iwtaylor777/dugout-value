@@ -1,0 +1,39 @@
+{
+  "model": "ShapeCast K-BB 0.1 full 61-input model",
+  "protocol_status": "workspace-blind prospective",
+  "source_cutoff": "2026-07-15",
+  "source_max_date": "2026-07-12",
+  "historical_analog": {
+    "training_cells": 879,
+    "holdout_cells": 562,
+    "holdout_pitchers": 412,
+    "rmse_improvement_pct": 1.6571938674132656,
+    "bootstrap_95pct": [
+      -0.6419672127519793,
+      3.893118316436697
+    ],
+    "gate": {
+      "passed": true,
+      "checks": {
+        "pooled_rmse_lower": true,
+        "pooled_mae_lower": true,
+        "rmse_lower_2024": true,
+        "rmse_lower_2025": true,
+        "bootstrap_point_estimate_positive": true
+      }
+    }
+  },
+  "forecast": {
+    "eligible_pitchers": 387,
+    "all_pitchers": 744,
+    "eligibility": {
+      "source_bf": 100,
+      "source_swings": 200
+    }
+  },
+  "hashes": {
+    "protocol_sha256": "22a78c36badf361459dd1a7b724be9e974d48b390d2734f856ccf0dcea9c5757",
+    "manifest_2026_sha256": "c9cea865e33dba09348aa56b78f8b0ee17bf33989febe2014097ca9f5eaa8031",
+    "coordinate_audit_sha256": "41770c340d58ce27ae72f01e06b6697a5b367e48c39d34543d6a5f177917a52b"
+  }
+}

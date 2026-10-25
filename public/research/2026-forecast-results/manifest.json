@@ -1,0 +1,150 @@
+{
+  "created_utc": "2026-10-18T18:05:45.640327+00:00",
+  "source": "https://baseballsavant.mlb.com/statcast_search/csv",
+  "source_query": "regular-season pitcher pitch-level details, all teams",
+  "source_window": {
+    "start": "2026-07-16",
+    "end": "2026-09-27"
+  },
+  "source_retrieved_utc": "2026-10-18T02:10:55.222528+00:00",
+  "source_pitch_rows": 291004,
+  "source_chunk_sha256_csv": [
+    {
+      "start": "2026-07-16",
+      "end": "2026-07-20",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-07-16&game_date_lt=2026-07-20&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-07-16_2026-07-20.csv.gz",
+      "rows": 18033,
+      "sha256_csv": "d20094b304a86b5c94feffceedb90e2d0b9041222711c0f1822330b6b093e0e8"
+    },
+    {
+      "start": "2026-07-21",
+      "end": "2026-07-25",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-07-21&game_date_lt=2026-07-25&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-07-21_2026-07-25.csv.gz",
+      "rows": 18832,
+      "sha256_csv": "691fd05603cc0353e1931f13d2af0bf573da76ae5ffeaf7bd09cf90434fdcb97"
+    },
+    {
+      "start": "2026-07-26",
+      "end": "2026-07-30",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-07-26&game_date_lt=2026-07-30&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-07-26_2026-07-30.csv.gz",
+      "rows": 20129,
+      "sha256_csv": "85f98b6a190191d2cf8af27f379bc1f70f41ab94aef764cd5bdab50aec30d18d"
+    },
+    {
+      "start": "2026-07-31",
+      "end": "2026-08-04",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-07-31&game_date_lt=2026-08-04&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-07-31_2026-08-04.csv.gz",
+      "rows": 19563,
+      "sha256_csv": "64ddf7de6b29a840d25d8e4182acee9f879fc8b63c6f9946e14351dee841f7eb"
+    },
+    {
+      "start": "2026-08-05",
+      "end": "2026-08-09",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-08-05&game_date_lt=2026-08-09&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-08-05_2026-08-09.csv.gz",
+      "rows": 21339,
+      "sha256_csv": "f03b493e66c8e9485edd8787959e52f9f0b5de4eb3a6c6765758a169a469bbb4"
+    },
+    {
+      "start": "2026-08-10",
+      "end": "2026-08-14",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-08-10&game_date_lt=2026-08-14&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-08-10_2026-08-14.csv.gz",
+      "rows": 18424,
+      "sha256_csv": "de0f6e1a3aeaf2a9dacea3bb29c4a29d71ab80a2569f83ad7f2b915a5c1b4954"
+    },
+    {
+      "start": "2026-08-15",
+      "end": "2026-08-19",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-08-15&game_date_lt=2026-08-19&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-08-15_2026-08-19.csv.gz",
+      "rows": 20949,
+      "sha256_csv": "461d0773b474b979b107e15c521305889bcebb18cdee37671e3e41436835397a"
+    },
+    {
+      "start": "2026-08-20",
+      "end": "2026-08-24",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-08-20&game_date_lt=2026-08-24&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-08-20_2026-08-24.csv.gz",
+      "rows": 19283,
+      "sha256_csv": "237f1e7d75e069d49ada6b42bb843413303b4752e550de368134d713db3ab7f0"
+    },
+    {
+      "start": "2026-08-25",
+      "end": "2026-08-29",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-08-25&game_date_lt=2026-08-29&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-08-25_2026-08-29.csv.gz",
+      "rows": 20372,
+      "sha256_csv": "c0f1372aece855a4d14e006bf635e0441f461e5348716d56e85990f62104ac01"
+    },
+    {
+      "start": "2026-08-30",
+      "end": "2026-09-03",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-08-30&game_date_lt=2026-09-03&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-08-30_2026-09-03.csv.gz",
+      "rows": 19652,
+      "sha256_csv": "86cb4088692d2106582cd4f8a3e8006d95b6f5d5c39f94e03e94a1492bfa85c0"
+    },
+    {
+      "start": "2026-09-04",
+      "end": "2026-09-08",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-09-04&game_date_lt=2026-09-08&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-09-04_2026-09-08.csv.gz",
+      "rows": 21150,
+      "sha256_csv": "eeb588ddf5c567badc0f80c4efd9fa393303c0940914d9d13db380b630c25978"
+    },
+    {
+      "start": "2026-09-09",
+      "end": "2026-09-13",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-09-09&game_date_lt=2026-09-13&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-09-09_2026-09-13.csv.gz",
+      "rows": 19015,
+      "sha256_csv": "d0994859d68f0fb620ef9ff35d36036a8bd051be85d089c9463f92968364c074"
+    },
+    {
+      "start": "2026-09-14",
+      "end": "2026-09-18",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-09-14&game_date_lt=2026-09-18&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-09-14_2026-09-18.csv.gz",
+      "rows": 19123,
+      "sha256_csv": "e59dd5018ecc3af00c7f5f69401cab10270af665db0f33e49dd337ad72603430"
+    },
+    {
+      "start": "2026-09-19",
+      "end": "2026-09-23",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-09-19&game_date_lt=2026-09-23&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-09-19_2026-09-23.csv.gz",
+      "rows": 18749,
+      "sha256_csv": "862c37f006da8af257a01f2c78e1ca6b5ead78562a2df0591aaf2db826a2f7ac"
+    },
+    {
+      "start": "2026-09-24",
+      "end": "2026-09-27",
+      "url": "https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfGT=R%7C&player_type=pitcher&game_date_gt=2026-09-24&game_date_lt=2026-09-27&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed&sort_order=desc&min_abs=0&type=details",
+      "file": "statcast_2026-09-24_2026-09-27.csv.gz",
+      "rows": 16391,
+      "sha256_csv": "3b4083dc3d6c3ebc12e7898f87fc71578d728bf3016274d822bc7a2f9271150b"
+    }
+  ],
+  "notes": [
+    "Pitcher counts include all regular-season pitchers; joins use stable MLBAM pitcher IDs.",
+    "Vargas pitch rows include all pitches to him in the frozen pre-period and post-July-16 period.",
+    "This bundle replays point scores. The full raw Statcast CSV chunks remain local for deeper audit."
+  ],
+  "files_sha256": {
+    "README.md": "7c2c9dde10a7ecd5509e4193b0726b92d263239b1f0341c6217d6abd249cd4e7",
+    "forecast_scores.json": "b511575378f5427a82cab863bd310bbcfec8c4046bb2be53399cc1c6a2c6890e",
+    "frozen_shapecast_predictions.csv": "a665bdf96623952282271a146a2d74f82d6116c017305d2ffb1331c5e30d8514",
+    "frozen_shapecast_protocol.md": "22a78c36badf361459dd1a7b724be9e974d48b390d2734f856ccf0dcea9c5757",
+    "frozen_shapecast_summary.json": "d3894ba7315cb712b6d8173fabbc7d12d960e48de6104c9152026063b6a2c733",
+    "frozen_vargas_prediction.json": "d63918fa8ab038895bae7b2aa3a822767c94be12e24b39a9fe16f5ec12a5663d",
+    "outcome_pitcher_counts.csv": "a8e4a9e89fe9c8f1bdd46d4f1a57c4adc6ad824b933b5f4d5c6c9de67411a09a",
+    "replay_2026_bundle.py": "15c44b57b6882efc5e0d3d0ee8845368ca19e41ee2659ccbd4f5d7ab1cbf353f",
+    "shapecast_pitcher_scores.csv": "917a9f7b3dbcef2e73d2e99e92ebcede4b52b4ee357b3f2e385539deab28c2bf",
+    "vargas_pitches.csv": "1ce3542b23999255c0e576cb43e904cbf6e20ca5344c2688a656485d24298bba"
+  }
+}

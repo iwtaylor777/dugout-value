@@ -1,0 +1,154 @@
+[
+  {
+    "path": "2024-pit.html",
+    "url": "https://web.archive.org/web/20240621173841id_/https://www.fangraphs.com/projections?pos=all&stats=pit&type=rzips&team=0&lg=all&players=0",
+    "resolved_url": "https://web.archive.org/web/20240621173841id_/https://www.fangraphs.com/projections?pos=all&stats=pit&type=rzips&team=0&lg=all&players=0",
+    "bytes": 567524,
+    "sha256": "85d86b127d92cd12e85a79df4dede1597faddf787e7f056cf919c8feeb7f768a"
+  },
+  {
+    "path": "2024-pit-schedule.json",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2024-06-21&endDate=2024-09-30",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2024-06-21&endDate=2024-09-30",
+    "bytes": 1735845,
+    "retrieved_at": "2026-10-19T19:23:35.026978+00:00",
+    "sha256": "f20e699bd16b156d5527fd08c75b1b54e1c2f415c85b55473863c03e4338675f"
+  },
+  {
+    "path": "2024-pit-source.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-03-20&enddate=2024-06-20&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-03-20&enddate=2024-06-20&pageitems=2000&pagenum=1",
+    "bytes": 7236585,
+    "sha256": "57909b422eac07f8e31857473fdc269b092776347b73532ef12529b51b1b546a"
+  },
+  {
+    "path": "2024-pit-target.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-06-21&enddate=2024-09-30&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-06-21&enddate=2024-09-30&pageitems=2000&pagenum=1",
+    "bytes": 8007179,
+    "sha256": "c4f9bf11898b147c4c46963344990a8e51c774569fc27b96765fe2258c010d87"
+  },
+  {
+    "path": "2025-pit.html",
+    "url": "https://web.archive.org/web/20250624042535id_/https://www.fangraphs.com/projections?pos=all&stats=pit&type=rzips&team=0&lg=all&players=0",
+    "resolved_url": "https://web.archive.org/web/20250624042535id_/https://www.fangraphs.com/projections?pos=all&stats=pit&type=rzips&team=0&lg=all&players=0",
+    "bytes": 623441,
+    "sha256": "59f7037c1e7a655e364df6d0a4378ef1c18bcc729581eb9e5374af524921f69f"
+  },
+  {
+    "path": "2025-pit-schedule.json",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2025-06-24&endDate=2025-09-28",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2025-06-24&endDate=2025-09-28",
+    "bytes": 1658068,
+    "retrieved_at": "2026-10-19T19:23:34.944123+00:00",
+    "sha256": "a99628686fa12a366d418349c0d97b0ed90f0c5fba321e096d4976029e76dc0f"
+  },
+  {
+    "path": "2025-pit-source.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-03-18&enddate=2025-06-22&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-03-18&enddate=2025-06-22&pageitems=2000&pagenum=1",
+    "bytes": 7682520,
+    "retrieved_at": "2026-10-19T19:26:14.592506+00:00",
+    "sha256": "2e6be39ecd973ef640c0713d745033ef3db92b74ad80ad946a5014e0bbaeb44d"
+  },
+  {
+    "path": "2025-pit-target.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-06-24&enddate=2025-09-28&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-06-24&enddate=2025-09-28&pageitems=2000&pagenum=1",
+    "bytes": 8010015,
+    "sha256": "8a8611db16e7c093f9799df881ab9380bb5288398c137769c263eed353a489a7"
+  },
+  {
+    "path": "2025-bat.html",
+    "url": "https://web.archive.org/web/20250731083705id_/https://www.fangraphs.com/projections?pos=all&stats=bat&type=rzips",
+    "resolved_url": "https://web.archive.org/web/20250731083705id_/https://www.fangraphs.com/projections?pos=all&stats=bat&type=rzips",
+    "bytes": 151127,
+    "sha256": "852f5b873e01e2c7d575a2569233afb8980f29e2c587e3086a593797aeb437a9"
+  },
+  {
+    "path": "2025-bat-schedule.json",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2025-07-31&endDate=2025-09-28",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2025-07-31&endDate=2025-09-28",
+    "bytes": 1047712,
+    "retrieved_at": "2026-10-19T19:23:34.926893+00:00",
+    "sha256": "5f3a4ccdfeb3ffb7602f6679a5ef5fd824b97d8795b58e4bdce571199ff9eb41"
+  },
+  {
+    "path": "2025-bat-source.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-03-18&enddate=2025-07-30&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-03-18&enddate=2025-07-30&pageitems=2000&pagenum=1",
+    "bytes": 11538181,
+    "sha256": "09d694ab856684b1445f20872bdc9a63ac2feb18473f44b93011f1ebb05800f3"
+  },
+  {
+    "path": "2025-bat-target.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-07-31&enddate=2025-09-28&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-07-31&enddate=2025-09-28&pageitems=2000&pagenum=1",
+    "bytes": 10038433,
+    "sha256": "b70c3e5d2689fa554fc0da05be9280fbd22decaa29b07d19030ea432bd88185f"
+  },
+  {
+    "path": "2024-apr-dc-bat.html",
+    "url": "https://web.archive.org/web/20240410082920id_/https://www.fangraphs.com/projections?pos=all&stats=bat&type=rfangraphsdc",
+    "resolved_url": "https://web.archive.org/web/20240410082920id_/https://www.fangraphs.com/projections?pos=all&stats=bat&type=rfangraphsdc",
+    "bytes": 676500,
+    "retrieved_at": "2026-10-19T19:24:25.553604+00:00",
+    "sha256": "b0e69c877f4a86f6f63bc4bfa398fa22398850103daad0aba48c05f5d1446455"
+  },
+  {
+    "path": "2024-apr-dc-bat-schedule.json",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2024-04-10&endDate=2024-09-30",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2024-04-10&endDate=2024-09-30",
+    "bytes": 3006859,
+    "retrieved_at": "2026-10-19T19:24:27.146490+00:00",
+    "sha256": "07b63bd8495599fdbd929cbe64c86aba4d59e4b6bdb05c36860e48a09949476a"
+  },
+  {
+    "path": "2024-apr-dc-bat-source.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-03-20&enddate=2024-04-09&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-03-20&enddate=2024-04-09&pageitems=2000&pagenum=1",
+    "bytes": 7241925,
+    "retrieved_at": "2026-10-19T19:24:26.533816+00:00",
+    "sha256": "9ca8dcbd5ee6a7bf51514f4be436370ac1762dcab684a8e4fc01311c3568088d"
+  },
+  {
+    "path": "2024-apr-dc-bat-target.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-04-10&enddate=2024-09-30&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-04-10&enddate=2024-09-30&pageitems=2000&pagenum=1",
+    "bytes": 12384892,
+    "retrieved_at": "2026-10-19T19:24:30.118338+00:00",
+    "sha256": "10733c22908289bb3d720bfb3f9f71ec23d8c29c65f79b05d03100309e76f768"
+  },
+  {
+    "path": "2025-dc-bat.html",
+    "url": "https://web.archive.org/web/20250601113224id_/https://www.fangraphs.com/projections?pos=all&stats=bat&type=rfangraphsdc",
+    "resolved_url": "https://web.archive.org/web/20250601113224id_/https://www.fangraphs.com/projections?pos=all&stats=bat&type=rfangraphsdc",
+    "bytes": 154330,
+    "retrieved_at": "2026-10-19T19:23:36.665102+00:00",
+    "sha256": "904c6fb76ed8a206089e15f4f4aad6ec9f849e2bd34bffaa3c1a744d97828975"
+  },
+  {
+    "path": "2025-dc-bat-schedule.json",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2025-06-01&endDate=2025-09-28",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2025-06-01&endDate=2025-09-28",
+    "bytes": 2064790,
+    "retrieved_at": "2026-10-19T19:23:38.446370+00:00",
+    "sha256": "35dced98fdc1ac618212d07db52dea7aeaa469d23004b457f9acf572323b3057"
+  },
+  {
+    "path": "2025-dc-bat-source.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-03-18&enddate=2025-05-31&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-03-18&enddate=2025-05-31&pageitems=2000&pagenum=1",
+    "bytes": 9974549,
+    "retrieved_at": "2026-10-19T19:23:38.567147+00:00",
+    "sha256": "fbba3b3fc9ce48fce54dee870ed901f009104cd43601583c2372ba7ad4200572"
+  },
+  {
+    "path": "2025-dc-bat-target.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-06-01&enddate=2025-09-28&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2025&season1=2025&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2025-06-01&enddate=2025-09-28&pageitems=2000&pagenum=1",
+    "bytes": 11468867,
+    "retrieved_at": "2026-10-19T19:23:40.050319+00:00",
+    "sha256": "f588d7e5c56bc40f4418030774973f9824eda6415c59300d6dcf4a05a52b0e44"
+  }
+]

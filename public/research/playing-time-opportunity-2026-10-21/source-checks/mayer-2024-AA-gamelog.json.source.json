@@ -1,0 +1,9 @@
+{
+  "path": "mayer-2024-AA-gamelog.json",
+  "url": "https://statsapi.mlb.com/api/v1/people/691785/stats?stats=gameLog&group=hitting&sportId=12&season=2024&gameType=R",
+  "resolved_url": "https://statsapi.mlb.com/api/v1/people/691785/stats?stats=gameLog&group=hitting&sportId=12&season=2024&gameType=R",
+  "http_status": 200,
+  "sha256": "763ee2bacf2a854a8139739dd1538b4c7571121f52c151f8a7d6848fa4bc6a40",
+  "bytes": 101547,
+  "retrieved_at": "2026-10-21T17:15:23.861570+00:00"
+}

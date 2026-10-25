@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "validThrough": "2026-10-18",
+  "reviewedOn": "2026-10-19",
+  "sourceSha256": "70608c2b2602e3f737166bb0bd963867dac077089b955471d626a98f40b070c0",
+  "scope": "Exclude from the priced MLB library only while current payroll/control data is absent. This does not assert that outrighted players cannot be traded. Retain their prior records in the refresh archive.",
+  "entries": [
+    {
+      "id": "mlb-622694",
+      "name": "Elieser Hernández",
+      "status": "free-agent-or-released",
+      "reason": "RHP Elieser Hernández elected free agency.",
+      "transactionId": 944787,
+      "effectiveDate": "2026-09-30",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-644433",
+      "name": "Chadwick Tromp",
+      "status": "outside-40-man-valuation",
+      "reason": "Los Angeles Dodgers signed free agent C Chadwick Tromp to a minor league contract.",
+      "transactionId": 937488,
+      "effectiveDate": "2026-08-13",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-669087",
+      "name": "Sam Huff",
+      "status": "free-agent-or-released",
+      "reason": "C Sam Huff elected free agency.",
+      "transactionId": 944604,
+      "effectiveDate": "2026-09-29",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-681806",
+      "name": "Andrew Wantz",
+      "status": "outside-40-man-valuation",
+      "reason": "Chicago Cubs signed free agent RHP Andrew Wantz to a minor league contract.",
+      "transactionId": 935927,
+      "effectiveDate": "2026-08-06",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-656457",
+      "name": "Tyler Gilbert",
+      "status": "outside-40-man-valuation",
+      "reason": "Chicago White Sox sent LHP Tyler Gilbert outright to Charlotte Knights.",
+      "transactionId": 941160,
+      "effectiveDate": "2026-09-03",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-671155",
+      "name": "Ivan Johnson",
+      "status": "outside-40-man-valuation",
+      "reason": "Cincinnati Reds sent 2B Ivan Johnson outright to Louisville Bats.",
+      "transactionId": 944898,
+      "effectiveDate": "2026-10-01",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-666397",
+      "name": "Edouard Julien",
+      "status": "outside-40-man-valuation",
+      "reason": "Colorado Rockies sent 2B Edouard Julien outright to Albuquerque Isotopes.",
+      "transactionId": 937461,
+      "effectiveDate": "2026-08-13",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-681546",
+      "name": "James Outman",
+      "status": "outside-40-man-valuation",
+      "reason": "Detroit Tigers sent CF James Outman outright to Toledo Mud Hens.",
+      "transactionId": 939395,
+      "effectiveDate": "2026-08-25",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-623205",
+      "name": "Andrew Velazquez",
+      "status": "free-agent-or-released",
+      "reason": "SS Andrew Velazquez elected free agency.",
+      "transactionId": 936420,
+      "effectiveDate": "2026-08-07",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-656212",
+      "name": "Charlie Barnes",
+      "status": "outside-40-man-valuation",
+      "reason": "Los Angeles Dodgers signed free agent LHP Charlie Barnes to a minor league contract.",
+      "transactionId": 938319,
+      "effectiveDate": "2026-08-16",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-677870",
+      "name": "Leo Jiménez",
+      "status": "free-agent-or-released",
+      "reason": "Miami Marlins released 3B Leo Jiménez.",
+      "transactionId": 941423,
+      "effectiveDate": "2026-09-05",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-642239",
+      "name": "Rob Zastryzny",
+      "status": "free-agent-or-released",
+      "reason": "LHP Rob Zastryzny elected free agency.",
+      "transactionId": 945449,
+      "effectiveDate": "2026-10-08",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-623381",
+      "name": "Thomas Pannone",
+      "status": "outside-40-man-valuation",
+      "reason": "Milwaukee Brewers sent LHP Thomas Pannone outright to Nashville Sounds.",
+      "transactionId": 935902,
+      "effectiveDate": "2026-08-06",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-662144",
+      "name": "Brian Keller",
+      "status": "outside-40-man-valuation",
+      "reason": "Philadelphia Phillies sent RHP Brian Keller outright to Lehigh Valley IronPigs.",
+      "transactionId": 938837,
+      "effectiveDate": "2026-08-21",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-642152",
+      "name": "Lou Trivino III",
+      "status": "outside-40-man-valuation",
+      "reason": "Philadelphia Phillies signed free agent RHP Lou Trivino III to a minor league contract.",
+      "transactionId": 936095,
+      "effectiveDate": "2026-08-07",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-672642",
+      "name": "Steward Berroa",
+      "status": "outside-40-man-valuation",
+      "reason": "Philadelphia Phillies sent RF Steward Berroa outright to Lehigh Valley IronPigs.",
+      "transactionId": 933939,
+      "effectiveDate": "2026-08-01",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-606965",
+      "name": "Chris Devenski",
+      "status": "outside-40-man-valuation",
+      "reason": "New York Mets sent RHP Chris Devenski outright to Syracuse Mets.",
+      "transactionId": 942274,
+      "effectiveDate": "2026-09-13",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-676760",
+      "name": "Ron Marinaccio",
+      "status": "outside-40-man-valuation",
+      "reason": "Minnesota Twins signed free agent RHP Ron Marinaccio to a minor league contract.",
+      "transactionId": 938954,
+      "effectiveDate": "2026-08-22",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-671083",
+      "name": "Buddy Kennedy",
+      "status": "outside-40-man-valuation",
+      "reason": "Washington Nationals signed free agent 3B Buddy Kennedy to a minor league contract.",
+      "transactionId": 941146,
+      "effectiveDate": "2026-09-02",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-657265",
+      "name": "Peter Strzelecki",
+      "status": "free-agent-or-released",
+      "reason": "RHP Peter Strzelecki elected free agency.",
+      "transactionId": 943217,
+      "effectiveDate": "2026-09-18",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-594835",
+      "name": "Marco Gonzales",
+      "status": "free-agent-or-released",
+      "reason": "LHP Marco Gonzales elected free agency.",
+      "transactionId": 938489,
+      "effectiveDate": "2026-08-19",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-573009",
+      "name": "Joe Mantiply",
+      "status": "free-agent-or-released",
+      "reason": "LHP Joe Mantiply elected free agency.",
+      "transactionId": 944651,
+      "effectiveDate": "2026-09-28",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-672820",
+      "name": "Lenyn Sosa",
+      "status": "free-agent-or-released",
+      "reason": "Buffalo Bisons released 2B Lenyn Sosa.",
+      "transactionId": 943170,
+      "effectiveDate": "2026-09-18",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "mlb-676680",
+      "name": "Tom Cosgrove",
+      "status": "outside-40-man-valuation",
+      "reason": "Washington Nationals sent LHP Tom Cosgrove outright to Rochester Red Wings.",
+      "transactionId": 941336,
+      "effectiveDate": "2026-09-04",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=622694,644433,669087,681806,656457,671155,666397,681546,623205,656212,677870,642239,623381,662144,642152,672642,606965,676760,671083,657265,594835,573009,672820,676680&startDate=07/31/2026&endDate=10/18/2026"
+    }
+  ]
+}

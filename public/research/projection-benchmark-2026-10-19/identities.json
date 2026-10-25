@@ -1,0 +1,448 @@
+{
+  "captured_at": "2026-10-18T23:57:07.540Z",
+  "use": "identity only; no later performance, injury or roster fields enter forecasts",
+  "sources": [
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/diamondbacks",
+      "sha256": "2fbc686a03b353ed3f22305243fc1329a8242b7dc35d59ae420fcca965112799",
+      "capturedAt": "2026-10-18T23:59:24.937Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/braves",
+      "sha256": "3d41ed875d02531fbfab4d20195fb30ceafa88dd3693ce134425e5bdfc22be01",
+      "capturedAt": "2026-10-18T23:59:35.291Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/orioles",
+      "sha256": "eb3f4a6c932e7950f7933dbb5481e832e5983ddec4c4812e78388d18bab2be70",
+      "capturedAt": "2026-10-18T23:59:43.754Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/red-sox",
+      "sha256": "28b7f3d7a0505737ddff9639a7708b2602f7c8474ea0336cb7f344cda2766084",
+      "capturedAt": "2026-10-18T23:59:52.227Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/cubs",
+      "sha256": "98883fe1489638370203887d30f3f9d077a674e5a6222e632436dec02417021d",
+      "capturedAt": "2026-10-19T00:00:00.674Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/white-sox",
+      "sha256": "9ce47bb77334ad4671c38bfc32af8b1357c813334e2ee281063d8b38bb35717a",
+      "capturedAt": "2026-10-19T00:00:09.116Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/reds",
+      "sha256": "a08de7a4e08b5ee48f3868f53359e67ef3305a209021d317f37d1a803696cc55",
+      "capturedAt": "2026-10-19T00:00:17.513Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/guardians",
+      "sha256": "dc8d5e7ec435eca0a642e869afa211ecd18bd72f73be8a7b35e6b2865251b7d0",
+      "capturedAt": "2026-10-19T00:00:25.931Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/rockies",
+      "sha256": "334613d61e39fe99371d2c23de6d5028ecedaf9eab2bcf40a38be286586bf5f9",
+      "capturedAt": "2026-10-19T00:00:34.392Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/tigers",
+      "sha256": "75cf2238881638450a142435c39385f59b7c2bab89eb77192f478b1e4e60d985",
+      "capturedAt": "2026-10-19T00:00:42.852Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/astros",
+      "sha256": "121f340bd2ba9f2b73eaed1d07e845d1f16c6ea4c598744373b21ab66107b371",
+      "capturedAt": "2026-10-19T00:00:51.313Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/royals",
+      "sha256": "552a2fd4e05dd95928bc5e8a8158894813ab43f6516d6a7f238055b1131f0222",
+      "capturedAt": "2026-10-19T00:01:00.394Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/angels",
+      "sha256": "c462467a14094ad81743a9bc240cc6f9856aa9b86bd4da1dd065ca6b57d923d2",
+      "capturedAt": "2026-10-19T00:01:08.864Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/dodgers",
+      "sha256": "f7b974b29d7509f42236b95d3d02f0bcf7a99a45b3e5abeafd98632fd92d2fb1",
+      "capturedAt": "2026-10-19T00:01:17.322Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/marlins",
+      "sha256": "ec3ea9fcb577a889a2418276351235134732afe4b9490e47467b0f3b6f68c936",
+      "capturedAt": "2026-10-19T00:01:25.824Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/brewers",
+      "sha256": "7494240969e0cf26ab541cfd0ad2670db536a977be8e8de779b44e90210e8f95",
+      "capturedAt": "2026-10-19T00:01:34.282Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/twins",
+      "sha256": "69e6c010008191b4d05d640e18e2dac104d9c2149c63248435097b1a8420496d",
+      "capturedAt": "2026-10-19T00:01:42.733Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/mets",
+      "sha256": "996e0c5944171909dab71bb13a1bb46d2d63aeff79419e3c6d4f0cdeacd3c3cd",
+      "capturedAt": "2026-10-19T00:01:51.174Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/yankees",
+      "sha256": "4b973d8c2e8bbbec623c952f221e07231ef17083687eddad24af970973408c19",
+      "capturedAt": "2026-10-19T00:01:59.749Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/athletics",
+      "sha256": "2b2ddd0fd0476236bf09d04ef29ab3aff6922446e002bcd4f1f957b6c23fb814",
+      "capturedAt": "2026-10-19T00:02:09.076Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/phillies",
+      "sha256": "12c78f983ac83ef75c7b371c389fc63d83704a37745d3ffaa6eee7c8075c760f",
+      "capturedAt": "2026-10-19T00:02:17.577Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/pirates",
+      "sha256": "77df508c1c19921bb5ea9ca766f288e6070bf18e0210861316423f30104e19ad",
+      "capturedAt": "2026-10-19T00:02:26.023Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/padres",
+      "sha256": "6b51821577f1d64084a879209ddf1348df900aff8061f523af6c45d8193f44b8",
+      "capturedAt": "2026-10-19T00:02:34.474Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/mariners",
+      "sha256": "8033ade5efe3919b44bc8474000f8baba995f3e031c1b96e8b1919908f2ff482",
+      "capturedAt": "2026-10-19T00:02:42.908Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/giants",
+      "sha256": "905dff9d6bc95fd8e5335fae5f97a539513aca7e1cc9382d5b2767ac673b38e9",
+      "capturedAt": "2026-10-19T00:02:51.389Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/cardinals",
+      "sha256": "dfd5fe34f45f5db6e91a4efcf887b6c12653a24874f49efda1bfe7788362cb8f",
+      "capturedAt": "2026-10-19T00:03:00.044Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/rays",
+      "sha256": "20918deac91f658c828f7a8673d3712aaf0d570f5304fe0871ecb2b4b6580483",
+      "capturedAt": "2026-10-19T00:03:08.472Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/rangers",
+      "sha256": "1b85e773d1ecba1178624c605507e9b8e64fbecd4c653104d2805094c77aa85e",
+      "capturedAt": "2026-10-19T00:03:16.935Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/blue-jays",
+      "sha256": "a43b67af01cf067a934569da5d677daf968fe52adf262deff92180631259d2ad",
+      "capturedAt": "2026-10-19T00:03:25.345Z"
+    },
+    {
+      "url": "https://www.fangraphs.com/roster-resource/depth-charts/nationals",
+      "sha256": "088a9c1045c2e719512feda7493d7d6bb6c69d4223944213c3f30421ed3bb4c0",
+      "capturedAt": "2026-10-19T00:03:34.136Z"
+    }
+  ],
+  "links": {
+    "sa3020241": {
+      "mlbam_id": "702616",
+      "fg_id": "31781",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/orioles"
+    },
+    "sa3015716": {
+      "mlbam_id": "694212",
+      "fg_id": "28824",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/orioles"
+    },
+    "sa916966": {
+      "mlbam_id": "665966",
+      "fg_id": "19722",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/orioles"
+    },
+    "sa3014479": {
+      "mlbam_id": "691723",
+      "fg_id": "28312",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/orioles"
+    },
+    "sa1169587": {
+      "mlbam_id": "677956",
+      "fg_id": "27493",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/orioles"
+    },
+    "sa3020211": {
+      "mlbam_id": "701350",
+      "fg_id": "31812",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/red-sox"
+    },
+    "sa3022886": {
+      "mlbam_id": "691019",
+      "fg_id": "33549",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/white-sox"
+    },
+    "sa3017170": {
+      "mlbam_id": "695657",
+      "fg_id": "29712",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/white-sox"
+    },
+    "sa3014522": {
+      "mlbam_id": "691011",
+      "fg_id": "27763",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/white-sox"
+    },
+    "sa3020188": {
+      "mlbam_id": "671284",
+      "fg_id": "31522",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/white-sox"
+    },
+    "sa3009808": {
+      "mlbam_id": "682877",
+      "fg_id": "26693",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/reds"
+    },
+    "sa3021053": {
+      "mlbam_id": "800050",
+      "fg_id": "32127",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/guardians"
+    },
+    "sa3025129": {
+      "mlbam_id": "683953",
+      "fg_id": "34967",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/guardians"
+    },
+    "sa3014461": {
+      "mlbam_id": "690984",
+      "fg_id": "27931",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/guardians"
+    },
+    "sa3008762": {
+      "mlbam_id": "682657",
+      "fg_id": "26540",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/guardians"
+    },
+    "sa3006936": {
+      "mlbam_id": "682177",
+      "fg_id": "25180",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/guardians"
+    },
+    "sa3017342": {
+      "mlbam_id": "700932",
+      "fg_id": "29794",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/guardians"
+    },
+    "sa3014682": {
+      "mlbam_id": "691182",
+      "fg_id": "27962",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/rockies"
+    },
+    "sa3010899": {
+      "mlbam_id": "687859",
+      "fg_id": "26143",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/rockies"
+    },
+    "sa3020206": {
+      "mlbam_id": "690022",
+      "fg_id": "31500",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/rockies"
+    },
+    "sa3017863": {
+      "mlbam_id": "701678",
+      "fg_id": "30080",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/tigers"
+    },
+    "sa3014528": {
+      "mlbam_id": "693307",
+      "fg_id": "27464",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/tigers"
+    },
+    "sa3019992": {
+      "mlbam_id": "690291",
+      "fg_id": "31437",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/tigers"
+    },
+    "sa3017050": {
+      "mlbam_id": "694388",
+      "fg_id": "29630",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/astros"
+    },
+    "sa3025245": {
+      "mlbam_id": "695506",
+      "fg_id": "35041",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/royals"
+    },
+    "sa3025168": {
+      "mlbam_id": "695681",
+      "fg_id": "34979",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/angels"
+    },
+    "sa3007872": {
+      "mlbam_id": "676439",
+      "fg_id": "23372",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/dodgers"
+    },
+    "sa3020653": {
+      "mlbam_id": "690976",
+      "fg_id": "31665",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/dodgers"
+    },
+    "sa3014465": {
+      "mlbam_id": "683357",
+      "fg_id": "27496",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/marlins"
+    },
+    "sa3015168": {
+      "mlbam_id": "691277",
+      "fg_id": "27969",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/marlins"
+    },
+    "sa3014711": {
+      "mlbam_id": "691185",
+      "fg_id": "27963",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/marlins"
+    },
+    "sa3019868": {
+      "mlbam_id": "805300",
+      "fg_id": "31370",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/marlins"
+    },
+    "sa3020715": {
+      "mlbam_id": "801464",
+      "fg_id": null,
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/marlins"
+    },
+    "sa3015407": {
+      "mlbam_id": "691620",
+      "fg_id": "28272",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/brewers"
+    },
+    "sa3017623": {
+      "mlbam_id": "672012",
+      "fg_id": "29949",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/brewers"
+    },
+    "sa3022499": {
+      "mlbam_id": "694385",
+      "fg_id": null,
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/brewers"
+    },
+    "sa3014820": {
+      "mlbam_id": "674441",
+      "fg_id": "27599",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/brewers"
+    },
+    "sa3019973": {
+      "mlbam_id": "686797",
+      "fg_id": "31595",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/twins"
+    },
+    "sa3014693": {
+      "mlbam_id": "691181",
+      "fg_id": "28084",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/twins"
+    },
+    "sa3007511": {
+      "mlbam_id": "680474",
+      "fg_id": "24488",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/yankees"
+    },
+    "sa3004147": {
+      "mlbam_id": "671286",
+      "fg_id": "22530",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/athletics"
+    },
+    "sa3020577": {
+      "mlbam_id": "805249",
+      "fg_id": "31792",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/phillies"
+    },
+    "sa3020758": {
+      "mlbam_id": "687282",
+      "fg_id": "31958",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/phillies"
+    },
+    "sa3020713": {
+      "mlbam_id": "687515",
+      "fg_id": "31855",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/phillies"
+    },
+    "sa3011255": {
+      "mlbam_id": "663968",
+      "fg_id": "26202",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/pirates"
+    },
+    "sa3010279": {
+      "mlbam_id": "687957",
+      "fg_id": "25705",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/padres"
+    },
+    "sa3016951": {
+      "mlbam_id": "669208",
+      "fg_id": "29547",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/mariners"
+    },
+    "sa3022757": {
+      "mlbam_id": "805811",
+      "fg_id": "33390",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/giants"
+    },
+    "sa3014503": {
+      "mlbam_id": "695336",
+      "fg_id": "27883",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/cardinals"
+    },
+    "sa3010700": {
+      "mlbam_id": "683748",
+      "fg_id": "25999",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/rays"
+    },
+    "sa3019988": {
+      "mlbam_id": "689200",
+      "fg_id": "31661",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/rays"
+    },
+    "sa3017073": {
+      "mlbam_id": "669234",
+      "fg_id": "29606",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/rays"
+    },
+    "sa3006910": {
+      "mlbam_id": "680718",
+      "fg_id": "24598",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/blue-jays"
+    },
+    "sa3016870": {
+      "mlbam_id": "695578",
+      "fg_id": "29518",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/nationals"
+    },
+    "sa3022882": {
+      "mlbam_id": "686611",
+      "fg_id": "33541",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/nationals"
+    },
+    "sa3017694": {
+      "mlbam_id": "691781",
+      "fg_id": "29993",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/nationals"
+    },
+    "sa3017627": {
+      "mlbam_id": "695670",
+      "fg_id": "29958",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/nationals"
+    },
+    "sa3005511": {
+      "mlbam_id": "678391",
+      "fg_id": "23917",
+      "source": "https://www.fangraphs.com/roster-resource/depth-charts/nationals"
+    }
+  }
+}

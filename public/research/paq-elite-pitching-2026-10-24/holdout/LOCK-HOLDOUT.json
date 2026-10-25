@@ -1,0 +1,11 @@
+{
+ "file": "PROTOCOL-HOLDOUT.md",
+ "sha256": "80756e3549de691856832472eb1d9200e6226fff4afd914553d4aa069ff15b57",
+ "locked_at": "2026-10-24T20:39:45+00:00",
+ "approved_by": "Ian Taylor, in chat Oct 24, 2026: 'Lock test, run it, then publish' and 'Include, fixed cutoff'",
+ "extends": {
+  "PROTOCOL.md": "9cc7e368576c929dd20199c7cbee498f0d92c69b4c5353af6b2427925d391ffd",
+  "AMENDMENT-1.md": "5353b89f8ffa1e60d59228c7d57c825733917257bc9d6dc840ebe8789906ef7f"
+ },
+ "data_fetched_before_lock": "none (2020 regular season and 2021-2026 postseasons not downloaded)"
+}

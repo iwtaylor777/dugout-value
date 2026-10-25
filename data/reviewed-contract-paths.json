@@ -1,0 +1,584 @@
+{
+  "version": 1,
+  "description": "Reviewed contract terms preserved independently of provider annotations. Projection values are rebuilt from current inputs; changed terms require review.",
+  "entries": [
+    {
+      "mlbamId": "621242",
+      "name": "Edwin Díaz",
+      "team": "LAD",
+      "baseYear": 2026,
+      "sourceVersion": "reviewed-production-2026-10-17.1",
+      "sourceSnapshot": "2026-07-31",
+      "sourceSha256": "53ed09285e671acb2e8837d85d5e81e40828e4a39728cc99aa397fcadbb6373c",
+      "scenario": {
+        "startYear": 2029,
+        "selectedId": "unavailable",
+        "note": "The option only becomes available if the injury language in the contract is triggered.",
+        "options": [
+          {
+            "id": "unavailable",
+            "label": "Option unavailable",
+            "description": "Healthy-player default: the injury condition is not met, so the option is excluded.",
+            "seasons": []
+          },
+          {
+            "id": "condition-met",
+            "label": "Injury condition met",
+            "description": "The condition is met and the club option becomes available; the club still chooses whether to exercise it.",
+            "seasons": [
+              {
+                "year": 2029,
+                "salary": 21.11,
+                "annualSalary": 21.11,
+                "salaryMode": "fixed",
+                "contractType": "clubOption",
+                "ros": false,
+                "optionBuyout": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mlbamId": "665742",
+      "name": "Juan Soto",
+      "team": "NYM",
+      "baseYear": 2026,
+      "sourceVersion": "reviewed-production-2026-10-17.1",
+      "sourceSnapshot": "2026-07-31",
+      "sourceSha256": "53ed09285e671acb2e8837d85d5e81e40828e4a39728cc99aa397fcadbb6373c",
+      "scenario": {
+        "startYear": 2030,
+        "selectedId": "option",
+        "note": "Soto can opt out after 2029, and the Mets can void the opt-out by adding $4M a year to the final ten years. Pick one path to compare it; impossible combinations are never added together.",
+        "options": [
+          {
+            "id": "option",
+            "label": "Player option (opt-out after 2029)",
+            "description": "Default: Soto holds one all-or-nothing option on 2030-39. If those ten years return more than they cost at the central projection he opts out and the club keeps nothing after 2029; if they return less he stays and the club carries the loss. No upside is credited.",
+            "seasons": [
+              {
+                "year": 2030,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2031,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2032,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2033,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2034,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2035,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2036,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2037,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2038,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              },
+              {
+                "year": 2039,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0,
+                "optionBlock": true
+              }
+            ]
+          },
+          {
+            "id": "walks",
+            "label": "Opt-out exercised",
+            "description": "Soto leaves after 2029 and the contract adds no value after that season.",
+            "seasons": []
+          },
+          {
+            "id": "stays",
+            "label": "Opt-out not exercised, $46M a year",
+            "description": "Assumes Soto stays and the club owns every year of 2030-39 at the listed $46M salary, as one guaranteed commitment.",
+            "seasons": [
+              {
+                "year": 2030,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2031,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2032,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2033,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2034,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2035,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2036,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2037,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2038,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2039,
+                "salary": 46,
+                "annualSalary": 46,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              }
+            ]
+          },
+          {
+            "id": "voided",
+            "label": "Mets void the opt-out (+$4M a year)",
+            "description": "Assumes the Mets void the opt-out by adding $4M a year to 2030-39, so the club owns every year at $50M.",
+            "seasons": [
+              {
+                "year": 2030,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2031,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2032,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2033,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2034,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2035,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2036,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2037,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2038,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2039,
+                "salary": 50,
+                "annualSalary": 50,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "mlbamId": "677594",
+      "name": "Julio Rodríguez",
+      "team": "SEA",
+      "baseYear": 2026,
+      "sourceVersion": "reviewed-production-2026-10-17.1",
+      "sourceSnapshot": "2026-07-31",
+      "sourceSha256": "53ed09285e671acb2e8837d85d5e81e40828e4a39728cc99aa397fcadbb6373c",
+      "scenario": {
+        "startYear": 2030,
+        "selectedId": "fallback",
+        "note": "This contract has mutually exclusive paths. Pick one to compare it; impossible combinations are never added together.",
+        "options": [
+          {
+            "id": "fallback",
+            "label": "Player-option fallback",
+            "description": "Conservative default: the club declines its earlier choice and the player controls the listed fallback years.",
+            "seasons": [
+              {
+                "year": 2030,
+                "salary": 18,
+                "annualSalary": 18,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2031,
+                "salary": 18,
+                "annualSalary": 18,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2032,
+                "salary": 18,
+                "annualSalary": 18,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2033,
+                "salary": 18,
+                "annualSalary": 18,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2034,
+                "salary": 18,
+                "annualSalary": 18,
+                "salaryMode": "fixed",
+                "contractType": "playerOption",
+                "ros": false,
+                "optionBuyout": 0
+              }
+            ]
+          },
+          {
+            "id": "club",
+            "label": "Current club-option tier",
+            "description": "Assumes the club exercises the current 8-year, $240M tier as one guaranteed commitment.",
+            "seasons": [
+              {
+                "year": 2030,
+                "salary": 30,
+                "annualSalary": 30,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2031,
+                "salary": 30,
+                "annualSalary": 30,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2032,
+                "salary": 30,
+                "annualSalary": 30,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2033,
+                "salary": 30,
+                "annualSalary": 30,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2034,
+                "salary": 30,
+                "annualSalary": 30,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2035,
+                "salary": 30,
+                "annualSalary": 30,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2036,
+                "salary": 30,
+                "annualSalary": 30,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2037,
+                "salary": 30,
+                "annualSalary": 30,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              }
+            ]
+          },
+          {
+            "id": "mutual",
+            "label": "Mutual-option path",
+            "description": "Assumes both the player and club agree to the 7-year, $168M option.",
+            "seasons": [
+              {
+                "year": 2030,
+                "salary": 24,
+                "annualSalary": 24,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2031,
+                "salary": 24,
+                "annualSalary": 24,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2032,
+                "salary": 24,
+                "annualSalary": 24,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2033,
+                "salary": 24,
+                "annualSalary": 24,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2034,
+                "salary": 24,
+                "annualSalary": 24,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2035,
+                "salary": 24,
+                "annualSalary": 24,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              },
+              {
+                "year": 2036,
+                "salary": 24,
+                "annualSalary": 24,
+                "salaryMode": "fixed",
+                "contractType": "fixed",
+                "ros": false,
+                "optionBuyout": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

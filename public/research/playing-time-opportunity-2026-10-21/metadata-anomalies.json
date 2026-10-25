@@ -1,0 +1,453 @@
+{
+  "title": "2024 AA global StatsAPI row metadata anomaly audit",
+  "sourceOfFlaggedRows": {
+    "file": "raw/2024-12-prior.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2024&startDate=2024-01-01&endDate=2024-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "sha256": "3da41f6dc8551cc97380e54f284d61869ed57068e05b28a825554e0388c345b7",
+    "rows": {
+      "totalSplits": 742,
+      "actualRows": 742,
+      "uniquePlayerIds": 742,
+      "missingPlayerIds": 0,
+      "sportIdCounts": {
+        "12": 741,
+        "14": 1
+      },
+      "leagueIdCounts": {
+        "109": 222,
+        "113": 322,
+        "111": 195,
+        "117": 2,
+        "122": 1
+      },
+      "duplicatePlayerIds": []
+    }
+  },
+  "official2024AATeams": {
+    "file": "raw/audit-2024-AA-teams.json",
+    "url": "https://statsapi.mlb.com/api/v1/teams?season=2024&sportIds=12",
+    "sha256": "e83f0e4101705ac6d108d481778f6aafa4d0bec205e0d60be3c19da4ab4d5b85",
+    "retrievedAt": "2026-10-21T17:22:01.478693+00:00",
+    "httpStatus": 200,
+    "teamCount": 30,
+    "allRawRowTeamIdsPresent": true,
+    "missingTeamIds": []
+  },
+  "cohortScan": {
+    "rows": 742,
+    "uniquePlayerIds": 742,
+    "sportIdCounts": {
+      "12": 741,
+      "14": 1
+    },
+    "metadataMismatchesVsOfficialTeamSportAndLeague": [
+      {
+        "personId": 691019,
+        "name": "Kyle Teel",
+        "teamId": 546,
+        "rawSportId": 12,
+        "officialSportId": 12,
+        "rawLeagueId": 117,
+        "officialLeagueId": 113
+      },
+      {
+        "personId": 701350,
+        "name": "Roman Anthony",
+        "teamId": 546,
+        "rawSportId": 12,
+        "officialSportId": 12,
+        "rawLeagueId": 117,
+        "officialLeagueId": 113
+      },
+      {
+        "personId": 800354,
+        "name": "Esteban Mejia",
+        "teamId": 540,
+        "rawSportId": 14,
+        "officialSportId": 12,
+        "rawLeagueId": 122,
+        "officialLeagueId": 109
+      }
+    ],
+    "mismatchCount": 3,
+    "remainingRowsConsistent": 739,
+    "duplicateIds": [],
+    "missingTeamIds": []
+  },
+  "countFieldsCompared": [
+    "gamesPlayed",
+    "plateAppearances",
+    "atBats",
+    "hits",
+    "doubles",
+    "triples",
+    "homeRuns",
+    "runs",
+    "rbi",
+    "baseOnBalls",
+    "strikeOuts",
+    "stolenBases",
+    "hitByPitch",
+    "totalBases"
+  ],
+  "anomalies": [
+    {
+      "personId": 800354,
+      "name": "Esteban Mejia",
+      "type": "global filtered row has AA count with A-level sport/league metadata",
+      "rawRecord": {
+        "name": "Esteban Mejia",
+        "rawTeam": {
+          "id": 540,
+          "name": "Frisco RoughRiders",
+          "link": "/api/v1/teams/540"
+        },
+        "rawSport": {
+          "id": 14,
+          "link": "/api/v1/sports/14",
+          "name": "Single-A",
+          "abbreviation": "A"
+        },
+        "rawLeague": {
+          "id": 122,
+          "name": "Carolina League",
+          "link": "/api/v1/league/122",
+          "abbreviation": "CAR"
+        },
+        "counts": {
+          "gamesPlayed": 1,
+          "plateAppearances": 3,
+          "atBats": 3,
+          "hits": 0,
+          "doubles": 0,
+          "triples": 0,
+          "homeRuns": 0,
+          "runs": 0,
+          "rbi": 0,
+          "baseOnBalls": 0,
+          "strikeOuts": 1,
+          "stolenBases": 0,
+          "hitByPitch": 0,
+          "totalBases": 0
+        }
+      },
+      "playerLevelEvidence": {
+        "AASeason": {
+          "file": "raw/audit-2024-mejia-AA-season.json",
+          "url": "https://statsapi.mlb.com/api/v1/people/800354/stats?stats=season&group=hitting&sportId=12&season=2024&gameType=R",
+          "sha256": "012c7306b0dfad90de408ece9eac9e4aab6784f8f849a318a77bacf0f1f84cca",
+          "retrievedAt": "2026-10-21T17:22:00.960628+00:00",
+          "httpStatus": 200,
+          "metadata": {
+            "playerId": 800354,
+            "playerName": "Esteban Mejia",
+            "team": {
+              "id": 540,
+              "name": "Frisco RoughRiders",
+              "link": "/api/v1/teams/540"
+            },
+            "sport": {
+              "id": 12,
+              "link": "/api/v1/sports/12",
+              "abbreviation": "AA"
+            },
+            "league": {
+              "id": 109,
+              "name": "Texas League",
+              "link": "/api/v1/league/109"
+            },
+            "date": null
+          },
+          "counts": {
+            "gamesPlayed": 1,
+            "plateAppearances": 3,
+            "atBats": 3,
+            "hits": 0,
+            "doubles": 0,
+            "triples": 0,
+            "homeRuns": 0,
+            "runs": 0,
+            "rbi": 0,
+            "baseOnBalls": 0,
+            "strikeOuts": 1,
+            "stolenBases": 0,
+            "hitByPitch": 0,
+            "totalBases": 0
+          }
+        },
+        "ASeason": {
+          "file": "raw/audit-2024-mejia-A-season.json",
+          "url": "https://statsapi.mlb.com/api/v1/people/800354/stats?stats=season&group=hitting&sportId=14&season=2024&gameType=R",
+          "sha256": "eaa5118e769c6ca25d4369da567878eef8caceee2293c96c15bb104303056a64",
+          "retrievedAt": "2026-10-21T17:22:01.162258+00:00",
+          "httpStatus": 200,
+          "metadata": {
+            "playerId": 800354,
+            "playerName": "Esteban Mejia",
+            "team": {
+              "id": 485,
+              "name": "Down East Wood Ducks",
+              "link": "/api/v1/teams/485"
+            },
+            "sport": {
+              "id": 14,
+              "link": "/api/v1/sports/14",
+              "abbreviation": "A"
+            },
+            "league": {
+              "id": 122,
+              "name": "Carolina League",
+              "link": "/api/v1/league/122"
+            },
+            "date": null
+          },
+          "counts": {
+            "gamesPlayed": 50,
+            "plateAppearances": 186,
+            "atBats": 166,
+            "hits": 36,
+            "doubles": 8,
+            "triples": 1,
+            "homeRuns": 2,
+            "runs": 18,
+            "rbi": 17,
+            "baseOnBalls": 16,
+            "strikeOuts": 52,
+            "stolenBases": 7,
+            "hitByPitch": 4,
+            "totalBases": 52
+          }
+        },
+        "AAGameLog": {
+          "file": "raw/audit-2024-mejia-AA-gameLog.json",
+          "url": "https://statsapi.mlb.com/api/v1/people/800354/stats?stats=gameLog&group=hitting&sportId=12&season=2024&gameType=R",
+          "sha256": "b25df111a2e4d37b8a1f2e5c93a8599cedb731c0ca189bb579a4480d387072c9",
+          "retrievedAt": "2026-10-21T17:22:01.059568+00:00",
+          "httpStatus": 200,
+          "metadata": {
+            "playerId": 800354,
+            "playerName": "Esteban Mejia",
+            "team": {
+              "id": 540,
+              "name": "Frisco RoughRiders",
+              "link": "/api/v1/teams/540"
+            },
+            "sport": {
+              "id": 12,
+              "link": "/api/v1/sports/12",
+              "abbreviation": "AA"
+            },
+            "league": {
+              "id": 109,
+              "name": "Texas League",
+              "link": "/api/v1/league/109"
+            },
+            "date": "2024-08-11"
+          },
+          "counts": {
+            "gamesPlayed": 1,
+            "plateAppearances": 3,
+            "atBats": 3,
+            "hits": 0,
+            "doubles": 0,
+            "triples": 0,
+            "homeRuns": 0,
+            "runs": 0,
+            "rbi": 0,
+            "baseOnBalls": 0,
+            "strikeOuts": 1,
+            "stolenBases": 0,
+            "hitByPitch": 0,
+            "totalBases": 0
+          }
+        }
+      },
+      "verification": "The global row count vector matches the player-specific AA season row for all listed count fields; the AA game log identifies one 2024-08-11 Frisco game with 3 PA. The distinct A season row is 50 G / 186 PA for Down East. The global row\u2019s team ID/name are Frisco, but sport/league IDs are 14/122, matching the other-level classification.",
+      "normalizedClassification": {
+        "sportId": 12,
+        "sportName": "Double-A",
+        "leagueId": 109,
+        "leagueName": "Texas League",
+        "teamId": 540,
+        "teamName": "Frisco RoughRiders",
+        "plateAppearances": 3
+      },
+      "normalizerHandling": "The audited normalizer applies the verified Frisco/AA override for this 3-PA row. This player is outside the train/evaluation forecast cohorts, so forecast inputs and outputs do not change."
+    },
+    {
+      "personId": 691019,
+      "name": "Kyle Teel",
+      "type": "global row league metadata disagrees with official Portland team league",
+      "rawRecord": {
+        "name": "Kyle Teel",
+        "rawTeam": {
+          "id": 546,
+          "name": "Portland Sea Dogs",
+          "link": "/api/v1/teams/546"
+        },
+        "rawSport": {
+          "id": 12,
+          "link": "/api/v1/sports/12",
+          "name": "Double-A",
+          "abbreviation": "AA"
+        },
+        "rawLeague": {
+          "id": 117,
+          "name": "International League",
+          "link": "/api/v1/league/117",
+          "abbreviation": "INT"
+        },
+        "counts": {
+          "gamesPlayed": 84,
+          "plateAppearances": 382,
+          "atBats": 325,
+          "hits": 97,
+          "doubles": 20,
+          "triples": 0,
+          "homeRuns": 11,
+          "runs": 65,
+          "rbi": 60,
+          "baseOnBalls": 48,
+          "strikeOuts": 87,
+          "stolenBases": 9,
+          "hitByPitch": 4,
+          "totalBases": 150
+        }
+      },
+      "individualSeasonEvidence": {
+        "file": "raw/audit-2024-teel-AA-season.json",
+        "url": "https://statsapi.mlb.com/api/v1/people/691019/stats?stats=season&group=hitting&sportId=12&season=2024&gameType=R",
+        "sha256": "6d2af1779893a85e951700ea0303727607203d3cb8e33e3901f24829692a7fe2",
+        "retrievedAt": "2026-10-21T17:22:01.248739+00:00",
+        "httpStatus": 200,
+        "metadata": {
+          "playerId": 691019,
+          "playerName": "Kyle Teel",
+          "team": {
+            "id": 546,
+            "name": "Portland Sea Dogs",
+            "link": "/api/v1/teams/546"
+          },
+          "sport": {
+            "id": 12,
+            "link": "/api/v1/sports/12",
+            "abbreviation": "AA"
+          },
+          "league": {
+            "id": 113,
+            "name": "Eastern League",
+            "link": "/api/v1/league/113"
+          },
+          "date": null
+        },
+        "counts": {
+          "gamesPlayed": 84,
+          "plateAppearances": 382,
+          "atBats": 325,
+          "hits": 97,
+          "doubles": 20,
+          "triples": 0,
+          "homeRuns": 11,
+          "runs": 65,
+          "rbi": 60,
+          "baseOnBalls": 48,
+          "strikeOuts": 87,
+          "stolenBases": 9,
+          "hitByPitch": 4,
+          "totalBases": 150
+        }
+      },
+      "verification": "Count fields match the player-specific season line; sport remains AA/12. Official team 546 and player-specific season response identify Eastern League 113; global row says International League 117."
+    },
+    {
+      "personId": 701350,
+      "name": "Roman Anthony",
+      "type": "global row league metadata disagrees with official Portland team league",
+      "rawRecord": {
+        "name": "Roman Anthony",
+        "rawTeam": {
+          "id": 546,
+          "name": "Portland Sea Dogs",
+          "link": "/api/v1/teams/546"
+        },
+        "rawSport": {
+          "id": 12,
+          "link": "/api/v1/sports/12",
+          "name": "Double-A",
+          "abbreviation": "AA"
+        },
+        "rawLeague": {
+          "id": 117,
+          "name": "International League",
+          "link": "/api/v1/league/117",
+          "abbreviation": "INT"
+        },
+        "counts": {
+          "gamesPlayed": 84,
+          "plateAppearances": 376,
+          "atBats": 323,
+          "hits": 87,
+          "doubles": 20,
+          "triples": 3,
+          "homeRuns": 15,
+          "runs": 60,
+          "rbi": 45,
+          "baseOnBalls": 48,
+          "strikeOuts": 96,
+          "stolenBases": 16,
+          "hitByPitch": 3,
+          "totalBases": 158
+        }
+      },
+      "individualSeasonEvidence": {
+        "file": "raw/audit-2024-anthony-AA-season.json",
+        "url": "https://statsapi.mlb.com/api/v1/people/701350/stats?stats=season&group=hitting&sportId=12&season=2024&gameType=R",
+        "sha256": "221d2e0684a69178d946786cabdddd347520cd593036566c470e982f7d41611c",
+        "retrievedAt": "2026-10-21T17:22:01.339518+00:00",
+        "httpStatus": 200,
+        "metadata": {
+          "playerId": 701350,
+          "playerName": "Roman Anthony",
+          "team": {
+            "id": 546,
+            "name": "Portland Sea Dogs",
+            "link": "/api/v1/teams/546"
+          },
+          "sport": {
+            "id": 12,
+            "link": "/api/v1/sports/12",
+            "abbreviation": "AA"
+          },
+          "league": {
+            "id": 113,
+            "name": "Eastern League",
+            "link": "/api/v1/league/113"
+          },
+          "date": null
+        },
+        "counts": {
+          "gamesPlayed": 84,
+          "plateAppearances": 376,
+          "atBats": 323,
+          "hits": 87,
+          "doubles": 20,
+          "triples": 3,
+          "homeRuns": 15,
+          "runs": 60,
+          "rbi": 45,
+          "baseOnBalls": 48,
+          "strikeOuts": 96,
+          "stolenBases": 16,
+          "hitByPitch": 3,
+          "totalBases": 158
+        }
+      },
+      "verification": "Count fields match the player-specific season line; sport remains AA/12. Official team 546 and player-specific season response identify Eastern League 113; global row says International League 117."
+    }
+  ],
+  "conclusion": "One of 742 rows has incorrect sport and league metadata, but its 3 PA are verified as a true AA Frisco appearance. Two additional rows have incorrect league metadata but correct AA sport and count fields. Team mapping finds all team IDs in the official 2024 AA list; the other 739 rows agree with their official team sport/league. Do not treat missing level metadata as zero; use individual game logs/team mapping to validate or quarantine any malformed global row.",
+  "limitations": [
+    "Only the three metadata-anomalous player rows received player-specific count comparisons.",
+    "The global API response does not expose why its row sport/league metadata disagrees with team and individual game records."
+  ]
+}

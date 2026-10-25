@@ -1,0 +1,175 @@
+{
+  "status": "scored",
+  "source": "https://baseballsavant.mlb.com/statcast_search/csv",
+  "outcome_window": {
+    "start": "2026-07-16",
+    "end": "2026-09-27"
+  },
+  "observed_min_date": "2026-07-16",
+  "observed_max_date": "2026-09-27",
+  "outcome_pitches": 291004,
+  "outcome_games": 985,
+  "input_sha256": {
+    "frozen_shape_forecast": "a665bdf96623952282271a146a2d74f82d6116c017305d2ffb1331c5e30d8514",
+    "frozen_shape_protocol": "22a78c36badf361459dd1a7b724be9e974d48b390d2734f856ccf0dcea9c5757",
+    "frozen_vargas_prediction": "d63918fa8ab038895bae7b2aa3a822767c94be12e24b39a9fe16f5ec12a5663d",
+    "frozen_vargas_pre_pitch_data": "df53c5bdebb7bf1ac6e45aa2f4b6e23542cdb88b533188415753956c0382bb7b",
+    "outcome_manifest": "cf20ab38e29aed9468f01521adca8718b277a7afa6dfd5062906b9f1637e68f2"
+  },
+  "shape": {
+    "frozen_forecast_count": 387,
+    "eligible_count": 284,
+    "ineligible_count": 103,
+    "metrics": {
+      "baseline": {
+        "n": 284,
+        "target_bf": 51937,
+        "rmse": 0.05531041185089607,
+        "mae": 0.04354596318801729,
+        "bias": 0.005822778928505837
+      },
+      "shapecast": {
+        "n": 284,
+        "target_bf": 51937,
+        "rmse": 0.05459631081619649,
+        "mae": 0.04281925459034098,
+        "bias": 0.009573549919166473
+      },
+      "rmse_improvement_pct": 1.2910788598440281
+    },
+    "pitcher_bootstrap": {
+      "unit": "pitcher",
+      "iterations": 10000,
+      "seed": 20261018,
+      "rmse_improvement_pct_interval_95": [
+        -1.8614224906167025,
+        4.109736507391237
+      ]
+    },
+    "by_frozen_role": {
+      "reliever_like": {
+        "baseline": {
+          "n": 127,
+          "target_bf": 14573,
+          "rmse": 0.06591215052252612,
+          "mae": 0.054028380060919944,
+          "bias": 0.00869428416511327
+        },
+        "shapecast": {
+          "n": 127,
+          "target_bf": 14573,
+          "rmse": 0.06403803427821293,
+          "mae": 0.05110301823086628,
+          "bias": 0.012229147265048966
+        }
+      },
+      "starter_like": {
+        "baseline": {
+          "n": 157,
+          "target_bf": 37364,
+          "rmse": 0.050576571806083964,
+          "mae": 0.03945752883706957,
+          "bias": 0.004702811959951073
+        },
+        "shapecast": {
+          "n": 157,
+          "target_bf": 37364,
+          "rmse": 0.050436911406361605,
+          "mae": 0.0395883561979479,
+          "bias": 0.008537793037634904
+        }
+      }
+    },
+    "calibration_deciles": [
+      {
+        "decile": 1,
+        "n": 29,
+        "target_bf": 5503,
+        "predicted_kbb": 0.09968711985326043,
+        "actual_kbb": 0.10666908958749773
+      },
+      {
+        "decile": 2,
+        "n": 28,
+        "target_bf": 4938,
+        "predicted_kbb": 0.1153872130916486,
+        "actual_kbb": 0.10085054678007291
+      },
+      {
+        "decile": 3,
+        "n": 28,
+        "target_bf": 6155,
+        "predicted_kbb": 0.1263373544507197,
+        "actual_kbb": 0.12786352558895206
+      },
+      {
+        "decile": 4,
+        "n": 29,
+        "target_bf": 5286,
+        "predicted_kbb": 0.13384987136083015,
+        "actual_kbb": 0.12277714718123345
+      },
+      {
+        "decile": 5,
+        "n": 28,
+        "target_bf": 4999,
+        "predicted_kbb": 0.14527084281834243,
+        "actual_kbb": 0.12262452490498099
+      },
+      {
+        "decile": 6,
+        "n": 28,
+        "target_bf": 4826,
+        "predicted_kbb": 0.15733165091935744,
+        "actual_kbb": 0.13447990053874845
+      },
+      {
+        "decile": 7,
+        "n": 29,
+        "target_bf": 5681,
+        "predicted_kbb": 0.1701578038636422,
+        "actual_kbb": 0.16282344657630698
+      },
+      {
+        "decile": 8,
+        "n": 28,
+        "target_bf": 4814,
+        "predicted_kbb": 0.18319084359267845,
+        "actual_kbb": 0.15974241794765268
+      },
+      {
+        "decile": 9,
+        "n": 28,
+        "target_bf": 4755,
+        "predicted_kbb": 0.20411445906195,
+        "actual_kbb": 0.2159831756046267
+      },
+      {
+        "decile": 10,
+        "n": 29,
+        "target_bf": 4980,
+        "predicted_kbb": 0.23737377479224453,
+        "actual_kbb": 0.21867469879518073
+      }
+    ],
+    "directional_adjustment_at_least_0_02": {
+      "n": 49,
+      "correct": 27,
+      "accuracy": 0.5510204081632653
+    }
+  },
+  "vargas": {
+    "status": "insufficient_registered_target_pitches",
+    "registered_threshold": 75,
+    "pre_pitches": 1619,
+    "pre_target_pitches": 25,
+    "pre_target_share": 0.015441630636195183,
+    "post_pitches": 1184,
+    "post_target_pitches": 28,
+    "post_target_share": 0.02364864864864865
+  },
+  "limitations": [
+    "No audit-quality point-in-time ZiPS or Steamer comparison included.",
+    "The Vargas region-coverage test has no frozen operational coverage grouping; no post-hoc grouping is scored."
+  ]
+}

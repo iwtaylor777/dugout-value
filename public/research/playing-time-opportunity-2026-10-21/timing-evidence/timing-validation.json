@@ -1,0 +1,1925 @@
+{
+  "method": "Official MLB StatsAPI compact live feed, latest recorded play endTime in final-status games; all May 31 regular-season MLB, Triple-A and Double-A schedule games checked.",
+  "qualification": "A recorded play endTime establishes the latest logged on-field event, not the exact time a final game or updated statistical leaderboard was published. Completed Early feeds may have an incomplete final advisory play.",
+  "summaries": {
+    "2024": {
+      "games_checked": 45,
+      "decision_utc": "2024-06-01T12:00:00Z",
+      "latest_final_play": {
+        "sport_id": 11,
+        "game_pk": 751937,
+        "last_play_end_utc": "2024-06-01T05:26:07.375Z"
+      },
+      "seconds_before_decision": 23632.625
+    },
+    "2025": {
+      "games_checked": 47,
+      "decision_utc": "2025-06-01T11:32:24Z",
+      "latest_final_play": {
+        "sport_id": 11,
+        "game_pk": 780076,
+        "last_play_end_utc": "2025-06-01T05:40:11.538Z"
+      },
+      "seconds_before_decision": 21132.462,
+      "archived_depth_charts_load_utc": "2025-06-01T05:15:51Z",
+      "seconds_before_forecast_load": -1460.538
+    }
+  },
+  "late_games_after_archived_forecast_load": [
+    {
+      "game_pk": 780076,
+      "cohort_players": [
+        {
+          "mlbam_id": "640902",
+          "game_pa": 5
+        },
+        {
+          "mlbam_id": "665923",
+          "game_pa": 6
+        },
+        {
+          "mlbam_id": "668709",
+          "game_pa": 6
+        },
+        {
+          "mlbam_id": "672642",
+          "game_pa": 6
+        },
+        {
+          "mlbam_id": "676439",
+          "game_pa": 6
+        },
+        {
+          "mlbam_id": "681546",
+          "game_pa": 7
+        },
+        {
+          "mlbam_id": "687231",
+          "game_pa": 6
+        },
+        {
+          "mlbam_id": "687515",
+          "game_pa": 5
+        },
+        {
+          "mlbam_id": "690976",
+          "game_pa": 7
+        },
+        {
+          "mlbam_id": "691777",
+          "game_pa": 6
+        }
+      ],
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1/game/780076/boxscore?fields=teams%2Chome%2Caway%2Cplayers%2Cperson%2Cid%2Cstats%2Cbatting%2CplateAppearances",
+        "resolved_url": "https://statsapi.mlb.com/api/v1/game/780076/boxscore?fields=teams%2Chome%2Caway%2Cplayers%2Cperson%2Cid%2Cstats%2Cbatting%2CplateAppearances",
+        "path": "timing-evidence/raw/2025-late-780076-boxscore.json",
+        "sha256": "1e0733ab8a18da4e65c64f591a35768613d39d89d60476baf7586feefe3c9196",
+        "bytes": 13060,
+        "retrieved_at_utc": "2026-10-21T17:23:09.786553+00:00"
+      }
+    }
+  ],
+  "games": [
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 744928,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:07:00Z",
+      "last_play_end_utc": "2024-06-01T02:53:35.183Z",
+      "last_play_at_bat_index": 102,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 103,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/744928/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/744928/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-744928.json",
+        "sha256": "89f216aa69c5b45c944f042b4adce54f0145314e5433b555446a8cc2549e87a3",
+        "bytes": 14426,
+        "retrieved_at_utc": "2026-10-21T17:23:08.118519+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 745253,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T02:10:00Z",
+      "last_play_end_utc": "2024-06-01T04:42:35.767Z",
+      "last_play_at_bat_index": 69,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 70,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/745253/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/745253/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-745253.json",
+        "sha256": "109cb62fe41417b044ef4bc62bd84279d59c40e6a82cdc369f1bdc3b9ce16d31",
+        "bytes": 9866,
+        "retrieved_at_utc": "2026-10-21T17:23:08.271342+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 745331,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T02:15:00Z",
+      "last_play_end_utc": "2024-06-01T04:40:55.374Z",
+      "last_play_at_bat_index": 67,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 68,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/745331/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/745331/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-745331.json",
+        "sha256": "f234903f9a8131d01c993d3d807248485b4d175c21c02b553b99db5ad39c3bcd",
+        "bytes": 9590,
+        "retrieved_at_utc": "2026-10-21T17:23:08.263350+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 745574,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:40:00Z",
+      "last_play_end_utc": "2024-06-01T00:55:53.315Z",
+      "last_play_at_bat_index": 62,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 63,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/745574/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/745574/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-745574.json",
+        "sha256": "ecba907d4abb1dff567cfe05e8925cbb3ea866c0319cba500b67171d909a641e",
+        "bytes": 8900,
+        "retrieved_at_utc": "2026-10-21T17:23:08.117725+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 745820,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:10:00Z",
+      "last_play_end_utc": "2024-06-01T02:01:59.404Z",
+      "last_play_at_bat_index": 82,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 83,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/745820/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/745820/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-745820.json",
+        "sha256": "2f84162e91adfa63d278a0e94b9e65c9adb1cefed18e57a4619b087abde93c0f",
+        "bytes": 11660,
+        "retrieved_at_utc": "2026-10-21T17:23:08.116181+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 745983,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T00:10:00Z",
+      "last_play_end_utc": "2024-06-01T03:13:32.230Z",
+      "last_play_at_bat_index": 88,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 89,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/745983/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/745983/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-745983.json",
+        "sha256": "f878ba6f77fb8dafae2c14314646d3d68c8fa618199e6a32e78d69579870fe0a",
+        "bytes": 12488,
+        "retrieved_at_utc": "2026-10-21T17:23:08.266546+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 746059,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:10:00Z",
+      "last_play_end_utc": "2024-06-01T01:29:53.304Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/746059/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/746059/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-746059.json",
+        "sha256": "2e6cefa1cc8d8d20852ee885ff6f6c0abbf8ca9c322ec1a3b4e899dd5fdb0df5",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:08.119658+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 746140,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T02:10:00Z",
+      "last_play_end_utc": "2024-06-01T04:30:46.894Z",
+      "last_play_at_bat_index": 69,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 70,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/746140/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/746140/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-746140.json",
+        "sha256": "723994d8f2d85939372a415eecb6c6f9d31d33776b19221b10ecae5a90a55054",
+        "bytes": 9866,
+        "retrieved_at_utc": "2026-10-21T17:23:08.263474+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 746303,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T00:10:00Z",
+      "last_play_end_utc": "2024-06-01T03:11:28.090Z",
+      "last_play_at_bat_index": 84,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 85,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/746303/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/746303/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-746303.json",
+        "sha256": "af8c31c2c85118a2f86b7f1d0d013f7d82c89859e1e49bc208a929be312eae91",
+        "bytes": 11936,
+        "retrieved_at_utc": "2026-10-21T17:23:08.276639+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 746387,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T00:10:00Z",
+      "last_play_end_utc": "2024-06-01T02:49:06.065Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/746387/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/746387/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-746387.json",
+        "sha256": "bcbc0773d735d8e91713d7a507abc0f16618e9d1c612a0e5c3226b79cda91d8c",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:08.271615+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 746635,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:10:00Z",
+      "last_play_end_utc": "2024-06-01T01:33:11.866Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/746635/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/746635/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-746635.json",
+        "sha256": "cd867fa15e2ce9a5c25cece30cfc299e580e2ed498182274f017e0e2490532bc",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:08.115676+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 746877,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T18:20:00Z",
+      "last_play_end_utc": "2024-05-31T21:25:59.098Z",
+      "last_play_at_bat_index": 78,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 79,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/746877/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/746877/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-746877.json",
+        "sha256": "bf177d5f3489fc5ccdc0949bea82a33c4076553e122ae33b031537b2197ec825",
+        "bytes": 11108,
+        "retrieved_at_utc": "2026-10-21T17:23:08.120575+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 746955,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:10:00Z",
+      "last_play_end_utc": "2024-06-01T01:41:41.519Z",
+      "last_play_at_bat_index": 74,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 75,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/746955/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/746955/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-746955.json",
+        "sha256": "89f0c06ebb686fe8a13bfdd40efffd08c635052db9c5f6b4925fa738b5253407",
+        "bytes": 10556,
+        "retrieved_at_utc": "2026-10-21T17:23:08.118166+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 747032,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:05:00Z",
+      "last_play_end_utc": "2024-06-01T02:01:28.327Z",
+      "last_play_at_bat_index": 73,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 74,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/747032/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/747032/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-747032.json",
+        "sha256": "34a7ed4426229420a9aadda89c92ca19020c9174673a9bb797e30134c226ef67",
+        "bytes": 10418,
+        "retrieved_at_utc": "2026-10-21T17:23:08.118712+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 1,
+      "game_pk": 747116,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:20:00Z",
+      "last_play_end_utc": "2024-06-01T01:27:42.761Z",
+      "last_play_at_bat_index": 68,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 69,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/747116/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/747116/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-1-747116.json",
+        "sha256": "d30e86caccc7a09486aabec59dae85157ccc40afbb3edce1ead5b32fa66f7e9c",
+        "bytes": 9728,
+        "retrieved_at_utc": "2026-10-21T17:23:08.263603+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 751637,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T01:45:00Z",
+      "last_play_end_utc": "2024-06-01T04:31:29.760Z",
+      "last_play_at_bat_index": 77,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 78,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/751637/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/751637/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-751637.json",
+        "sha256": "e59994bf5c285fc9acde131321a0b9cf627c93997f593e751c75a9c6603a573f",
+        "bytes": 10970,
+        "retrieved_at_utc": "2026-10-21T17:23:08.556513+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 751712,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T00:15:00Z",
+      "last_play_end_utc": "2024-06-01T03:23:40.584Z",
+      "last_play_at_bat_index": 78,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 79,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/751712/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/751712/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-751712.json",
+        "sha256": "f3f308aab6c9ca89c9d91bd881cc73ed825711ace683e753492466c64d368d79",
+        "bytes": 11108,
+        "retrieved_at_utc": "2026-10-21T17:23:08.570086+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 751797,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T01:35:00Z",
+      "last_play_end_utc": "2024-06-01T04:53:48.610Z",
+      "last_play_at_bat_index": 100,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 101,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/751797/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/751797/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-751797.json",
+        "sha256": "ddde8c7e7baa4f450aaa2486d76e225c7486f23bd9949123401ddaa139f6db88",
+        "bytes": 14146,
+        "retrieved_at_utc": "2026-10-21T17:23:08.556892+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 751937,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T02:05:00Z",
+      "last_play_end_utc": "2024-06-01T05:26:07.375Z",
+      "last_play_at_bat_index": 89,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 90,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/751937/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/751937/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-751937.json",
+        "sha256": "572bf18560197b4509867ca385ab5e9893fad3bdd568b4276df046fc6a690a78",
+        "bytes": 12626,
+        "retrieved_at_utc": "2026-10-21T17:23:08.569071+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 752089,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T00:35:00Z",
+      "last_play_end_utc": "2024-06-01T03:52:14.879Z",
+      "last_play_at_bat_index": 98,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 99,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/752089/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/752089/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-752089.json",
+        "sha256": "5c74e22bddad188581a72e538ae32727a00b1a92a4aea756abdf94b4eca22323",
+        "bytes": 13868,
+        "retrieved_at_utc": "2026-10-21T17:23:08.574111+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 752242,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:05:00Z",
+      "last_play_end_utc": "2024-06-01T01:38:35.631Z",
+      "last_play_at_bat_index": 65,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 66,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/752242/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/752242/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-752242.json",
+        "sha256": "53ce8d02084ba0a56115eeba749c0bc98991945ee48e3337b4813d2f67010f06",
+        "bytes": 9314,
+        "retrieved_at_utc": "2026-10-21T17:23:08.406075+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 752320,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:35:00Z",
+      "last_play_end_utc": "2024-06-01T00:50:10.377Z",
+      "last_play_at_bat_index": 63,
+      "last_play_is_complete": false,
+      "game_detailed_state": "Completed Early",
+      "plays": 64,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/752320/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/752320/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-752320.json",
+        "sha256": "d46b36ad6127d1fd0f512bacab1f995396ad5dac706eeda7e27f49a36181eb63",
+        "bytes": 9050,
+        "retrieved_at_utc": "2026-10-21T17:23:08.257027+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 752540,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:45:00Z",
+      "last_play_end_utc": "2024-06-01T01:21:41.320Z",
+      "last_play_at_bat_index": 73,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 74,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/752540/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/752540/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-752540.json",
+        "sha256": "1d9ddfe16d0afeaa8de670fa85376a5dc5ca291193e698f52413f6ac1f80d15c",
+        "bytes": 10418,
+        "retrieved_at_utc": "2026-10-21T17:23:08.402368+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 752690,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:35:00Z",
+      "last_play_end_utc": "2024-06-01T01:20:01.171Z",
+      "last_play_at_bat_index": 74,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 75,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/752690/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/752690/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-752690.json",
+        "sha256": "fe20f358be961ae73c96d947979e2327149ca50a7911d80d7a2f2a53a57edcf9",
+        "bytes": 10556,
+        "retrieved_at_utc": "2026-10-21T17:23:08.395770+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 752835,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T00:05:00Z",
+      "last_play_end_utc": "2024-06-01T02:22:30.907Z",
+      "last_play_at_bat_index": 72,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 73,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/752835/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/752835/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-752835.json",
+        "sha256": "a2e3f13e90a9b1d0ecedd5627055d7395f5334ce6601870173cbc84694273a5d",
+        "bytes": 10280,
+        "retrieved_at_utc": "2026-10-21T17:23:08.543575+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 752912,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:15:00Z",
+      "last_play_end_utc": "2024-06-01T01:43:11.083Z",
+      "last_play_at_bat_index": 72,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 73,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/752912/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/752912/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-752912.json",
+        "sha256": "aa5696de39c597c9b02b54605cc09a85cfcab0554bd313452427893994f00de6",
+        "bytes": 10280,
+        "retrieved_at_utc": "2026-10-21T17:23:08.413222+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 753062,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:05:00Z",
+      "last_play_end_utc": "2024-06-01T01:52:51.425Z",
+      "last_play_at_bat_index": 75,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 76,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/753062/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/753062/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-753062.json",
+        "sha256": "a0297d1219cfb65629a1c38ee02dd05733692226fd4fe9d5821ad155134a9022",
+        "bytes": 10694,
+        "retrieved_at_utc": "2026-10-21T17:23:08.403407+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 753216,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:05:00Z",
+      "last_play_end_utc": "2024-06-01T01:44:07.370Z",
+      "last_play_at_bat_index": 76,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 77,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/753216/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/753216/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-753216.json",
+        "sha256": "1db88c0fb6ae0bfe1af35a4c1a7cf0c1a3f70d7e8204ffa82b07e0e46db804a8",
+        "bytes": 10832,
+        "retrieved_at_utc": "2026-10-21T17:23:08.396658+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 753440,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:05:00Z",
+      "last_play_end_utc": "2024-06-01T01:52:20.827Z",
+      "last_play_at_bat_index": 74,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 75,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/753440/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/753440/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-753440.json",
+        "sha256": "5ec27eadbaa2cae987638b8d8d0c06db4fec0c4b4e46044b514c1bd6a8a0e3b7",
+        "bytes": 10556,
+        "retrieved_at_utc": "2026-10-21T17:23:08.415463+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 11,
+      "game_pk": 753512,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:04:00Z",
+      "last_play_end_utc": "2024-06-01T02:25:43.739Z",
+      "last_play_at_bat_index": 94,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 95,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/753512/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/753512/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-11-753512.json",
+        "sha256": "a726d65b5c2805d1d84079526e38e51b352e65129c228f42bdedfd2190ea6e81",
+        "bytes": 13316,
+        "retrieved_at_utc": "2026-10-21T17:23:08.400721+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 749344,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:35:00Z",
+      "last_play_end_utc": "2024-06-01T02:28:27.000Z",
+      "last_play_at_bat_index": 79,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 80,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/749344/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/749344/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-749344.json",
+        "sha256": "014d8e63476615a44eb942c7084023b06aa2ef5e7000477123ef64e2dbb8ad50",
+        "bytes": 11246,
+        "retrieved_at_utc": "2026-10-21T17:23:08.788357+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 749412,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:00:00Z",
+      "last_play_end_utc": "2024-06-01T00:00:21.367Z",
+      "last_play_at_bat_index": 53,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 54,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/749412/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/749412/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-749412.json",
+        "sha256": "79bd9ef7f3171d693f93a49ba75a09fbce4a5bc1f5584a4cd7576cec6d55790e",
+        "bytes": 7658,
+        "retrieved_at_utc": "2026-10-21T17:23:08.677380+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 749428,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:05:00Z",
+      "last_play_end_utc": "2024-06-01T02:48:14.853Z",
+      "last_play_at_bat_index": 56,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 57,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/749428/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/749428/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-749428.json",
+        "sha256": "d61047fd449debfe1a3d7dea5e34b7c9a406ba3b082f0beb5f9eb0ad84abde11",
+        "bytes": 8072,
+        "retrieved_at_utc": "2026-10-21T17:23:08.553259+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 749552,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T00:05:00Z",
+      "last_play_end_utc": "2024-06-01T02:28:28.262Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/749552/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/749552/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-749552.json",
+        "sha256": "a49bf7f38970622e591361db0290f59f24da04450a2b68b5933338a3938fcf75",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:08.837962+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 749691,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:05:00Z",
+      "last_play_end_utc": "2024-06-01T03:15:01.000Z",
+      "last_play_at_bat_index": 55,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 56,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/749691/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/749691/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-749691.json",
+        "sha256": "c2e05aaca86adedee64f93cc439fbf6aed68c549cdd4895f71899bfb40169139",
+        "bytes": 7934,
+        "retrieved_at_utc": "2026-10-21T17:23:08.524819+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 749692,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:00:00Z",
+      "last_play_end_utc": "2024-06-01T00:25:49.294Z",
+      "last_play_at_bat_index": 74,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 75,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/749692/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/749692/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-749692.json",
+        "sha256": "a4013696bcc89f51df2eb469f56401da05d72c9fda3c37fc8db97337589d634a",
+        "bytes": 10556,
+        "retrieved_at_utc": "2026-10-21T17:23:08.661384+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 750030,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:00:00Z",
+      "last_play_end_utc": "2024-06-01T01:42:29.721Z",
+      "last_play_at_bat_index": 78,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 79,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/750030/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/750030/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-750030.json",
+        "sha256": "e577e3cdb00a1bb42c57c48c59bead264bfd310a9c79bef4c57a89c05312af1c",
+        "bytes": 11108,
+        "retrieved_at_utc": "2026-10-21T17:23:08.730817+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 750445,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-06-01T00:00:00Z",
+      "last_play_end_utc": "2024-06-01T02:15:36.984Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/750445/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/750445/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-750445.json",
+        "sha256": "945e044b4f006a82357f26d28f4d571233e694eba17dbeba333976872a822a3b",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:08.803553+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 750515,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:35:00Z",
+      "last_play_end_utc": "2024-06-01T02:17:48.976Z",
+      "last_play_at_bat_index": 73,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 74,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/750515/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/750515/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-750515.json",
+        "sha256": "964f9a2551ca42abca04c514ba6a26c74282ccb2c936e7e45630f729256b663f",
+        "bytes": 10418,
+        "retrieved_at_utc": "2026-10-21T17:23:08.805791+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 750587,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:35:00Z",
+      "last_play_end_utc": "2024-06-01T01:43:40.431Z",
+      "last_play_at_bat_index": 82,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 83,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/750587/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/750587/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-750587.json",
+        "sha256": "2780bafd5bf26adfea35cc4f2c916f27c25fb5223c3cf5ada00028a3cdf9eeb8",
+        "bytes": 11660,
+        "retrieved_at_utc": "2026-10-21T17:23:08.693563+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 750655,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:35:00Z",
+      "last_play_end_utc": "2024-06-01T00:52:42.091Z",
+      "last_play_at_bat_index": 62,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 63,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/750655/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/750655/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-750655.json",
+        "sha256": "8ba1bcc4c53bcc933465a5aa7b934253891eaa19195bc0d849f23b5c79351c67",
+        "bytes": 8900,
+        "retrieved_at_utc": "2026-10-21T17:23:08.677796+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 750933,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:10:00Z",
+      "last_play_end_utc": "2024-06-01T01:43:56.798Z",
+      "last_play_at_bat_index": 76,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 77,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/750933/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/750933/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-750933.json",
+        "sha256": "914fdee8fcf99b52f8585a694f6652ecb861d138f89e89f6428324d3dd713ef0",
+        "bytes": 10832,
+        "retrieved_at_utc": "2026-10-21T17:23:08.776789+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 751204,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:05:00Z",
+      "last_play_end_utc": "2024-06-01T02:04:09.811Z",
+      "last_play_at_bat_index": 80,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 81,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/751204/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/751204/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-751204.json",
+        "sha256": "6c757c914ce0cb2ade24950a089ea15f4e6910637948fec5be6e7ac9e0033530",
+        "bytes": 11384,
+        "retrieved_at_utc": "2026-10-21T17:23:08.733712+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 751280,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T22:00:00Z",
+      "last_play_end_utc": "2024-06-01T00:46:02.369Z",
+      "last_play_at_bat_index": 86,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 87,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/751280/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/751280/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-751280.json",
+        "sha256": "9718dfa56c89dfffb0c9ab30ede52461575775e2910b77f5ca67af137149b058",
+        "bytes": 12212,
+        "retrieved_at_utc": "2026-10-21T17:23:08.662674+00:00"
+      }
+    },
+    {
+      "year": 2024,
+      "sport_id": 12,
+      "game_pk": 751340,
+      "official_date": "2024-05-31",
+      "start_utc": "2024-05-31T23:05:00Z",
+      "last_play_end_utc": "2024-06-01T01:42:02.772Z",
+      "last_play_at_bat_index": 73,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 74,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/751340/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/751340/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2024-12-751340.json",
+        "sha256": "c8551cf528cacc39e536d98af8938df8ea7eff7bb2d011c3499e4ffe181c0430",
+        "bytes": 10418,
+        "retrieved_at_utc": "2026-10-21T17:23:08.715669+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777691,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T01:40:00Z",
+      "last_play_end_utc": "2025-06-01T04:29:29.500Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777691/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777691/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777691.json",
+        "sha256": "9a0cc31741936b46eb53e43b3fbae290f38337ba1ff9969aa2d62768bf35e7c5",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:09.080563+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777693,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:10:00Z",
+      "last_play_end_utc": "2025-05-31T22:49:27.328Z",
+      "last_play_at_bat_index": 84,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 85,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777693/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777693/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777693.json",
+        "sha256": "a295dc8892e03e4b212e5c2019ce85af61e37bc42de5221e83a3d72e3838391a",
+        "bytes": 11936,
+        "retrieved_at_utc": "2026-10-21T17:23:08.961465+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777694,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:10:00Z",
+      "last_play_end_utc": "2025-05-31T22:20:58.958Z",
+      "last_play_at_bat_index": 57,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 58,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777694/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777694/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777694.json",
+        "sha256": "93227b126c661105cb11a6e14dbe54c8a027945a3fa9eefa8b18131b4088d451",
+        "bytes": 8210,
+        "retrieved_at_utc": "2026-10-21T17:23:08.933068+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777695,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:15:00Z",
+      "last_play_end_utc": "2025-06-01T03:11:38.333Z",
+      "last_play_at_bat_index": 92,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 93,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777695/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777695/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777695.json",
+        "sha256": "e0ab414b7efbd9ad3f9b2e76cf1bbe86a5490e50b73315788b8436bd07cfcff5",
+        "bytes": 13040,
+        "retrieved_at_utc": "2026-10-21T17:23:09.064279+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777696,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T02:10:00Z",
+      "last_play_end_utc": "2025-06-01T05:09:37.948Z",
+      "last_play_at_bat_index": 85,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 86,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777696/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777696/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777696.json",
+        "sha256": "41655c40e13a6503517dc47251a60b6529cd90c1716a1dcb0d597a6d5e5f1218",
+        "bytes": 12074,
+        "retrieved_at_utc": "2026-10-21T17:23:09.101937+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777697,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:05:00Z",
+      "last_play_end_utc": "2025-05-31T22:34:48.974Z",
+      "last_play_at_bat_index": 66,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 67,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777697/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777697/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777697.json",
+        "sha256": "d6c33dd736c591496434ad91d51ba3d5d34c7a86f3901853501b361faa2c838a",
+        "bytes": 9452,
+        "retrieved_at_utc": "2026-10-21T17:23:08.878545+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777698,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:15:00Z",
+      "last_play_end_utc": "2025-06-01T02:20:50.687Z",
+      "last_play_at_bat_index": 85,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 86,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777698/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777698/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777698.json",
+        "sha256": "ba74b51c0a5c48d27a5667be2330d7c6040d9c7eb167c9de9ee0f07daf16e556",
+        "bytes": 12074,
+        "retrieved_at_utc": "2026-10-21T17:23:09.099528+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777699,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:05:00Z",
+      "last_play_end_utc": "2025-05-31T22:45:26.514Z",
+      "last_play_at_bat_index": 71,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 72,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777699/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777699/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777699.json",
+        "sha256": "dbc54c7d113c95480dfffafdce979885458a8c76c62a69d6b9933ac3de366213",
+        "bytes": 10142,
+        "retrieved_at_utc": "2026-10-21T17:23:08.913137+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777700,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:10:00Z",
+      "last_play_end_utc": "2025-05-31T22:37:58.960Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777700/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777700/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777700.json",
+        "sha256": "bb42b820cce5c1905a8a0e1a8b14aeebd08f04b074b01f933c566450a68fc754",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:08.969191+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777701,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T19:07:00Z",
+      "last_play_end_utc": "2025-05-31T21:43:03.433Z",
+      "last_play_at_bat_index": 73,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 74,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777701/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777701/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777701.json",
+        "sha256": "bc0fdc0fd259679dbeed9d3e4e2d740cba4ea9e86b97deadf1abcea675d372e9",
+        "bytes": 10418,
+        "retrieved_at_utc": "2026-10-21T17:23:08.879892+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777702,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:05:00Z",
+      "last_play_end_utc": "2025-05-31T22:47:16.342Z",
+      "last_play_at_bat_index": 87,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 88,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777702/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777702/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777702.json",
+        "sha256": "e323a9bb5eb018f407a72448b4338de69fc35b1cf6887315eebff0b570cf35ba",
+        "bytes": 12350,
+        "retrieved_at_utc": "2026-10-21T17:23:08.924431+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777703,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:10:00Z",
+      "last_play_end_utc": "2025-05-31T23:01:50.299Z",
+      "last_play_at_bat_index": 77,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 78,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777703/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777703/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777703.json",
+        "sha256": "988f60e56f9644b06a936d2054fe6d0e64256d27a64d7685610f9c1604dcd9de",
+        "bytes": 10970,
+        "retrieved_at_utc": "2026-10-21T17:23:08.961954+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777704,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T18:20:00Z",
+      "last_play_end_utc": "2025-05-31T20:38:54.384Z",
+      "last_play_at_bat_index": 62,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 63,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777704/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777704/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777704.json",
+        "sha256": "46233f536e418cb8edcb98a5c9ad7199bd4d81174ecdb7b0706f06a0660bc7fc",
+        "bytes": 8900,
+        "retrieved_at_utc": "2026-10-21T17:23:08.829876+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777705,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:10:00Z",
+      "last_play_end_utc": "2025-05-31T22:24:56.935Z",
+      "last_play_at_bat_index": 65,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 66,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777705/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777705/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777705.json",
+        "sha256": "1e9c26b418c4f1d769b70f19d08daae2d45749d1d2c561d68accf733a5af7c42",
+        "bytes": 9314,
+        "retrieved_at_utc": "2026-10-21T17:23:09.017156+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 1,
+      "game_pk": 777706,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:10:00Z",
+      "last_play_end_utc": "2025-05-31T22:26:40.720Z",
+      "last_play_at_bat_index": 67,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 68,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/777706/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/777706/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-1-777706.json",
+        "sha256": "0eeb34fdbdd6b936d8710adff8d379f3eec13f5d626416e3309390d18a279a1a",
+        "bytes": 9590,
+        "retrieved_at_utc": "2026-10-21T17:23:09.009667+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 779557,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T01:05:00Z",
+      "last_play_end_utc": "2025-06-01T03:47:09.329Z",
+      "last_play_at_bat_index": 75,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 76,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/779557/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/779557/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-779557.json",
+        "sha256": "314c2f835e26149b3258e067efbadceb836887c8b31176a29afd29d91b5f4923",
+        "bytes": 10694,
+        "retrieved_at_utc": "2026-10-21T17:23:09.363906+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 779788,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T01:37:00Z",
+      "last_play_end_utc": "2025-06-01T04:02:41.857Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/779788/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/779788/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-779788.json",
+        "sha256": "5553952a63a94b365a94c5f3fd2ae5933e375f04de74d41ca35aa9769f99e6f2",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:09.370561+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 779859,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T00:15:00Z",
+      "last_play_end_utc": "2025-06-01T02:51:30.584Z",
+      "last_play_at_bat_index": 66,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 67,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/779859/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/779859/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-779859.json",
+        "sha256": "152ba349fbd8898375adb016cee8f6c3bd4852b7f094e25d2321f2a11029f0ea",
+        "bytes": 9452,
+        "retrieved_at_utc": "2026-10-21T17:23:09.280930+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 780076,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T02:05:00Z",
+      "last_play_end_utc": "2025-06-01T05:40:11.538Z",
+      "last_play_at_bat_index": 103,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 104,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/780076/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/780076/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-780076.json",
+        "sha256": "48e6703854af06a228d7095ed5fe67d5572bbbe5305fdfd6e135f5430b5d4acb",
+        "bytes": 14566,
+        "retrieved_at_utc": "2026-10-21T17:23:09.365707+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 780232,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T00:35:00Z",
+      "last_play_end_utc": "2025-06-01T03:49:37.973Z",
+      "last_play_at_bat_index": 89,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 90,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/780232/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/780232/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-780232.json",
+        "sha256": "cab781d5f947aa9ae3853ec491dda5297989269ab8418dab5430891c021b15e5",
+        "bytes": 12626,
+        "retrieved_at_utc": "2026-10-21T17:23:09.366067+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 780381,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:05:00Z",
+      "last_play_end_utc": "2025-06-01T01:36:54.888Z",
+      "last_play_at_bat_index": 69,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 70,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/780381/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/780381/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-780381.json",
+        "sha256": "5aa189c60a2ce27a54e5ac6ac4049fe9404c804db6a9da2dca3a5db606b47820",
+        "bytes": 9866,
+        "retrieved_at_utc": "2026-10-21T17:23:09.236402+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 780605,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:05:00Z",
+      "last_play_end_utc": "2025-05-31T23:06:57.211Z",
+      "last_play_at_bat_index": 76,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 77,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/780605/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/780605/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-780605.json",
+        "sha256": "30ef9fdea6fc99fee285d94d3eeb1264208181aad0d5c5dc0bd5223b04031ddf",
+        "bytes": 10832,
+        "retrieved_at_utc": "2026-10-21T17:23:09.102533+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 780676,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:45:00Z",
+      "last_play_end_utc": "2025-06-01T01:24:40.318Z",
+      "last_play_at_bat_index": 80,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 81,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/780676/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/780676/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-780676.json",
+        "sha256": "e10cb78b6cd7171102325b7667428680c3c125b63cf588807a918e360585ce5e",
+        "bytes": 11384,
+        "retrieved_at_utc": "2026-10-21T17:23:09.223863+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 780758,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:05:00Z",
+      "last_play_end_utc": "2025-06-01T01:41:23.266Z",
+      "last_play_at_bat_index": 75,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 76,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/780758/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/780758/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-780758.json",
+        "sha256": "7d309536ae85896a7f46d6f1235e7b6e7320f53f6281602565dab95f643272c8",
+        "bytes": 10694,
+        "retrieved_at_utc": "2026-10-21T17:23:09.237796+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 780830,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:05:00Z",
+      "last_play_end_utc": "2025-05-31T22:35:20.965Z",
+      "last_play_at_bat_index": 68,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 69,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/780830/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/780830/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-780830.json",
+        "sha256": "f262de396c40d002df488b46edb59b95a9b211797af436f7988f6fec3f5b7092",
+        "bytes": 9728,
+        "retrieved_at_utc": "2026-10-21T17:23:09.137993+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 780840,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T20:10:00Z",
+      "last_play_end_utc": "2025-06-01T03:08:50.726Z",
+      "last_play_at_bat_index": 60,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 61,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/780840/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/780840/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-780840.json",
+        "sha256": "be31ac7f6377c8cf35fcfb00e737ae04c557489a936a33571ea7be7658b6d06f",
+        "bytes": 8624,
+        "retrieved_at_utc": "2026-10-21T17:23:09.075828+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 781281,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:08:00Z",
+      "last_play_end_utc": "2025-06-01T01:59:51.132Z",
+      "last_play_at_bat_index": 85,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 86,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/781281/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/781281/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-781281.json",
+        "sha256": "a6559abcc1c0698d5e2fb7f8e297066acc5b0f25ddbd3f9aee14b273b90fcf75",
+        "bytes": 12074,
+        "retrieved_at_utc": "2026-10-21T17:23:09.283392+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 781355,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:35:00Z",
+      "last_play_end_utc": "2025-06-01T01:31:05.014Z",
+      "last_play_at_bat_index": 79,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 80,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/781355/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/781355/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-781355.json",
+        "sha256": "9c36241cfe05868aee2b8e6b83e058702c720af0decb90ca900fa404edf7c758",
+        "bytes": 11246,
+        "retrieved_at_utc": "2026-10-21T17:23:09.223753+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 781431,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:05:00Z",
+      "last_play_end_utc": "2025-06-01T00:11:20.205Z",
+      "last_play_at_bat_index": 64,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 65,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/781431/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/781431/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-781431.json",
+        "sha256": "075acefdf2d9e59b38e21ab578cb8ff90bf38658226323fcc41ec011de4c0567",
+        "bytes": 9176,
+        "retrieved_at_utc": "2026-10-21T17:23:09.222608+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 781504,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:35:00Z",
+      "last_play_end_utc": "2025-06-01T01:45:51.459Z",
+      "last_play_at_bat_index": 83,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 84,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/781504/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/781504/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-781504.json",
+        "sha256": "ec045e71d6a783aa4b09766ea9c5bf40e88012096c24bcb683c28f3cc5232555",
+        "bytes": 11798,
+        "retrieved_at_utc": "2026-10-21T17:23:09.223214+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 11,
+      "game_pk": 781730,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:05:00Z",
+      "last_play_end_utc": "2025-06-01T00:48:28.058Z",
+      "last_play_at_bat_index": 77,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 78,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/781730/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/781730/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-11-781730.json",
+        "sha256": "d870209622b80bc89665da4e7aaeb84eb2f45588b1643d7f5e076ce5641755f7",
+        "bytes": 10970,
+        "retrieved_at_utc": "2026-10-21T17:23:09.164340+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 781805,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:05:00Z",
+      "last_play_end_utc": "2025-06-01T02:17:00.915Z",
+      "last_play_at_bat_index": 87,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 88,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/781805/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/781805/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-781805.json",
+        "sha256": "be6d29cee8bb07ce449ec0b4fe31ebdbbba4fced547fd29b639c8bf8737b5476",
+        "bytes": 12350,
+        "retrieved_at_utc": "2026-10-21T17:23:09.519297+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 781941,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:35:00Z",
+      "last_play_end_utc": "2025-06-01T02:34:18.255Z",
+      "last_play_at_bat_index": 91,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 92,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/781941/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/781941/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-781941.json",
+        "sha256": "36811fbe85b10187306debb470b60125ce887f772fdc13727660d41d109bc042",
+        "bytes": 12902,
+        "retrieved_at_utc": "2026-10-21T17:23:09.574511+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 782149,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T00:00:00Z",
+      "last_play_end_utc": "2025-06-01T02:15:54.017Z",
+      "last_play_at_bat_index": 66,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 67,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/782149/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/782149/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-782149.json",
+        "sha256": "59a38db4e992756f30ddda57e6857a677b823eef5d3d1539e30bbc97f9a605df",
+        "bytes": 9452,
+        "retrieved_at_utc": "2026-10-21T17:23:09.676979+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 782359,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:05:00Z",
+      "last_play_end_utc": "2025-06-01T02:12:03.463Z",
+      "last_play_at_bat_index": 81,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 82,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/782359/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/782359/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-782359.json",
+        "sha256": "8d214a5d13a787ed393e6879497e91ff18f9e533d43213d3b00af847d2492d08",
+        "bytes": 11522,
+        "retrieved_at_utc": "2026-10-21T17:23:09.518775+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 782428,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-06-01T00:05:00Z",
+      "last_play_end_utc": "2025-06-01T02:55:49.120Z",
+      "last_play_at_bat_index": 85,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 86,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/782428/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/782428/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-782428.json",
+        "sha256": "7dd19e6e67b034d87b70171316d63a2a0cf8481806c1fe93f81a087dc8150ace",
+        "bytes": 12074,
+        "retrieved_at_utc": "2026-10-21T17:23:09.651131+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 782497,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T21:05:00Z",
+      "last_play_end_utc": "2025-06-01T01:49:12.957Z",
+      "last_play_at_bat_index": 64,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 65,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/782497/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/782497/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-782497.json",
+        "sha256": "1f33f528703a5352ed447d46bbeaf1cc65f7558b7f65e0bc45690c3e4c80b91e",
+        "bytes": 9176,
+        "retrieved_at_utc": "2026-10-21T17:23:09.370332+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 782501,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T21:00:00Z",
+      "last_play_end_utc": "2025-05-31T22:46:38.574Z",
+      "last_play_at_bat_index": 52,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 53,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/782501/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/782501/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-782501.json",
+        "sha256": "3d3802039dfaea1e917fbcaf982c62eea3d3e4ff23aa8faabb1446ff7b6a2f16",
+        "bytes": 7520,
+        "retrieved_at_utc": "2026-10-21T17:23:09.364540+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 782560,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:35:00Z",
+      "last_play_end_utc": "2025-06-01T01:42:24.239Z",
+      "last_play_at_bat_index": 62,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 63,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/782560/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/782560/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-782560.json",
+        "sha256": "0f7b28b029006316107849478e586d9d4fd9553f0bb72ec77eff8763224afc2c",
+        "bytes": 8900,
+        "retrieved_at_utc": "2026-10-21T17:23:09.651208+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 782703,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:05:00Z",
+      "last_play_end_utc": "2025-06-01T01:26:37.082Z",
+      "last_play_at_bat_index": 70,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 71,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/782703/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/782703/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-782703.json",
+        "sha256": "03f398bd2c8a098cb05e02266df05181b957c9f2365e8a4a1758a07ff44ff995",
+        "bytes": 10004,
+        "retrieved_at_utc": "2026-10-21T17:23:09.511710+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 782838,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T23:15:00Z",
+      "last_play_end_utc": "2025-06-01T01:45:55.207Z",
+      "last_play_at_bat_index": 71,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 72,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/782838/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/782838/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-782838.json",
+        "sha256": "67ab617e752eb80b2a8737aae101cfb806fe2500543afa3a080b9ef9888d95f8",
+        "bytes": 10142,
+        "retrieved_at_utc": "2026-10-21T17:23:09.544368+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 783050,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:35:00Z",
+      "last_play_end_utc": "2025-06-01T01:25:33.244Z",
+      "last_play_at_bat_index": 82,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 83,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/783050/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/783050/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-783050.json",
+        "sha256": "34f39bdc96980e89851fd3f5d60777d46be7e4572d6e8f499d27ef7f086ca215",
+        "bytes": 11660,
+        "retrieved_at_utc": "2026-10-21T17:23:09.519381+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 783115,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:05:00Z",
+      "last_play_end_utc": "2025-06-01T00:57:09.348Z",
+      "last_play_at_bat_index": 78,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 79,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/783115/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/783115/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-783115.json",
+        "sha256": "7caefa2fe9fb2d3cbd215d26fca359fe0f4c286b1d66955aa955b1cf76293952",
+        "bytes": 11108,
+        "retrieved_at_utc": "2026-10-21T17:23:09.409551+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 783185,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:45:00Z",
+      "last_play_end_utc": "2025-06-01T01:12:19.932Z",
+      "last_play_at_bat_index": 76,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 77,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/783185/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/783185/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-783185.json",
+        "sha256": "ddcdfab06e3d115fd92b910925dd7ed592cc099e5254c3519ee65b11b9fe77ca",
+        "bytes": 10832,
+        "retrieved_at_utc": "2026-10-21T17:23:09.512149+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 783391,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:10:00Z",
+      "last_play_end_utc": "2025-06-01T02:01:00.868Z",
+      "last_play_at_bat_index": 83,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 84,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/783391/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/783391/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-783391.json",
+        "sha256": "5a33ee82b7952b0cd6bd99174ea796f2935ba924faa12fc798bad9560f6cb38d",
+        "bytes": 11798,
+        "retrieved_at_utc": "2026-10-21T17:23:09.418007+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 783603,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:35:00Z",
+      "last_play_end_utc": "2025-06-01T01:25:22.709Z",
+      "last_play_at_bat_index": 77,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 78,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/783603/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/783603/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-783603.json",
+        "sha256": "5b0a0e12eb47a7b16ec46f57d365389aca9c664b5a3c60f2194f376fe5b185a3",
+        "bytes": 10970,
+        "retrieved_at_utc": "2026-10-21T17:23:09.511276+00:00"
+      }
+    },
+    {
+      "year": 2025,
+      "sport_id": 12,
+      "game_pk": 783737,
+      "official_date": "2025-05-31",
+      "start_utc": "2025-05-31T22:06:00Z",
+      "last_play_end_utc": "2025-06-01T00:37:06.510Z",
+      "last_play_at_bat_index": 69,
+      "last_play_is_complete": true,
+      "game_detailed_state": "Final",
+      "plays": 70,
+      "source": {
+        "url": "https://statsapi.mlb.com/api/v1.1/game/783737/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "resolved_url": "https://statsapi.mlb.com/api/v1.1/game/783737/feed/live?fields=gameData%2Cdatetime%2CofficialDate%2CdateTime%2Cstatus%2CabstractGameState%2CcodedGameState%2CdetailedState%2CstatusCode%2CliveData%2Cplays%2CallPlays%2Cabout%2CatBatIndex%2CstartTime%2CendTime%2CisComplete",
+        "path": "timing-evidence/raw/2025-12-783737.json",
+        "sha256": "1714b1bc3fcc508832d3a1362d6fb901a58420485fd8902edde5be333eb16a96",
+        "bytes": 9866,
+        "retrieved_at_utc": "2026-10-21T17:23:09.643012+00:00"
+      }
+    }
+  ]
+}

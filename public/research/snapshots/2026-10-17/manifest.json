@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "dugout-value-2026-10-17",
+  "capturedAt": "2026-10-17T22:08:55-04:00",
+  "captureDate": "2026-10-17",
+  "sourceDataAsOf": "2026-07-31",
+  "modelVersion": "2026-10-17.1",
+  "purpose": "Immutable public-data valuation snapshot.",
+  "provenance": {
+    "playerData": [
+      "FanGraphs projections",
+      "FanGraphs 2026 Trade Value Series",
+      "FanGraphs RosterResource",
+      "FanGraphs RosterResource injury report",
+      "FanGraphs The Board",
+      "SoxProspects current projection grades",
+      "FanGraphs playoff odds"
+    ],
+    "projectionPriority": [
+      "FanGraphs Depth Charts RoS",
+      "FanGraphs 2026 Trade Value Series ZiPS update where published",
+      "ZiPS future + ZiPS role-aware rolling talent update",
+      "ZiPS-anchored nonlinear aging + Marcel fallback"
+    ],
+    "playoffOdds": {
+      "source": "FanGraphs Playoff Odds",
+      "sourceUrl": "https://www.fangraphs.com/standings/playoff-odds/fg/mlb",
+      "mode": "FanGraphs projections"
+    }
+  },
+  "replay": {
+    "command": "node replay.mjs <player-id>",
+    "verifyCommand": "node verify.mjs .",
+    "defaultSettingsSource": "lib/value-model.mjs#initialSettings",
+    "workspaceDefaultsSource": "app/trade-workspace.tsx"
+  },
+  "files": [
+    {
+      "path": "app/data/player-database.json",
+      "bytes": 3085854,
+      "sha256": "53ed09285e671acb2e8837d85d5e81e40828e4a39728cc99aa397fcadbb6373c"
+    },
+    {
+      "path": "app/data/playoff-odds.json",
+      "bytes": 691,
+      "sha256": "dee14406ba2d524a51b7ec62c331d924c8ab518021a7a0428cb9ae05a1247643"
+    },
+    {
+      "path": "app/trade-workspace.tsx",
+      "bytes": 208352,
+      "sha256": "57681e4c8bdab2957e7aa2a0a7c170f113bfe6343d14bc90e2f5e5745da7dea9"
+    },
+    {
+      "path": "lib/value-model.mjs",
+      "bytes": 25844,
+      "sha256": "eb0b0c507346247ae0c7152a586788bb3aff58f8feccb1a1fb5c6a8da2c0a592"
+    },
+    {
+      "path": "lib/trade-package.mjs",
+      "bytes": 3720,
+      "sha256": "0ddf8302d89d0f481da5c3f1b313be440cd029bc271c23c90647d39a51f568ef"
+    },
+    {
+      "path": "lib/trade-share.mjs",
+      "bytes": 5108,
+      "sha256": "39a777097ed6f78d446c7465393caa3e28e08a07b201f84f9006461d99684441"
+    },
+    {
+      "path": "lib/trade-discovery.mjs",
+      "bytes": 15058,
+      "sha256": "ed0e330ba2a456af4d519098fb5fd1f1fdaef525ebc1703ab303184dc2a108ff"
+    },
+    {
+      "path": "verify.mjs",
+      "bytes": 2790,
+      "sha256": "8f35b7475d483efb4a26f2ed02c719762af2783d686788187802f0821ed17fbf"
+    },
+    {
+      "path": "replay.mjs",
+      "bytes": 1393,
+      "sha256": "cce8d31c6f4f1fb1180783a23a71ba46f080ed28b5d766d790444c367639d27c"
+    },
+    {
+      "path": "README.md",
+      "bytes": 457,
+      "sha256": "3612753935a8bf1f466059fd98be7cfb5db24a2409bfc845f1fdec005102b593"
+    }
+  ]
+}

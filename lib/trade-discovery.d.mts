@@ -64,6 +64,8 @@ export type DiscoveryTarget = {
   tradeValue: number;
   controlThrough: number;
   controlYears: number;
+  valuationView: DiscoveryView;
+  projectionYear: number;
   deadlineLabel: string;
   deadlineFit: number;
 };
@@ -85,8 +87,11 @@ export type DiscoveryOffer = {
 
 export type DiscoveryValues = Record<
   string,
-  { total?: number; low?: number; high?: number } | undefined
+  | { total?: number; low?: number; high?: number; pendingFreeAgent?: boolean }
+  | undefined
 >;
+
+export type DiscoveryView = "offseason" | "deadline";
 
 export const DISCOVERY_POSITIONS: ReadonlyArray<{
   id: DiscoveryPosition;
@@ -116,11 +121,25 @@ export function incumbentRestOfSeasonWar(
   position: DiscoveryPosition,
   baseYear: number,
 ): number;
+export function discoveryProjectionYear(
+  baseYear: number,
+  valuationView?: DiscoveryView,
+): number;
+export function hasControlAfter(
+  player: DiscoveryPlayer | undefined,
+  baseYear: number,
+): boolean;
+export function isPendingFreeAgent(
+  player: DiscoveryPlayer | undefined,
+  baseYear: number,
+  value?: { pendingFreeAgent?: boolean },
+): boolean;
 export function rankTeamNeeds(
   players: DiscoveryPlayer[],
   teams: Array<string | { abbr: string }>,
   team: string,
   baseYear: number,
+  options?: { valuationView?: DiscoveryView },
 ): DiscoveryNeed[];
 export function findTradeTargets(args: {
   players: DiscoveryPlayer[];
@@ -131,6 +150,7 @@ export function findTradeTargets(args: {
   sellerThreshold?: number;
   baseYear: number;
   limit?: number;
+  valuationView?: DiscoveryView;
 }): DiscoveryTarget[];
 export function generateOfferPackages(args: {
   players: DiscoveryPlayer[];
@@ -140,4 +160,5 @@ export function generateOfferPackages(args: {
   targetValue: number;
   baseYear: number;
   limit?: number;
+  valuationView?: DiscoveryView;
 }): DiscoveryOffer[];

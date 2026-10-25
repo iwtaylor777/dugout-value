@@ -1,0 +1,9 @@
+{
+  "path": "anthony-2025-AAA-cutoff-byDateRange.json",
+  "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&personId=701350&sportIds=11&season=2025&startDate=03%2F01%2F2025&endDate=05%2F31%2F2025&gameType=R&playerPool=ALL&limit=100",
+  "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&personId=701350&sportIds=11&season=2025&startDate=03%2F01%2F2025&endDate=05%2F31%2F2025&gameType=R&playerPool=ALL&limit=100",
+  "http_status": 200,
+  "sha256": "68cd6b65c641c0989e784e6d4dc5af2e2cec312a8ae0cf52eb5a40f399310933",
+  "bytes": 1461,
+  "retrieved_at": "2026-10-21T17:15:24.000386+00:00"
+}

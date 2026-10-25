@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import {
+  discoveryProjectionYear,
   findTradeTargets,
   generateOfferPackages,
   incumbentRestOfSeasonWar,
@@ -109,6 +110,7 @@ test("the Red Sox first-base bucket includes Willson Contreras", async () => {
     database.teams,
     "BOS",
     database.meta.baseYear,
+    { valuationView: "offseason" },
   ).find((need) => need.id === "1B");
 
   assert.equal(contreras?.team, "BOS");
@@ -287,4 +289,116 @@ test("builds value-matched offer concepts from the buyer's assets", () => {
       (offer) => Math.abs(offer.gap) / 10 <= 0.3 || offer.salaryRelief,
     ),
   );
+});
+
+const withSeasons = (player, seasons) => ({ ...player, seasons });
+
+test("offseason view drops pending free agents and compares next-season WAR", () => {
+  const players = [
+    withSeasons(mlb({ id: "buyer-c", team: "BUY", position: "C" }), [
+      { year: 2026, war: 1.5, salaryMode: "prearb" },
+      { year: 2027, war: 0.2, salaryMode: "prearb" },
+    ]),
+    // Great rest-of-2026, but no control after the season.
+    withSeasons(mlb({ id: "rental-c", team: "SELL", position: "C" }), [
+      { year: 2026, war: 2, salaryMode: "fixed" },
+    ]),
+    withSeasons(mlb({ id: "controlled-c", team: "SELL", position: "C" }), [
+      { year: 2026, war: 0.4, salaryMode: "prearb" },
+      { year: 2027, war: 2.4, salaryMode: "arb1" },
+      { year: 2028, war: 2.2, salaryMode: "arb2" },
+    ]),
+  ];
+  const args = {
+    players,
+    values: {
+      "rental-c": { total: 0, pendingFreeAgent: true },
+      "controlled-c": { total: 20, pendingFreeAgent: false },
+    },
+    buyerTeam: "BUY",
+    position: "C",
+    playoffOdds: { SELL: 10 },
+    baseYear: 2026,
+  };
+
+  assert.equal(discoveryProjectionYear(2026, "offseason"), 2027);
+  assert.equal(discoveryProjectionYear(2026, "deadline"), 2026);
+
+  const deadline = findTradeTargets(args);
+  assert.deepEqual(deadline.map((target) => target.id), ["rental-c"]);
+
+  const offseason = findTradeTargets({ ...args, valuationView: "offseason" });
+  assert.deepEqual(offseason.map((target) => target.id), ["controlled-c"]);
+  assert.equal(offseason[0].improvement, 2.2);
+  assert.equal(offseason[0].projectionYear, 2027);
+  assert.equal(offseason[0].controlYears, 2);
+  const allTeams = findTradeTargets({ ...args, playoffOdds: { SELL: 100 }, sellerThreshold: 0, valuationView: "offseason" });
+  assert.deepEqual(allTeams.map(target => target.id), ["controlled-c"]);
+});
+
+test("offseason view falls back to the seasons themselves when no value is supplied", () => {
+  const players = [
+    withSeasons(mlb({ id: "buyer-c", team: "BUY", position: "C" }), [
+      { year: 2026, war: 0, salaryMode: "prearb" },
+    ]),
+    withSeasons(mlb({ id: "rental-c", team: "SELL", position: "C" }), [
+      { year: 2026, war: 2, salaryMode: "fixed" },
+    ]),
+  ];
+  const targets = findTradeTargets({
+    players,
+    values: {},
+    buyerTeam: "BUY",
+    position: "C",
+    playoffOdds: { SELL: 10 },
+    baseYear: 2026,
+    valuationView: "offseason",
+  });
+  assert.equal(targets.length, 0);
+});
+
+test("offseason team needs use next-season WAR and offer pools skip pending free agents", () => {
+  const players = [
+    withSeasons({ ...mlb({ id: "sp-expiring", team: "BUY", position: "SP", role: "starter" }), seasonToDateWar: 2 }, [
+      { year: 2026, war: 1.5, salaryMode: "prearb" },
+    ]),
+    withSeasons(mlb({ id: "sp-signed", team: "NYY", position: "SP", role: "starter", ytd: 2 }), [
+      { year: 2026, war: 1, salaryMode: "prearb" },
+      { year: 2027, war: 3, salaryMode: "prearb" },
+    ]),
+  ];
+  const need = (view) =>
+    rankTeamNeeds(players, ["BUY", "NYY"], "BUY", 2026, { valuationView: view }).find(
+      (candidate) => candidate.id === "SP",
+    );
+  assert.equal(need("deadline").restOfSeasonWar, 1.5);
+  assert.equal(need("offseason").restOfSeasonWar, 0);
+  assert.equal(need("offseason").seasonToDateWar, 2);
+
+  const pool = [
+    withSeasons(mlb({ id: "expiring-ss", team: "BUY", position: "SS", age: 25 }), [
+      { year: 2026, war: 1, salaryMode: "prearb" },
+    ]),
+    withSeasons(mlb({ id: "signed-ss", team: "BUY", position: "SS", age: 25 }), [
+      { year: 2026, war: 1, salaryMode: "prearb" },
+      { year: 2027, war: 2, salaryMode: "prearb" },
+    ]),
+  ];
+  const values = {
+    "expiring-ss": { total: 10, pendingFreeAgent: true },
+    "signed-ss": { total: 10, pendingFreeAgent: false },
+  };
+  const ids = (view) =>
+    generateOfferPackages({
+      players: pool,
+      values,
+      buyerTeam: "BUY",
+      holePosition: "C",
+      targetValue: 10,
+      baseYear: 2026,
+      valuationView: view,
+    }).flatMap((offer) => offer.assetIds);
+  assert.ok(ids("deadline").includes("expiring-ss"));
+  assert.ok(!ids("offseason").includes("expiring-ss"));
+  assert.ok(ids("offseason").includes("signed-ss"));
 });

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <pattern id="lines" width="1200" height="26" patternUnits="userSpaceOnUse"><path d="M0 25.5h1200" stroke="#10283f" stroke-opacity=".04"/></pattern>
+  </defs>
+  <rect width="1200" height="675" fill="#f3ecd9"/>
+  <rect width="1200" height="675" fill="url(#lines)"/>
+  <rect x="46" y="46" width="1108" height="583" rx="18" fill="none" stroke="#10283f" stroke-width="3"/>
+  <rect x="58" y="58" width="1084" height="559" rx="12" fill="none" stroke="#9d3f2f"/>
+  <text x="92" y="125" fill="#9d3f2f" font-family="Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="5">INTRODUCING DUGOUT VALUE</text>
+  <text x="90" y="230" fill="#10283f" font-family="Georgia, serif" font-size="70" font-weight="700">Baseball trade values</text>
+  <text x="90" y="312" fill="#10283f" font-family="Georgia, serif" font-size="70" font-weight="700">shouldn’t be a black box.</text>
+  <g transform="translate(90 365)">
+    <rect width="1020" height="118" rx="10" fill="#10283f"/>
+    <text x="45" y="51" fill="#f3ecd9" font-family="Arial, sans-serif" font-size="25" font-weight="700">PROJECTIONS · CONTRACTS · ARBITRATION · PROSPECTS</text>
+    <text x="45" y="88" fill="#bf934d" font-family="Georgia, serif" font-size="26">Every important assumption is visible and editable.</text>
+  </g>
+  <circle cx="1035" cy="142" r="64" fill="#f3ecd9" stroke="#9d3f2f" stroke-width="6"/>
+  <path d="M1005 92c19 17 27 34 29 52s-5 36-20 55M1065 92c-19 17-27 34-29 52s5 36 20 55" fill="none" stroke="#9d3f2f" stroke-width="5"/>
+  <text x="90" y="565" fill="#3f6958" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="2">DUGOUT-VALUE.VERCEL.APP</text>
+</svg>

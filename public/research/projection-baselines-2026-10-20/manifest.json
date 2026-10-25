@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-20",
+  "files": {
+    "PROTOCOL.md": "e09109c0e04c665c30ecdc68e6285ddfbba75dc42c342c9d1696642b8737abe4",
+    "README.md": "a8b3683c22744bb88d88286efa149d9ce1d109708998aa1c38e64ffaf8377680",
+    "baselines.py": "b524fe1687106cbd1342cf9dd4f79803036a653197de8f77df006135ce06c8b7",
+    "inputs.json": "c0effa99a53ab737afbd9e3ddc8991ee2479c726955b445fb1b680c273258238",
+    "original-sources.json": "eee2c49501b92325c4577fe15842823cb218f0dac938e120341ecc2f7942ba8c",
+    "replay.py": "9d0a1e92b59090bbe019bf73620ae4ed31e3cc967fec6dbbf7239592a571abbd",
+    "results.json": "18671a072830d8b3d9a77af69e5eff73360ae7186ce4047001157466c65ec57e",
+    "roster-validation.json": "6a9f0345e35bc871687d278e1b77caabe4ce306b252d6af6217a33f49a0cdadc",
+    "scoring.py": "b294ab5ba056590553cc08ccd5a82099d03007b2fc5ea1c11dff197b2531bf4f",
+    "source-code/fetch.py": "2a9c23feece8506ab3381730d685c2d176d9e3d775d0c3043bfc3d20b09d780f",
+    "source-code/package_release.py": "78e73fb0e05f2739a8d28d82b30c2ec0e8492d84f9c9909b004bcba5dac6c7f3",
+    "source-code/run.py": "1aa3b73f1c2f129cd378d0dc97e5d7cec670b9ff15efbc10f5169e2686f28091",
+    "source-code/test_baselines.py": "6a98fb338a0825b75d64431e86915928d22e138cb3b1d43648cc1480866e3b1a",
+    "sources.json": "bfa85bae05f7abbe112d5281ba5a9de666e65951eb6a0e27580138d5c0eb3fd8"
+  }
+}

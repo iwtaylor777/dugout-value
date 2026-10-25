@@ -1,0 +1,21 @@
+node_modules
+.next
+.vinext
+.wrangler
+.git
+
+analysis
+coverage
+docs
+outputs
+work
+
+.env*
+*.log
+
+# Local-only folders that the site never reads (added Oct 24, 2026)
+Red Sox
+tmp
+output
+dist
+data/refresh-archives

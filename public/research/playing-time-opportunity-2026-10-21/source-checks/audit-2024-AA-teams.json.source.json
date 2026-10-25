@@ -1,0 +1,9 @@
+{
+  "path": "audit-2024-AA-teams.json",
+  "url": "https://statsapi.mlb.com/api/v1/teams?season=2024&sportIds=12",
+  "resolved_url": "https://statsapi.mlb.com/api/v1/teams?season=2024&sportIds=12",
+  "http_status": 200,
+  "sha256": "e83f0e4101705ac6d108d481778f6aafa4d0bec205e0d60be3c19da4ab4d5b85",
+  "bytes": 20207,
+  "retrieved_at": "2026-10-21T17:22:01.478693+00:00"
+}

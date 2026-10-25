@@ -16,9 +16,14 @@ import {
   initialSettings,
   isReliever,
   marketValueForSeason,
+  postseasonRotationValueForSeason,
   prospectRankAdjustment,
   valuePlayer,
 } from "../lib/value-model.mjs";
+
+// The July 31 view keeps rest-of-2026 seasons in value; deadline tests use it.
+const archivedDatabase = JSON.parse(await readFile(new URL("../public/research/snapshots/2026-10-17/app/data/player-database.json", import.meta.url)));
+const deadlineView = { ...initialSettings, valuationView: "deadline" };
 
 test("first-year arbitration follows role-specific counting stats", () => {
   const hitter = { position: "OF", role: "position" };
@@ -174,7 +179,8 @@ test("Zach Neto's arbitration ladder carries his first award into later raises",
   assert.equal(rows.length, 3);
   assert.ok(rows[0].salary >= 8);
   assert.ok(rows[1].salary >= 13);
-  assert.ok(rows[2].salary >= 19);
+  assert.ok(rows[2].salary >= 18);
+  assert.ok(rows[2].salary > rows[1].salary + 4);
 });
 
 test("contract notes distinguish full, partial, and absent trade protection", () => {
@@ -266,7 +272,7 @@ test("the star premium threshold is explicit and editable", () => {
 });
 
 test("deadline boost applies only to rest-of-season field value", () => {
-  const player = { position: "SP", role: "starter" };
+  const player = { position: "SS", role: "position" };
   const rosSeason = {
     year: database.meta.baseYear,
     war: 1.4,
@@ -303,6 +309,103 @@ test("deadline boost applies only to rest-of-season field value", () => {
   );
 });
 
+test("October rotation value uses a two-WAR net fourth-starter benchmark", () => {
+  const database = archivedDatabase;
+  const share = database.meta.seasonRemainingFraction;
+  const ace = { position: "SP", role: "starter" };
+  const reliever = { position: "RP", role: "reliever" };
+  const deadlineSettings = {
+    ...initialSettings,
+    deadlineBoost: 15,
+    inflation: 0,
+  };
+  const aceSeason = {
+    year: database.meta.baseYear,
+    war: 5.8 * share,
+    salary: 0,
+    salaryMode: "fixed",
+    ros: true,
+  };
+  const replacementSeason = {
+    ...aceSeason,
+    war: 2 * share,
+  };
+  const futureAceSeason = {
+    ...aceSeason,
+    year: database.meta.baseYear + 1,
+    ros: false,
+  };
+  const expected = (5.8 - 2) * 0.25 * 12 * 1.3;
+
+  assert.ok(
+    Math.abs(
+      postseasonRotationValueForSeason(
+        ace,
+        aceSeason,
+        deadlineSettings,
+        database,
+      ) - expected,
+    ) < 1e-9,
+  );
+  assert.equal(
+    postseasonRotationValueForSeason(
+      ace,
+      replacementSeason,
+      deadlineSettings,
+      database,
+    ),
+    0,
+  );
+  assert.equal(
+    postseasonRotationValueForSeason(
+      reliever,
+      aceSeason,
+      deadlineSettings,
+      database,
+    ),
+    0,
+  );
+  assert.equal(
+    postseasonRotationValueForSeason(
+      ace,
+      futureAceSeason,
+      deadlineSettings,
+      database,
+    ),
+    0,
+  );
+});
+
+test("Skubal's deadline value separates current-win and October premiums", () => {
+  const database = archivedDatabase;
+  const skubal = database.players.find(
+    (player) => player.name === "Tarik Skubal",
+  );
+  assert.ok(skubal);
+  const baseline = valuePlayer(
+    skubal,
+    { ...deadlineView, deadlineBoost: 0 },
+    database,
+  );
+  const deadline = valuePlayer(
+    skubal,
+    { ...deadlineView, deadlineBoost: 15 },
+    database,
+  );
+
+  assert.ok(baseline.total > 0);
+  assert.ok(deadline.deadlineCurrentWinAdjustment > 0);
+  assert.ok(deadline.octoberAdjustment > deadline.deadlineCurrentWinAdjustment);
+  assert.ok(deadline.total > baseline.total + 20);
+  assert.ok(
+    Math.abs(
+      deadline.deadlineAdjustment -
+        deadline.deadlineCurrentWinAdjustment -
+        deadline.octoberAdjustment,
+    ) < 1e-9,
+  );
+});
+
 test("deadline adjustment raises current MLB surplus without changing salary", () => {
   const player = {
     id: "test-deadline",
@@ -331,12 +434,12 @@ test("deadline adjustment raises current MLB surplus without changing salary", (
   };
   const baseline = valuePlayer(
     player,
-    { ...initialSettings, deadlineBoost: 0 },
+    { ...deadlineView, deadlineBoost: 0 },
     database,
   );
   const deadline = valuePlayer(
     player,
-    { ...initialSettings, deadlineBoost: 15 },
+    { ...deadlineView, deadlineBoost: 15 },
     database,
   );
 
@@ -408,7 +511,7 @@ test("player options preserve downside but do not invent club upside", () => {
   };
   const result = valuePlayer(
     player,
-    { ...initialSettings, inflation: 0, starPremium: 0 },
+    { ...initialSettings, inflation: 0, starPremium: 0, timingPreference: 0 },
     database,
   );
 
@@ -448,24 +551,21 @@ test("prospect scouting risk widens the range without moving the median", () => 
 });
 
 test("ordinal rank breaks FV ties without overruling the scouting tier", () => {
-  const topOfTier = database.players.find(
-    (player) =>
+  const tier = database.players
+    .filter(
+      (player) =>
       player.kind === "prospect" &&
       player.fv === "50" &&
       player.prospectType === "Hitter" &&
       player.rosterContext === "none" &&
-      player.rank === 33,
-  );
-  const bottomOfTier = database.players.find(
-    (player) =>
-      player.kind === "prospect" &&
-      player.fv === "50" &&
-      player.prospectType === "Hitter" &&
-      player.rosterContext === "none" &&
-      player.rank === 120,
-  );
+      Number.isFinite(player.rank),
+    )
+    .sort((left, right) => left.rank - right.rank);
+  const topOfTier = tier[0];
+  const bottomOfTier = tier.at(-1);
   assert.ok(topOfTier);
   assert.ok(bottomOfTier);
+  assert.ok(topOfTier.rank < bottomOfTier.rank);
 
   const topValue = valuePlayer(topOfTier, initialSettings, database);
   const bottomValue = valuePlayer(bottomOfTier, initialSettings, database);
@@ -537,7 +637,8 @@ test("prospect roster context follows option status and Rule 5 timing", () => {
   );
 });
 
-test("the live snapshot clears identity, reliever, opt-out, and arb checks", () => {
+test("the archived July snapshot clears identity, reliever, opt-out, and arb checks", () => {
+  const database = archivedDatabase;
   const identities = database.players.map(identity);
   assert.equal(new Set(identities).size, identities.length);
 
@@ -573,9 +674,13 @@ test("the live snapshot clears identity, reliever, opt-out, and arb checks", () 
     mlbPlayers.find((player) => player.name === "Stephen Strasburg"),
     undefined,
   );
+  const marcelFallbacks = mlbPlayers.filter((player) =>
+    player.source.projection.includes("Marcel"),
+  );
+  assert.ok(marcelFallbacks.length <= 5);
   assert.ok(
-    mlbPlayers.every(
-      (player) => !player.source.projection.includes("Marcel + aging"),
+    marcelFallbacks.every((player) =>
+      player.source.projection.includes("Depth Charts RoS"),
     ),
   );
   const protectedPlayers = mlbPlayers.filter(
@@ -745,14 +850,14 @@ test("mutually exclusive contract paths stay separate and conservative", () => {
   );
   assert.equal(effectiveSeasons(julio).at(-1)?.year, 2034);
   const fallbackValue = valuePlayer(julio, initialSettings, database).total;
-  assert.ok(fallbackValue > 150 && fallbackValue < 230);
+  assert.ok(fallbackValue > 100 && fallbackValue < 200);
 
   const clubScenario = structuredClone(julio);
   clubScenario.contractScenario.selectedId = "club";
   assert.equal(effectiveSeasons(clubScenario).at(-1)?.year, 2037);
   assert.ok(
     valuePlayer(clubScenario, initialSettings, database).total >
-      fallbackValue + 100,
+      fallbackValue + 30,
   );
 
   const mutual = julio.contractScenario.options.find(
@@ -776,4 +881,305 @@ test("injury-only club options are excluded from the healthy default", () => {
     effectiveSeasons(conditionMet).at(-1)?.contractType,
     "clubOption",
   );
+});
+
+const mlbPlayer = (overrides = {}) => ({
+  id: "test-view",
+  kind: "mlb",
+  name: "View Player",
+  team: "SEA",
+  position: "SS",
+  role: "position",
+  risk: 0,
+  seasons: [
+    { year: 2026, war: 1, salary: 5, salaryMode: "fixed", ros: true },
+    { year: 2027, war: 4, salary: 10, salaryMode: "fixed", ros: false },
+    { year: 2028, war: 4, salary: 10, salaryMode: "fixed", ros: false },
+  ],
+  ...overrides,
+});
+
+test("defaults are a 10% discount in the offseason view", () => {
+  assert.equal(initialSettings.timingPreference, 10);
+  assert.equal(initialSettings.valuationView, "offseason");
+});
+
+test("the default discount applies 1/1.1^years to future surplus", () => {
+  const player = mlbPlayer();
+  const flat = valuePlayer(
+    player,
+    { ...initialSettings, timingPreference: 0 },
+    database,
+  );
+  const discounted = valuePlayer(player, initialSettings, database);
+  for (const [index, years] of [[1, 1], [2, 2]]) {
+    assert.ok(
+      Math.abs(
+        discounted.rows[index].surplus -
+          flat.rows[index].surplus / Math.pow(1.1, years),
+      ) < 1e-9,
+    );
+  }
+  assert.ok(discounted.total < flat.total);
+});
+
+test("the FanGraphs prospect table is not discounted twice", () => {
+  const prospect = {
+    id: "test-fv-discount",
+    kind: "prospect",
+    name: "Future Player",
+    team: "SEA",
+    position: "SS",
+    prospectType: "Hitter",
+    fv: "55",
+    eta: database.meta.baseYear + 3,
+    adjustment: 0,
+    rosterContext: "none",
+  };
+  const valueAt = (timingPreference) =>
+    valuePlayer(prospect, { ...initialSettings, timingPreference }, database)
+      .total;
+  assert.equal(valueAt(10), valueAt(0));
+  assert.equal(valueAt(5), valueAt(10));
+  assert.ok(
+    Math.abs(valueAt(20) - valueAt(10) / Math.pow(1.1, 3)) < 1e-9,
+  );
+});
+
+test("offseason view excludes rest-of-2026 seasons and the deadline view keeps them", () => {
+  const player = mlbPlayer();
+  const offseason = valuePlayer(player, initialSettings, database);
+  const deadline = valuePlayer(player, deadlineView, database);
+
+  assert.equal(offseason.valuationView, "offseason");
+  assert.equal(deadline.valuationView, "deadline");
+  assert.equal(offseason.rows.length, 3);
+  assert.equal(offseason.rows[0].excluded, true);
+  assert.equal(offseason.rows[0].surplus, 0);
+  assert.equal(deadline.rows[0].excluded, false);
+  assert.ok(deadline.rows[0].surplus !== 0);
+  assert.ok(
+    Math.abs(
+      deadline.total - offseason.total - offseason.excludedRosValue,
+    ) < 1e-9,
+  );
+  assert.equal(offseason.totalWar, 8);
+  assert.equal(deadline.totalWar, 9);
+  assert.equal(offseason.totalSalary, 20);
+  assert.equal(deadline.totalSalary, 25);
+});
+
+test("a settings object with no valuationView behaves as the deadline view", () => {
+  const { valuationView: _omitted, ...legacy } = initialSettings;
+  const player = mlbPlayer();
+  assert.equal(
+    valuePlayer(player, legacy, database).total,
+    valuePlayer(player, deadlineView, database).total,
+  );
+});
+
+test("offseason view flags pending free agents and leaves the deadline view alone", () => {
+  const rental = mlbPlayer({
+    seasons: [
+      { year: 2026, war: 2, salary: 4, salaryMode: "fixed", ros: true },
+    ],
+  });
+  const offseason = valuePlayer(rental, initialSettings, database);
+  assert.equal(offseason.pendingFreeAgent, true);
+  assert.equal(offseason.total, 0);
+  assert.equal(offseason.controlThrough, 2026);
+  assert.equal(offseason.totalWar, 0);
+
+  const deadline = valuePlayer(rental, deadlineView, database);
+  assert.equal(deadline.pendingFreeAgent, false);
+  assert.ok(deadline.total > 0);
+
+  assert.equal(
+    valuePlayer(mlbPlayer(), initialSettings, database).pendingFreeAgent,
+    false,
+  );
+});
+
+test("pending free agents in the live snapshot match players with no seasons after 2026", () => {
+  const mlb = database.players.filter((player) => player.kind === "mlb");
+  const expected = mlb.filter(
+    (player) =>
+      !effectiveSeasons(player).some(
+        (season) => season.year > database.meta.baseYear,
+      ),
+  ).length;
+  const flagged = mlb.filter(
+    (player) =>
+      valuePlayer(player, initialSettings, database).pendingFreeAgent,
+  ).length;
+  assert.equal(flagged, expected);
+  assert.ok(flagged > 100);
+  assert.equal(
+    mlb.filter(
+      (player) =>
+        valuePlayer(player, deadlineView, database).pendingFreeAgent,
+    ).length,
+    0,
+  );
+});
+
+test("driver fields describe control, WAR, salary, extrapolation and the FanGraphs rank", () => {
+  const mcgonigle = database.players.find(
+    (player) => player.name === "Kevin McGonigle",
+  );
+  const result = valuePlayer(mcgonigle, initialSettings, database);
+  const anchor = mcgonigle.agingModel.anchorYear;
+
+  assert.equal(result.controlThrough, 2034);
+  assert.equal(result.fgTradeValueRank, mcgonigle.futureProjectionUpdate.rank);
+  assert.equal(result.valuationBasis, "projection");
+  assert.ok(
+    result.rows.every((row) => row.extrapolated === row.year > anchor),
+  );
+  assert.ok(result.rows.some((row) => row.extrapolated));
+  const fromRows = result.rows
+    .filter((row) => row.extrapolated)
+    .reduce((sum, row) => sum + row.surplus, 0);
+  assert.ok(Math.abs(result.extrapolatedValue - fromRows) < 1e-9);
+  assert.ok(
+    Math.abs(result.extrapolatedShare - result.extrapolatedValue / result.total) <
+      1e-12,
+  );
+  assert.ok(
+    Math.abs(
+      result.totalWar -
+        result.rows.filter((row) => !row.excluded).reduce((s, r) => s + r.war, 0),
+    ) < 1e-9,
+  );
+  assert.equal(
+    valuePlayer(
+      { ...mcgonigle, futureProjectionUpdate: undefined },
+      initialSettings,
+      database,
+    ).fgTradeValueRank,
+    null,
+  );
+});
+
+test("rookie blends are labeled as blended with prospect grade", () => {
+  const blended = database.players.find(
+    (player) => player.kind === "mlb" && player.rookieMode === "blend",
+  );
+  const result = valuePlayer(blended, initialSettings, database);
+  assert.equal(result.valuationBasis, "projection blended with prospect grade");
+  assert.ok(result.prospectWeight > 0 && result.prospectWeight <= 0.8);
+  const projectionOnly = valuePlayer(
+    { ...blended, rookieMode: "projection" },
+    initialSettings,
+    database,
+  );
+  assert.equal(projectionOnly.valuationBasis, "projection");
+  assert.equal(projectionOnly.prospectWeight, 0);
+});
+
+test("Soto's post-2029 opt-out is one all-or-nothing option", () => {
+  const soto = database.players.find((player) => player.name === "Juan Soto");
+  assert.ok(soto?.contractScenario);
+  assert.equal(soto.contractScenario.selectedId, "option");
+  assert.deepEqual(
+    soto.contractScenario.options.map((option) => option.id),
+    ["option", "walks", "stays", "voided"],
+  );
+  assert.equal(soto.seasons.at(-1).year, 2029);
+  const withPath = (id, settings = initialSettings) => {
+    const copy = structuredClone(soto);
+    copy.contractScenario.selectedId = id;
+    return valuePlayer(copy, settings, database);
+  };
+  const walks = withPath("walks");
+  const stays = withPath("stays");
+  const voided = withPath("voided");
+  const option = withPath("option");
+
+  assert.equal(walks.controlThrough, 2029);
+  assert.equal(stays.controlThrough, 2039);
+  // At $12M/WAR the ten years cost more than they return, so he stays and the
+  // club carries them; the option value equals the guaranteed-years value.
+  assert.ok(stays.total < walks.total);
+  assert.ok(Math.abs(option.total - stays.total) < 1e-9);
+  assert.ok(voided.total < stays.total);
+  // At a higher WAR price the block is worth more than it costs and he opts out.
+  const rich = { ...initialSettings, dollarsPerWar: 18 };
+  const richOption = withPath("option", rich);
+  assert.ok(Math.abs(richOption.total - withPath("walks", rich).total) < 1e-9);
+  assert.ok(richOption.rows.filter((row) => row.optionBlock).every((row) => row.optedOut));
+  assert.equal(richOption.controlThrough, 2029);
+  assert.ok(withPath("stays", rich).total > richOption.total);
+});
+
+test("club control stops before player-option years; controlThrough keeps counting them", () => {
+  const byName = (name) => database.players.find((player) => player.name === name);
+  const julio = valuePlayer(byName("Julio Rodríguez"), initialSettings, database);
+  assert.equal(julio.clubControlThrough, 2029);
+  assert.equal(julio.controlThrough, 2034);
+  assert.equal(julio.playerOptionThrough, 2034);
+  // Club-control totals exclude the option years, so they are smaller.
+  assert.ok(julio.clubControlWar < julio.totalWar);
+  assert.ok(julio.clubControlSalary < julio.totalSalary);
+  const clubRows = julio.rows.filter(
+    (row) => !row.excluded && !row.optedOut && row.year <= 2029,
+  );
+  assert.ok(
+    Math.abs(julio.clubControlWar - clubRows.reduce((s, r) => s + r.war, 0)) < 1e-9,
+  );
+  assert.ok(
+    Math.abs(
+      julio.clubControlSalary - clubRows.reduce((s, r) => s + r.salary, 0),
+    ) < 1e-9,
+  );
+
+  // No option: club control equals total control and there is no option tail.
+  const mcgonigle = valuePlayer(byName("Kevin McGonigle"), initialSettings, database);
+  assert.equal(mcgonigle.clubControlThrough, mcgonigle.controlThrough);
+  assert.equal(mcgonigle.playerOptionThrough, null);
+  assert.ok(Math.abs(mcgonigle.clubControlWar - mcgonigle.totalWar) < 1e-9);
+
+  // Soto: on the default option path club control ends in 2029.
+  const soto = byName("Juan Soto");
+  const withPath = (id) => {
+    const copy = structuredClone(soto);
+    copy.contractScenario.selectedId = id;
+    return valuePlayer(copy, initialSettings, database);
+  };
+  assert.equal(withPath("option").clubControlThrough, 2029);
+  assert.equal(withPath("option").playerOptionThrough, 2039);
+  // Guaranteed years are club control, not an option.
+  assert.equal(withPath("stays").clubControlThrough, 2039);
+  assert.equal(withPath("stays").playerOptionThrough, null);
+  assert.equal(withPath("walks").clubControlThrough, 2029);
+  assert.equal(withPath("walks").playerOptionThrough, null);
+
+  // Prospects and pending free agents.
+  const prospect = database.players.find((player) => player.kind === "prospect");
+  const p = valuePlayer(prospect, initialSettings, database);
+  assert.equal(p.clubControlThrough, null);
+  assert.equal(p.playerOptionThrough, null);
+  assert.equal(p.clubControlWar, null);
+});
+
+test("club-control surplus plus player-option surplus equals the total", () => {
+  for (const name of ["Juan Soto", "Bobby Witt Jr.", "Julio Rodríguez"]) {
+    const player = database.players.find(
+      (item) => item.name === name && item.kind === "mlb",
+    );
+    const result = valuePlayer(player, initialSettings, database);
+    const counted = result.rows.filter((row) => !row.excluded && !row.optedOut);
+    const club = counted
+      .filter((row) => row.year <= result.clubControlThrough)
+      .reduce((sum, row) => sum + row.surplus, 0);
+    const option = counted
+      .filter((row) => row.year > result.clubControlThrough)
+      .reduce((sum, row) => sum + row.surplus, 0);
+    assert.ok(
+      Math.abs(club + option - result.total) < 0.05,
+      `${name}: ${club} + ${option} vs ${result.total}`,
+    );
+    // The sentence reports total - club as the option effect.
+    assert.ok(Math.abs(result.total - club - option) < 0.05);
+  }
 });

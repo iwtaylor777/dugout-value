@@ -1,0 +1,2263 @@
+{
+  "status": "retrospective development comparison",
+  "date": "2026-10-20",
+  "bootstrap_resamples": 5000,
+  "audits": {
+    "2024-pit": {
+      "key": "2024-pit",
+      "kind": "pit",
+      "product": "rzips",
+      "capture": "20240621173841",
+      "extra": "&team=0&lg=all&players=0",
+      "forecast_rows": 633,
+      "raw_forecast_rows": 633,
+      "source_rows": 668,
+      "target_rows": 740,
+      "excluded_forecasts": [],
+      "invalid_ids": 0,
+      "duplicate_ids": 0,
+      "projection_load_utc": "2024-06-21T10:40:29+00:00",
+      "first_target_game_utc": "2024-06-21T18:20:00+00:00",
+      "excluded_forecast_work": 0,
+      "source_start": "2024-03-20",
+      "source_end": "2024-06-20",
+      "target_start": "2024-06-21",
+      "target_end": "2024-09-30",
+      "league_rates": {
+        "K-BB%": 0.13864569245735164,
+        "FIP": 4.08701510453884
+      },
+      "pace_factor": 1.096774193548387,
+      "target_ids_absent": 91,
+      "zero_source": 0,
+      "unforecast_players": 198,
+      "unforecast_work": 12532.0,
+      "target_total_work": 98155.0,
+      "forecast_roster_work_coverage": 0.8723243849014314,
+      "workload_interpretation": "basic ZiPS workload diagnostic",
+      "completed_games": 1123,
+      "gap_games_started": 0,
+      "elapsed_team_games": 74.86666666666666,
+      "remaining_team_games": 87.13333333333334,
+      "roster_sizes": {},
+      "roster_date": null,
+      "roster_unknown": 0
+    },
+    "2025-pit": {
+      "key": "2025-pit",
+      "kind": "pit",
+      "product": "rzips",
+      "capture": "20250624042535",
+      "extra": "&team=0&lg=all&players=0",
+      "baseline_end": "2025-06-22",
+      "forecast_rows": 659,
+      "raw_forecast_rows": 659,
+      "source_rows": 709,
+      "target_rows": 739,
+      "excluded_forecasts": [],
+      "invalid_ids": 0,
+      "duplicate_ids": 0,
+      "projection_load_utc": "2025-06-23T10:58:52+00:00",
+      "first_target_game_utc": "2025-06-24T22:35:00+00:00",
+      "excluded_forecast_work": 0,
+      "source_start": "2025-03-18",
+      "source_end": "2025-06-22",
+      "target_start": "2025-06-24",
+      "target_end": "2025-09-28",
+      "league_rates": {
+        "K-BB%": 0.13367849648754676,
+        "FIP": 4.181535452714121
+      },
+      "pace_factor": 1.0,
+      "target_ids_absent": 102,
+      "zero_source": 0,
+      "unforecast_players": 182,
+      "unforecast_work": 11647.0,
+      "target_total_work": 94556.0,
+      "forecast_roster_work_coverage": 0.8768243157493972,
+      "workload_interpretation": "basic ZiPS workload diagnostic",
+      "completed_games": 1165,
+      "gap_games_started": 9,
+      "elapsed_team_games": 77.66666666666667,
+      "remaining_team_games": 83.73333333333333,
+      "roster_sizes": {},
+      "roster_date": null,
+      "roster_unknown": 0
+    },
+    "2025-bat": {
+      "key": "2025-bat",
+      "kind": "bat",
+      "product": "rzips",
+      "capture": "20250731083705",
+      "extra": "",
+      "forecast_rows": 611,
+      "raw_forecast_rows": 611,
+      "source_rows": 1339,
+      "target_rows": 1171,
+      "excluded_forecasts": [],
+      "invalid_ids": 0,
+      "duplicate_ids": 0,
+      "projection_load_utc": "2025-07-30T11:03:45+00:00",
+      "first_target_game_utc": "2025-07-31T17:05:00+00:00",
+      "excluded_forecast_work": 0,
+      "source_start": "2025-03-18",
+      "source_end": "2025-07-30",
+      "target_start": "2025-07-31",
+      "target_end": "2025-09-28",
+      "league_rates": {
+        "K%": 0.21928867909172295,
+        "BB%": 0.08456091804346057,
+        "wOBA": 0.31264037134057343
+      },
+      "pace_factor": 0.4444444444444444,
+      "target_ids_absent": 129,
+      "zero_source": 1,
+      "unforecast_players": 57,
+      "unforecast_work": 3090.0,
+      "target_total_work": 60055.0,
+      "forecast_roster_work_coverage": 0.9485471650986596,
+      "workload_interpretation": "basic ZiPS workload diagnostic",
+      "completed_games": 1632,
+      "gap_games_started": 0,
+      "elapsed_team_games": 108.8,
+      "remaining_team_games": 53.2,
+      "roster_sizes": {},
+      "roster_date": null,
+      "roster_unknown": 0
+    },
+    "2024-apr-dc-bat": {
+      "key": "2024-apr-dc-bat",
+      "kind": "bat",
+      "product": "rfangraphsdc",
+      "capture": "20240410082920",
+      "extra": "",
+      "forecast_rows": 584,
+      "raw_forecast_rows": 600,
+      "source_rows": 844,
+      "target_rows": 1436,
+      "excluded_forecasts": [
+        {
+          "player_id": "sa3014485",
+          "name": "Tyler Gentry",
+          "forecast_work": 92.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3010692",
+          "name": "Orelvis Martinez",
+          "forecast_work": 72.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3017372",
+          "name": "Paul McIntosh",
+          "forecast_work": 24.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3006891",
+          "name": "Leo Jimenez",
+          "forecast_work": 39.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa917333",
+          "name": "Jair Camargo",
+          "forecast_work": 18.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3011890",
+          "name": "Davis Wendzel",
+          "forecast_work": 59.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3019978",
+          "name": "Nathan Martorella",
+          "forecast_work": 58.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3005554",
+          "name": "Eddys Leonard",
+          "forecast_work": 7.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3009845",
+          "name": "Kenedy Corona",
+          "forecast_work": 7.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3014838",
+          "name": "Pedro Le\u00f3n",
+          "forecast_work": 13.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3005598",
+          "name": "Julio Carreras",
+          "forecast_work": 7.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa969091",
+          "name": "Lazaro Armenteros",
+          "forecast_work": 7.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3004068",
+          "name": "Chris Roller",
+          "forecast_work": 7.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3009957",
+          "name": "Aaron Schunk",
+          "forecast_work": 26.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3014547",
+          "name": "Zach DeLoach",
+          "forecast_work": 66.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        },
+        {
+          "player_id": "sa3010151",
+          "name": "Greg Jones",
+          "forecast_work": 52.0,
+          "reason": "no verified numeric FanGraphs or MLBAM crosswalk"
+        }
+      ],
+      "invalid_ids": 16,
+      "duplicate_ids": 0,
+      "projection_load_utc": "2024-04-09T10:36:14+00:00",
+      "first_target_game_utc": "2024-04-10T17:10:00+00:00",
+      "excluded_forecast_work": 554.0,
+      "source_start": "2024-03-20",
+      "source_end": "2024-04-09",
+      "target_start": "2024-04-10",
+      "target_end": "2024-09-30",
+      "league_rates": {
+        "K%": 0.22605158120970217,
+        "BB%": 0.09042063248388087,
+        "wOBA": 0.30950254059481225
+      },
+      "pace_factor": 8.285714285714286,
+      "target_ids_absent": 47,
+      "zero_source": 176,
+      "unforecast_players": 112,
+      "unforecast_work": 6682.0,
+      "target_total_work": 169421.0,
+      "forecast_roster_work_coverage": 0.9605597889281731,
+      "workload_interpretation": "roster forecast",
+      "completed_games": 171,
+      "gap_games_started": 0,
+      "elapsed_team_games": 11.4,
+      "remaining_team_games": 150.6,
+      "roster_sizes": {
+        "108": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "109": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "110": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "111": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "112": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "113": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "114": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "115": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "116": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "117": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "118": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "119": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "120": {
+          "raw_rows": 27,
+          "unique_players": 27,
+          "identical_duplicates": 0
+        },
+        "121": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "133": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "134": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "135": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "136": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "137": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "138": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "139": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "140": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "141": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "142": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "143": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "144": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "145": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "146": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "147": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "158": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        }
+      },
+      "roster_date": "2024-04-09",
+      "roster_unknown": 0
+    },
+    "2025-dc-bat": {
+      "key": "2025-dc-bat",
+      "kind": "bat",
+      "product": "rfangraphsdc",
+      "capture": "20250601113224",
+      "extra": "",
+      "forecast_rows": 612,
+      "raw_forecast_rows": 612,
+      "source_rows": 1159,
+      "target_rows": 1336,
+      "excluded_forecasts": [],
+      "invalid_ids": 0,
+      "duplicate_ids": 0,
+      "projection_load_utc": "2025-06-01T05:15:51+00:00",
+      "first_target_game_utc": "2025-06-01T17:05:00+00:00",
+      "excluded_forecast_work": 0,
+      "source_start": "2025-03-18",
+      "source_end": "2025-05-31",
+      "target_start": "2025-06-01",
+      "target_end": "2025-09-28",
+      "league_rates": {
+        "K%": 0.21942302985805187,
+        "BB%": 0.08656081742535487,
+        "wOBA": 0.31105694033961034
+      },
+      "pace_factor": 1.6,
+      "target_ids_absent": 74,
+      "zero_source": 105,
+      "unforecast_players": 75,
+      "unforecast_work": 3556.0,
+      "target_total_work": 117549.0,
+      "forecast_roster_work_coverage": 0.9697487856128083,
+      "workload_interpretation": "roster forecast",
+      "completed_games": 869,
+      "gap_games_started": 0,
+      "elapsed_team_games": 57.93333333333333,
+      "remaining_team_games": 104.06666666666666,
+      "roster_sizes": {
+        "108": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "109": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "110": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "111": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "112": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "113": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "114": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "115": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "116": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "117": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "118": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "119": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "120": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "121": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "133": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "134": {
+          "raw_rows": 27,
+          "unique_players": 27,
+          "identical_duplicates": 0
+        },
+        "135": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "136": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "137": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "138": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "139": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "140": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "141": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "142": {
+          "raw_rows": 27,
+          "unique_players": 26,
+          "identical_duplicates": 1
+        },
+        "143": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "144": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "145": {
+          "raw_rows": 25,
+          "unique_players": 25,
+          "identical_duplicates": 0
+        },
+        "146": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "147": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        },
+        "158": {
+          "raw_rows": 26,
+          "unique_players": 26,
+          "identical_duplicates": 0
+        }
+      },
+      "roster_date": "2025-05-31",
+      "roster_unknown": 0
+    }
+  },
+  "scores": {
+    "2024-pit": {
+      "workload": {
+        "metrics": {
+          "archived": {
+            "n": 633,
+            "weight": 633.0,
+            "rmse": 102.2571951759135,
+            "mae": 79.68404423380727,
+            "bias": 44.733017377567144
+          },
+          "calendar": {
+            "n": 633,
+            "weight": 633.0,
+            "rmse": 89.40757753921226,
+            "mae": 62.31101258727005,
+            "bias": 9.924629261580787
+          },
+          "games": {
+            "n": 633,
+            "weight": 633.0,
+            "rmse": 93.03545090503424,
+            "mae": 64.71363097323099,
+            "bias": 18.803648824872468
+          },
+          "multiyear": {
+            "n": 633,
+            "weight": 633.0,
+            "rmse": 89.919208791169,
+            "mae": 64.4788014244587,
+            "bias": -4.664888064088466
+          }
+        },
+        "comparisons": {
+          "archived_vs_multiyear": {
+            "rmse_reduction_pct": -13.72119100091127,
+            "interval95_pct": [
+              -21.69496052954943,
+              -6.384728698770506
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_calendar": {
+            "rmse_reduction_pct": -0.572245961738928,
+            "interval95_pct": [
+              -6.706560368561231,
+              5.212205754698902
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_games": {
+            "rmse_reduction_pct": 3.3495211594622556,
+            "interval95_pct": [
+              -2.9481138233085433,
+              9.203761789956207
+            ],
+            "resamples": 5000
+          },
+          "archived_vs_games": {
+            "rmse_reduction_pct": -9.91207564554326,
+            "interval95_pct": [
+              -18.472757956107596,
+              -2.5748569337379146
+            ],
+            "resamples": 5000
+          }
+        },
+        "groups": {
+          "not_requested": {
+            "n": 633,
+            "zero_outcomes": 91,
+            "metrics": {
+              "archived": {
+                "n": 633,
+                "weight": 633.0,
+                "rmse": 102.2571951759135,
+                "mae": 79.68404423380727,
+                "bias": 44.733017377567144
+              },
+              "calendar": {
+                "n": 633,
+                "weight": 633.0,
+                "rmse": 89.40757753921226,
+                "mae": 62.31101258727005,
+                "bias": 9.924629261580787
+              },
+              "games": {
+                "n": 633,
+                "weight": 633.0,
+                "rmse": 93.03545090503424,
+                "mae": 64.71363097323099,
+                "bias": 18.803648824872468
+              },
+              "multiyear": {
+                "n": 633,
+                "weight": 633.0,
+                "rmse": 89.919208791169,
+                "mae": 64.4788014244587,
+                "bias": -4.664888064088466
+              }
+            },
+            "mean_actual": 135.2654028436019
+          },
+          "prior_mlb": {
+            "n": 564,
+            "zero_outcomes": 77,
+            "metrics": {
+              "archived": {
+                "n": 564,
+                "weight": 564.0,
+                "rmse": 99.38438166607939,
+                "mae": 76.49290780141844,
+                "bias": 44.680851063829785
+              },
+              "calendar": {
+                "n": 564,
+                "weight": 564.0,
+                "rmse": 85.33409064680076,
+                "mae": 59.575268817204304,
+                "bias": 13.981468771448169
+              },
+              "games": {
+                "n": 564,
+                "weight": 564.0,
+                "rmse": 89.52114431688554,
+                "mae": 62.25101678002818,
+                "bias": 23.21097396158974
+              },
+              "multiyear": {
+                "n": 564,
+                "weight": 564.0,
+                "rmse": 82.97644612552001,
+                "mae": 61.04110250876161,
+                "bias": 3.506098175988464
+              }
+            },
+            "mean_actual": 136.93971631205673
+          },
+          "no_prior_mlb": {
+            "n": 69,
+            "zero_outcomes": 14,
+            "metrics": {
+              "archived": {
+                "n": 69,
+                "weight": 69.0,
+                "rmse": 123.25383258291326,
+                "mae": 105.76811594202898,
+                "bias": 45.15942028985507
+              },
+              "calendar": {
+                "n": 69,
+                "weight": 69.0,
+                "rmse": 117.52434113032626,
+                "mae": 84.67274427302479,
+                "bias": -23.23562412342217
+              },
+              "games": {
+                "n": 69,
+                "weight": 69.0,
+                "rmse": 117.89677481915885,
+                "mae": 84.84282524810614,
+                "bias": -17.221443596990444
+              },
+              "multiyear": {
+                "n": 69,
+                "weight": 69.0,
+                "rmse": 133.78046457553995,
+                "mae": 92.57825343102616,
+                "bias": -71.45381906993468
+              }
+            },
+            "mean_actual": 121.57971014492753
+          },
+          "current_mlb": {
+            "n": 633,
+            "zero_outcomes": 91,
+            "metrics": {
+              "archived": {
+                "n": 633,
+                "weight": 633.0,
+                "rmse": 102.2571951759135,
+                "mae": 79.68404423380727,
+                "bias": 44.733017377567144
+              },
+              "calendar": {
+                "n": 633,
+                "weight": 633.0,
+                "rmse": 89.40757753921226,
+                "mae": 62.31101258727005,
+                "bias": 9.924629261580787
+              },
+              "games": {
+                "n": 633,
+                "weight": 633.0,
+                "rmse": 93.03545090503424,
+                "mae": 64.71363097323099,
+                "bias": 18.803648824872468
+              },
+              "multiyear": {
+                "n": 633,
+                "weight": 633.0,
+                "rmse": 89.919208791169,
+                "mae": 64.4788014244587,
+                "bias": -4.664888064088466
+              }
+            },
+            "mean_actual": 135.2654028436019
+          }
+        }
+      },
+      "rates": {
+        "K-BB%": {
+          "metrics": {
+            "archived": {
+              "n": 542,
+              "weight": 85623.0,
+              "rmse": 0.05849565019908635,
+              "mae": 0.043651318954308405,
+              "bias": -0.01093279612852832
+            },
+            "current_prior": {
+              "n": 542,
+              "weight": 85623.0,
+              "rmse": 0.059686814997752566,
+              "mae": 0.04483101513090174,
+              "bias": -0.008983816191638974
+            },
+            "multiyear": {
+              "n": 542,
+              "weight": 85623.0,
+              "rmse": 0.056997032178566116,
+              "mae": 0.04259495146802051,
+              "bias": -0.0034567913375732734
+            }
+          },
+          "comparisons": {
+            "archived_vs_multiyear": {
+              "rmse_reduction_pct": -2.6292913213888194,
+              "interval95_pct": [
+                -6.1999074136404735,
+                0.7668470031870441
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_archived": {
+              "rmse_reduction_pct": 2.5619306998379834,
+              "interval95_pct": [
+                -0.7727730601765777,
+                5.837959322865669
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_current_prior": {
+              "rmse_reduction_pct": 4.50649413825772,
+              "interval95_pct": [
+                0.89752362432276,
+                7.962168337259912
+              ],
+              "resamples": 5000
+            }
+          },
+          "positive_work_excluded": 0
+        }
+      }
+    },
+    "2025-pit": {
+      "workload": {
+        "metrics": {
+          "archived": {
+            "n": 659,
+            "weight": 659.0,
+            "rmse": 101.68396993643287,
+            "mae": 79.57814871016691,
+            "bias": 47.99393019726859
+          },
+          "calendar": {
+            "n": 659,
+            "weight": 659.0,
+            "rmse": 88.8841635904706,
+            "mae": 61.28679817905918,
+            "bias": 6.024279210925645
+          },
+          "games": {
+            "n": 659,
+            "weight": 659.0,
+            "rmse": 93.2160261384229,
+            "mae": 64.56342227461298,
+            "bias": 16.322089002064505
+          },
+          "multiyear": {
+            "n": 659,
+            "weight": 659.0,
+            "rmse": 87.94637013287004,
+            "mae": 63.961813799875024,
+            "bias": -3.67180219584041
+          }
+        },
+        "comparisons": {
+          "archived_vs_multiyear": {
+            "rmse_reduction_pct": -15.620428430198949,
+            "interval95_pct": [
+              -22.85618735946897,
+              -8.719089753396082
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_calendar": {
+            "rmse_reduction_pct": 1.0550737271055393,
+            "interval95_pct": [
+              -4.01530986268173,
+              5.753591535114748
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_games": {
+            "rmse_reduction_pct": 5.653165259080649,
+            "interval95_pct": [
+              0.45327169716603977,
+              10.501177354536988
+            ],
+            "resamples": 5000
+          },
+          "archived_vs_games": {
+            "rmse_reduction_pct": -9.084214537782737,
+            "interval95_pct": [
+              -16.613811967885344,
+              -2.20948155864579
+            ],
+            "resamples": 5000
+          }
+        },
+        "groups": {
+          "not_requested": {
+            "n": 659,
+            "zero_outcomes": 102,
+            "metrics": {
+              "archived": {
+                "n": 659,
+                "weight": 659.0,
+                "rmse": 101.68396993643287,
+                "mae": 79.57814871016691,
+                "bias": 47.99393019726859
+              },
+              "calendar": {
+                "n": 659,
+                "weight": 659.0,
+                "rmse": 88.8841635904706,
+                "mae": 61.28679817905918,
+                "bias": 6.024279210925645
+              },
+              "games": {
+                "n": 659,
+                "weight": 659.0,
+                "rmse": 93.2160261384229,
+                "mae": 64.56342227461298,
+                "bias": 16.322089002064505
+              },
+              "multiyear": {
+                "n": 659,
+                "weight": 659.0,
+                "rmse": 87.94637013287004,
+                "mae": 63.961813799875024,
+                "bias": -3.67180219584041
+              }
+            },
+            "mean_actual": 125.8103186646434
+          },
+          "prior_mlb": {
+            "n": 581,
+            "zero_outcomes": 88,
+            "metrics": {
+              "archived": {
+                "n": 581,
+                "weight": 581.0,
+                "rmse": 100.85094913524715,
+                "mae": 77.98795180722891,
+                "bias": 46.693631669535286
+              },
+              "calendar": {
+                "n": 581,
+                "weight": 581.0,
+                "rmse": 89.49016042220747,
+                "mae": 61.218588640275385,
+                "bias": 8.475043029259897
+              },
+              "games": {
+                "n": 581,
+                "weight": 581.0,
+                "rmse": 94.13264123359352,
+                "mae": 64.67361142916239,
+                "bias": 19.334570409165778
+              },
+              "multiyear": {
+                "n": 581,
+                "weight": 581.0,
+                "rmse": 87.30290798260633,
+                "mae": 63.672630497982325,
+                "bias": 2.4397315552726995
+              }
+            },
+            "mean_actual": 130.55077452667814
+          },
+          "no_prior_mlb": {
+            "n": 78,
+            "zero_outcomes": 14,
+            "metrics": {
+              "archived": {
+                "n": 78,
+                "weight": 78.0,
+                "rmse": 107.68633225180508,
+                "mae": 91.42307692307692,
+                "bias": 57.67948717948718
+              },
+              "calendar": {
+                "n": 78,
+                "weight": 78.0,
+                "rmse": 84.23319279969607,
+                "mae": 61.794871794871796,
+                "bias": -12.23076923076923
+              },
+              "games": {
+                "n": 78,
+                "weight": 78.0,
+                "rmse": 86.08184708692711,
+                "mae": 63.7426543413668,
+                "bias": -6.117035325189835
+              },
+              "multiyear": {
+                "n": 78,
+                "weight": 78.0,
+                "rmse": 92.59874844453105,
+                "mae": 66.11585865115276,
+                "bias": -49.19489334195217
+              }
+            },
+            "mean_actual": 90.5
+          },
+          "current_mlb": {
+            "n": 659,
+            "zero_outcomes": 102,
+            "metrics": {
+              "archived": {
+                "n": 659,
+                "weight": 659.0,
+                "rmse": 101.68396993643287,
+                "mae": 79.57814871016691,
+                "bias": 47.99393019726859
+              },
+              "calendar": {
+                "n": 659,
+                "weight": 659.0,
+                "rmse": 88.8841635904706,
+                "mae": 61.28679817905918,
+                "bias": 6.024279210925645
+              },
+              "games": {
+                "n": 659,
+                "weight": 659.0,
+                "rmse": 93.2160261384229,
+                "mae": 64.56342227461298,
+                "bias": 16.322089002064505
+              },
+              "multiyear": {
+                "n": 659,
+                "weight": 659.0,
+                "rmse": 87.94637013287004,
+                "mae": 63.961813799875024,
+                "bias": -3.67180219584041
+              }
+            },
+            "mean_actual": 125.8103186646434
+          }
+        }
+      },
+      "rates": {
+        "K-BB%": {
+          "metrics": {
+            "archived": {
+              "n": 557,
+              "weight": 82909.0,
+              "rmse": 0.05706498662875786,
+              "mae": 0.04358925025885741,
+              "bias": -0.00396182785592102
+            },
+            "current_prior": {
+              "n": 557,
+              "weight": 82909.0,
+              "rmse": 0.06003189799193959,
+              "mae": 0.04636333954125135,
+              "bias": -0.006895178014671643
+            },
+            "multiyear": {
+              "n": 557,
+              "weight": 82909.0,
+              "rmse": 0.05681331100530061,
+              "mae": 0.04309972120918763,
+              "bias": 0.0011039003999828688
+            }
+          },
+          "comparisons": {
+            "archived_vs_multiyear": {
+              "rmse_reduction_pct": -0.44298707293044387,
+              "interval95_pct": [
+                -3.0076691847776855,
+                2.098262420387682
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_archived": {
+              "rmse_reduction_pct": 0.44103335219291745,
+              "interval95_pct": [
+                -2.1432330746713015,
+                2.9198497541033874
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_current_prior": {
+              "rmse_reduction_pct": 5.3614613135688804,
+              "interval95_pct": [
+                1.2789084436507239,
+                8.955684138471847
+              ],
+              "resamples": 5000
+            }
+          },
+          "positive_work_excluded": 0
+        }
+      }
+    },
+    "2025-bat": {
+      "workload": {
+        "metrics": {
+          "archived": {
+            "n": 611,
+            "weight": 611.0,
+            "rmse": 72.71612630324802,
+            "mae": 59.44844517184943,
+            "bias": 42.94762684124386
+          },
+          "calendar": {
+            "n": 611,
+            "weight": 611.0,
+            "rmse": 53.53229712599926,
+            "mae": 39.73758865248227,
+            "bias": -3.8670667394071696
+          },
+          "games": {
+            "n": 611,
+            "weight": 611.0,
+            "rmse": 55.07210680628217,
+            "mae": 40.10974655819775,
+            "bias": 5.085894627900268
+          },
+          "multiyear": {
+            "n": 611,
+            "weight": 611.0,
+            "rmse": 57.34810232787401,
+            "mae": 43.56029116128213,
+            "bias": -1.1082317677838105
+          }
+        },
+        "comparisons": {
+          "archived_vs_multiyear": {
+            "rmse_reduction_pct": -26.79778990333633,
+            "interval95_pct": [
+              -35.44885302312206,
+              -19.024196486922946
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_calendar": {
+            "rmse_reduction_pct": -7.12804308190525,
+            "interval95_pct": [
+              -11.32650007207051,
+              -3.259030945369659
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_games": {
+            "rmse_reduction_pct": -4.1327554974385174,
+            "interval95_pct": [
+              -8.430520006465613,
+              -0.2125486536774817
+            ],
+            "resamples": 5000
+          },
+          "archived_vs_games": {
+            "rmse_reduction_pct": -32.038032536197,
+            "interval95_pct": [
+              -41.75942279969147,
+              -23.592169926738666
+            ],
+            "resamples": 5000
+          }
+        },
+        "groups": {
+          "not_requested": {
+            "n": 611,
+            "zero_outcomes": 130,
+            "metrics": {
+              "archived": {
+                "n": 611,
+                "weight": 611.0,
+                "rmse": 72.71612630324802,
+                "mae": 59.44844517184943,
+                "bias": 42.94762684124386
+              },
+              "calendar": {
+                "n": 611,
+                "weight": 611.0,
+                "rmse": 53.53229712599926,
+                "mae": 39.73758865248227,
+                "bias": -3.8670667394071696
+              },
+              "games": {
+                "n": 611,
+                "weight": 611.0,
+                "rmse": 55.07210680628217,
+                "mae": 40.10974655819775,
+                "bias": 5.085894627900268
+              },
+              "multiyear": {
+                "n": 611,
+                "weight": 611.0,
+                "rmse": 57.34810232787401,
+                "mae": 43.56029116128213,
+                "bias": -1.1082317677838105
+              }
+            },
+            "mean_actual": 93.23240589198036
+          },
+          "prior_mlb": {
+            "n": 535,
+            "zero_outcomes": 113,
+            "metrics": {
+              "archived": {
+                "n": 535,
+                "weight": 535.0,
+                "rmse": 71.68928281848018,
+                "mae": 58.18691588785047,
+                "bias": 42.1196261682243
+              },
+              "calendar": {
+                "n": 535,
+                "weight": 535.0,
+                "rmse": 52.13187142237757,
+                "mae": 38.699688473520254,
+                "bias": -0.9119418483904512
+              },
+              "games": {
+                "n": 535,
+                "weight": 535.0,
+                "rmse": 54.10917922645782,
+                "mae": 39.263695711929635,
+                "bias": 8.655353216052784
+              },
+              "multiyear": {
+                "n": 535,
+                "weight": 535.0,
+                "rmse": 55.04736743252957,
+                "mae": 42.09156252359428,
+                "bias": 4.662690682764943
+              }
+            },
+            "mean_actual": 96.40934579439252
+          },
+          "no_prior_mlb": {
+            "n": 76,
+            "zero_outcomes": 17,
+            "metrics": {
+              "archived": {
+                "n": 76,
+                "weight": 76.0,
+                "rmse": 79.57047521735552,
+                "mae": 68.32894736842105,
+                "bias": 48.776315789473685
+              },
+              "calendar": {
+                "n": 76,
+                "weight": 76.0,
+                "rmse": 62.508972715247275,
+                "mae": 47.04385964912281,
+                "bias": -24.66959064327486
+              },
+              "games": {
+                "n": 76,
+                "weight": 76.0,
+                "rmse": 61.42493518175993,
+                "mae": 46.065499226006196,
+                "bias": -20.041215170278633
+              },
+              "multiyear": {
+                "n": 76,
+                "weight": 76.0,
+                "rmse": 71.47837212842971,
+                "mae": 53.89936775553215,
+                "bias": -41.732488492041476
+              }
+            },
+            "mean_actual": 70.86842105263158
+          },
+          "current_mlb": {
+            "n": 610,
+            "zero_outcomes": 130,
+            "metrics": {
+              "archived": {
+                "n": 610,
+                "weight": 610.0,
+                "rmse": 72.75389685918357,
+                "mae": 59.47377049180328,
+                "bias": 42.945901639344264
+              },
+              "calendar": {
+                "n": 610,
+                "weight": 610.0,
+                "rmse": 53.57395496013745,
+                "mae": 39.78306010928962,
+                "bias": -3.853734061930788
+              },
+              "games": {
+                "n": 610,
+                "weight": 610.0,
+                "rmse": 55.115087864327336,
+                "mae": 40.1558281099325,
+                "bias": 5.113904291224696
+              },
+              "multiyear": {
+                "n": 610,
+                "weight": 610.0,
+                "rmse": 57.39419034303711,
+                "mae": 43.6186920946409,
+                "bias": -1.0970391611532362
+              }
+            },
+            "mean_actual": 93.3655737704918
+          },
+          "no_current_mlb": {
+            "n": 1,
+            "zero_outcomes": 0,
+            "metrics": {
+              "archived": {
+                "n": 1,
+                "weight": 1.0,
+                "rmse": 44.0,
+                "mae": 44.0,
+                "bias": 44.0
+              },
+              "calendar": {
+                "n": 1,
+                "weight": 1.0,
+                "rmse": 12.0,
+                "mae": 12.0,
+                "bias": -12.0
+              },
+              "games": {
+                "n": 1,
+                "weight": 1.0,
+                "rmse": 12.0,
+                "mae": 12.0,
+                "bias": -12.0
+              },
+              "multiyear": {
+                "n": 1,
+                "weight": 1.0,
+                "rmse": 7.935721812434141,
+                "mae": 7.935721812434141,
+                "bias": -7.935721812434141
+              }
+            },
+            "mean_actual": 12.0
+          }
+        }
+      },
+      "rates": {
+        "K%": {
+          "metrics": {
+            "archived": {
+              "n": 481,
+              "weight": 56965.0,
+              "rmse": 0.05070668661167227,
+              "mae": 0.03777820613359081,
+              "bias": -0.0051368029175809715
+            },
+            "current_prior": {
+              "n": 481,
+              "weight": 56965.0,
+              "rmse": 0.05663052243174948,
+              "mae": 0.042407317088637264,
+              "bias": -0.009226729439598817
+            },
+            "multiyear": {
+              "n": 481,
+              "weight": 56965.0,
+              "rmse": 0.05267683361618629,
+              "mae": 0.03960298937530128,
+              "bias": -0.005748944268764861
+            }
+          },
+          "comparisons": {
+            "archived_vs_multiyear": {
+              "rmse_reduction_pct": 3.740063457247442,
+              "interval95_pct": [
+                0.7096473851394903,
+                6.864049013260214
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_archived": {
+              "rmse_reduction_pct": -3.8853791011864454,
+              "interval95_pct": [
+                -7.369924226153228,
+                -0.7147194086231662
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_current_prior": {
+              "rmse_reduction_pct": 6.981551018407317,
+              "interval95_pct": [
+                3.8308756888376374,
+                9.838186306343097
+              ],
+              "resamples": 5000
+            }
+          },
+          "positive_work_excluded": 0
+        },
+        "BB%": {
+          "metrics": {
+            "archived": {
+              "n": 481,
+              "weight": 56965.0,
+              "rmse": 0.02987878731336371,
+              "mae": 0.02315659391731765,
+              "bias": 0.0023677374615992276
+            },
+            "current_prior": {
+              "n": 481,
+              "weight": 56965.0,
+              "rmse": 0.03240359597374387,
+              "mae": 0.025068883276702862,
+              "bias": 0.001976066058826351
+            },
+            "multiyear": {
+              "n": 481,
+              "weight": 56965.0,
+              "rmse": 0.030714533206538008,
+              "mae": 0.023706596308977895,
+              "bias": 0.001065974244081084
+            }
+          },
+          "comparisons": {
+            "archived_vs_multiyear": {
+              "rmse_reduction_pct": 2.7210112149658108,
+              "interval95_pct": [
+                -0.03432634677896284,
+                5.648634548070047
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_archived": {
+              "rmse_reduction_pct": -2.7971211964164895,
+              "interval95_pct": [
+                -5.986807420360977,
+                0.03431455553769557
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_current_prior": {
+              "rmse_reduction_pct": 5.212578161308035,
+              "interval95_pct": [
+                2.3936262060364126,
+                8.150727090254973
+              ],
+              "resamples": 5000
+            }
+          },
+          "positive_work_excluded": 0
+        }
+      }
+    },
+    "2024-apr-dc-bat": {
+      "workload": {
+        "metrics": {
+          "archived": {
+            "n": 584,
+            "weight": 584.0,
+            "rmse": 150.37682689993545,
+            "mae": 106.73801369863014,
+            "bias": 22.86472602739726
+          },
+          "calendar": {
+            "n": 584,
+            "weight": 584.0,
+            "rmse": 172.31661203128434,
+            "mae": 135.4787181996086,
+            "bias": -93.87989236790605
+          },
+          "games": {
+            "n": 584,
+            "weight": 584.0,
+            "rmse": 185.42768230306095,
+            "mae": 134.2003424657534,
+            "bias": 15.950162220620028
+          },
+          "multiyear": {
+            "n": 584,
+            "weight": 584.0,
+            "rmse": 170.36677931046293,
+            "mae": 127.19174283193973,
+            "bias": -27.108450268338974
+          }
+        },
+        "comparisons": {
+          "archived_vs_multiyear": {
+            "rmse_reduction_pct": 11.733480254445249,
+            "interval95_pct": [
+              4.964402723097398,
+              18.30417787545775
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_calendar": {
+            "rmse_reduction_pct": 1.1315407712794459,
+            "interval95_pct": [
+              -5.3285910188615775,
+              7.417996157258319
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_games": {
+            "rmse_reduction_pct": 8.12225165387261,
+            "interval95_pct": [
+              0.31891910318812433,
+              15.390886185912576
+            ],
+            "resamples": 5000
+          },
+          "archived_vs_games": {
+            "rmse_reduction_pct": 18.902709114294364,
+            "interval95_pct": [
+              14.141852060575665,
+              23.703650361905357
+            ],
+            "resamples": 5000
+          }
+        },
+        "groups": {
+          "active": {
+            "n": 387,
+            "zero_outcomes": 1,
+            "metrics": {
+              "archived": {
+                "n": 387,
+                "weight": 387.0,
+                "rmse": 158.32447139622496,
+                "mae": 114.80878552971576,
+                "bias": 37.14987080103359
+              },
+              "calendar": {
+                "n": 387,
+                "weight": 387.0,
+                "rmse": 171.57373437405258,
+                "mae": 146.31782945736435,
+                "bias": -86.11184939091913
+              },
+              "games": {
+                "n": 387,
+                "weight": 387.0,
+                "rmse": 191.3636208592126,
+                "mae": 145.5049639602883,
+                "bias": 75.46525227798175
+              },
+              "multiyear": {
+                "n": 387,
+                "weight": 387.0,
+                "rmse": 181.63706575645816,
+                "mae": 138.51570522500757,
+                "bias": -36.81760853272482
+              }
+            },
+            "mean_actual": 357.9560723514212
+          },
+          "not_on_active_roster": {
+            "n": 197,
+            "zero_outcomes": 47,
+            "metrics": {
+              "archived": {
+                "n": 197,
+                "weight": 197.0,
+                "rmse": 133.39217398790035,
+                "mae": 90.88324873096447,
+                "bias": -5.197969543147208
+              },
+              "calendar": {
+                "n": 197,
+                "weight": 197.0,
+                "rmse": 173.7667233171935,
+                "mae": 114.1856417693981,
+                "bias": -109.1399564902103
+              },
+              "games": {
+                "n": 197,
+                "weight": 197.0,
+                "rmse": 173.17528336569703,
+                "mae": 111.99278653486508,
+                "bias": -100.96526850120223
+              },
+              "multiyear": {
+                "n": 197,
+                "weight": 197.0,
+                "rmse": 145.71011323648537,
+                "mae": 104.94619234403498,
+                "bias": -8.035129210890636
+              }
+            },
+            "mean_actual": 122.89340101522842
+          },
+          "prior_mlb": {
+            "n": 529,
+            "zero_outcomes": 37,
+            "metrics": {
+              "archived": {
+                "n": 529,
+                "weight": 529.0,
+                "rmse": 150.84813780928587,
+                "mae": 107.40642722117202,
+                "bias": 25.60680529300567
+              },
+              "calendar": {
+                "n": 529,
+                "weight": 529.0,
+                "rmse": 173.55531942995674,
+                "mae": 137.71239535511748,
+                "bias": -96.72724817715364
+              },
+              "games": {
+                "n": 529,
+                "weight": 529.0,
+                "rmse": 184.83446421896062,
+                "mae": 135.12774848273804,
+                "bias": 20.388319570191996
+              },
+              "multiyear": {
+                "n": 529,
+                "weight": 529.0,
+                "rmse": 168.6294758954392,
+                "mae": 127.85660991497477,
+                "bias": -17.42721605741455
+              }
+            },
+            "mean_actual": 293.76748582230624
+          },
+          "no_prior_mlb": {
+            "n": 55,
+            "zero_outcomes": 11,
+            "metrics": {
+              "archived": {
+                "n": 55,
+                "weight": 55.0,
+                "rmse": 145.76587703948724,
+                "mae": 100.30909090909091,
+                "bias": -3.5090909090909093
+              },
+              "calendar": {
+                "n": 55,
+                "weight": 55.0,
+                "rmse": 159.91328123053023,
+                "mae": 113.99480519480521,
+                "bias": -66.49350649350649
+              },
+              "games": {
+                "n": 55,
+                "weight": 55.0,
+                "rmse": 191.03932177134556,
+                "mae": 125.2803827751196,
+                "bias": -26.736842105263165
+              },
+              "multiyear": {
+                "n": 55,
+                "weight": 55.0,
+                "rmse": 186.25081277296562,
+                "mae": 120.7969303423849,
+                "bias": -120.22432113341205
+              }
+            },
+            "mean_actual": 133.38181818181818
+          },
+          "current_mlb": {
+            "n": 408,
+            "zero_outcomes": 2,
+            "metrics": {
+              "archived": {
+                "n": 408,
+                "weight": 408.0,
+                "rmse": 158.08199349282847,
+                "mae": 115.2156862745098,
+                "bias": 40.0735294117647
+              },
+              "calendar": {
+                "n": 408,
+                "weight": 408.0,
+                "rmse": 170.6788107896848,
+                "mae": 145.28816526610643,
+                "bias": -85.74474789915963
+              },
+              "games": {
+                "n": 408,
+                "weight": 408.0,
+                "rmse": 189.32770902268993,
+                "mae": 143.45833333333331,
+                "bias": 71.46297729618159
+              },
+              "multiyear": {
+                "n": 408,
+                "weight": 408.0,
+                "rmse": 178.85031500291873,
+                "mae": 136.0805826118326,
+                "bias": -32.56953197945846
+              }
+            },
+            "mean_actual": 350.2377450980392
+          },
+          "no_current_mlb": {
+            "n": 176,
+            "zero_outcomes": 46,
+            "metrics": {
+              "archived": {
+                "n": 176,
+                "weight": 176.0,
+                "rmse": 130.7803719287347,
+                "mae": 87.08522727272727,
+                "bias": -17.02840909090909
+              },
+              "calendar": {
+                "n": 176,
+                "weight": 176.0,
+                "rmse": 176.05474355231877,
+                "mae": 112.73863636363636,
+                "bias": -112.73863636363636
+              },
+              "games": {
+                "n": 176,
+                "weight": 176.0,
+                "rmse": 176.05474355231877,
+                "mae": 112.73863636363636,
+                "bias": -112.73863636363636
+              },
+              "multiyear": {
+                "n": 176,
+                "weight": 176.0,
+                "rmse": 148.85228934515342,
+                "mae": 106.58579606946086,
+                "bias": -14.448669938016529
+              }
+            },
+            "mean_actual": 112.73863636363636
+          }
+        }
+      },
+      "rates": {
+        "K%": {
+          "metrics": {
+            "archived": {
+              "n": 536,
+              "weight": 162739.0,
+              "rmse": 0.03583744017793552,
+              "mae": 0.02674749005831423,
+              "bias": -0.0009043810236022088
+            },
+            "current_prior": {
+              "n": 536,
+              "weight": 162739.0,
+              "rmse": 0.056352255937433184,
+              "mae": 0.044449313652236075,
+              "bias": 0.0011122059381888144
+            },
+            "multiyear": {
+              "n": 536,
+              "weight": 162739.0,
+              "rmse": 0.04041958893813093,
+              "mae": 0.030154145045733445,
+              "bias": -0.00025231952297518094
+            }
+          },
+          "comparisons": {
+            "archived_vs_multiyear": {
+              "rmse_reduction_pct": 11.336455616134973,
+              "interval95_pct": [
+                7.141770019018451,
+                15.472141875067226
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_archived": {
+              "rmse_reduction_pct": -12.785926498780912,
+              "interval95_pct": [
+                -18.304192548647944,
+                -7.691046902864112
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_current_prior": {
+              "rmse_reduction_pct": 28.27334369185145,
+              "interval95_pct": [
+                23.973495669987493,
+                32.36311555311015
+              ],
+              "resamples": 5000
+            }
+          },
+          "positive_work_excluded": 0
+        },
+        "BB%": {
+          "metrics": {
+            "archived": {
+              "n": 536,
+              "weight": 162739.0,
+              "rmse": 0.021356858897771426,
+              "mae": 0.016765341885473056,
+              "bias": 0.006574312615291972
+            },
+            "current_prior": {
+              "n": 536,
+              "weight": 162739.0,
+              "rmse": 0.02837619585760665,
+              "mae": 0.023013722053369347,
+              "bias": 0.008914770589712328
+            },
+            "multiyear": {
+              "n": 536,
+              "weight": 162739.0,
+              "rmse": 0.02184877535870289,
+              "mae": 0.017286326302344623,
+              "bias": 0.006327700938420799
+            }
+          },
+          "comparisons": {
+            "archived_vs_multiyear": {
+              "rmse_reduction_pct": 2.2514601063694077,
+              "interval95_pct": [
+                -1.7615634449154245,
+                6.170821084664773
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_archived": {
+              "rmse_reduction_pct": -2.303318401297282,
+              "interval95_pct": [
+                -6.5766546897675155,
+                1.731069342887782
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_current_prior": {
+              "rmse_reduction_pct": 23.003155643761136,
+              "interval95_pct": [
+                18.239692878560383,
+                27.689916590396518
+              ],
+              "resamples": 5000
+            }
+          },
+          "positive_work_excluded": 0
+        }
+      }
+    },
+    "2025-dc-bat": {
+      "workload": {
+        "metrics": {
+          "archived": {
+            "n": 612,
+            "weight": 612.0,
+            "rmse": 89.16823344784369,
+            "mae": 65.5718954248366,
+            "bias": 11.61111111111111
+          },
+          "calendar": {
+            "n": 612,
+            "weight": 612.0,
+            "rmse": 105.142727457751,
+            "mae": 75.86960784313725,
+            "bias": -18.919281045751625
+          },
+          "games": {
+            "n": 612,
+            "weight": 612.0,
+            "rmse": 109.6488342226963,
+            "mae": 78.6319298720639,
+            "bias": 1.6135517498138534
+          },
+          "multiyear": {
+            "n": 612,
+            "weight": 612.0,
+            "rmse": 110.24697251097834,
+            "mae": 81.3861516602269,
+            "bias": -13.327065077737219
+          }
+        },
+        "comparisons": {
+          "archived_vs_multiyear": {
+            "rmse_reduction_pct": 19.119562726346647,
+            "interval95_pct": [
+              13.615947502736892,
+              24.50225892025341
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_calendar": {
+            "rmse_reduction_pct": -4.854586880750606,
+            "interval95_pct": [
+              -10.24854485702254,
+              0.3540400350355188
+            ],
+            "resamples": 5000
+          },
+          "multiyear_vs_games": {
+            "rmse_reduction_pct": -0.5455035546180343,
+            "interval95_pct": [
+              -5.991462167621043,
+              4.579085006575208
+            ],
+            "resamples": 5000
+          },
+          "archived_vs_games": {
+            "rmse_reduction_pct": 18.67835706602826,
+            "interval95_pct": [
+              13.33925630401309,
+              23.806813873956127
+            ],
+            "resamples": 5000
+          }
+        },
+        "groups": {
+          "active": {
+            "n": 389,
+            "zero_outcomes": 7,
+            "metrics": {
+              "archived": {
+                "n": 389,
+                "weight": 389.0,
+                "rmse": 89.62993038931711,
+                "mae": 66.38817480719794,
+                "bias": 18.151670951156813
+              },
+              "calendar": {
+                "n": 389,
+                "weight": 389.0,
+                "rmse": 101.35368295648259,
+                "mae": 76.08226221079691,
+                "bias": -14.191259640102816
+              },
+              "games": {
+                "n": 389,
+                "weight": 389.0,
+                "rmse": 106.49831259835487,
+                "mae": 78.54908724089681,
+                "bias": 14.179410189888214
+              },
+              "multiyear": {
+                "n": 389,
+                "weight": 389.0,
+                "rmse": 107.89529844467384,
+                "mae": 80.76505245827761,
+                "bias": -21.059621640869267
+              }
+            },
+            "mean_actual": 245.413881748072
+          },
+          "not_on_active_roster": {
+            "n": 223,
+            "zero_outcomes": 70,
+            "metrics": {
+              "archived": {
+                "n": 223,
+                "weight": 223.0,
+                "rmse": 88.35707721609177,
+                "mae": 64.14798206278027,
+                "bias": 0.20179372197309417
+              },
+              "calendar": {
+                "n": 223,
+                "weight": 223.0,
+                "rmse": 111.44437853353779,
+                "mae": 75.49865470852016,
+                "bias": -27.16681614349776
+              },
+              "games": {
+                "n": 223,
+                "weight": 223.0,
+                "rmse": 114.93806232083232,
+                "mae": 78.77644011208183,
+                "bias": -20.306264094082678
+              },
+              "multiyear": {
+                "n": 223,
+                "weight": 223.0,
+                "rmse": 114.23339508384026,
+                "mae": 82.46959376586936,
+                "bias": 0.161564980820484
+              }
+            },
+            "mean_actual": 83.08071748878923
+          },
+          "prior_mlb": {
+            "n": 526,
+            "zero_outcomes": 59,
+            "metrics": {
+              "archived": {
+                "n": 526,
+                "weight": 526.0,
+                "rmse": 88.10000151055445,
+                "mae": 64.92585551330798,
+                "bias": 16.659695817490494
+              },
+              "calendar": {
+                "n": 526,
+                "weight": 526.0,
+                "rmse": 101.35912060983205,
+                "mae": 73.72015209125476,
+                "bias": -10.987072243345999
+              },
+              "games": {
+                "n": 526,
+                "weight": 526.0,
+                "rmse": 107.09106824185523,
+                "mae": 77.26728419099791,
+                "bias": 11.827571571711731
+              },
+              "multiyear": {
+                "n": 526,
+                "weight": 526.0,
+                "rmse": 103.65625178710313,
+                "mae": 78.11163081806217,
+                "bias": 0.18032518567442232
+              }
+            },
+            "mean_actual": 196.9277566539924
+          },
+          "no_prior_mlb": {
+            "n": 86,
+            "zero_outcomes": 18,
+            "metrics": {
+              "archived": {
+                "n": 86,
+                "weight": 86.0,
+                "rmse": 95.44199504727807,
+                "mae": 69.52325581395348,
+                "bias": -19.267441860465116
+              },
+              "calendar": {
+                "n": 86,
+                "weight": 86.0,
+                "rmse": 125.83233030043274,
+                "mae": 89.01627906976745,
+                "bias": -67.43488372093024
+              },
+              "games": {
+                "n": 86,
+                "weight": 86.0,
+                "rmse": 124.15131156651509,
+                "mae": 86.97848368881634,
+                "bias": -60.85824390504991
+              },
+              "multiyear": {
+                "n": 86,
+                "weight": 86.0,
+                "rmse": 144.1422246167438,
+                "mae": 101.41403495067624,
+                "bias": -95.94203343302237
+              }
+            },
+            "mean_actual": 121.03488372093024
+          },
+          "current_mlb": {
+            "n": 507,
+            "zero_outcomes": 37,
+            "metrics": {
+              "archived": {
+                "n": 507,
+                "weight": 507.0,
+                "rmse": 90.42033118670389,
+                "mae": 67.0828402366864,
+                "bias": 17.93885601577909
+              },
+              "calendar": {
+                "n": 507,
+                "weight": 507.0,
+                "rmse": 103.79223481498771,
+                "mae": 77.38500986193293,
+                "bias": -8.640236686390523
+              },
+              "games": {
+                "n": 507,
+                "weight": 507.0,
+                "rmse": 109.27556421680241,
+                "mae": 80.71941041756038,
+                "bias": 16.14495793074177
+              },
+              "multiyear": {
+                "n": 507,
+                "weight": 507.0,
+                "rmse": 111.34160618428294,
+                "mae": 83.83631849248083,
+                "bias": -9.028898287064907
+              }
+            },
+            "mean_actual": 210.64102564102564
+          },
+          "no_current_mlb": {
+            "n": 105,
+            "zero_outcomes": 40,
+            "metrics": {
+              "archived": {
+                "n": 105,
+                "weight": 105.0,
+                "rmse": 82.85655993226803,
+                "mae": 58.27619047619048,
+                "bias": -18.942857142857143
+              },
+              "calendar": {
+                "n": 105,
+                "weight": 105.0,
+                "rmse": 111.4336018400537,
+                "mae": 68.55238095238096,
+                "bias": -68.55238095238096
+              },
+              "games": {
+                "n": 105,
+                "weight": 105.0,
+                "rmse": 111.4336018400537,
+                "mae": 68.55238095238096,
+                "bias": -68.55238095238096
+              },
+              "multiyear": {
+                "n": 105,
+                "weight": 105.0,
+                "rmse": 104.8006907171911,
+                "mae": 69.5553460987722,
+                "bias": -34.08107043841209
+              }
+            },
+            "mean_actual": 68.55238095238096
+          }
+        }
+      },
+      "rates": {
+        "K%": {
+          "metrics": {
+            "archived": {
+              "n": 535,
+              "weight": 113993.0,
+              "rmse": 0.0411372213387774,
+              "mae": 0.030986846576544172,
+              "bias": -0.003339592489012482
+            },
+            "current_prior": {
+              "n": 535,
+              "weight": 113993.0,
+              "rmse": 0.05231939883150404,
+              "mae": 0.039345593948106515,
+              "bias": -0.006305314497667553
+            },
+            "multiyear": {
+              "n": 535,
+              "weight": 113993.0,
+              "rmse": 0.04576678236621772,
+              "mae": 0.034218678852919994,
+              "bias": -0.003027158761388583
+            }
+          },
+          "comparisons": {
+            "archived_vs_multiyear": {
+              "rmse_reduction_pct": 10.115548413247396,
+              "interval95_pct": [
+                6.725442208421168,
+                13.558024747316141
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_archived": {
+              "rmse_reduction_pct": -11.253946855852265,
+              "interval95_pct": [
+                -15.684538344622943,
+                -7.21037158260158
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_current_prior": {
+              "rmse_reduction_pct": 12.524257945679363,
+              "interval95_pct": [
+                8.759888912707872,
+                16.08861082538144
+              ],
+              "resamples": 5000
+            }
+          },
+          "positive_work_excluded": 0
+        },
+        "BB%": {
+          "metrics": {
+            "archived": {
+              "n": 535,
+              "weight": 113993.0,
+              "rmse": 0.023392555932401474,
+              "mae": 0.01808485071364031,
+              "bias": 0.004303590946812524
+            },
+            "current_prior": {
+              "n": 535,
+              "weight": 113993.0,
+              "rmse": 0.027078436409171045,
+              "mae": 0.020776012657789313,
+              "bias": 0.004068284411334144
+            },
+            "multiyear": {
+              "n": 535,
+              "weight": 113993.0,
+              "rmse": 0.024387122180929074,
+              "mae": 0.018619347948962077,
+              "bias": 0.002128639635891938
+            }
+          },
+          "comparisons": {
+            "archived_vs_multiyear": {
+              "rmse_reduction_pct": 4.078243595734141,
+              "interval95_pct": [
+                0.4777333783209327,
+                7.381049385242585
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_archived": {
+              "rmse_reduction_pct": -4.251635654528916,
+              "interval95_pct": [
+                -7.969264752925441,
+                -0.4800266259544714
+              ],
+              "resamples": 5000
+            },
+            "multiyear_vs_current_prior": {
+              "rmse_reduction_pct": 9.938957285327096,
+              "interval95_pct": [
+                5.778541752022437,
+                13.849165160942475
+              ],
+              "resamples": 5000
+            }
+          },
+          "positive_work_excluded": 0
+        }
+      }
+    }
+  }
+}

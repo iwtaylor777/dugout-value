@@ -1,0 +1,8 @@
+import type { Metadata } from "next";
+import { pageMetadata, SITE_URL, webPageJsonLd } from "../seo";
+import { JsonLd } from "../json-ld";
+import Link from "next/link";
+import { articles } from "../articles";
+import { Publication } from "../site-shell";
+export const metadata: Metadata = pageMetadata({ title: "Analysis", description: "Baseball research on pitching, hitting, projections, and trade value, with guides to reading the trade model.", path: "/analysis" });
+export default function Analysis() { return <Publication active="analysis"><JsonLd data={{ ...webPageJsonLd({ type: "CollectionPage", title: "Analysis", description: "Baseball research on pitching, hitting, projections, and trade value.", path: "/analysis" }), mainEntity: { "@type": "ItemList", itemListElement: articles.map((a, i) => ({ "@type": "ListItem", position: i + 1, url: `${SITE_URL}/analysis/${a.slug}`, name: a.title })) } }}/><header className="section-intro"><h1>Analysis</h1><p>Research on pitching, hitting, projections, and trade value.</p><p className="section-links"><Link href="/research">Forecast results and research files</Link><Link href="/players">Player studies</Link><Link href="/ledger">Trade & contract ledger</Link></p></header><div className="article-index">{articles.map(article => <article key={article.slug}><div><p className="eyebrow">{article.category}</p><h2><Link href={`/analysis/${article.slug}`}>{article.title}</Link></h2><p>{article.summary}</p><div className="story-meta">By {article.author} · {article.dateLabel} · {article.readTime}</div></div><Link className="index-arrow" href={`/analysis/${article.slug}`} aria-label={`Read ${article.title}`}>↗</Link></article>)}</div></Publication>; }

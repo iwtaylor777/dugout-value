@@ -1,0 +1,9 @@
+{
+  "path": "audit-2024-mejia-AA-gameLog.json",
+  "url": "https://statsapi.mlb.com/api/v1/people/800354/stats?stats=gameLog&group=hitting&sportId=12&season=2024&gameType=R",
+  "resolved_url": "https://statsapi.mlb.com/api/v1/people/800354/stats?stats=gameLog&group=hitting&sportId=12&season=2024&gameType=R",
+  "http_status": 200,
+  "sha256": "b25df111a2e4d37b8a1f2e5c93a8599cedb731c0ca189bb579a4480d387072c9",
+  "bytes": 1592,
+  "retrieved_at": "2026-10-21T17:22:01.059568+00:00"
+}

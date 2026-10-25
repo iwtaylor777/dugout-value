@@ -31,6 +31,8 @@ test("depth-chart assignments separate current position from eligibility", () =>
     playerId: "",
     age: null,
     serviceTime: 0,
+    serviceTimeKnown: false,
+    on40Man: false,
     actualWar: 0,
     projectedWar: 0,
     activeRoster: true,
@@ -44,6 +46,8 @@ test("depth-chart assignments separate current position from eligibility", () =>
     playerId: "",
     age: null,
     serviceTime: 0,
+    serviceTimeKnown: false,
+    on40Man: false,
     actualWar: 0,
     projectedWar: 0,
     activeRoster: true,
@@ -96,4 +100,11 @@ test("active roster assignments outrank lower-level duplicates", () => {
   );
 
   assert.equal(assignments.get("123").depthPosition, "1B");
+});
+
+test("offseason 40-man membership survives without claiming an active MLB role", () => {
+  const assignments = rosterAssignmentsFromDepthChart([{ type: "off-sp", role: "AAA", position: "SP", mlbamid: 684442, roster40: "Y", servicetime: "0.000" }], "ARI");
+  assert.equal(assignments.get("684442").on40Man, true);
+  assert.equal(assignments.get("684442").activeRoster, false);
+  assert.equal(assignments.get("684442").serviceTimeKnown, true);
 });

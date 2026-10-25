@@ -1,0 +1,136 @@
+{
+  "purpose": "Bounded historical-date checks of MLB Stats API active-roster snapshots: Boston transactions and Juan Soto\u2019s Yankees-to-Mets move.",
+  "snapshot_sources": [
+    {
+      "url": "https://statsapi.mlb.com/api/v1/teams/111/roster?rosterType=active&date=2024-04-09",
+      "local_file": "analysis/projection_baselines/raw/2024-apr-dc-bat-roster-111.json",
+      "sha256": "b82b69f7193762ad0dcdf611328ad2d02cdfcf3236377c68ce4f342be15848cf"
+    },
+    {
+      "url": "https://statsapi.mlb.com/api/v1/teams/111/roster?rosterType=active&date=2025-05-31",
+      "local_file": "analysis/projection_baselines/raw/2025-dc-bat-roster-111.json",
+      "sha256": "ff8b57fb01698bd918704b1c96658eef489aba6509c1fc628e5d0c3b234c5055"
+    },
+    {
+      "url": "https://statsapi.mlb.com/api/v1/teams/147/roster?rosterType=active&date=2024-04-09",
+      "local_file": "analysis/projection_baselines/raw/2024-apr-dc-bat-roster-147.json",
+      "sha256": "27da42428f917440c5bde2b39584260afb8863d4e5ab5592b81ef3f7711f7152"
+    },
+    {
+      "url": "https://statsapi.mlb.com/api/v1/teams/121/roster?rosterType=active&date=2024-04-09",
+      "local_file": "analysis/projection_baselines/raw/2024-apr-dc-bat-roster-121.json",
+      "sha256": "4d9f5a7d024e7559008c2382e8e4c7bdb22c026eda9eadb6c9ae7f52dd642350"
+    },
+    {
+      "url": "https://statsapi.mlb.com/api/v1/teams/121/roster?rosterType=active&date=2025-05-31",
+      "local_file": "analysis/projection_baselines/raw/2025-dc-bat-roster-121.json",
+      "sha256": "ccaccfe1642beaa1d0bdb1c5f9c61eed40aa5ce5b6cc80cdd730da8faeaed3bc"
+    },
+    {
+      "url": "https://statsapi.mlb.com/api/v1/teams/147/roster?rosterType=active&date=2025-05-31",
+      "local_file": "analysis/projection_baselines/raw/2025-dc-bat-roster-147.json",
+      "sha256": "2e9cd37c92e3f950b9d793f668040da31a895f408a8ed3ee36a2636382afbbb1"
+    }
+  ],
+  "checks": [
+    {
+      "date": "2024-04-09",
+      "team": "Boston Red Sox",
+      "team_id": 111,
+      "assertions": [
+        {
+          "player": "Trevor Story",
+          "mlb_person_id": 596115,
+          "expected": "absent from active roster snapshot",
+          "observed": "absent",
+          "independent_evidence": "Boston placed Story on the 10-day injured list and recalled David Hamilton on Apr. 7, 2024.",
+          "evidence_url": "https://www.mlb.com/press-release/press-release-red-sox-place-shortstop-trevor-story-on-10-day-injured-list"
+        },
+        {
+          "player": "David Hamilton",
+          "mlb_person_id": 666152,
+          "expected": "present on active roster snapshot",
+          "observed": "present",
+          "independent_evidence": "Same Apr. 7 official club announcement confirms his recall to fill Story\u2019s active-roster spot.",
+          "evidence_url": "https://www.mlb.com/press-release/press-release-red-sox-place-shortstop-trevor-story-on-10-day-injured-list"
+        }
+      ]
+    },
+    {
+      "date": "2025-05-31",
+      "team": "Boston Red Sox",
+      "team_id": 111,
+      "assertions": [
+        {
+          "player": "Marcelo Mayer",
+          "mlb_person_id": 691785,
+          "expected": "present on active roster snapshot",
+          "observed": "present",
+          "independent_evidence": "Boston selected Mayer to the active Major League roster on May 24, 2025.",
+          "evidence_url": "https://www.mlb.com/redsox/press-release/red-sox-announce-roster-moves-5-24"
+        },
+        {
+          "player": "Roman Anthony",
+          "mlb_person_id": 701350,
+          "expected": "absent from active roster snapshot",
+          "observed": "absent",
+          "independent_evidence": "Boston selected Anthony to its active Major League roster on June 9, 2025, after the snapshot date.",
+          "evidence_url": "https://www.mlb.com/amp/press-release/red-sox-announce-roster-moves-6-9-2025.html"
+        }
+      ]
+    },
+    {
+      "dates": [
+        "2024-04-09",
+        "2025-05-31"
+      ],
+      "team_change_check": "Juan Soto",
+      "mlb_person_id": 665742,
+      "assertions": [
+        {
+          "date": "2024-04-09",
+          "expected": "present with NYY teamId 147; absent from NYM teamId 121",
+          "observed": {
+            "NYY_147": "present (status Active)",
+            "NYM_121": "absent"
+          },
+          "independent_evidence": [
+            {
+              "description": "MLB\u2019s Apr. 9 Yankees video records Soto\u2019s RBI single in the Marlins-Yankees game, confirming he appeared for NYY on the snapshot date.",
+              "url": "https://www.mlb.com/yankees/video/sixto-sanchez-in-play-run-s-to-juan-soto?t=season-of-dreams"
+            }
+          ]
+        },
+        {
+          "date": "2025-05-31",
+          "expected": "present with NYM teamId 121; absent from NYY teamId 147",
+          "observed": {
+            "NYM_121": "present (status Active)",
+            "NYY_147": "absent"
+          },
+          "independent_evidence": [
+            {
+              "description": "Official MLB starting lineups list Soto batting third as the Mets\u2019 RF on May 31; the official scoreboard links the Mets-Rockies game box score.",
+              "url": "https://www.mlb.com/starting-lineups/2025-05-31"
+            },
+            {
+              "description": "Official MLB scoreboard for May 31, including the Mets-Rockies final and box-score link.",
+              "url": "https://www.mlb.com/scores/2025-05-31"
+            }
+          ]
+        }
+      ],
+      "transition_evidence": {
+        "description": "The Mets announced signing four-time All-Star Juan Soto on Dec. 11, 2024, corroborating the change of club between the two snapshot dates.",
+        "url": "https://www.mlb.com/amp/press-release/press-release-mets-sign-four-time-all-star-juan-soto.html"
+      }
+    }
+  ],
+  "assessment": "Selected Boston roster moves and Soto\u2019s club assignment agree with official records on both dates. These checks support historical date behavior but do not verify every roster member.",
+  "limitations": [
+    "This is a bounded spot-check of selected players at three clubs on two dates, not a comprehensive validation of all 30 clubs.",
+    "The MLB Stats API responses were retrieved in 2026 with date parameters; the API does not provide an archived retrieval receipt from the original date. Official transactions independently support the checked inclusion/exclusion states but do not prove every roster entry or exact intraday cutoff.",
+    "Anthony\u2019s ID 701350 was confirmed by MLB\u2019s player page; it is correct.",
+    "The non-Boston check confirms Soto\u2019s dated club assignment and uses official MLB game evidence for both dates; the Apr. 9 evidence is an official in-game highlight rather than a linked box-score page. This remains a bounded two-date, two-club spot-check, not full 30-club verification."
+  ]
+}

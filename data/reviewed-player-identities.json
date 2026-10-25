@@ -1,0 +1,558 @@
+{
+  "version": 1,
+  "reviewedOn": "2026-10-19",
+  "baselineSha256": "53ed09285e671acb2e8837d85d5e81e40828e4a39728cc99aa397fcadbb6373c",
+  "sourceSha256": "ab2d964e7b3177e07eac61023caf33d661fb2875129778e005731d578da44bda",
+  "entries": [
+    {
+      "from": "prospect-2852283",
+      "to": "prospect-2913930",
+      "name": "Blake Bryant",
+      "team": "ARI",
+      "age": 19,
+      "prospectType": "Pitcher",
+      "birthDate": "39318",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852308",
+      "to": "prospect-2913952",
+      "name": "Cody Boshell",
+      "team": "ARI",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39227",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852328",
+      "to": "prospect-sa3075072",
+      "name": "Ruben Gallego",
+      "team": "ARI",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39549",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852404",
+      "to": "prospect-2914042",
+      "name": "Cole Dennis",
+      "team": "ATL",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39674",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852389",
+      "to": "prospect-2914030",
+      "name": "Jack Brenner",
+      "team": "ATL",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39332",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852379",
+      "to": "prospect-2914020",
+      "name": "Jensen Hirschkorn",
+      "team": "ATL",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39435",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852375",
+      "to": "prospect-2914016",
+      "name": "Kaiden McCarthy",
+      "team": "ATL",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39666",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852405",
+      "to": "prospect-2914043",
+      "name": "Ryne Barker",
+      "team": "ATL",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39060",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852408",
+      "to": "prospect-sa3077993",
+      "name": "Eric Booth Jr.",
+      "team": "BAL",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39633",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852436",
+      "to": "prospect-2914081",
+      "name": "Kevin Roberts Jr.",
+      "team": "BAL",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39656",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852439",
+      "to": "prospect-2914084",
+      "name": "Will Plunkett",
+      "team": "BAL",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39510",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-sox-primera-franklin",
+      "to": "prospect-sa3067709",
+      "name": "Franklin Primera",
+      "team": "BOS",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39249",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852509",
+      "to": "prospect-2914149",
+      "name": "Jace Mataczynski",
+      "team": "BOS",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39510",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852488",
+      "to": "prospect-sa3078052",
+      "name": "Martin Shelar",
+      "team": "BOS",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39304",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852590",
+      "to": "prospect-2914223",
+      "name": "Alex Weingartner",
+      "team": "CHW",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39429",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852562",
+      "to": "prospect-2914198",
+      "name": "Cole Prosek",
+      "team": "CHW",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39247",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852564",
+      "to": "prospect-2914200",
+      "name": "Landon Thome",
+      "team": "CHW",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39402",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852628",
+      "to": "prospect-2914256",
+      "name": "Dylan Bowen",
+      "team": "CIN",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39111",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852657",
+      "to": "prospect-2914283",
+      "name": "Savion Sims",
+      "team": "CLE",
+      "age": 19,
+      "prospectType": "Pitcher",
+      "birthDate": "39238",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852739",
+      "to": "prospect-2914357",
+      "name": "Will Adams",
+      "team": "DET",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39547",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852800",
+      "to": "prospect-2914416",
+      "name": "Beau Peterson",
+      "team": "HOU",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39297",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852799",
+      "to": "prospect-2914415",
+      "name": "Keon Johnson",
+      "team": "HOU",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39514",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852816",
+      "to": "prospect-sa3077055",
+      "name": "Randy Arias",
+      "team": "HOU",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39735",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852858",
+      "to": "prospect-2914477",
+      "name": "Dominic Battista",
+      "team": "KCR",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39381",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852847",
+      "to": "prospect-2914466",
+      "name": "Jack Slightom",
+      "team": "KCR",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39541",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852893",
+      "to": "prospect-sa3069445",
+      "name": "Carlos Castillo",
+      "team": "LAA",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39706",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852863",
+      "to": "prospect-2914483",
+      "name": "Jared Grindlinger",
+      "team": "LAA",
+      "age": 17,
+      "prospectType": "Pitcher",
+      "birthDate": "39919",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852905",
+      "to": "prospect-2914526",
+      "name": "Bo Lowrance",
+      "team": "LAD",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39344",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2852963",
+      "to": "prospect-sa3077955",
+      "name": "Jacob Lombard",
+      "team": "MIA",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39352",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853040",
+      "to": "prospect-2914659",
+      "name": "Julian Garcia",
+      "team": "MIL",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39550",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853033",
+      "to": "prospect-sa3078039",
+      "name": "Trey Ebel",
+      "team": "MIL",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39720",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853080",
+      "to": "prospect-2914694",
+      "name": "Ethan Wachsmann",
+      "team": "MIN",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39605",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853142",
+      "to": "prospect-2914753",
+      "name": "Jacob Madrid",
+      "team": "NYM",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39388",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853175",
+      "to": "prospect-2914789",
+      "name": "Sean Duncan",
+      "team": "NYY",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39577",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853211",
+      "to": "prospect-2914822",
+      "name": "Chan-Min Park",
+      "team": "PHI",
+      "age": 17,
+      "prospectType": "Pitcher",
+      "birthDate": "39785",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853227",
+      "to": "prospect-2914838",
+      "name": "Ho Hua",
+      "team": "PHI",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39640",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853206",
+      "to": "prospect-sa3078051",
+      "name": "Tyler Spangler",
+      "team": "PHI",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39356",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853252",
+      "to": "prospect-2914860",
+      "name": "Aiden Ruiz",
+      "team": "PIT",
+      "age": 19,
+      "prospectType": "Hitter",
+      "birthDate": "39169",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853260",
+      "to": "prospect-2914867",
+      "name": "Andruw Giles",
+      "team": "PIT",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39457",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853286",
+      "to": "prospect-sa3077949",
+      "name": "Neomar Urbina",
+      "team": "PIT",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39729",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853294",
+      "to": "prospect-2914892",
+      "name": "Coleman Borthwick",
+      "team": "SDP",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39551",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853310",
+      "to": "prospect-sa3078041",
+      "name": "Elliot Lascelles",
+      "team": "SDP",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39486",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853359",
+      "to": "prospect-2914953",
+      "name": "Carson Bolemon",
+      "team": "SFG",
+      "age": 19,
+      "prospectType": "Pitcher",
+      "birthDate": "39177",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853370",
+      "to": "prospect-2914964",
+      "name": "Kaden Waechter",
+      "team": "SFG",
+      "age": 19,
+      "prospectType": "Pitcher",
+      "birthDate": "39297",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853413",
+      "to": "prospect-2915010",
+      "name": "Rocco Maniscalco",
+      "team": "STL",
+      "age": 17,
+      "prospectType": "Hitter",
+      "birthDate": "39934",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853409",
+      "to": "prospect-sa3078040",
+      "name": "Trevor Condon",
+      "team": "STL",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39456",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853506",
+      "to": "prospect-2915095",
+      "name": "Collin Bland",
+      "team": "TBR",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39372",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853510",
+      "to": "prospect-2915099",
+      "name": "Gavin Giese",
+      "team": "TBR",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39390",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853480",
+      "to": "prospect-2915075",
+      "name": "Taj Marchand",
+      "team": "TBR",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39656",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853534",
+      "to": "prospect-2915122",
+      "name": "Brody Bumila",
+      "team": "TEX",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39475",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853527",
+      "to": "prospect-2915116",
+      "name": "Connor Comeau",
+      "team": "TEX",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39671",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853526",
+      "to": "prospect-2915115",
+      "name": "Gio Rojas",
+      "team": "TEX",
+      "age": 19,
+      "prospectType": "Pitcher",
+      "birthDate": "39262",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853573",
+      "to": "prospect-2915158",
+      "name": "Will Brick",
+      "team": "TOR",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39605",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853634",
+      "to": "prospect-2915225",
+      "name": "Cooper Harris",
+      "team": "WSN",
+      "age": 18,
+      "prospectType": "Pitcher",
+      "birthDate": "39610",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    },
+    {
+      "from": "prospect-2853626",
+      "to": "prospect-2915214",
+      "name": "Luke Williams",
+      "team": "WSN",
+      "age": 18,
+      "prospectType": "Hitter",
+      "birthDate": "39433",
+      "reason": "Reviewed matching name, organization, age and player type; provider Board row ID changed or permanent ID assigned."
+    }
+  ]
+}

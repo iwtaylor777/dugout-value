@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-19",
+  "files": {
+    "PROTOCOL.md": "ad0cc55d509fb00311e4e7050c3e976619a8d3d0abf187e38ef92f51d64d24c8",
+    "README.md": "ab2185da844f0d971e6875b93d6bc5b1ca390e5109a949c7fb89778dcbde86ad",
+    "fetch.py": "daea29d74b419e22956013b359457ddf519b44eecba76b3a4d748c41ff2680de",
+    "identities.json": "9df4b48841824700e531f36272f1322b39b86f5070fbade820041871c3a8f1ac",
+    "inputs.json": "0746f84e7503fa477123f655ab23316b8fdd3c6f04f21a955f390a1fd186760d",
+    "replay.py": "e2b5089cfcf1d58e0193659ee91316d7f508cad88cae2559c09deef1dfe1742c",
+    "results.json": "d40e8fc3fb94845160129f958415eeb597e53471658216221ddf7e5782624c9f",
+    "run.py": "5092b9041740862230acb6ba3135b77abaf242dd171daaba8f21d550afb485e9",
+    "scoring.py": "b70d8bad612d433e1899681fdb6aff726c0b2ceb8dc66ce740c8dfd7afd08cb2",
+    "sources.json": "eee2c49501b92325c4577fe15842823cb218f0dac938e120341ecc2f7942ba8c",
+    "test_benchmark.py": "b38b02dc95a0f2a37142077cedf7d670ffc1def61cbee625534a7308937f3f30"
+  }
+}

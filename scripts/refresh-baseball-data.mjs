@@ -1,4 +1,7 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { resolve, join } from "node:path";
+import { pathToFileURL } from "node:url";
 import {
   normalizeProspectRisk,
   prospectRosterContext,
@@ -14,13 +17,48 @@ import {
   buildInSeasonTalentUpdate,
   signalPersistence,
 } from "../lib/in-season-projection.mjs";
+import {
+  agingProjectionSummary,
+  projectWithAging,
+} from "../lib/aging-curve.mjs";
+import { loadTradeValueZiPS } from "../lib/fangraphs-trade-value-zips.mjs";
+import { loadSoxProspects } from "../lib/soxprospects.mjs";
+import { normalizeSeasonHistory, remainingSeasonProjection } from "../lib/refresh-history.mjs";
+import { applyReviewedContractPaths, reconcileMlbUniverse, depthChartControlContract } from "../lib/refresh-contracts.mjs";
+import { reviewDataRefresh } from "../lib/data-refresh-review.mjs";
+import { reconcilePlayerIdentities } from "../lib/refresh-identities.mjs";
+import { verifyRefreshEvidence, reconcileMissingProspects } from "../lib/refresh-evidence.mjs";
 
 const BASE_YEAR = 2026;
-const OUT = new URL("../app/data/player-database.json", import.meta.url);
-const PLAYOFF_ODDS_OUT = new URL(
-  "../app/data/playoff-odds.json",
-  import.meta.url,
-);
+// Downloads are candidates. They must never overwrite the reviewed production
+// contracts, including hand-maintained option paths, as a side effect of fetching.
+const refreshArgs = process.argv.slice(2);
+if (![2, 4].includes(refreshArgs.length) || refreshArgs[0] !== "--output-dir" || (refreshArgs.length === 4 && refreshArgs[2] !== "--replay-dir")) {
+  throw new Error("Usage: node scripts/refresh-baseball-data.mjs --output-dir <new-review-directory> [--replay-dir <previous-candidate-directory>]. Review the candidate before promoting it.");
+}
+const replayDirectory = refreshArgs[3] ? resolve(refreshArgs[3]) : null;
+const replayManifest = replayDirectory ? JSON.parse(await readFile(join(replayDirectory, "source-manifest.json"), "utf8")) : null;
+const outputDirectory = resolve(refreshArgs[1]);
+const productionDirectory = new URL("../app/data/", import.meta.url).pathname.replace(/\/$/, "");
+if (outputDirectory === productionDirectory) throw new Error("Refresh output cannot be the production data directory.");
+// A new directory prevents accidental replacement of an earlier review.
+await mkdir(outputDirectory, { recursive: false });
+await mkdir(join(outputDirectory, "sources"));
+const baselineBytes = replayDirectory
+  ? await readFile(join(replayDirectory, "baseline-player-database.json")).catch(error => {
+    if (error.code !== "ENOENT") throw error;
+    return readFile(new URL("../app/data/player-database.json", import.meta.url));
+  })
+  : await readFile(new URL("../app/data/player-database.json", import.meta.url));
+await writeFile(join(outputDirectory, "baseline-player-database.json"), baselineBytes, { flag: "wx" });
+const baseline = JSON.parse(baselineBytes);
+const reviewedContracts = JSON.parse(await readFile(new URL("../data/reviewed-contract-paths.json", import.meta.url), "utf8"));
+const rosterDispositions = JSON.parse(await readFile(new URL("../data/reviewed-roster-dispositions.json", import.meta.url), "utf8"));
+const reviewedIdentities = JSON.parse(await readFile(new URL("../data/reviewed-player-identities.json", import.meta.url), "utf8"));
+const prospectDispositions = JSON.parse(await readFile(new URL("../data/reviewed-prospect-dispositions.json", import.meta.url), "utf8"));
+const evidenceManifest = await verifyRefreshEvidence(new URL("../data/refresh-evidence/2026-10-18/", import.meta.url).pathname, [rosterDispositions, prospectDispositions], outputDirectory);
+const OUT = pathToFileURL(join(outputDirectory, "player-database.json"));
+const PLAYOFF_ODDS_OUT = pathToFileURL(join(outputDirectory, "playoff-odds.json"));
 const boardUrl = "https://www.fangraphs.com/prospects/the-board/";
 const graduatesUrl =
   "https://www.fangraphs.com/prospects/the-board/2025-graduates";
@@ -85,7 +123,10 @@ const normalizeIdentity = (name, team) =>
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const seasonStart = new Date("2026-03-25T12:00:00Z");
 const seasonEnd = new Date("2026-09-27T12:00:00Z");
-const snapshotDate = new Date();
+const snapshotDate = replayManifest ? new Date(replayManifest.snapshotDate) : new Date();
+if (snapshotDate.getUTCFullYear() !== BASE_YEAR) throw new Error("Refresh calendar requires a reviewed base-year rollover.");
+const sourceManifest = { snapshotDate: snapshotDate.toISOString(), baselineSha256: createHash("sha256").update(baselineBytes).digest("hex"), sources: [] };
+if (replayManifest && replayManifest.baselineSha256 !== sourceManifest.baselineSha256) throw new Error("Replay baseline differs from the captured baseline; reconcile the database versions before replaying.");
 const snapshotParts = Object.fromEntries(
   new Intl.DateTimeFormat("en-US", {
     timeZone: "America/New_York",
@@ -102,8 +143,53 @@ const seasonRemainingFraction = Math.max(
   Math.min(1, (seasonEnd - snapshotDate) / (seasonEnd - seasonStart)),
 );
 
+// Serialize source requests and honor rate limits. The old concurrent batch
+// could hit the provider's limit halfway through the 30-team refresh.
+let requestQueue = Promise.resolve();
+async function sourceRequest(url) {
+  const pending = requestQueue.then(async () => {
+    const key = createHash("sha256").update(url).digest("hex");
+    if (replayDirectory) {
+      const saved = replayManifest.sources.find(source => source.url === url);
+      if (!saved) throw new Error(`Source missing from replay: ${url}`);
+      const bytes = await readFile(join(replayDirectory, "sources", `${key}.txt`));
+      if (createHash("sha256").update(bytes).digest("hex") !== saved.sha256) throw new Error(`Replay source checksum mismatch: ${url}`);
+      await writeFile(join(outputDirectory, "sources", `${key}.txt`), bytes, { flag: "wx" });
+      sourceManifest.sources.push(saved);
+      return new Response(bytes);
+    }
+    await sleep(4000);
+    let response = await fetch(url, {
+      signal: AbortSignal.timeout(30_000),
+      headers: { "user-agent": "DugoutValueDataRefresh/1.0 (public-source review snapshot)" },
+    });
+    if (response.status === 429) {
+      const retryHeader = response.headers.get("retry-after");
+      const seconds = Number(retryHeader);
+      const retryMs = retryHeader && !Number.isFinite(seconds) ? Date.parse(retryHeader) - Date.now() : seconds * 1000;
+      const delay = Math.max(60_000, Number.isFinite(retryMs) ? retryMs : 60_000);
+      if (delay > 300_000) throw new Error(`Source asks for a longer pause; retry this refresh later: ${url}`);
+      console.log(`Source rate limit; pausing ${Math.ceil(delay / 1000)} seconds.`);
+      await sleep(delay);
+      response = await fetch(url, {
+        signal: AbortSignal.timeout(30_000),
+        headers: { "user-agent": "DugoutValueDataRefresh/1.0 (public-source review snapshot)" },
+      });
+    }
+    if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${url}`);
+    const bytes = Buffer.from(await response.arrayBuffer());
+    await writeFile(join(outputDirectory, "sources", `${key}.txt`), bytes, { flag: "wx" });
+    sourceManifest.sources.push({ url, sha256: createHash("sha256").update(bytes).digest("hex"), capturedAt: new Date().toISOString() });
+    await writeFile(join(outputDirectory, "source-manifest.json"), JSON.stringify(sourceManifest, null, 2) + "\n");
+    return new Response(bytes);
+  });
+  // A failed batch stops queued requests instead of continuing to hit the source.
+  requestQueue = pending;
+  return pending;
+}
+
 async function getNextData(url) {
-  const response = await fetch(url, {
+  const response = await sourceRequest(url, {
     headers: {
       "user-agent":
         "DugoutValueDataRefresh/1.0 (public-source snapshot; one request per page)",
@@ -123,7 +209,7 @@ const queryData = (queries, key) =>
   queries.find((query) => query.queryKey?.[0] === key)?.state?.data;
 
 async function loadHistory(stats) {
-  const response = await fetch(historyUrl(stats), {
+  const response = await sourceRequest(historyUrl(stats), {
     headers: {
       "user-agent": "DugoutValueDataRefresh/1.0 (public-source snapshot)",
     },
@@ -144,26 +230,6 @@ async function loadProjection(type) {
     rows.push(...data.map((row) => ({ ...row, _stats: stats })));
   }
   return rows;
-}
-
-function ageWar(war, age, isPitcher, yearsOut) {
-  let projected = Number(war) || 0;
-  let currentAge = Number.isFinite(age) ? age : isPitcher ? 28 : 27;
-  for (let year = 0; year < yearsOut; year += 1) {
-    currentAge += 1;
-    if (isPitcher)
-      projected += currentAge <= 26 ? 0 : currentAge <= 29 ? -0.15 : -0.3;
-    else
-      projected +=
-        currentAge <= 26
-          ? 0.15
-          : currentAge === 27
-            ? 0
-            : currentAge <= 31
-              ? -0.25
-              : -0.4;
-  }
-  return Math.max(-0.5, Number(projected.toFixed(1)));
 }
 
 function marcelWar(rows) {
@@ -275,33 +341,7 @@ function pitcherRole(row) {
 }
 
 function depthChartContract(assignment) {
-  if (!assignment?.activeRoster) return null;
-  const completedService = Math.max(0, Math.floor(assignment.serviceTime || 0));
-  const remainingYears = Math.max(1, 6 - completedService);
-  return {
-    summary: {
-      playerName: assignment.playerName,
-      playerId: assignment.playerId,
-      age: assignment.age,
-    },
-    summaries: [],
-    years: Array.from({ length: remainingYears }, (_, index) => {
-      const serviceYear = completedService + index;
-      const arbitrationYear = Math.max(0, serviceYear - 2);
-      return {
-        Season: BASE_YEAR + index,
-        Type:
-          arbitrationYear > 0
-            ? `ARB ${Math.min(4, arbitrationYear)}`
-            : "PRE-ARB",
-        ArbYear: Math.min(4, arbitrationYear),
-        Salary: 780000,
-      };
-    }),
-    incentives: [],
-    notes: "",
-    team: assignment.team,
-  };
+  return depthChartControlContract(assignment, { baseYear: BASE_YEAR, remainingFraction: seasonRemainingFraction });
 }
 
 function projectedPlayingTime(
@@ -455,6 +495,25 @@ function projectionComponent(row, stats) {
   );
 }
 
+function projectionWithPublishedWar(row, war) {
+  const publishedWar = Number(war);
+  if (!Number.isFinite(publishedWar)) return row;
+  if (!row?._components?.length) return { ...(row ?? {}), WAR: publishedWar };
+  const componentWar = row._components.reduce(
+    (sum, component) => sum + (Number(component.WAR) || 0),
+    0,
+  );
+  const scale = componentWar ? publishedWar / componentWar : 1;
+  return {
+    ...row,
+    WAR: publishedWar,
+    _components: row._components.map((component) => ({
+      ...component,
+      WAR: Number(((Number(component.WAR) || 0) * scale).toFixed(4)),
+    })),
+  };
+}
+
 function prospectGrade(value) {
   const raw = String(value ?? "40").replace(".0", "");
   if (
@@ -484,7 +543,6 @@ const [
   steamer,
   zipsRos,
   steamerRos,
-  steamerNeutralUpdated,
   depthChartsRos,
   hitterHistory,
   pitcherHistory,
@@ -492,6 +550,8 @@ const [
   graduateQueries,
   injuryQueries,
   playoffOddsQueries,
+  tradeValueZips,
+  soxProspectsData,
 ] = await Promise.all([
   loadProjection("zips"),
   loadProjection("zipsp1"),
@@ -499,7 +559,6 @@ const [
   loadProjection("steamer"),
   loadProjection("rzips"),
   loadProjection("steamerr"),
-  loadProjection("steamer600u"),
   loadProjection("rfangraphsdc"),
   loadHistory("bat"),
   loadHistory("pit"),
@@ -507,6 +566,8 @@ const [
   getNextData(graduatesUrl),
   getNextData(injuryReportUrl),
   getNextData(playoffOddsUrl),
+  loadTradeValueZiPS({ fetchImpl: sourceRequest }),
+  loadSoxProspects(sourceRequest),
 ]);
 
 const boardRows = queryData(boardQueries, "prospects/the-board");
@@ -529,6 +590,7 @@ const availabilityById = activeAvailabilityByMlbId(injuryRows, BASE_YEAR);
 
 const contractRecords = new Map();
 const depthAssignments = new Map();
+const providerLinks = [];
 for (const [abbr, slug] of Object.entries(teamSlugs)) {
   console.log(`Loading ${abbr} payroll and depth chart…`);
   const [payrollQueries, depthQueries] = await Promise.all([
@@ -542,6 +604,10 @@ for (const [abbr, slug] of Object.entries(teamSlugs)) {
     "roster-resource/payroll2020/data",
   );
   const depthChart = queryData(depthQueries, "depth-charts-all");
+  for (const row of depthChart?.dataRoster ?? []) {
+    const mlbamId = String(row.mlbamid || row.mlbamid1 || row.mlbamid2 || "");
+    if (mlbamId) providerLinks.push({ mlbamId, fangraphsIds: [...new Set([row.playerid, row.playerid1, row.playerid2, row.minormasterid].filter(Boolean).map(String))] });
+  }
   for (const [id, assignment] of rosterAssignmentsFromDepthChart(
     depthChart?.dataRoster,
     abbr,
@@ -616,11 +682,19 @@ const contracts = new Map(
 const steamerById = projectionMap(steamer);
 const zipsRosById = projectionMap(zipsRos);
 const steamerRosById = projectionMap(steamerRos);
-const steamerNeutralUpdatedById = projectionMap(steamerNeutralUpdated);
 const depthChartsRosById = projectionMap(depthChartsRos);
 const zipsById = projectionMap(zips);
 const zips2027ById = projectionMap(zips2027);
 const zips2028ById = projectionMap(zips2028);
+const tradeValueZipsByFgId = new Map(
+  tradeValueZips.map((player) => [String(player.fgId), player]),
+);
+const soxProspectsByIdentity = new Map(
+  soxProspectsData.prospects.map((player) => [
+    normalizeIdentity(player.name, "BOS"),
+    player,
+  ]),
+);
 const lastProspectByFgId = new Map();
 for (const row of [...boardRows, ...graduateRows]) {
   const fgId = String(row.PlayerId || row.UPID || "");
@@ -629,8 +703,17 @@ for (const row of [...boardRows, ...graduateRows]) {
   if (!existing || Number(row.Season) >= Number(existing.Season))
     lastProspectByFgId.set(fgId, row);
 }
+// Published prospect projections may still use a minor-league ID after the
+// player receives a numeric major-league ID. Use the provider's own crosswalk.
+for (const links of providerLinks) {
+  for (const map of [tradeValueZipsByFgId, lastProspectByFgId]) {
+    const value = links.fangraphsIds.map(id => map.get(id)).find(Boolean);
+    if (value) for (const id of links.fangraphsIds) if (!map.has(id)) map.set(id, value);
+  }
+}
 const historyById = new Map();
-for (const row of [...hitterHistory, ...pitcherHistory]) {
+const normalizedHistory = normalizeSeasonHistory([...hitterHistory, ...pitcherHistory]);
+for (const row of normalizedHistory) {
   const id = String(row.xMLBAMID || "");
   if (!id) continue;
   historyById.set(id, [...(historyById.get(id) ?? []), row]);
@@ -640,7 +723,7 @@ const projectionIds = new Set([
   ...steamerById.keys(),
   ...contracts.keys(),
   ...[...depthAssignments.entries()]
-    .filter(([, assignment]) => assignment.activeRoster)
+    .filter(([, assignment]) => assignment.activeRoster || assignment.on40Man)
     .map(([id]) => id),
 ]);
 const mlb = [];
@@ -657,13 +740,13 @@ for (const id of projectionIds) {
   if (
     !hasCurrentProjection &&
     !hasRecentPlayingRecord(history) &&
-    !depthAssignment?.activeRoster
+    !depthAssignment?.activeRoster && !depthAssignment?.on40Man
   )
     continue;
   const primary =
     zipsById.get(id) ??
     steamerById.get(id) ??
-    (depthAssignment?.activeRoster
+    (depthAssignment?.activeRoster || depthAssignment?.on40Man
       ? {
           xMLBAMID: id,
           playerid: depthAssignment.playerId,
@@ -705,13 +788,13 @@ for (const id of projectionIds) {
   const age = Number(matchedContract.summary?.age) || null;
   const isPitcher = primary?._stats === "pit";
   const isTwoWay = primary?._stats === "twp";
-  const rosProjection =
+  const rosProjection = remainingSeasonProjection(
     depthChartsRosById.get(id) ??
     steamerRosById.get(id) ??
     zipsRosById.get(id) ??
     (depthAssignment
       ? { WAR: depthAssignment.projectedWar }
-      : undefined);
+      : undefined), seasonRemainingFraction);
   const contractYears = matchedContract.years.length
     ? matchedContract.years
     : [{ Season: BASE_YEAR, Type: "PRE-ARB", Salary: 780000, ArbYear: 0 }];
@@ -720,17 +803,53 @@ for (const id of projectionIds) {
     : steamerById.has(id)
       ? "Steamer"
       : depthAssignment?.activeRoster
-        ? "RosterResource + Marcel aging"
-        : "Marcel + aging";
+        ? "RosterResource + Marcel + role-aware aging"
+        : "Marcel + role-aware aging";
   const currentWar = Number(primary?.WAR ?? backup?.WAR ?? 0);
-  const future2027 = Number(zips2027ById.get(id)?.WAR);
-  const future2028 = Number(zips2028ById.get(id)?.WAR);
   const fgId = String(
     primary?.playerid ||
       backup?.playerid ||
       matchedContract.summary?.playerId ||
       "",
   );
+  const tradeValueProjection = tradeValueZipsByFgId.get(fgId);
+  const publishedZiPSWarForSeason = (season) => {
+    const war = Number(tradeValueProjection?.projections?.[season]);
+    return Number.isFinite(war) ? war : null;
+  };
+  const publishedZiPSYears = Object.keys(
+    tradeValueProjection?.projections ?? {},
+  )
+    .map(Number)
+    .filter((season) => Number.isFinite(publishedZiPSWarForSeason(season)))
+    .sort((left, right) => left - right);
+  const publicFutureProjectionForSeason = (season) =>
+    season === BASE_YEAR + 1
+      ? zips2027ById.get(id)
+      : season === BASE_YEAR + 2
+        ? zips2028ById.get(id)
+        : undefined;
+  const explicitFutureProjectionForSeason = (season) => {
+    const publishedWar = publishedZiPSWarForSeason(season);
+    if (publishedWar !== null)
+      return projectionWithPublishedWar(
+        publicFutureProjectionForSeason(season) ??
+          zips2028ById.get(id) ??
+          zips2027ById.get(id) ??
+          primary ??
+          backup,
+        publishedWar,
+      );
+    return publicFutureProjectionForSeason(season);
+  };
+  const future2027Projection = explicitFutureProjectionForSeason(
+    BASE_YEAR + 1,
+  );
+  const future2028Projection = explicitFutureProjectionForSeason(
+    BASE_YEAR + 2,
+  );
+  const future2027 = Number(future2027Projection?.WAR);
+  const future2028 = Number(future2028Projection?.WAR);
   const lastProspect = lastProspectByFgId.get(fgId);
   const injuryRecord = availabilityById.get(id);
   const availabilityRisk = injuryRecord
@@ -763,23 +882,27 @@ for (const id of projectionIds) {
           : pitcherRole(primary ?? backup ?? rosProjection)
       : "position";
   const updatePart = (partRole, stats, label) => {
+    const preseason = projectionComponent(zipsById.get(id), stats);
+    const updated = projectionComponent(zipsRosById.get(id), stats);
+    // WAR per inning is not directly portable across starting and relief roles.
+    // When ZiPS changes the projected role, leave the published future ZiPS
+    // baseline alone instead of presenting the role change as a talent change.
+    const incompatiblePitcherRoles =
+      stats === "pit" &&
+      preseason &&
+      updated &&
+      pitcherRole(preseason) !== pitcherRole(updated);
     const update = buildInSeasonTalentUpdate({
       role: partRole,
-      providers: [
+      providers: incompatiblePitcherRoles
+        ? []
+        : [
         {
           name: "ZiPS",
-          preseason: projectionComponent(zipsById.get(id), stats),
-          updated: projectionComponent(zipsRosById.get(id), stats),
+          preseason,
+          updated,
         },
-        {
-          name: "Steamer update",
-          preseason: projectionComponent(steamerById.get(id), stats),
-          updated: projectionComponent(
-            steamerNeutralUpdatedById.get(id),
-            stats,
-          ),
-        },
-      ],
+          ],
     });
     return update ? { role: partRole, stats, label, update } : null;
   };
@@ -789,17 +912,19 @@ for (const id of projectionIds) {
       projectionComponent(zipsRosById.get(id), "pit") ??
       projectionComponent(steamerRosById.get(id), "pit"),
   );
-  const updateParts = (
-    isTwoWay
-      ? [
-          updatePart("position", "bat", "Hitting"),
-          updatePart(pitcherUpdateRole, "pit", "Pitching"),
-        ]
-      : [updatePart(role, isPitcher ? "pit" : "bat", null)]
-  ).filter(Boolean);
+  const updateParts = tradeValueProjection
+    ? []
+    : (
+        isTwoWay
+          ? [
+              updatePart("position", "bat", "Hitting"),
+              updatePart(pitcherUpdateRole, "pit", "Pitching"),
+            ]
+          : [updatePart(role, isPitcher ? "pit" : "bat", null)]
+      ).filter(Boolean);
   const talentUpdate = updateParts.length
     ? {
-        method: "Rolling talent update v1",
+        method: "Role-aware rolling talent update v2",
         unitLabel:
           updateParts.length === 1
             ? updateParts[0].update.unitLabel
@@ -807,6 +932,7 @@ for (const id of projectionIds) {
         rateChange:
           updateParts.length === 1 ? updateParts[0].update.rateChange : null,
         capped: updateParts.some((part) => part.update.capped),
+        roleGuarded: updateParts.some((part) => part.update.roleGuarded),
         providers: updateParts.flatMap((part) =>
           part.update.providers.map((provider) => ({
             ...provider,
@@ -823,35 +949,132 @@ for (const id of projectionIds) {
     {
       history,
       rosProjection,
-      future2027: zips2027ById.get(id),
-      future2028: zips2028ById.get(id),
+      future2027: future2027Projection,
+      future2028: future2028Projection,
       fallback: primary ?? backup,
       isPitcher,
     },
   );
+  const agingAnchorYear = publishedZiPSYears.at(-1) ??
+    (Number.isFinite(future2028)
+      ? BASE_YEAR + 2
+      : Number.isFinite(future2027)
+        ? BASE_YEAR + 1
+        : BASE_YEAR);
+  const agingAnchorProjection =
+    agingAnchorYear === BASE_YEAR
+      ? primary ?? backup
+      : explicitFutureProjectionForSeason(agingAnchorYear) ??
+        future2028Projection ??
+        future2027Projection ??
+        primary ??
+        backup;
+  const agingPriorProjection =
+    agingAnchorYear === BASE_YEAR
+      ? undefined
+      : agingAnchorYear === BASE_YEAR + 1
+        ? primary ?? backup
+        : explicitFutureProjectionForSeason(agingAnchorYear - 1) ??
+          future2027Projection ??
+          primary ??
+          backup;
+  const agingBaseAge = age
+    ? Math.floor(age) + (agingAnchorYear - BASE_YEAR)
+    : isPitcher
+      ? 28
+      : 27;
+  const agingPosition =
+    depthAssignment?.depthPosition ||
+    agingAnchorProjection?.positionDB ||
+    agingAnchorProjection?.minpos ||
+    primary?.positionDB;
+  const agingProjectionForSeason = (season) => {
+    const yearsOut = Math.max(0, season - agingAnchorYear);
+    if (!isTwoWay)
+      return projectWithAging({
+        baseProjection: agingAnchorProjection,
+        priorProjection: agingPriorProjection,
+        baseAge: agingBaseAge,
+        role,
+        position: agingPosition,
+        yearsOut,
+      });
+    if (yearsOut === 0)
+      return {
+        war: Number(agingAnchorProjection?.WAR) || 0,
+        workloadScale: 1,
+      };
+    const parts = ["bat", "pit"]
+      .map((stats) => {
+        const baseComponent = projectionComponent(
+          agingAnchorProjection,
+          stats,
+        );
+        if (!baseComponent) return null;
+        const partRole =
+          stats === "bat" ? "position" : pitcherRole(baseComponent);
+        return projectWithAging({
+          baseProjection: baseComponent,
+          priorProjection: projectionComponent(agingPriorProjection, stats),
+          baseAge: agingBaseAge,
+          role: partRole,
+          position:
+            stats === "bat"
+              ? baseComponent.positionDB || baseComponent.minpos
+              : partRole === "starter"
+                ? "SP"
+                : "RP",
+          yearsOut,
+        });
+      })
+      .filter(Boolean);
+    return {
+      war: Number(
+        parts.reduce((sum, part) => sum + part.war, 0).toFixed(1),
+      ),
+      workloadScale: 1,
+    };
+  };
+  const agingModel = isTwoWay
+    ? {
+        method: "ZiPS-anchored nonlinear aging v2",
+        role: "position",
+        profile: "two-way",
+        unitLabel: "hitting and pitching workloads",
+        baseAge: agingBaseAge,
+        rateTrend: null,
+        workloadRetention: null,
+      }
+    : agingProjectionSummary({
+        baseProjection: agingAnchorProjection,
+        priorProjection: agingPriorProjection,
+        baseAge: agingBaseAge,
+        role,
+        position: agingPosition,
+      });
   const projectedWarDetail = (season) => {
+    const agedProjection = agingProjectionForSeason(season);
+    const explicitFutureProjection =
+      season > BASE_YEAR
+        ? explicitFutureProjectionForSeason(season)
+        : undefined;
+    const explicitFutureWar = Number(explicitFutureProjection?.WAR);
     const futureWar =
-      season === 2027 && Number.isFinite(future2027)
-        ? future2027
-        : season === 2028 && Number.isFinite(future2028)
-          ? future2028
-          : season > 2028 && Number.isFinite(future2028)
-            ? ageWar(future2028, age ? age + 2 : null, isPitcher, season - 2028)
-            : ageWar(currentWar, age, isPitcher, season - BASE_YEAR);
+      Number.isFinite(explicitFutureWar)
+        ? explicitFutureWar
+        : season > agingAnchorYear
+          ? agedProjection.war
+          : currentWar;
     if (season === BASE_YEAR) {
       return {
         war: Number(
           Number(
-            rosProjection?.WAR ?? currentWar * seasonRemainingFraction,
+            seasonRemainingFraction === 0 ? 0 : rosProjection?.WAR ?? currentWar * seasonRemainingFraction,
           ).toFixed(1),
         ),
       };
     }
 
-    const explicitFutureProjection =
-      season === BASE_YEAR + 1
-        ? zips2027ById.get(id)
-        : zips2028ById.get(id);
     const futureProjectionForWorkload =
       explicitFutureProjection ?? primary ?? backup;
     const yearsBeyondExplicit = Math.max(0, season - (BASE_YEAR + 2));
@@ -860,10 +1083,13 @@ for (const id of projectionIds) {
         futureProjectionForWorkload,
         part.stats,
       );
-      const workloadScale = Math.pow(
-        part.role === "position" ? 0.96 : 0.93,
-        yearsBeyondExplicit,
-      );
+      const workloadScale =
+        !isTwoWay && season > agingAnchorYear
+          ? agedProjection.workloadScale
+          : Math.pow(
+              part.role === "position" ? 0.96 : 0.93,
+              yearsBeyondExplicit,
+            );
       const scaledComponent = component
         ? {
             ...component,
@@ -908,16 +1134,20 @@ for (const id of projectionIds) {
     if (role === "two-way") return undefined;
     if (season === BASE_YEAR)
       return arbitrationMetrics(role, currentRoleHistory, rosProjection);
-    const explicitProjection =
-      season === BASE_YEAR + 1
-        ? zips2027ById.get(id)
-        : zips2028ById.get(id);
-    const yearsBeyondExplicit = Math.max(0, season - (BASE_YEAR + 2));
+    const explicitProjection = explicitFutureProjectionForSeason(season);
+    const agingWorkloadScale =
+      season > agingAnchorYear
+        ? agingProjectionForSeason(season).workloadScale
+        : 1;
     const metrics = arbitrationMetrics(
       role,
       [],
-      explicitProjection ?? primary ?? backup ?? rosProjection,
-      Math.pow(isPitcher ? 0.93 : 0.96, yearsBeyondExplicit),
+      explicitProjection ??
+        agingAnchorProjection ??
+        primary ??
+        backup ??
+        rosProjection,
+      agingWorkloadScale,
     );
     return metrics
       ? { ...metrics, war: projectedWarForSeason(season) }
@@ -956,7 +1186,7 @@ for (const id of projectionIds) {
       arbMetrics: projectedArbitrationMetrics(season),
       salary:
         season === BASE_YEAR
-          ? Number(
+          ? seasonRemainingFraction === 0 ? 0 : Number(
               (
                 baseAnnualSalary * seasonRemainingFraction +
                 expectedIncentive
@@ -1088,9 +1318,11 @@ for (const id of projectionIds) {
   const ytdWar = history.some((row) => Number(row.Season) === BASE_YEAR)
     ? historyYtdWar
     : (depthAssignment?.actualWar ?? 0);
-  mlb.push({
+  const player = {
     id: `mlb-${primary?.xMLBAMID || primary?.playerid}`,
     kind: "mlb",
+    mlbamId: String(id),
+    fangraphsId: fgId,
     name: primary?.PlayerName || primary?.ShortName,
     team,
     position: isTwoWay
@@ -1109,14 +1341,16 @@ for (const id of projectionIds) {
     age: age ? Math.floor(age) : isPitcher ? 28 : 27,
     source: {
       projection: [
-        "FanGraphs Depth Charts RoS (2026)",
-        `${source} future`,
-        talentUpdate ? "ZiPS/Steamer rolling talent update" : null,
+        seasonRemainingFraction === 0 ? "2026 regular season complete" : "FanGraphs Depth Charts RoS (2026)",
+        tradeValueProjection
+          ? "ZiPS Trade Value Series update (2027–31)"
+          : `${source} future`,
+        talentUpdate ? "ZiPS role-aware rolling talent update" : null,
       ]
         .filter(Boolean)
         .join(" · "),
       contract: [
-        "FanGraphs RosterResource",
+        matchedContract.estimatedControl ? "FanGraphs RosterResource roster and service time · estimated control and salaries" : "FanGraphs RosterResource",
         hasDeferrals ? "economic AAV" : null,
         expectedIncentives.size ? "expected playing-time incentives" : null,
         contractScenario ? "conditional option paths" : null,
@@ -1135,7 +1369,21 @@ for (const id of projectionIds) {
     availability,
     seasons,
     contractScenario,
+    estimatedControl: matchedContract.estimatedControl || undefined,
     talentUpdate,
+    futureProjectionUpdate: tradeValueProjection
+      ? {
+          provider: "ZiPS",
+          series: "FanGraphs 2026 Trade Value Series",
+          rank: tradeValueProjection.rank,
+          sourceUrl: tradeValueProjection.sourceUrl,
+          projections: tradeValueProjection.projections,
+        }
+      : undefined,
+    agingModel: {
+      ...agingModel,
+      anchorYear: agingAnchorYear,
+    },
     threeYearProjection: [BASE_YEAR, BASE_YEAR + 1, BASE_YEAR + 2].map(
       (year) => {
         const projection = projectedWarDetail(year);
@@ -1164,9 +1412,23 @@ for (const id of projectionIds) {
             risk: lastProspect.cRisk || lastProspect.Variance || null,
           }
         : null,
-  });
+  };
+  mlb.push(applyReviewedContractPaths(player, reviewedContracts, BASE_YEAR, year => {
+    const projection = projectedWarDetail(year);
+    return { year, war: projection.war, projectionBaselineWar: projection.baselineWar, inSeasonAdjustment: projection.inSeasonAdjustment, signalPersistence: projection.signalPersistence, arbMetrics: projectedArbitrationMetrics(year) };
+  }));
 }
 
+const reconciliation = reconcileMlbUniverse(baseline.players, mlb, { baseYear: BASE_YEAR, remainingFraction: seasonRemainingFraction, snapshotDate: snapshotLabel, dispositions: rosterDispositions });
+mlb.splice(0, mlb.length, ...reconciliation.players);
+for (const player of mlb) {
+  if (!player.fangraphsId) {
+    const identityRow = historyById.get(player.id.replace(/^mlb-/, ""))?.find(row => row.playerid);
+    if (identityRow) player.fangraphsId = String(identityRow.playerid);
+  }
+}
+const mlbFgIds = new Set(mlb.map(player => player.fangraphsId).filter(Boolean).map(String));
+const mlbAmIds = new Set(mlb.map(player => player.id.replace(/^mlb-/, "")));
 const mlbIdentities = new Set(
   mlb.map((player) => normalizeIdentity(player.name, player.team)),
 );
@@ -1175,37 +1437,156 @@ const prospects = boardRows
     (row) =>
       teamSlugs[normalizeTeam(row.Team)] &&
       row.playerName &&
+      !mlbFgIds.has(String(row.PlayerId || row.UPID || "")) &&
+      !mlbAmIds.has(String(row.MLBAMID || row.mlbamid || row.xMLBAMID || "")) &&
       !mlbIdentities.has(normalizeIdentity(row.playerName, row.Team)),
   )
-  .map((row) => ({
-    id: `prospect-${row.PlayerId || row.ID}`,
-    kind: "prospect",
-    name: row.playerName,
-    team: normalizeTeam(row.Team),
-    position: row.positionDB || row.Position || "—",
-    age: Math.floor(Number(row.Age) || 20),
+  .map((row) => {
+    const tradeValueProjection = tradeValueZipsByFgId.get(
+      String(row.PlayerId || row.UPID || ""),
+    );
+    return {
+      id: `prospect-${row.PlayerId || row.ID}`,
+      kind: "prospect",
+      fangraphsId: String(row.PlayerId || row.UPID || ""),
+      boardIdentity: row.BirthDate ? `${row.playerName.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().replace(/[^a-z0-9]/g, "")}:${row.BirthDate}` : undefined,
+      mlbamId: row.MLBAMID || row.mlbamid || row.xMLBAMID ? String(row.MLBAMID || row.mlbamid || row.xMLBAMID) : undefined,
+      name: row.playerName,
+      team: normalizeTeam(row.Team),
+      position: row.positionDB || row.Position || "—",
+      age: Math.floor(Number(row.Age) || 20),
+      source: {
+        projection: tradeValueProjection
+          ? "FanGraphs The Board · ZiPS Trade Value Series update"
+          : "FanGraphs The Board",
+        contract: "FV, ETA, scouting risk & roster status",
+        refreshed: snapshotLabel,
+      },
+      prospectType: String(row.positionDB || row.Position).includes("P")
+        ? "Pitcher"
+        : "Hitter",
+      fv: prospectGrade(row.cFV || row.FV_Current),
+      eta: Number(row.cETA || row.ETA_Current) || BASE_YEAR + 1,
+      adjustment: 0,
+      rosterContext: prospectRosterContext(row, BASE_YEAR),
+      rank: Number(row.Ovr_Rank) || null,
+      riskLabel: normalizeProspectRisk(row.cRisk || row.Variance),
+      futureProjectionUpdate: tradeValueProjection
+        ? {
+            provider: "ZiPS",
+            series: "FanGraphs 2026 Trade Value Series",
+            rank: tradeValueProjection.rank,
+            sourceUrl: tradeValueProjection.sourceUrl,
+            projections: tradeValueProjection.projections,
+          }
+        : undefined,
+    };
+  });
+
+function soxProspectRisk(player) {
+  const spread = Number(player.ceiling) - Number(player.floor);
+  if (spread >= 4) return "High";
+  if (spread >= 2.5) return "Med";
+  return "Low";
+}
+
+function withSoxProspectsGrade(player) {
+  if (player.team !== "BOS") return player;
+  const rating = soxProspectsByIdentity.get(
+    normalizeIdentity(player.name, player.team),
+  );
+  if (!rating) return player;
+  const soxProspects = {
+    grade: rating.grade,
+    fv: rating.fv,
+    organizationRank: rating.rank,
+    floor: rating.floor,
+    ceiling: rating.ceiling,
+    rankingsDate: soxProspectsData.rankingsDate,
+    sourceUrl: soxProspectsData.sourceUrl,
+  };
+  if (player.kind === "mlb") {
+    return {
+      ...player,
+      rookieMode: player.rookieMode === "projection" ? "blend" : player.rookieMode,
+      lastProspect: {
+        fv: prospectGrade(rating.fv),
+        rank: player.lastProspect?.rank ?? null,
+        year: BASE_YEAR,
+        serviceTime: player.lastProspect?.serviceTime ?? 0,
+        risk: player.lastProspect?.risk ?? soxProspectRisk(rating),
+      },
+      soxProspects,
+    };
+  }
+  return {
+    ...player,
+    fv: prospectGrade(rating.fv),
     source: {
-      projection: "FanGraphs The Board",
+      ...player.source,
+      projection: player.rank
+        ? "SoxProspects current grade · FanGraphs The Board rank"
+        : "SoxProspects current grade",
+      contract: "FV from SoxProspects · ETA, scouting risk & roster status",
+    },
+    soxProspects,
+  };
+}
+
+const gradedMlb = mlb.map(withSoxProspectsGrade);
+const gradedProspects = prospects.map(withSoxProspectsGrade);
+const existingIdentities = new Set(
+  [...gradedMlb, ...gradedProspects].map((player) =>
+    normalizeIdentity(player.name, player.team),
+  ),
+);
+const soxOnlyProspects = soxProspectsData.prospects
+  .filter(
+    (player) => !existingIdentities.has(normalizeIdentity(player.name, "BOS")),
+  )
+  .map((player) => ({
+    id: `prospect-sox-${player.slug}`,
+    kind: "prospect",
+    name: player.name,
+    team: "BOS",
+    position: /(?:^|\/)(?:LHP|RHP|P)(?:$|\/)/.test(player.position)
+      ? "P"
+      : player.position,
+    age: player.age ?? 20,
+    source: {
+      projection: "SoxProspects current grade",
       contract: "FV, ETA, scouting risk & roster status",
       refreshed: snapshotLabel,
     },
-    prospectType: String(row.positionDB || row.Position).includes("P")
+    prospectType: /(?:^|\/)(?:LHP|RHP|P)(?:$|\/)/.test(player.position)
       ? "Pitcher"
       : "Hitter",
-    fv: prospectGrade(row.cFV || row.FV_Current),
-    eta: Number(row.cETA || row.ETA_Current) || BASE_YEAR + 1,
+    fv: prospectGrade(player.fv),
+    eta: player.eta ?? BASE_YEAR + 1,
     adjustment: 0,
-    rosterContext: prospectRosterContext(row, BASE_YEAR),
-    rank: Number(row.Ovr_Rank) || null,
-    riskLabel: normalizeProspectRisk(row.cRisk || row.Variance),
+    rosterContext: "none",
+    rank: null,
+    riskLabel: soxProspectRisk(player),
+    soxProspects: {
+      grade: player.grade,
+      fv: player.fv,
+      organizationRank: player.rank,
+      floor: player.floor,
+      ceiling: player.ceiling,
+      rankingsDate: soxProspectsData.rankingsDate,
+      sourceUrl: soxProspectsData.sourceUrl,
+    },
   }));
+const finalProspects = [...gradedProspects, ...soxOnlyProspects];
 
 const teams = teamRows
   .map((team) => ({ abbr: normalizeTeam(team.AbbName), name: team.FullName }))
   .filter((team) => teamSlugs[team.abbr])
   .sort((a, b) => a.name.localeCompare(b.name));
 
-const players = [...mlb, ...prospects].sort(
+const identityReconciliation = reconcilePlayerIdentities(baseline.players, [...gradedMlb, ...finalProspects], { providerLinks, registry: reviewedIdentities });
+const prospectReconciliation = reconcileMissingProspects(baseline.players, identityReconciliation.players, prospectDispositions, snapshotLabel);
+const players = prospectReconciliation.players.sort(
   (a, b) =>
     a.team.localeCompare(b.team) ||
     a.kind.localeCompare(b.kind) ||
@@ -1223,24 +1604,46 @@ const output = {
   meta: {
     refreshed: snapshotLabel,
     baseYear: BASE_YEAR,
-    mlbCount: mlb.length,
-    prospectCount: prospects.length,
+    modelDate: snapshotLabel,
+    seasonPhase: seasonRemainingFraction === 0 ? "offseason" : "in-season",
+    refreshIntegrity: {
+      version: 1,
+      rawHistoryRows: hitterHistory.length + pitcherHistory.length,
+      normalizedHistoryRows: normalizedHistory.length,
+      carriedMlbIds: reconciliation.carriedIds,
+      contractRegistryVersion: reviewedContracts.version,
+      identityTransitions: identityReconciliation.transitions,
+      evidenceManifest: "reviewed-evidence/manifest.json",
+      evidenceAsOf: evidenceManifest.asOf,
+    },
+    mlbCount: gradedMlb.length,
+    prospectCount: players.filter(player => player.kind === "prospect").length,
     projectionPriority: [
       "FanGraphs Depth Charts RoS",
-      "ZiPS future + ZiPS/Steamer rolling talent update",
-      "Marcel + aging",
+      "FanGraphs 2026 Trade Value Series ZiPS update where published",
+      "ZiPS future + ZiPS role-aware rolling talent update",
+      "ZiPS-anchored nonlinear aging + Marcel fallback",
     ],
     seasonRemainingFraction: Number(seasonRemainingFraction.toFixed(4)),
     sources: [
       "FanGraphs projections",
+      "FanGraphs 2026 Trade Value Series",
       "FanGraphs RosterResource",
       "FanGraphs RosterResource injury report",
       "FanGraphs The Board",
+      "SoxProspects current projection grades",
       "FanGraphs playoff odds",
     ],
+    soxProspects: {
+      rankingsDate: soxProspectsData.rankingsDate,
+      gradedPlayers: soxProspectsData.prospects.length,
+      addedPlayers: soxOnlyProspects.length,
+      sourceUrl: soxProspectsData.sourceUrl,
+    },
   },
   teams,
   players,
+  archivedPlayers: [...reconciliation.archived.map(player => ({ ...player, disposition: { ...player.disposition, evidenceVerified: true } })), ...prospectReconciliation.archived],
 };
 const playoffOddsOutput = {
   refreshed: snapshotLabel,
@@ -1250,9 +1653,19 @@ const playoffOddsOutput = {
   odds: playoffOdds,
 };
 
-await mkdir(new URL("../app/data/", import.meta.url), { recursive: true });
-await writeFile(OUT, `${JSON.stringify(output)}\n`);
-await writeFile(PLAYOFF_ODDS_OUT, `${JSON.stringify(playoffOddsOutput, null, 2)}\n`);
+await writeFile(OUT, `${JSON.stringify(output)}\n`, { flag: "wx" });
+await writeFile(PLAYOFF_ODDS_OUT, `${JSON.stringify(playoffOddsOutput, null, 2)}\n`, { flag: "wx" });
+await writeFile(join(outputDirectory, "source-manifest.json"), JSON.stringify(sourceManifest, null, 2) + "\n");
+const review = reviewDataRefresh(baseline, output);
+await writeFile(join(outputDirectory, "mlb-reconciliation.json"), JSON.stringify(reconciliation.carriedIds.map(id => {
+  const mlbamId = id.replace(/^mlb-/, "");
+  const prior = baseline.players.find(player => player.id === id);
+  const depth = depthAssignments.get(mlbamId);
+  return { id, name: prior.name, previousTeam: prior.team, sourceAsOf: prior.source?.refreshed, currentDepthTeam: depth?.team ?? null, activeDepthAssignment: depth?.activeRoster ?? false, hasZiPS: zipsById.has(mlbamId), hasSteamer: steamerById.has(mlbamId), hasPayroll: contracts.has(mlbamId), hasRecentHistory: hasRecentPlayingRecord(historyById.get(mlbamId) ?? []), disposition: "unresolved; retained with original source date" };
+}), null, 2) + "\n", { flag: "wx" });
+await writeFile(join(outputDirectory, "review.json"), JSON.stringify({ ...review, baselineSha256: sourceManifest.baselineSha256, candidateSha256: createHash("sha256").update(await readFile(OUT)).digest("hex") }, null, 2) + "\n", { flag: "wx" });
+console.log(`Candidate review: ${review.blockers.length} blockers, ${review.warnings.length} warnings; ${reconciliation.carriedIds.length} MLB records retained for reconciliation.`);
+if (!review.readyForPromotion) process.exitCode = 1;
 console.log(
-  `Wrote ${players.length} players (${mlb.length} MLB, ${prospects.length} prospects) to ${OUT.pathname}`,
+  `Wrote ${players.length} players (${output.meta.mlbCount} MLB, ${output.meta.prospectCount} prospects) to ${OUT.pathname}`,
 );

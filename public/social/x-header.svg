@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="500" viewBox="0 0 1500 500">
+  <defs>
+    <pattern id="paper-lines" width="1500" height="28" patternUnits="userSpaceOnUse">
+      <path d="M0 27.5h1500" stroke="#10283f" stroke-opacity=".045"/>
+    </pattern>
+  </defs>
+  <rect width="1500" height="500" fill="#f3ecd9"/>
+  <rect width="1500" height="500" fill="url(#paper-lines)"/>
+  <path d="M0 18h1500M0 482h1500" stroke="#3f6958" stroke-width="2" opacity=".6"/>
+  <path d="M0 30h1500M0 470h1500" stroke="#9d3f2f" opacity=".55"/>
+  <rect x="244" y="100" width="10" height="280" rx="5" fill="#9d3f2f"/>
+  <rect x="270" y="100" width="4" height="280" rx="2" fill="#bf934d"/>
+  <text x="322" y="218" fill="#10283f" font-family="Georgia, serif" font-size="102" font-weight="700" letter-spacing="-4">Dugout Value</text>
+  <text x="327" y="292" fill="#9d3f2f" font-family="Georgia, serif" font-size="44" font-weight="700">Build better trades.</text>
+  <g transform="translate(327 330)">
+    <rect width="229" height="48" rx="24" fill="#3f6958"/>
+    <text x="27" y="31" fill="#fffdf7" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="1.5">FREE TO USE</text>
+  </g>
+</svg>

@@ -1,0 +1,638 @@
+[
+  {
+    "path": "analysis/projection_baselines/results/inputs.json",
+    "sha256": "c0effa99a53ab737afbd9e3ddc8991ee2479c726955b445fb1b680c273258238"
+  },
+  {
+    "path": "analysis/projection_benchmark/results/inputs.json",
+    "sha256": "0746f84e7503fa477123f655ab23316b8fdd3c6f04f21a955f390a1fd186760d"
+  },
+  {
+    "path": "analysis/projection_baselines/results/results.json",
+    "sha256": "18671a072830d8b3d9a77af69e5eff73360ae7186ce4047001157466c65ec57e"
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2023-11-prior.json",
+    "sha256": "96e43260cbacacc6bf5d8c4773465223fd58bc3bd6eff12fb90c6faeb618abd3",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=11&season=2023&startDate=2023-01-01&endDate=2023-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=11&season=2023&startDate=2023-01-01&endDate=2023-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "retrieved_at": "2026-10-21T17:15:28.627879+00:00",
+    "bytes": 1027321
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2023-12-prior.json",
+    "sha256": "5473e7c8855150724f9d00e5459ed351f9e2bf75a4682b430784f9bd96187a25",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2023&startDate=2023-01-01&endDate=2023-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2023&startDate=2023-01-01&endDate=2023-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "retrieved_at": "2026-10-21T17:15:28.967648+00:00",
+    "bytes": 879569
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-11-prior.json",
+    "sha256": "7a252f8809597ef5d18f029aa476ab087c633dbb8b1d3f8b9c24e06408b20a0e",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=11&season=2024&startDate=2024-01-01&endDate=2024-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=11&season=2024&startDate=2024-01-01&endDate=2024-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "retrieved_at": "2026-10-21T17:15:28.260383+00:00",
+    "bytes": 977108
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-11-current.json",
+    "sha256": "046794e723f848b592dab3bdf6bd1fd6c5deecf3a85b44a02b19c2f43e64f1aa",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=11&season=2024&startDate=2024-01-01&endDate=2024-05-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=11&season=2024&startDate=2024-01-01&endDate=2024-05-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "retrieved_at": "2026-10-21T17:15:27.810970+00:00",
+    "bytes": 661042
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-12-prior.json",
+    "sha256": "3da41f6dc8551cc97380e54f284d61869ed57068e05b28a825554e0388c345b7",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2024&startDate=2024-01-01&endDate=2024-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2024&startDate=2024-01-01&endDate=2024-12-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "retrieved_at": "2026-10-21T17:15:29.610454+00:00",
+    "bytes": 815255
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-12-current.json",
+    "sha256": "9c0ffbe9e8a0f5ca607125bc1c671d987f9b4151765915d1782151884e4ed93d",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2024&startDate=2024-01-01&endDate=2024-05-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2024&startDate=2024-01-01&endDate=2024-05-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "retrieved_at": "2026-10-21T17:15:29.339392+00:00",
+    "bytes": 548162
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2025-11-current.json",
+    "sha256": "bdf6269cee8bc716fbb8a04f0567528467e8504c17246f0caa29b594d9777db1",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=11&season=2025&startDate=2025-01-01&endDate=2025-05-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=11&season=2025&startDate=2025-01-01&endDate=2025-05-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "retrieved_at": "2026-10-21T17:15:30.094165+00:00",
+    "bytes": 703349
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2025-12-current.json",
+    "sha256": "07adae409f642b3fa4e3c879b9d83a82923d4eb6539d051ba2f09c7ac2b9dce0",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2025&startDate=2025-01-01&endDate=2025-05-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/stats?stats=byDateRange&group=hitting&sportIds=12&season=2025&startDate=2025-01-01&endDate=2025-05-31&gameType=R&playerPool=ALL&limit=2000&offset=0",
+    "retrieved_at": "2026-10-21T17:15:30.180454+00:00",
+    "bytes": 565515
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-1-schedule.json",
+    "sha256": "3a772e949e796318553f73b405b0c10e07721f43889afed7c86228ab6f1c9073",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2024-01-01&endDate=2024-05-31&gameTypes=R",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2024-01-01&endDate=2024-05-31&gameTypes=R",
+    "retrieved_at": "2026-10-21T17:15:29.735385+00:00",
+    "bytes": 1158009
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-11-schedule.json",
+    "sha256": "14a8d63c07e1dd14b7e0ccffc8c0a7be21c60775e0498221c0bb6283de7632fd",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=11&startDate=2024-01-01&endDate=2024-05-31&gameTypes=R",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=11&startDate=2024-01-01&endDate=2024-05-31&gameTypes=R",
+    "retrieved_at": "2026-10-21T17:15:30.046572+00:00",
+    "bytes": 1149577
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-12-schedule.json",
+    "sha256": "6b44e2e1c5f982ac8e5f062b696a67056901d0a3337c2b11f0a9ec8de66c6013",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=12&startDate=2024-01-01&endDate=2024-05-31&gameTypes=R",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=12&startDate=2024-01-01&endDate=2024-05-31&gameTypes=R",
+    "retrieved_at": "2026-10-21T17:15:30.200841+00:00",
+    "bytes": 1030963
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-108.json",
+    "sha256": "029d7363e24b69117bd1870961d8b3aea2d5d917b0f61d22725cc71140b33229",
+    "url": "https://statsapi.mlb.com/api/v1/teams/108/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/108/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.334432+00:00",
+    "bytes": 6660
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-109.json",
+    "sha256": "40657cc51ca3bac49ea04f0c366e55d430d381f6901daf86df2fa6ae40e9f469",
+    "url": "https://statsapi.mlb.com/api/v1/teams/109/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/109/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.502395+00:00",
+    "bytes": 6686
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-110.json",
+    "sha256": "39709292399d985fa52eba32faf643d4a404b2f103bb3e51550a0238b43d6b11",
+    "url": "https://statsapi.mlb.com/api/v1/teams/110/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/110/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.647244+00:00",
+    "bytes": 6674
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-111.json",
+    "sha256": "08e852476840df9e9844f56e3d076430ed8012ad32620078442c0b1f3002873f",
+    "url": "https://statsapi.mlb.com/api/v1/teams/111/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/111/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.647371+00:00",
+    "bytes": 6670
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-112.json",
+    "sha256": "ca07cba905325e303da0f7f8c2635694c72160155b0347db2a93b7a7ce602b57",
+    "url": "https://statsapi.mlb.com/api/v1/teams/112/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/112/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.648937+00:00",
+    "bytes": 6665
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-113.json",
+    "sha256": "aaad544584463843953ea4e26b81aed8231dacbf942d05469bd2965e40d2949f",
+    "url": "https://statsapi.mlb.com/api/v1/teams/113/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/113/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.655089+00:00",
+    "bytes": 6664
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-114.json",
+    "sha256": "20a235eafca311db4cf38e264617781882bcf337a345d86d27b8ee197b35699e",
+    "url": "https://statsapi.mlb.com/api/v1/teams/114/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/114/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.787832+00:00",
+    "bytes": 6410
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-115.json",
+    "sha256": "4ab8ebd1d7c61fab9eb34be7f670088db57864392ebc976f7e728d179bbdd80c",
+    "url": "https://statsapi.mlb.com/api/v1/teams/115/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/115/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.787127+00:00",
+    "bytes": 6661
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-116.json",
+    "sha256": "96c093ee84673c96338a4b299d38c8483554f38674aa4030d198863164f9dc6e",
+    "url": "https://statsapi.mlb.com/api/v1/teams/116/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/116/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.813114+00:00",
+    "bytes": 6640
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-117.json",
+    "sha256": "de3720df9a7442ee721887c1546bdd101f5690d39fcd9f7976fc70bf0928619c",
+    "url": "https://statsapi.mlb.com/api/v1/teams/117/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/117/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.799579+00:00",
+    "bytes": 6668
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-118.json",
+    "sha256": "bedb18f9379678f8e57c5eb590fb29751291b5c703e61a1d4a969211767d7ee2",
+    "url": "https://statsapi.mlb.com/api/v1/teams/118/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/118/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.926221+00:00",
+    "bytes": 6659
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-119.json",
+    "sha256": "9e3f3896bfff3fd43a9aaadea3f21cd4690172b15976bfb58e24085f83896166",
+    "url": "https://statsapi.mlb.com/api/v1/teams/119/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/119/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.943023+00:00",
+    "bytes": 6437
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-120.json",
+    "sha256": "de95d2885d23728f4118a0f7921ed96145d2a3d3b8a0f8d1b8bc9a667e9f186f",
+    "url": "https://statsapi.mlb.com/api/v1/teams/120/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/120/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.943173+00:00",
+    "bytes": 6649
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-121.json",
+    "sha256": "a7a0a8bba0f003e752bbc8600a234cebaf1df038bacae66e5a3ee3144cbd3a23",
+    "url": "https://statsapi.mlb.com/api/v1/teams/121/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/121/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:30.977368+00:00",
+    "bytes": 6666
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-133.json",
+    "sha256": "59cebc7e9d0db4b73823bc18d99d85506ae4cf63cd77c2773db6f4b6f1faf5e3",
+    "url": "https://statsapi.mlb.com/api/v1/teams/133/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/133/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.058126+00:00",
+    "bytes": 6406
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-134.json",
+    "sha256": "baf8372d80503edb6623dcc77234a879887665f5c74a3bbf91708c0b4e2de821",
+    "url": "https://statsapi.mlb.com/api/v1/teams/134/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/134/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.064308+00:00",
+    "bytes": 6431
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-135.json",
+    "sha256": "ee270cb48f79377aa3d7e140e64ead212a88950a570c07438909740f151623e0",
+    "url": "https://statsapi.mlb.com/api/v1/teams/135/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/135/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.084754+00:00",
+    "bytes": 6194
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-136.json",
+    "sha256": "b32bd50ed39a60b87828e09605aa54b511e95fcb51254eef036a23a43689d2d6",
+    "url": "https://statsapi.mlb.com/api/v1/teams/136/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/136/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.113499+00:00",
+    "bytes": 6394
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-137.json",
+    "sha256": "31cd1e0107d18a226ae55dcf5845258a72f1a7acb3f87bcf50135898d98702a7",
+    "url": "https://statsapi.mlb.com/api/v1/teams/137/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/137/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.193693+00:00",
+    "bytes": 6660
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-138.json",
+    "sha256": "f701833e0a51d73a88da349f0c47e53bbae2988d5142c9d01a068161113ef0bc",
+    "url": "https://statsapi.mlb.com/api/v1/teams/138/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/138/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.198379+00:00",
+    "bytes": 6666
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-139.json",
+    "sha256": "d19c0f38ce936395fa1854b97b4318793340c3a677f84ecd8b39e588000578f3",
+    "url": "https://statsapi.mlb.com/api/v1/teams/139/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/139/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.216862+00:00",
+    "bytes": 6670
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-140.json",
+    "sha256": "e1463d9456729b8948163c91f2de2e9758989c6e3dd65dfb7a9c9b7ca1140ae9",
+    "url": "https://statsapi.mlb.com/api/v1/teams/140/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/140/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.276885+00:00",
+    "bytes": 6678
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-141.json",
+    "sha256": "fdd0d79999cb2cfb1b4d4d07f31f67d59d8106727ef62609ce4340b5f69c6ca5",
+    "url": "https://statsapi.mlb.com/api/v1/teams/141/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/141/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.328833+00:00",
+    "bytes": 6194
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-142.json",
+    "sha256": "c336f03ad98c6e7e392fc16b4cede219f8c5f32d977ecc2e6cf107e3fe3a93e9",
+    "url": "https://statsapi.mlb.com/api/v1/teams/142/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/142/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.328444+00:00",
+    "bytes": 6669
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-143.json",
+    "sha256": "accb5e8a96d555a94150ef457da102acaa81fd57810905ccc19337489385d8c1",
+    "url": "https://statsapi.mlb.com/api/v1/teams/143/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/143/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.360766+00:00",
+    "bytes": 6681
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-144.json",
+    "sha256": "94a2c778d654ab768444e34acaa51f3ccef0ada2abd9640eb27aefa651cba17c",
+    "url": "https://statsapi.mlb.com/api/v1/teams/144/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/144/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.400588+00:00",
+    "bytes": 6663
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-145.json",
+    "sha256": "681820c283da930b4d0f0772560dd4372265ce6912d74ae0928d06be1c93db23",
+    "url": "https://statsapi.mlb.com/api/v1/teams/145/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/145/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.459836+00:00",
+    "bytes": 6663
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-146.json",
+    "sha256": "216d01a5c76e8d1b24b33b7a4c40fa997a7581b6d0828b1124f7e5527580fbc8",
+    "url": "https://statsapi.mlb.com/api/v1/teams/146/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/146/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.459746+00:00",
+    "bytes": 6673
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-147.json",
+    "sha256": "8a3a775e9ca3127a6d1a871850a14fef89cd8059448246cea722530adf31342a",
+    "url": "https://statsapi.mlb.com/api/v1/teams/147/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/147/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.485992+00:00",
+    "bytes": 6668
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-roster-158.json",
+    "sha256": "5e62cfdb0285d8cec87ae4c67e970c7197c7dba9d4415d314b2b424276669761",
+    "url": "https://statsapi.mlb.com/api/v1/teams/158/roster?rosterType=active&date=2024-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/158/roster?rosterType=active&date=2024-05-31",
+    "retrieved_at": "2026-10-21T17:15:31.540779+00:00",
+    "bytes": 6661
+  },
+  {
+    "path": "analysis/projection_baselines/raw/history-2023-bat.json",
+    "sha256": "89df643ed9b56e3820ea7ab7c6229babcbd353c25f394abb45c788ca981b05c4",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2023&season1=2023&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2023-03-30&enddate=2023-10-01&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2023&season1=2023&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2023-03-30&enddate=2023-10-01&pageitems=2000&pagenum=1",
+    "bytes": 12554674,
+    "retrieved_at": "2026-10-20T15:09:51.148435+00:00"
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-mlb-source.json",
+    "sha256": "fd5038b29c9febe9ed10b36fe083bc4d126ad124166d125519f5a672adcf76a7",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-03-20&enddate=2024-05-31&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-03-20&enddate=2024-05-31&pageitems=2000&pagenum=1",
+    "retrieved_at": "2026-10-21T17:15:34.050507+00:00",
+    "bytes": 9665923
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2024-mlb-target.json",
+    "sha256": "3beaf78b6575041456b78d1014bba60028295fba4c63e97037fc67a861247615",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-06-01&enddate=2024-09-30&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-06-01&enddate=2024-09-30&pageitems=2000&pagenum=1",
+    "retrieved_at": "2026-10-21T17:15:35.857775+00:00",
+    "bytes": 11617012
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2025-1-schedule.json",
+    "sha256": "b047a33a64fe2a668a70e95196a3e197e912c4b933ee2814d46d98a7654a2b76",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2025-01-01&endDate=2025-05-31&gameTypes=R",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate=2025-01-01&endDate=2025-05-31&gameTypes=R",
+    "retrieved_at": "2026-10-21T17:15:30.514799+00:00",
+    "bytes": 1165340
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2025-11-schedule.json",
+    "sha256": "a3b45da0b58f6d8f3d36b29bcd948dd9f6ea47de1b61bf2f98a294c4030c5bff",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=11&startDate=2025-01-01&endDate=2025-05-31&gameTypes=R",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=11&startDate=2025-01-01&endDate=2025-05-31&gameTypes=R",
+    "retrieved_at": "2026-10-21T17:15:30.503425+00:00",
+    "bytes": 1186500
+  },
+  {
+    "path": "analysis/playing_time_opportunity/raw/2025-12-schedule.json",
+    "sha256": "da0e0d08039a5287d840df4e41955b3a9da271f32a66d62e6b8c65fdc35c85df",
+    "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=12&startDate=2025-01-01&endDate=2025-05-31&gameTypes=R",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/schedule?sportId=12&startDate=2025-01-01&endDate=2025-05-31&gameTypes=R",
+    "retrieved_at": "2026-10-21T17:15:30.530843+00:00",
+    "bytes": 1077112
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-108.json",
+    "sha256": "3c477a42d1742bb48f0e63ae2e81bb94bafe3cbe6d034df822e1a9ab667418ed",
+    "url": "https://statsapi.mlb.com/api/v1/teams/108/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/108/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6417,
+    "retrieved_at": "2026-10-20T15:09:53.336871+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-109.json",
+    "sha256": "01d6c9235edb744302b5ab6c07d2e4e0e33cb31ad6b33aa4b3fb348755137a5a",
+    "url": "https://statsapi.mlb.com/api/v1/teams/109/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/109/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6669,
+    "retrieved_at": "2026-10-20T15:09:53.415803+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-110.json",
+    "sha256": "2c15932fae6f91e1f9312a492ea62e58c2633fba046777aa60a4624fa05da999",
+    "url": "https://statsapi.mlb.com/api/v1/teams/110/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/110/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6678,
+    "retrieved_at": "2026-10-20T15:09:53.415061+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-111.json",
+    "sha256": "ff8b57fb01698bd918704b1c96658eef489aba6509c1fc628e5d0c3b234c5055",
+    "url": "https://statsapi.mlb.com/api/v1/teams/111/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/111/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6446,
+    "retrieved_at": "2026-10-20T15:09:53.442428+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-112.json",
+    "sha256": "819d8f8feabc18485dc687f80a4090b90089946b6ac26e2b4bac9828181188f3",
+    "url": "https://statsapi.mlb.com/api/v1/teams/112/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/112/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6648,
+    "retrieved_at": "2026-10-20T15:09:54.598779+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-113.json",
+    "sha256": "f758c776b4c53f38aee09d2caf6ff134dbae90c71521076e58456cc1cb1f6ca3",
+    "url": "https://statsapi.mlb.com/api/v1/teams/113/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/113/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6404,
+    "retrieved_at": "2026-10-20T15:09:54.601172+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-114.json",
+    "sha256": "34288f87b8d14ac7694915d1ecbed82dd5381e2178908f859514a2d7b95bd69f",
+    "url": "https://statsapi.mlb.com/api/v1/teams/114/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/114/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6647,
+    "retrieved_at": "2026-10-20T15:09:53.576996+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-115.json",
+    "sha256": "1a08632253ce49f713c673de5e28e494679fa005afd3bc5dc02468851b086e53",
+    "url": "https://statsapi.mlb.com/api/v1/teams/115/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/115/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6422,
+    "retrieved_at": "2026-10-20T15:09:53.717852+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-116.json",
+    "sha256": "1864394d9ba8352eec28bda1b104fe6e68b5f6f6704148d0be11669d594f5a54",
+    "url": "https://statsapi.mlb.com/api/v1/teams/116/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/116/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6665,
+    "retrieved_at": "2026-10-20T15:09:53.745700+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-117.json",
+    "sha256": "d3f924600744dff0e79317918150a0448e4bd8be0268d6475decb4179d7d2076",
+    "url": "https://statsapi.mlb.com/api/v1/teams/117/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/117/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6653,
+    "retrieved_at": "2026-10-20T15:09:53.877014+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-118.json",
+    "sha256": "de58ce7b3ff8c17f23fa01493ded9f8647bfa7067b098965723c0d73dbb1dc82",
+    "url": "https://statsapi.mlb.com/api/v1/teams/118/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/118/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6668,
+    "retrieved_at": "2026-10-20T15:09:53.916601+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-119.json",
+    "sha256": "2b7b6903ff8f7e79ae63373edca84ce60900f0020f98383bdf34e49f3d7d9f14",
+    "url": "https://statsapi.mlb.com/api/v1/teams/119/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/119/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6439,
+    "retrieved_at": "2026-10-20T15:09:54.012001+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-120.json",
+    "sha256": "7cb3391d7012388e6a997dc7a2641bddc8afbc62079266203ca722dd669be7fb",
+    "url": "https://statsapi.mlb.com/api/v1/teams/120/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/120/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6655,
+    "retrieved_at": "2026-10-20T15:09:54.046119+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-121.json",
+    "sha256": "ccaccfe1642beaa1d0bdb1c5f9c61eed40aa5ce5b6cc80cdd730da8faeaed3bc",
+    "url": "https://statsapi.mlb.com/api/v1/teams/121/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/121/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6414,
+    "retrieved_at": "2026-10-20T15:09:54.147709+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-133.json",
+    "sha256": "6f08a4a0f012dbe9ae848572361ef49fe8cb1e891d3bd7dd2a247c645b8b95c7",
+    "url": "https://statsapi.mlb.com/api/v1/teams/133/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/133/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6666,
+    "retrieved_at": "2026-10-20T15:09:54.183684+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-134.json",
+    "sha256": "dfbc16b6fc0b3a7fddf085bd0dea7ac21a546052a5665c782a84e75cb13bdec9",
+    "url": "https://statsapi.mlb.com/api/v1/teams/134/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/134/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6928,
+    "retrieved_at": "2026-10-20T15:09:54.273914+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-135.json",
+    "sha256": "3e073b6020d662d1e66904ae72173ef97645c3ccba2a0176f9d4bb632a93666c",
+    "url": "https://statsapi.mlb.com/api/v1/teams/135/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/135/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6446,
+    "retrieved_at": "2026-10-20T15:09:54.345631+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-136.json",
+    "sha256": "4401c61b7f1cd5e3efb23631c4ce1d4699d8752a58e38105aabf6a2bea050144",
+    "url": "https://statsapi.mlb.com/api/v1/teams/136/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/136/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6666,
+    "retrieved_at": "2026-10-20T15:09:54.422757+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-137.json",
+    "sha256": "b338787b891dc79b61a4f32fca8accae40fe8c495a0acb6279071b0dc718dd34",
+    "url": "https://statsapi.mlb.com/api/v1/teams/137/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/137/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6663,
+    "retrieved_at": "2026-10-20T15:09:54.494464+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-138.json",
+    "sha256": "ae5634ad8e227d2eefefdd0be61d465286b3a9bfb4c9120665aec2474666d6d2",
+    "url": "https://statsapi.mlb.com/api/v1/teams/138/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/138/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6650,
+    "retrieved_at": "2026-10-20T15:09:54.563180+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-139.json",
+    "sha256": "f7e755ba0b534fa52dfe510d0171739817013a9c77f2a5e89615b60e3701aa85",
+    "url": "https://statsapi.mlb.com/api/v1/teams/139/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/139/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6661,
+    "retrieved_at": "2026-10-20T15:09:54.632829+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-140.json",
+    "sha256": "bd21b7fd1e08168d620b412a0d6678d6b4f1dd4780000f54f6449f1b8d3681fa",
+    "url": "https://statsapi.mlb.com/api/v1/teams/140/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/140/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6640,
+    "retrieved_at": "2026-10-20T15:09:54.676683+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-141.json",
+    "sha256": "1f1fdf21d456996c0bda6e96a8c492318660350385363fc27f68d784c000a6f2",
+    "url": "https://statsapi.mlb.com/api/v1/teams/141/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/141/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6438,
+    "retrieved_at": "2026-10-20T15:09:54.751590+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-142.json",
+    "sha256": "1eed665035497cf30ef6c08bec17f9784bb997ff8585169837413151d9662601",
+    "url": "https://statsapi.mlb.com/api/v1/teams/142/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/142/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6895,
+    "retrieved_at": "2026-10-20T15:09:54.751480+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-143.json",
+    "sha256": "bbbbc22d3945fc9dfc0d30ecfd2d78599f515f069d26864c35560ce1a3067fd1",
+    "url": "https://statsapi.mlb.com/api/v1/teams/143/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/143/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6663,
+    "retrieved_at": "2026-10-20T15:09:55.558782+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-144.json",
+    "sha256": "051f7867b145830d8728fe7ff2cd08b1f96b064dbc7e5ea9f1de49d682ee9c4d",
+    "url": "https://statsapi.mlb.com/api/v1/teams/144/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/144/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6682,
+    "retrieved_at": "2026-10-20T15:09:54.817417+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-145.json",
+    "sha256": "99c725abc4c70bdcce9ef8174a0f89c31ac3b78fb7d1fdce00ded739c50b0891",
+    "url": "https://statsapi.mlb.com/api/v1/teams/145/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/145/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6420,
+    "retrieved_at": "2026-10-20T15:09:54.898975+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-146.json",
+    "sha256": "0451274ef31dafbcc241184b7ebb25dd8af87cb455f7562bfc69a28a94003f9c",
+    "url": "https://statsapi.mlb.com/api/v1/teams/146/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/146/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6665,
+    "retrieved_at": "2026-10-20T15:09:54.895608+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-147.json",
+    "sha256": "2e9cd37c92e3f950b9d793f668040da31a895f408a8ed3ee36a2636382afbbb1",
+    "url": "https://statsapi.mlb.com/api/v1/teams/147/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/147/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6673,
+    "retrieved_at": "2026-10-20T15:09:54.959285+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/2025-dc-bat-roster-158.json",
+    "sha256": "47d778adf879babd093c2bb07bc2820c429b1e06485f19168c656b0b8aa88584",
+    "url": "https://statsapi.mlb.com/api/v1/teams/158/roster?rosterType=active&date=2025-05-31",
+    "resolved_url": "https://statsapi.mlb.com/api/v1/teams/158/roster?rosterType=active&date=2025-05-31",
+    "bytes": 6658,
+    "retrieved_at": "2026-10-20T15:09:55.032827+00:00"
+  },
+  {
+    "path": "analysis/projection_baselines/raw/history-2024-bat.json",
+    "sha256": "3103bd8e74f6aae14e96f8173f32b4e597ab920b75a11e989a19d52a301dc8c2",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-03-20&enddate=2024-09-30&pageitems=2000&pagenum=1",
+    "resolved_url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=2024&season1=2024&ind=0&team=0&rost=0&age=0&filter=&players=0&month=1000&startdate=2024-03-20&enddate=2024-09-30&pageitems=2000&pagenum=1",
+    "bytes": 12532136,
+    "retrieved_at": "2026-10-20T15:09:52.578966+00:00"
+  }
+]

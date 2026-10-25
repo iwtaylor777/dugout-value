@@ -1,0 +1,1156 @@
+{
+  "status": "retrospective development; June 2024 fit, June 2025 evaluation",
+  "date": "2026-10-21",
+  "audits": {
+    "2024": {
+      "n": 584,
+      "feature_cutoff": "2024-05-31",
+      "target_start": "2024-06-01",
+      "target_end": "2024-09-30",
+      "selection_archive": "2024-04-10",
+      "elapsed_games": 57.4,
+      "remaining_games": 104.6,
+      "schedules": {
+        "1": {
+          "unique_scheduled": 868,
+          "completed_games": 861,
+          "cross_cutoff_suspensions": []
+        },
+        "11": {
+          "unique_scheduled": 825,
+          "completed_games": 817,
+          "cross_cutoff_suspensions": []
+        },
+        "12": {
+          "unique_scheduled": 735,
+          "completed_games": 728,
+          "cross_cutoff_suspensions": []
+        }
+      },
+      "identical_roster_duplicates": [],
+      "unknown_identities": 0,
+      "missing_source_requests": 0,
+      "active": 380,
+      "no_prior_mlb": 55,
+      "no_current_mlb": 98,
+      "zero_outcomes": 78,
+      "current_aa_or_aaa": 248,
+      "any_aa_or_aaa_history": 411
+    },
+    "2025": {
+      "n": 612,
+      "feature_cutoff": "2025-05-31",
+      "target_start": "2025-06-01",
+      "target_end": "2025-09-28",
+      "selection_archive": "2025-06-01",
+      "elapsed_games": 57.93333333333333,
+      "remaining_games": 104.06666666666666,
+      "schedules": {
+        "1": {
+          "unique_scheduled": 873,
+          "completed_games": 869,
+          "cross_cutoff_suspensions": []
+        },
+        "11": {
+          "unique_scheduled": 840,
+          "completed_games": 825,
+          "cross_cutoff_suspensions": []
+        },
+        "12": {
+          "unique_scheduled": 750,
+          "completed_games": 739,
+          "cross_cutoff_suspensions": []
+        }
+      },
+      "identical_roster_duplicates": [
+        {
+          "team": 142,
+          "mlbam_id": "668904"
+        }
+      ],
+      "unknown_identities": 0,
+      "missing_source_requests": 0,
+      "active": 389,
+      "no_prior_mlb": 86,
+      "no_current_mlb": 105,
+      "zero_outcomes": 77,
+      "current_aa_or_aaa": 289,
+      "any_aa_or_aaa_history": 446
+    }
+  },
+  "scores": {
+    "n": 612,
+    "zero_outcomes": 77,
+    "workload": {
+      "metrics": {
+        "constant": {
+          "n": 612,
+          "rmse": 149.55870398321886,
+          "mae": 132.96750665053239,
+          "bias": 4.48027414122711
+        },
+        "mlb": {
+          "n": 612,
+          "rmse": 97.72090503255926,
+          "mae": 77.30899223772752,
+          "bias": -4.717906117672229
+        },
+        "roster": {
+          "n": 612,
+          "rmse": 96.15178509840852,
+          "mae": 75.80132705553052,
+          "bias": -3.6394187246878174
+        },
+        "minors": {
+          "n": 612,
+          "rmse": 94.96978349444123,
+          "mae": 74.56186778173327,
+          "bias": -2.607405227158962
+        },
+        "archived": {
+          "n": 612,
+          "rmse": 89.16823344784369,
+          "mae": 65.5718954248366,
+          "bias": 11.61111111111111
+        },
+        "calendar": {
+          "n": 612,
+          "rmse": 105.142727457751,
+          "mae": 75.86960784313725,
+          "bias": -18.919281045751625
+        },
+        "games": {
+          "n": 612,
+          "rmse": 109.6488342226963,
+          "mae": 78.6319298720639,
+          "bias": 1.6135517498138534
+        },
+        "multiyear": {
+          "n": 612,
+          "rmse": 110.24697251097834,
+          "mae": 81.3861516602269,
+          "bias": -13.327065077737219
+        }
+      },
+      "comparisons": {
+        "mlb_vs_constant": {
+          "rmse_reduction_pct": 34.66050291294048,
+          "interval95_pct": [
+            30.411968326149964,
+            39.04931428790504
+          ],
+          "resamples": 5000
+        },
+        "roster_vs_mlb": {
+          "rmse_reduction_pct": 1.6057157203240444,
+          "interval95_pct": [
+            0.19588918756719337,
+            3.0730312487315574
+          ],
+          "resamples": 5000
+        },
+        "minors_vs_roster": {
+          "rmse_reduction_pct": 1.2293080183145322,
+          "interval95_pct": [
+            -0.07821276755863821,
+            2.5422726741942365
+          ],
+          "resamples": 5000
+        },
+        "minors_vs_archived": {
+          "rmse_reduction_pct": -6.506296942611277,
+          "interval95_pct": [
+            -14.13016959943018,
+            -0.004839628296618853
+          ],
+          "resamples": 5000
+        },
+        "minors_vs_multiyear": {
+          "rmse_reduction_pct": 13.857241308840308,
+          "interval95_pct": [
+            9.768626498851212,
+            17.574756881177752
+          ],
+          "resamples": 5000
+        }
+      }
+    },
+    "probability": {
+      "metrics": {
+        "constant": {
+          "n": 612,
+          "brier": 0.11004705722909666,
+          "log_loss": 0.37862043099180115,
+          "mean_predicted": 0.8664383561643837,
+          "observed_fraction": 0.8741830065359477,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 612,
+              "mean_predicted": 0.8664383561643837,
+              "observed_fraction": 0.8741830065359477
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            }
+          ]
+        },
+        "mlb": {
+          "n": 612,
+          "brier": 0.0937650123714785,
+          "log_loss": 0.29771101196773814,
+          "mean_predicted": 0.8517137636507365,
+          "observed_fraction": 0.8741830065359477,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "n": 136,
+              "mean_predicted": 0.6352310456179678,
+              "observed_fraction": 0.6911764705882353
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 80,
+              "mean_predicted": 0.7506449589362001,
+              "observed_fraction": 0.725
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 77,
+              "mean_predicted": 0.8535561813568016,
+              "observed_fraction": 0.935064935064935
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "n": 319,
+              "mean_predicted": 0.9689090234195525,
+              "observed_fraction": 0.9749216300940439
+            }
+          ]
+        },
+        "roster": {
+          "n": 612,
+          "brier": 0.08719781241227116,
+          "log_loss": 0.268058853717114,
+          "mean_predicted": 0.8592255382950899,
+          "observed_fraction": 0.8741830065359477,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "n": 107,
+              "mean_predicted": 0.5582761788507329,
+              "observed_fraction": 0.6448598130841121
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "n": 59,
+              "mean_predicted": 0.6488798537295648,
+              "observed_fraction": 0.6271186440677966
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 33,
+              "mean_predicted": 0.7483336745515792,
+              "observed_fraction": 0.7878787878787878
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 16,
+              "mean_predicted": 0.8311070372709675,
+              "observed_fraction": 0.8125
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "n": 397,
+              "mean_predicted": 0.9819492268840927,
+              "observed_fraction": 0.982367758186398
+            }
+          ]
+        },
+        "minors": {
+          "n": 612,
+          "brier": 0.08135285398196401,
+          "log_loss": 0.25680289309328475,
+          "mean_predicted": 0.8632670344977472,
+          "observed_fraction": 0.8741830065359477,
+          "reliability_bins": [
+            {
+              "lower": 0.0,
+              "upper": 0.1,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.1,
+              "upper": 0.2,
+              "n": 0,
+              "mean_predicted": null,
+              "observed_fraction": null
+            },
+            {
+              "lower": 0.2,
+              "upper": 0.3,
+              "n": 3,
+              "mean_predicted": 0.27736516811283746,
+              "observed_fraction": 0.0
+            },
+            {
+              "lower": 0.3,
+              "upper": 0.4,
+              "n": 9,
+              "mean_predicted": 0.34763329454492375,
+              "observed_fraction": 0.4444444444444444
+            },
+            {
+              "lower": 0.4,
+              "upper": 0.5,
+              "n": 16,
+              "mean_predicted": 0.4608944637969628,
+              "observed_fraction": 0.375
+            },
+            {
+              "lower": 0.5,
+              "upper": 0.6,
+              "n": 55,
+              "mean_predicted": 0.5632847591118373,
+              "observed_fraction": 0.6545454545454545
+            },
+            {
+              "lower": 0.6,
+              "upper": 0.7,
+              "n": 47,
+              "mean_predicted": 0.6505185903473573,
+              "observed_fraction": 0.6595744680851063
+            },
+            {
+              "lower": 0.7,
+              "upper": 0.8,
+              "n": 65,
+              "mean_predicted": 0.7441910941278536,
+              "observed_fraction": 0.7846153846153846
+            },
+            {
+              "lower": 0.8,
+              "upper": 0.9,
+              "n": 22,
+              "mean_predicted": 0.8550953748339416,
+              "observed_fraction": 0.8636363636363636
+            },
+            {
+              "lower": 0.9,
+              "upper": 1.0,
+              "n": 395,
+              "mean_predicted": 0.9828981358847925,
+              "observed_fraction": 0.9822784810126582
+            }
+          ]
+        }
+      },
+      "comparisons": {
+        "mlb_vs_constant": {
+          "brier_improvement": 0.016282044857618166,
+          "interval95": [
+            0.007525576718964601,
+            0.025171578655765525
+          ],
+          "resamples": 5000
+        },
+        "roster_vs_mlb": {
+          "brier_improvement": 0.006567199959207334,
+          "interval95": [
+            0.0005241911358900113,
+            0.012431969578571045
+          ],
+          "resamples": 5000
+        },
+        "minors_vs_roster": {
+          "brier_improvement": 0.005844958430307148,
+          "interval95": [
+            0.001001436044623544,
+            0.01066627800292963
+          ],
+          "resamples": 5000
+        }
+      }
+    },
+    "conditional_positive_only": {
+      "constant": {
+        "pa_per_game": {
+          "n": 535,
+          "rmse": 1.3556228702772648,
+          "mae": 1.2002235742462766,
+          "bias": 0.06798951781356935
+        },
+        "pa": {
+          "n": 535,
+          "rmse": 141.07515336685404,
+          "mae": 124.90326662656251,
+          "bias": 7.075442487132114
+        }
+      },
+      "mlb": {
+        "pa_per_game": {
+          "n": 535,
+          "rmse": 0.9353180683413628,
+          "mae": 0.7502129641798674,
+          "bias": -0.014199895834735958
+        },
+        "pa": {
+          "n": 535,
+          "rmse": 97.33543364539113,
+          "mae": 78.07216247231821,
+          "bias": -1.4777358265348561
+        }
+      },
+      "roster": {
+        "pa_per_game": {
+          "n": 535,
+          "rmse": 0.9338187256250535,
+          "mae": 0.748317912574943,
+          "bias": -0.015499099132338889
+        },
+        "pa": {
+          "n": 535,
+          "rmse": 97.1794020467139,
+          "mae": 77.87495076863239,
+          "bias": -1.6129395830387327
+        }
+      },
+      "minors": {
+        "pa_per_game": {
+          "n": 535,
+          "rmse": 0.9256784227013124,
+          "mae": 0.7389871090566618,
+          "bias": -0.007344136543620195
+        },
+        "pa": {
+          "n": 535,
+          "rmse": 96.33226785578323,
+          "mae": 76.90392514916326,
+          "bias": -0.7642798096394114
+        }
+      }
+    },
+    "groups": {
+      "active": {
+        "n": 389,
+        "zero_outcomes": 7,
+        "mean_actual_pa": 245.413881748072,
+        "bias": {
+          "constant": -54.670535711420044,
+          "mlb": -15.003142473105292,
+          "roster": -4.305208085781852,
+          "minors": -3.393287845505228,
+          "archived": 18.151670951156813,
+          "calendar": -14.191259640102816,
+          "games": 14.179410189888214,
+          "multiyear": -21.059621640869267
+        },
+        "workload": {
+          "constant": {
+            "n": 389,
+            "rmse": 149.6811505151727,
+            "mae": 131.00348460325108,
+            "bias": -54.670535711420044
+          },
+          "mlb": {
+            "n": 389,
+            "rmse": 95.93308708440071,
+            "mae": 76.00453296928832,
+            "bias": -15.003142473105292
+          },
+          "roster": {
+            "n": 389,
+            "rmse": 95.52278735683082,
+            "mae": 77.04692428403322,
+            "bias": -4.305208085781852
+          },
+          "minors": {
+            "n": 389,
+            "rmse": 94.38847181247922,
+            "mae": 75.857406406579,
+            "bias": -3.393287845505228
+          },
+          "archived": {
+            "n": 389,
+            "rmse": 89.62993038931711,
+            "mae": 66.38817480719794,
+            "bias": 18.151670951156813
+          },
+          "calendar": {
+            "n": 389,
+            "rmse": 101.35368295648259,
+            "mae": 76.08226221079691,
+            "bias": -14.191259640102816
+          },
+          "games": {
+            "n": 389,
+            "rmse": 106.49831259835487,
+            "mae": 78.54908724089681,
+            "bias": 14.179410189888214
+          },
+          "multiyear": {
+            "n": 389,
+            "rmse": 107.89529844467384,
+            "mae": 80.76505245827761,
+            "bias": -21.059621640869267
+          }
+        },
+        "probability": {
+          "constant": {
+            "n": 389,
+            "brier": 0.0310267255223275,
+            "log_loss": 0.17701160119676432,
+            "mean_predicted": 0.8664383561643837,
+            "observed_fraction": 0.9820051413881749
+          },
+          "mlb": {
+            "n": 389,
+            "brier": 0.025750518109878107,
+            "log_loss": 0.11334956692628542,
+            "mean_predicted": 0.9165968524062842,
+            "observed_fraction": 0.9820051413881749
+          },
+          "roster": {
+            "n": 389,
+            "brier": 0.01703406005365936,
+            "log_loss": 0.07509334718370761,
+            "mean_predicted": 0.9833125123337624,
+            "observed_fraction": 0.9820051413881749
+          },
+          "minors": {
+            "n": 389,
+            "brier": 0.017167777023755583,
+            "log_loss": 0.07754027986359557,
+            "mean_predicted": 0.9836346061939937,
+            "observed_fraction": 0.9820051413881749
+          }
+        }
+      },
+      "not_active": {
+        "n": 223,
+        "zero_outcomes": 70,
+        "mean_actual_pa": 83.08071748878923,
+        "bias": {
+          "constant": 107.66262854786272,
+          "mlb": 13.223604834181856,
+          "roster": -2.4780193459184026,
+          "minors": -1.2365158166805033,
+          "archived": 0.20179372197309417,
+          "calendar": -27.16681614349776,
+          "games": -20.306264094082678,
+          "multiyear": 0.161564980820484
+        },
+        "workload": {
+          "constant": {
+            "n": 223,
+            "rmse": 149.34486860633092,
+            "mae": 136.39353614108134,
+            "bias": 107.66262854786272
+          },
+          "mlb": {
+            "n": 223,
+            "rmse": 100.76366528183813,
+            "mae": 79.58448396608111,
+            "bias": 13.223604834181856
+          },
+          "roster": {
+            "n": 223,
+            "rmse": 97.2392667847625,
+            "mae": 73.62851395289579,
+            "bias": -2.4780193459184026
+          },
+          "minors": {
+            "n": 223,
+            "rmse": 95.97539293180425,
+            "mae": 72.30193717606068,
+            "bias": -1.2365158166805033
+          },
+          "archived": {
+            "n": 223,
+            "rmse": 88.35707721609177,
+            "mae": 64.14798206278027,
+            "bias": 0.20179372197309417
+          },
+          "calendar": {
+            "n": 223,
+            "rmse": 111.44437853353779,
+            "mae": 75.49865470852016,
+            "bias": -27.16681614349776
+          },
+          "games": {
+            "n": 223,
+            "rmse": 114.93806232083232,
+            "mae": 78.77644011208183,
+            "bias": -20.306264094082678
+          },
+          "multiyear": {
+            "n": 223,
+            "rmse": 114.23339508384026,
+            "mae": 82.46959376586936,
+            "bias": 0.161564980820484
+          }
+        },
+        "probability": {
+          "constant": {
+            "n": 223,
+            "brier": 0.2478896986368688,
+            "log_loss": 0.7303057887956993,
+            "mean_predicted": 0.8664383561643835,
+            "observed_fraction": 0.6860986547085202
+          },
+          "mlb": {
+            "n": 223,
+            "brier": 0.2124091301641357,
+            "log_loss": 0.6193101246185236,
+            "mean_predicted": 0.7385320527722246,
+            "observed_fraction": 0.6860986547085202
+          },
+          "roster": {
+            "n": 223,
+            "brier": 0.20959108446384064,
+            "log_loss": 0.6046668449345808,
+            "mean_predicted": 0.6427688885146255,
+            "observed_fraction": 0.6860986547085202
+          },
+          "minors": {
+            "n": 223,
+            "brier": 0.19331695683731417,
+            "log_loss": 0.56950763096929,
+            "mean_predicted": 0.6532984901486891,
+            "observed_fraction": 0.6860986547085202
+          }
+        }
+      },
+      "prior_mlb": {
+        "n": 526,
+        "zero_outcomes": 59,
+        "mean_actual_pa": 196.9277566539924,
+        "bias": {
+          "constant": -6.184410617340453,
+          "mlb": 1.1844261390418522,
+          "roster": 1.8393077538866005,
+          "minors": -0.06762909293012141,
+          "archived": 16.659695817490494,
+          "calendar": -10.987072243345999,
+          "games": 11.827571571711731,
+          "multiyear": 0.18032518567442232
+        },
+        "workload": {
+          "constant": {
+            "n": 526,
+            "rmse": 151.09865801265548,
+            "mae": 133.9351588148031,
+            "bias": -6.184410617340453
+          },
+          "mlb": {
+            "n": 526,
+            "rmse": 95.09774173238122,
+            "mae": 75.75902673125766,
+            "bias": 1.1844261390418522
+          },
+          "roster": {
+            "n": 526,
+            "rmse": 93.3817467272655,
+            "mae": 74.21602317005639,
+            "bias": 1.8393077538866005
+          },
+          "minors": {
+            "n": 526,
+            "rmse": 93.15133786839822,
+            "mae": 73.05501444909517,
+            "bias": -0.06762909293012141
+          },
+          "archived": {
+            "n": 526,
+            "rmse": 88.10000151055445,
+            "mae": 64.92585551330798,
+            "bias": 16.659695817490494
+          },
+          "calendar": {
+            "n": 526,
+            "rmse": 101.35912060983205,
+            "mae": 73.72015209125476,
+            "bias": -10.987072243345999
+          },
+          "games": {
+            "n": 526,
+            "rmse": 107.09106824185523,
+            "mae": 77.26728419099791,
+            "bias": 11.827571571711731
+          },
+          "multiyear": {
+            "n": 526,
+            "rmse": 103.65625178710313,
+            "mae": 78.11163081806217,
+            "bias": 0.18032518567442232
+          }
+        },
+        "probability": {
+          "constant": {
+            "n": 526,
+            "brier": 0.10004351503752694,
+            "log_loss": 0.35309785482075107,
+            "mean_predicted": 0.8664383561643837,
+            "observed_fraction": 0.8878326996197718
+          },
+          "mlb": {
+            "n": 526,
+            "brier": 0.08318463832677664,
+            "log_loss": 0.26724411257917985,
+            "mean_predicted": 0.8766204228094656,
+            "observed_fraction": 0.8878326996197718
+          },
+          "roster": {
+            "n": 526,
+            "brier": 0.07746760512641629,
+            "log_loss": 0.24086443365669433,
+            "mean_predicted": 0.8808211088468857,
+            "observed_fraction": 0.8878326996197718
+          },
+          "minors": {
+            "n": 526,
+            "brier": 0.07305537628532653,
+            "log_loss": 0.23229739267766714,
+            "mean_predicted": 0.8754751700399437,
+            "observed_fraction": 0.8878326996197718
+          }
+        }
+      },
+      "no_prior_mlb": {
+        "n": 86,
+        "zero_outcomes": 18,
+        "mean_actual_pa": 121.03488372093024,
+        "bias": {
+          "constant": 69.70846231572172,
+          "mlb": -40.8182173622258,
+          "roster": -37.148838814573175,
+          "minors": -18.14138483883771,
+          "archived": -19.267441860465116,
+          "calendar": -67.43488372093024,
+          "games": -60.85824390504991,
+          "multiyear": -95.94203343302237
+        },
+        "workload": {
+          "constant": {
+            "n": 86,
+            "rmse": 139.77116227560674,
+            "mae": 127.04907597138815,
+            "bias": 69.70846231572172
+          },
+          "mlb": {
+            "n": 86,
+            "rmse": 112.44090632712222,
+            "mae": 86.78901382381056,
+            "bias": -40.8182173622258
+          },
+          "roster": {
+            "n": 86,
+            "rmse": 111.60781776466274,
+            "mae": 85.49748802947705,
+            "bias": -37.148838814573175
+          },
+          "minors": {
+            "n": 86,
+            "rmse": 105.411411321428,
+            "mae": 83.77820328135695,
+            "bias": -18.14138483883771
+          },
+          "archived": {
+            "n": 86,
+            "rmse": 95.44199504727807,
+            "mae": 69.52325581395348,
+            "bias": -19.267441860465116
+          },
+          "calendar": {
+            "n": 86,
+            "rmse": 125.83233030043274,
+            "mae": 89.01627906976745,
+            "bias": -67.43488372093024
+          },
+          "games": {
+            "n": 86,
+            "rmse": 124.15131156651509,
+            "mae": 86.97848368881634,
+            "bias": -60.85824390504991
+          },
+          "multiyear": {
+            "n": 86,
+            "rmse": 144.1422246167438,
+            "mae": 101.41403495067624,
+            "bias": -95.94203343302237
+          }
+        },
+        "probability": {
+          "constant": {
+            "n": 86,
+            "brier": 0.1712315129589303,
+            "log_loss": 0.5347236294333398,
+            "mean_predicted": 0.8664383561643834,
+            "observed_fraction": 0.7906976744186046
+          },
+          "mlb": {
+            "n": 86,
+            "brier": 0.15847753269139916,
+            "log_loss": 0.4840550710186884,
+            "mean_predicted": 0.6993776855403692,
+            "observed_fraction": 0.7906976744186046
+          },
+          "roster": {
+            "n": 86,
+            "brier": 0.14671047557924405,
+            "log_loss": 0.4343875159471228,
+            "mean_predicted": 0.7271410021294555,
+            "observed_fraction": 0.7906976744186046
+          },
+          "minors": {
+            "n": 86,
+            "brier": 0.13210254314977,
+            "log_loss": 0.4066853723795043,
+            "mean_predicted": 0.788598670600127,
+            "observed_fraction": 0.7906976744186046
+          }
+        }
+      },
+      "current_mlb": {
+        "n": 507,
+        "zero_outcomes": 37,
+        "mean_actual_pa": 210.64102564102564,
+        "bias": {
+          "constant": -19.8976796043737,
+          "mlb": -2.3608510556895252,
+          "roster": 0.18877718611882774,
+          "minors": 1.0671064382949722,
+          "archived": 17.93885601577909,
+          "calendar": -8.640236686390523,
+          "games": 16.14495793074177,
+          "multiyear": -9.028898287064907
+        },
+        "workload": {
+          "constant": {
+            "n": 507,
+            "rmse": 149.3641283389034,
+            "mae": 132.24529214472767,
+            "bias": -19.8976796043737
+          },
+          "mlb": {
+            "n": 507,
+            "rmse": 99.54753051336534,
+            "mae": 79.10217761386407,
+            "bias": -2.3608510556895252
+          },
+          "roster": {
+            "n": 507,
+            "rmse": 97.33199644977539,
+            "mae": 77.4070367098964,
+            "bias": 0.18877718611882774
+          },
+          "minors": {
+            "n": 507,
+            "rmse": 96.43627511257114,
+            "mae": 76.52371490520495,
+            "bias": 1.0671064382949722
+          },
+          "archived": {
+            "n": 507,
+            "rmse": 90.42033118670389,
+            "mae": 67.0828402366864,
+            "bias": 17.93885601577909
+          },
+          "calendar": {
+            "n": 507,
+            "rmse": 103.79223481498771,
+            "mae": 77.38500986193293,
+            "bias": -8.640236686390523
+          },
+          "games": {
+            "n": 507,
+            "rmse": 109.27556421680241,
+            "mae": 80.71941041756038,
+            "bias": 16.14495793074177
+          },
+          "multiyear": {
+            "n": 507,
+            "rmse": 111.34160618428294,
+            "mae": 83.83631849248083,
+            "bias": -9.028898287064907
+          }
+        },
+        "probability": {
+          "constant": {
+            "n": 507,
+            "brier": 0.07132281202589529,
+            "log_loss": 0.2798211777934663,
+            "mean_predicted": 0.8664383561643837,
+            "observed_fraction": 0.9270216962524654
+          },
+          "mlb": {
+            "n": 507,
+            "brier": 0.06396624867186824,
+            "log_loss": 0.2207799392127762,
+            "mean_predicted": 0.894566192420279,
+            "observed_fraction": 0.9270216962524654
+          },
+          "roster": {
+            "n": 507,
+            "brier": 0.057464636378343675,
+            "log_loss": 0.18949406787023504,
+            "mean_predicted": 0.9145806096879561,
+            "observed_fraction": 0.9270216962524654
+          },
+          "minors": {
+            "n": 507,
+            "brier": 0.05658134740941412,
+            "log_loss": 0.18926856629065605,
+            "mean_predicted": 0.9179153965543099,
+            "observed_fraction": 0.9270216962524654
+          }
+        }
+      },
+      "no_current_mlb": {
+        "n": 105,
+        "zero_outcomes": 40,
+        "mean_actual_pa": 68.55238095238096,
+        "bias": {
+          "constant": 122.190965084271,
+          "mlb": -16.099114845531567,
+          "roster": -22.124136122582748,
+          "minors": -20.35004726892226,
+          "archived": -18.942857142857143,
+          "calendar": -68.55238095238096,
+          "games": -68.55238095238096,
+          "multiyear": -34.08107043841209
+        },
+        "workload": {
+          "constant": {
+            "n": 105,
+            "rmse": 150.49468639467904,
+            "mae": 136.4547709785609,
+            "bias": 122.190965084271
+          },
+          "mlb": {
+            "n": 105,
+            "rmse": 88.37120195220899,
+            "mae": 68.65046856438249,
+            "bias": -16.099114845531567
+          },
+          "roster": {
+            "n": 105,
+            "rmse": 90.23609597251033,
+            "mae": 68.04804329587813,
+            "bias": -22.124136122582748
+          },
+          "minors": {
+            "n": 105,
+            "rmse": 87.5437152630198,
+            "mae": 65.08894881411291,
+            "bias": -20.35004726892226
+          },
+          "archived": {
+            "n": 105,
+            "rmse": 82.85655993226803,
+            "mae": 58.27619047619048,
+            "bias": -18.942857142857143
+          },
+          "calendar": {
+            "n": 105,
+            "rmse": 111.4336018400537,
+            "mae": 68.55238095238096,
+            "bias": -68.55238095238096
+          },
+          "games": {
+            "n": 105,
+            "rmse": 111.4336018400537,
+            "mae": 68.55238095238096,
+            "bias": -68.55238095238096
+          },
+          "multiyear": {
+            "n": 105,
+            "rmse": 104.8006907171911,
+            "mae": 69.5553460987722,
+            "bias": -34.08107043841209
+          }
+        },
+        "probability": {
+          "constant": {
+            "n": 105,
+            "brier": 0.29702984121026904,
+            "log_loss": 0.8556796821494752,
+            "mean_predicted": 0.8664383561643836,
+            "observed_fraction": 0.6190476190476191
+          },
+          "mlb": {
+            "n": 105,
+            "brier": 0.23765047137816803,
+            "log_loss": 0.6691781918416975,
+            "mean_predicted": 0.6447977504492306,
+            "observed_fraction": 0.6190476190476191
+          },
+          "roster": {
+            "n": 105,
+            "brier": 0.23076657669037814,
+            "log_loss": 0.6474145339491867,
+            "mean_predicted": 0.5919396221409657,
+            "observed_fraction": 0.6190476190476191
+          },
+          "minors": {
+            "n": 105,
+            "brier": 0.20096384286084776,
+            "log_loss": 0.5828972139402637,
+            "mean_predicted": 0.5993935148532016,
+            "observed_fraction": 0.6190476190476191
+          }
+        }
+      }
+    },
+    "bootstrap_seed": 20261021
+  }
+}

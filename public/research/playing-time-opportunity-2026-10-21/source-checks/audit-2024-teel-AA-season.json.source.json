@@ -1,0 +1,9 @@
+{
+  "path": "audit-2024-teel-AA-season.json",
+  "url": "https://statsapi.mlb.com/api/v1/people/691019/stats?stats=season&group=hitting&sportId=12&season=2024&gameType=R",
+  "resolved_url": "https://statsapi.mlb.com/api/v1/people/691019/stats?stats=season&group=hitting&sportId=12&season=2024&gameType=R",
+  "http_status": 200,
+  "sha256": "6d2af1779893a85e951700ea0303727607203d3cb8e33e3901f24829692a7fe2",
+  "bytes": 1196,
+  "retrieved_at": "2026-10-21T17:22:01.248739+00:00"
+}

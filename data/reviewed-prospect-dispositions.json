@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "reviewedOn": "2026-10-19",
+  "validThrough": "2026-10-18",
+  "entries": [
+    {
+      "id": "prospect-sa3024884",
+      "name": "JP Wheat",
+      "action": "retain-grade",
+      "team": "CHC",
+      "mlbamId": "702516",
+      "transactionId": 943019,
+      "effectiveDate": "2026-09-16",
+      "reason": "South Bend Cubs activated RHP JP Wheat from the Development List.",
+      "sourceFile": "prospect-transactions.json",
+      "sourceSha256": "5d47749cfa67c230f28546ed98e0d1a9f67895b5d5290639e5eab72f10f3dee2",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=702516,835714,688883,689520,693311,692479,686633&startDate=01/01/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "prospect-31865",
+      "name": "Peyton Pallette",
+      "action": "retain-grade",
+      "team": "CHW",
+      "mlbamId": "688883",
+      "transactionId": 914119,
+      "effectiveDate": "2026-05-30",
+      "reason": "RHP Peyton Pallette returned to Chicago White Sox from Cleveland Guardians.",
+      "sourceFile": "prospect-transactions.json",
+      "sourceSha256": "5d47749cfa67c230f28546ed98e0d1a9f67895b5d5290639e5eab72f10f3dee2",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=702516,835714,688883,689520,693311,692479,686633&startDate=01/01/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "prospect-26429",
+      "name": "Cody Laweryson",
+      "action": "retain-grade",
+      "team": "MIN",
+      "mlbamId": "689520",
+      "transactionId": 936075,
+      "effectiveDate": "2026-08-07",
+      "reason": "Minnesota Twins signed free agent RHP Cody Laweryson to a minor league contract.",
+      "sourceFile": "prospect-transactions.json",
+      "sourceSha256": "5d47749cfa67c230f28546ed98e0d1a9f67895b5d5290639e5eab72f10f3dee2",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=702516,835714,688883,689520,693311,692479,686633&startDate=01/01/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "prospect-sa3014709",
+      "name": "Tink Hence",
+      "action": "retain-grade",
+      "team": "STL",
+      "mlbamId": "693311",
+      "transactionId": 935901,
+      "effectiveDate": "2026-08-06",
+      "reason": "St. Louis Cardinals sent RHP Tink Hence outright to FCL Cardinals.",
+      "sourceFile": "prospect-transactions.json",
+      "sourceSha256": "5d47749cfa67c230f28546ed98e0d1a9f67895b5d5290639e5eab72f10f3dee2",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=702516,835714,688883,689520,693311,692479,686633&startDate=01/01/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "prospect-sa3015282",
+      "name": "Dahian  Santos",
+      "action": "archive",
+      "team": null,
+      "mlbamId": "692479",
+      "transactionId": 892130,
+      "effectiveDate": "2026-03-17",
+      "reason": "New Hampshire Fisher Cats released RHP Dahian Santos.",
+      "sourceFile": "prospect-transactions.json",
+      "sourceSha256": "5d47749cfa67c230f28546ed98e0d1a9f67895b5d5290639e5eab72f10f3dee2",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=702516,835714,688883,689520,693311,692479,686633&startDate=01/01/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "prospect-25714",
+      "name": "Blaine Crim",
+      "action": "archive",
+      "team": null,
+      "mlbamId": "688760",
+      "transactionId": 921992,
+      "effectiveDate": "2026-06-24",
+      "reason": "Texas Rangers released 1B Blaine Crim.",
+      "sourceFile": "crim-transactions.json",
+      "sourceSha256": "cdd9e17d463034cb5fb009207637dceafe3dacb5dc39f9855446d20c04c0d1a3",
+      "sourceUrl": "https://statsapi.mlb.com/api/v1/transactions?playerId=688760&startDate=01/01/2026&endDate=10/18/2026"
+    },
+    {
+      "id": "prospect-2852654",
+      "name": "Logan Schmidt",
+      "action": "archive",
+      "effectiveDate": "2026-07-28",
+      "reason": "Did not sign with Cleveland by the draft signing deadline.",
+      "sourceFile": "schmidt-signing.html",
+      "sourceSha256": "5eda8182ad676546d328d32b5424f2170fbe8e8c7e9dc8beeba55f18738bd22b",
+      "sourceUrl": "https://www.mlb.com/milb/news/guardians-unable-to-sign-second-round-draft-pick-logan-schmidt"
+    }
+  ]
+}

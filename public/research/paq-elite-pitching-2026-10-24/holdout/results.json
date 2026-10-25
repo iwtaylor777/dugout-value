@@ -1,0 +1,381 @@
+{
+ "H1_pooled": {
+  "label": "H1: pooled holdout (2021 RS + 2021-2026 postseasons)",
+  "beta": -0.0011427026255298833,
+  "se": 0.002469648812901581,
+  "lo": -0.005983214298816982,
+  "hi": 0.003697809047757216,
+  "p_one_sided": 0.6782097276865684,
+  "n_pa": 123459,
+  "n_elite_pa": 22320,
+  "n_hitters": 1056,
+  "n_pitchers": 619,
+  "n_elite_pitchers": 172,
+  "rank": 46,
+  "n_columns": 46,
+  "columns_dropped_constant": [],
+  "main_skill": 0.0020659572210672316,
+  "elite_main": -0.00893519114976883,
+  "wOBA_points_per_SD": -1.428378281912354,
+  "runs_per_season_88_elite_PA": -0.10055783104662973,
+  "power_at_0.004": 0.3668151142191366,
+  "power_at_0.0053": 0.573812953587731,
+  "seasons": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "blocks": [
+   "post",
+   "rs"
+  ]
+ },
+ "block_rs2021": {
+  "label": "2021 regular-season block alone",
+  "beta": -0.0025103806122792815,
+  "se": 0.0029996062827104338,
+  "lo": -0.00838960892639173,
+  "hi": 0.0033688477018331683,
+  "p_one_sided": 0.7986765575555181,
+  "n_pa": 106559,
+  "n_elite_pa": 17800,
+  "n_hitters": 914,
+  "n_pitchers": 341,
+  "n_elite_pitchers": 71,
+  "rank": 39,
+  "n_columns": 39,
+  "columns_dropped_constant": [
+   "postseason",
+   "postseason_x_elite"
+  ],
+  "main_skill": 0.00225110570875202,
+  "elite_main": -0.008764349082798297,
+  "wOBA_points_per_SD": -3.137975765349102,
+  "runs_per_season_88_elite_PA": -0.22091349388057677,
+  "power_at_0.004": 0.2655080562326024,
+  "power_at_0.0053": 0.42345385634430527,
+  "seasons": [
+   2021
+  ],
+  "blocks": [
+   "rs"
+  ]
+ },
+ "block_post": {
+  "label": "postseason block alone (S2)",
+  "beta": 0.0011601161451379554,
+  "se": 0.00448255798015965,
+  "lo": -0.007625697495974959,
+  "hi": 0.00994592978625087,
+  "p_one_sided": 0.39789218487042494,
+  "n_pa": 16900,
+  "n_elite_pa": 4520,
+  "n_hitters": 435,
+  "n_pitchers": 436,
+  "n_elite_pitchers": 129,
+  "rank": 37,
+  "n_columns": 37,
+  "columns_dropped_constant": [
+   "postseason",
+   "postseason_x_elite"
+  ],
+  "main_skill": 0.00156206967596368,
+  "elite_main": -0.0059936591440399745,
+  "wOBA_points_per_SD": 1.4501451814224442,
+  "runs_per_season_88_elite_PA": 0.10209022077214007,
+  "power_at_0.004": 0.14284679866507832,
+  "power_at_0.0053": 0.21840143176214527,
+  "seasons": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "blocks": [
+   "post"
+  ]
+ },
+ "S1_relievers": {
+  "label": "S1: pooled, PAs against relievers",
+  "beta": -0.0022275033153404335,
+  "se": 0.003285564665260728,
+  "lo": -0.00866721005925146,
+  "hi": 0.004212203428570593,
+  "p_one_sided": 0.7511035849775259,
+  "n_pa": 41214,
+  "n_elite_pa": 12677,
+  "n_hitters": 868,
+  "n_pitchers": 531,
+  "n_elite_pitchers": 156,
+  "rank": 45,
+  "n_columns": 45,
+  "columns_dropped_constant": [
+   "starter"
+  ],
+  "main_skill": 0.002879298686267541,
+  "elite_main": -0.008736091547440691,
+  "wOBA_points_per_SD": -2.7843791441755417,
+  "runs_per_season_88_elite_PA": -0.19602029174995814,
+  "power_at_0.004": 0.2288869999787178,
+  "power_at_0.0053": 0.3643531080283354,
+  "seasons": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025,
+   2026
+  ],
+  "blocks": [
+   "post",
+   "rs"
+  ]
+ },
+ "S3_excl_post2026": {
+  "label": "S3: pooled excluding 2026 postseason",
+  "beta": -0.0006797086691671726,
+  "se": 0.0025935752152422735,
+  "lo": -0.0057631160910420285,
+  "hi": 0.004403698752707684,
+  "p_one_sided": 0.6033678099826815,
+  "n_pa": 121050,
+  "n_elite_pa": 21696,
+  "n_hitters": 1018,
+  "n_pitchers": 582,
+  "n_elite_pitchers": 161,
+  "rank": 45,
+  "n_columns": 45,
+  "columns_dropped_constant": [],
+  "main_skill": 0.0016712559741628799,
+  "elite_main": -0.008829995963434588,
+  "wOBA_points_per_SD": -0.8496358364589658,
+  "runs_per_season_88_elite_PA": -0.05981436288671119,
+  "power_at_0.004": 0.3380863817854731,
+  "power_at_0.0053": 0.5332917757523844,
+  "seasons": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "blocks": [
+   "post",
+   "rs"
+  ]
+ },
+ "post2021_descriptive": {
+  "label": "postseason 2021 alone (descriptive)",
+  "beta": 0.004116804725952167,
+  "se": 0.015380364603231618,
+  "lo": -0.026028709896381803,
+  "hi": 0.034262319348286135,
+  "p_one_sided": 0.3944781101302815,
+  "n_pa": 2476,
+  "n_elite_pa": 546,
+  "n_hitters": 127,
+  "n_pitchers": 105,
+  "n_elite_pitchers": 32,
+  "rank": 17,
+  "n_columns": 17,
+  "columns_dropped_constant": [
+   "postseason",
+   "postseason_x_elite"
+  ],
+  "main_skill": -0.0017355263130410423,
+  "elite_main": 0.0028818502516267932,
+  "wOBA_points_per_SD": 5.146005907440209,
+  "runs_per_season_88_elite_PA": 0.36227881588379074,
+  "power_at_0.004": 0.044575607639585166,
+  "power_at_0.0053": 0.05311542760134727,
+  "seasons": [
+   2021
+  ],
+  "blocks": [
+   "post"
+  ]
+ },
+ "post2022_descriptive": {
+  "label": "postseason 2022 alone (descriptive)",
+  "beta": 0.005038404225610233,
+  "se": 0.012210254392468249,
+  "lo": -0.018893694383627535,
+  "hi": 0.028970502834848,
+  "p_one_sided": 0.3399362497904565,
+  "n_pa": 2854,
+  "n_elite_pa": 777,
+  "n_hitters": 133,
+  "n_pitchers": 130,
+  "n_elite_pitchers": 34,
+  "rank": 20,
+  "n_columns": 20,
+  "columns_dropped_constant": [
+   "postseason",
+   "postseason_x_elite"
+  ],
+  "main_skill": -0.0006249846498389285,
+  "elite_main": 0.0025970103028425734,
+  "wOBA_points_per_SD": 6.298005282012792,
+  "runs_per_season_88_elite_PA": 0.4433795718537005,
+  "power_at_0.004": 0.05130073011298632,
+  "power_at_0.0053": 0.06351706036454147,
+  "seasons": [
+   2022
+  ],
+  "blocks": [
+   "post"
+  ]
+ },
+ "post2023_descriptive": {
+  "label": "postseason 2023 alone (descriptive)",
+  "beta": 0.021440383553731002,
+  "se": 0.01055419437556716,
+  "lo": 0.0007541625776193682,
+  "hi": 0.04212660452984264,
+  "p_one_sided": 0.021104369408679106,
+  "n_pa": 2902,
+  "n_elite_pa": 752,
+  "n_hitters": 131,
+  "n_pitchers": 130,
+  "n_elite_pitchers": 39,
+  "rank": 19,
+  "n_columns": 19,
+  "columns_dropped_constant": [
+   "postseason",
+   "postseason_x_elite"
+  ],
+  "main_skill": -0.011866248978051695,
+  "elite_main": -0.016284492436943413,
+  "wOBA_points_per_SD": 26.800479442163752,
+  "runs_per_season_88_elite_PA": 1.8867537527283282,
+  "power_at_0.004": 0.05694270493355956,
+  "power_at_0.0053": 0.07244866905016054,
+  "seasons": [
+   2023
+  ],
+  "blocks": [
+   "post"
+  ]
+ },
+ "post2024_descriptive": {
+  "label": "postseason 2024 alone (descriptive)",
+  "beta": -0.008752122191530433,
+  "se": 0.010120376514406807,
+  "lo": -0.028588060159767774,
+  "hi": 0.01108381577670691,
+  "p_one_sided": 0.8064262726288967,
+  "n_pa": 2943,
+  "n_elite_pa": 785,
+  "n_hitters": 140,
+  "n_pitchers": 127,
+  "n_elite_pitchers": 32,
+  "rank": 20,
+  "n_columns": 20,
+  "columns_dropped_constant": [
+   "postseason",
+   "postseason_x_elite"
+  ],
+  "main_skill": 0.013190784293538921,
+  "elite_main": -0.00807575024220249,
+  "wOBA_points_per_SD": -10.940152739413042,
+  "runs_per_season_88_elite_PA": -0.7701867528546781,
+  "power_at_0.004": 0.0588240787178288,
+  "power_at_0.0053": 0.07546303817966808,
+  "seasons": [
+   2024
+  ],
+  "blocks": [
+   "post"
+  ]
+ },
+ "post2025_descriptive": {
+  "label": "postseason 2025 alone (descriptive)",
+  "beta": -0.004819136341573865,
+  "se": 0.010018263334078377,
+  "lo": -0.024454932476367482,
+  "hi": 0.014816659793219753,
+  "p_one_sided": 0.6847542250372509,
+  "n_pa": 3316,
+  "n_elite_pa": 1036,
+  "n_hitters": 143,
+  "n_pitchers": 139,
+  "n_elite_pitchers": 38,
+  "rank": 18,
+  "n_columns": 18,
+  "columns_dropped_constant": [
+   "postseason",
+   "postseason_x_elite"
+  ],
+  "main_skill": -0.0023171023936702302,
+  "elite_main": -0.011933525647004343,
+  "wOBA_points_per_SD": -6.02392042696733,
+  "runs_per_season_88_elite_PA": -0.42408399805850006,
+  "power_at_0.004": 0.059298078046444734,
+  "power_at_0.0053": 0.07622511149530722,
+  "seasons": [
+   2025
+  ],
+  "blocks": [
+   "post"
+  ]
+ },
+ "post2026_descriptive": {
+  "label": "postseason 2026 alone (descriptive)",
+  "beta": -0.01478791646680421,
+  "se": 0.01047170498278765,
+  "lo": -0.035312458233068,
+  "hi": 0.0057366252994595825,
+  "p_one_sided": 0.9210512929409365,
+  "n_pa": 2409,
+  "n_elite_pa": 624,
+  "n_hitters": 142,
+  "n_pitchers": 124,
+  "n_elite_pitchers": 30,
+  "rank": 18,
+  "n_columns": 18,
+  "columns_dropped_constant": [
+   "postseason",
+   "postseason_x_elite"
+  ],
+  "main_skill": 0.01647421504881366,
+  "elite_main": 0.016452253678750046,
+  "wOBA_points_per_SD": -18.484895583505264,
+  "runs_per_season_88_elite_PA": -1.3013366490787706,
+  "power_at_0.004": 0.05728484168228228,
+  "power_at_0.0053": 0.07299558413495784,
+  "seasons": [
+   2026
+  ],
+  "blocks": [
+   "post"
+  ]
+ },
+ "verdict": {
+  "passed": false,
+  "label": "FAIL, evidence against the finding at the planned size",
+  "conditions": {
+   "pooled_one_sided_p_lt_0.025": false,
+   "rs2021_block_beta_positive": false,
+   "postseason_block_beta_positive": true
+  },
+  "holm_H1_S1": {
+   "H1": {
+    "p": 0.6782097276865684,
+    "threshold": 0.0125,
+    "cleared": false
+   },
+   "S1": {
+    "p": 0.7511035849775259,
+    "threshold": 0.025,
+    "cleared": false
+   }
+  },
+  "S1_supports_H1": false
+ },
+ "fitted_at": "2026-10-24T20:49:55.351993+00:00"
+}
