@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/analysis/disciplined-hitters-edge-on-elite-arms-failed-its-holdout",
-        destination: "/analysis/swing-decisions-looked-most-valuable-against-elite-relievers",
+        destination: "/analysis/do-good-swing-decisions-beat-elite-relievers",
         permanent: true,
       },
     ];

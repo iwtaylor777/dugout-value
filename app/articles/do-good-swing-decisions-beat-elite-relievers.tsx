@@ -6,9 +6,9 @@ const FIG = "/analysis/decision-skill-elite-pitching";
 const FILES = "/research/paq-elite-pitching-2026-10-24";
 
 export const article: Article = {
-  slug: "swing-decisions-looked-most-valuable-against-elite-relievers",
+  slug: "do-good-swing-decisions-beat-elite-relievers",
   category: "Research",
-  title: "Swing decisions looked most valuable against elite relievers",
+  title: "Do good swing decisions beat elite relievers?",
   summary:
     "From 2022 to 2026, each standard deviation of swing-decision skill was worth about 5 extra wOBA points against the hardest-to-hit pitchers, mostly relievers.",
   author: AUTHOR,

@@ -1,5 +1,5 @@
 import type { Article } from "./types";
-import { article as eliteHoldout } from "./swing-decisions-looked-most-valuable-against-elite-relievers";
+import { article as eliteHoldout } from "./do-good-swing-decisions-beat-elite-relievers";
 import { article as playingTimeOpportunity } from "./minor-league-history-and-mlb-opportunity";
 import { article as projectionBaselines } from "./prior-seasons-and-projection-baselines";
 import { article as projectionBenchmark } from "./projection-rates-and-playing-time";
