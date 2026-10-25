@@ -1,0 +1,514 @@
+{
+ "grid": [
+  {
+   "D": 11,
+   "P": 20,
+   "nonRP": {
+    "n": 53,
+    "ratio": 1.002,
+    "mse": 0.172
+   },
+   "stars26": {
+    "n": 6,
+    "ratio": 1.13,
+    "mse": 0.024
+   },
+   "RP": {
+    "n": 8,
+    "ratio": 0.919,
+    "mse": 0.319
+   },
+   "mega": {
+    "n": 27,
+    "ratio": 0.868,
+    "mse": 0.112
+   },
+   "megaSP": {
+    "n": 9,
+    "ratio": 0.999,
+    "mse": 0.064
+   },
+   "megaLong": {
+    "n": 15,
+    "ratio": 0.778,
+    "mse": 0.124
+   }
+  },
+  {
+   "D": 10.5,
+   "P": 20,
+   "nonRP": {
+    "n": 53,
+    "ratio": 1.05,
+    "mse": 0.165
+   },
+   "stars26": {
+    "n": 6,
+    "ratio": 1.184,
+    "mse": 0.037
+   },
+   "RP": {
+    "n": 8,
+    "ratio": 0.962,
+    "mse": 0.306
+   },
+   "mega": {
+    "n": 27,
+    "ratio": 0.909,
+    "mse": 0.103
+   },
+   "megaSP": {
+    "n": 9,
+    "ratio": 1.046,
+    "mse": 0.068
+   },
+   "megaLong": {
+    "n": 15,
+    "ratio": 0.815,
+    "mse": 0.105
+   }
+  },
+  {
+   "D": 10.5,
+   "P": 10,
+   "nonRP": {
+    "n": 53,
+    "ratio": 1.062,
+    "mse": 0.166
+   },
+   "stars26": {
+    "n": 6,
+    "ratio": 1.221,
+    "mse": 0.047
+   },
+   "RP": {
+    "n": 8,
+    "ratio": 0.962,
+    "mse": 0.306
+   },
+   "mega": {
+    "n": 27,
+    "ratio": 0.944,
+    "mse": 0.093
+   },
+   "megaSP": {
+    "n": 9,
+    "ratio": 1.079,
+    "mse": 0.069
+   },
+   "megaLong": {
+    "n": 15,
+    "ratio": 0.849,
+    "mse": 0.088
+   }
+  },
+  {
+   "D": 10,
+   "P": 20,
+   "nonRP": {
+    "n": 53,
+    "ratio": 1.103,
+    "mse": 0.162
+   },
+   "stars26": {
+    "n": 6,
+    "ratio": 1.243,
+    "mse": 0.056
+   },
+   "RP": {
+    "n": 8,
+    "ratio": 1.011,
+    "mse": 0.297
+   },
+   "mega": {
+    "n": 27,
+    "ratio": 0.955,
+    "mse": 0.098
+   },
+   "megaSP": {
+    "n": 9,
+    "ratio": 1.098,
+    "mse": 0.076
+   },
+   "megaLong": {
+    "n": 15,
+    "ratio": 0.856,
+    "mse": 0.088
+   }
+  },
+  {
+   "D": 10,
+   "P": 10,
+   "nonRP": {
+    "n": 53,
+    "ratio": 1.115,
+    "mse": 0.164
+   },
+   "stars26": {
+    "n": 6,
+    "ratio": 1.282,
+    "mse": 0.069
+   },
+   "RP": {
+    "n": 8,
+    "ratio": 1.011,
+    "mse": 0.297
+   },
+   "mega": {
+    "n": 27,
+    "ratio": 0.991,
+    "mse": 0.092
+   },
+   "megaSP": {
+    "n": 9,
+    "ratio": 1.133,
+    "mse": 0.08
+   },
+   "megaLong": {
+    "n": 15,
+    "ratio": 0.891,
+    "mse": 0.076
+   }
+  },
+  {
+   "D": 10,
+   "P": 0,
+   "nonRP": {
+    "n": 53,
+    "ratio": 1.127,
+    "mse": 0.166
+   },
+   "stars26": {
+    "n": 6,
+    "ratio": 1.323,
+    "mse": 0.084
+   },
+   "RP": {
+    "n": 8,
+    "ratio": 1.011,
+    "mse": 0.297
+   },
+   "mega": {
+    "n": 27,
+    "ratio": 1.03,
+    "mse": 0.088
+   },
+   "megaSP": {
+    "n": 9,
+    "ratio": 1.169,
+    "mse": 0.085
+   },
+   "megaLong": {
+    "n": 15,
+    "ratio": 0.93,
+    "mse": 0.065
+   }
+  },
+  {
+   "D": 10.5,
+   "P": 0,
+   "nonRP": {
+    "n": 53,
+    "ratio": 1.073,
+    "mse": 0.167
+   },
+   "stars26": {
+    "n": 6,
+    "ratio": 1.26,
+    "mse": 0.06
+   },
+   "RP": {
+    "n": 8,
+    "ratio": 0.962,
+    "mse": 0.306
+   },
+   "mega": {
+    "n": 27,
+    "ratio": 0.981,
+    "mse": 0.086
+   },
+   "megaSP": {
+    "n": 9,
+    "ratio": 1.114,
+    "mse": 0.071
+   },
+   "megaLong": {
+    "n": 15,
+    "ratio": 0.885,
+    "mse": 0.074
+   }
+  }
+ ],
+ "mega": [
+  {
+   "name": "Gerrit Cole",
+   "season": 2020,
+   "role": "starter",
+   "pos": "",
+   "age": 29,
+   "w": 5.906345223924691,
+   "yrs": 9,
+   "aav": 42.985882675044
+  },
+  {
+   "name": "Anthony Rendon",
+   "season": 2020,
+   "role": "position",
+   "pos": "",
+   "age": 30,
+   "w": 6.127019434126492,
+   "yrs": 7,
+   "aav": 41.791830378515
+  },
+  {
+   "name": "Stephen Strasburg",
+   "season": 2020,
+   "role": "starter",
+   "pos": "",
+   "age": 31,
+   "w": 4.7057780680142445,
+   "yrs": 7,
+   "aav": 41.791830378515
+  },
+  {
+   "name": "George Springer",
+   "season": 2021,
+   "role": "position",
+   "pos": "",
+   "age": 31,
+   "w": 5.048366859006826,
+   "yrs": 6,
+   "aav": 28.9818518575
+  },
+  {
+   "name": "Marcus Semien",
+   "season": 2022,
+   "role": "position",
+   "pos": "",
+   "age": 31,
+   "w": 4.357955939511538,
+   "yrs": 7,
+   "aav": 28.137720250000005
+  },
+  {
+   "name": "Freddie Freeman",
+   "season": 2022,
+   "role": "position",
+   "pos": "",
+   "age": 32,
+   "w": 5.7251673954175155,
+   "yrs": 6,
+   "aav": 30.388737870000003
+  },
+  {
+   "name": "Corey Seager",
+   "season": 2022,
+   "role": "position",
+   "pos": "",
+   "age": 28,
+   "w": 4.565999955860289,
+   "yrs": 10,
+   "aav": 36.579036325000004
+  },
+  {
+   "name": "Aaron Judge",
+   "season": 2023,
+   "role": "position",
+   "pos": "",
+   "age": 31,
+   "w": 7.059576020813446,
+   "yrs": 9,
+   "aav": 43.70908
+  },
+  {
+   "name": "Dansby Swanson",
+   "season": 2023,
+   "role": "position",
+   "pos": "",
+   "age": 29,
+   "w": 5.265504184786557,
+   "yrs": 7,
+   "aav": 27.630382714285716
+  },
+  {
+   "name": "Trea Turner",
+   "season": 2023,
+   "role": "position",
+   "pos": "",
+   "age": 30,
+   "w": 6.872334426147731,
+   "yrs": 11,
+   "aav": 29.801645454545454
+  },
+  {
+   "name": "Carlos Rodón",
+   "season": 2023,
+   "role": "starter",
+   "pos": "",
+   "age": 30,
+   "w": 4.318277787504095,
+   "yrs": 6,
+   "aav": 29.503629
+  },
+  {
+   "name": "Xander Bogaerts",
+   "season": 2023,
+   "role": "position",
+   "pos": "",
+   "age": 30,
+   "w": 4.94344780761903,
+   "yrs": 11,
+   "aav": 27.814869090909088
+  },
+  {
+   "name": "Brandon Nimmo",
+   "season": 2023,
+   "role": "position",
+   "pos": "",
+   "age": 30,
+   "w": 4.559648025284253,
+   "yrs": 8,
+   "aav": 22.12772175
+  },
+  {
+   "name": "Carlos Correa",
+   "season": 2023,
+   "role": "position",
+   "pos": "",
+   "age": 28,
+   "w": 4.778178628163628,
+   "yrs": 6,
+   "aav": 36.424233333333326
+  },
+  {
+   "name": "Jacob deGrom",
+   "season": 2023,
+   "role": "starter",
+   "pos": "",
+   "age": 35,
+   "w": 4.470703090846709,
+   "yrs": 5,
+   "aav": 40.430899
+  },
+  {
+   "name": "Aaron Nola",
+   "season": 2024,
+   "role": "starter",
+   "pos": "",
+   "age": 31,
+   "w": 4.864880425737368,
+   "yrs": 7,
+   "aav": 26.067829026099997
+  },
+  {
+   "name": "Juan Soto",
+   "season": 2025,
+   "role": "position",
+   "pos": "",
+   "age": 26,
+   "w": 6.385818473600409,
+   "yrs": 15,
+   "aav": 52.53
+  },
+  {
+   "name": "Willy Adames",
+   "season": 2025,
+   "role": "position",
+   "pos": "",
+   "age": 29,
+   "w": 4.269006885392859,
+   "yrs": 7,
+   "aav": 26.78
+  },
+  {
+   "name": "Corbin Burnes",
+   "season": 2025,
+   "role": "starter",
+   "pos": "",
+   "age": 30,
+   "w": 3.8932464321454368,
+   "yrs": 6,
+   "aav": 36.050000000000004
+  },
+  {
+   "name": "Max Fried",
+   "season": 2025,
+   "role": "starter",
+   "pos": "",
+   "age": 31,
+   "w": 3.2777074178059897,
+   "yrs": 8,
+   "aav": 28.0675
+  },
+  {
+   "name": "Blake Snell",
+   "season": 2025,
+   "role": "starter",
+   "pos": "",
+   "age": 32,
+   "w": 3.571735918521881,
+   "yrs": 5,
+   "aav": 37.492
+  },
+  {
+   "name": "Cody Bellinger",
+   "season": 2026,
+   "role": "position",
+   "pos": "",
+   "age": 30,
+   "w": 3.7995124496643933,
+   "yrs": 5,
+   "aav": 32.5
+  },
+  {
+   "name": "Kyle Schwarber",
+   "season": 2026,
+   "role": "position",
+   "pos": "",
+   "age": 33,
+   "w": 3.2762198260947883,
+   "yrs": 5,
+   "aav": 30
+  },
+  {
+   "name": "Kyle Tucker",
+   "season": 2026,
+   "role": "position",
+   "pos": "",
+   "age": 29,
+   "w": 4.517307193312875,
+   "yrs": 4,
+   "aav": 60
+  },
+  {
+   "name": "Alex Bregman",
+   "season": 2026,
+   "role": "position",
+   "pos": "",
+   "age": 32,
+   "w": 4.005310925920373,
+   "yrs": 5,
+   "aav": 35
+  },
+  {
+   "name": "Pete Alonso",
+   "season": 2026,
+   "role": "position",
+   "pos": "",
+   "age": 31,
+   "w": 2.802313062434808,
+   "yrs": 5,
+   "aav": 31
+  },
+  {
+   "name": "Dylan Cease",
+   "season": 2026,
+   "role": "starter",
+   "pos": "",
+   "age": 30,
+   "w": 3.9244897961616516,
+   "yrs": 7,
+   "aav": 30
+  }
+ ]
+}

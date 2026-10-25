@@ -21,12 +21,12 @@ Under the site's convention, a free agent's price on an open market should be cl
   - at 600 PA that is about +14 batting runs. Adding −3 runs for position (a corner infield/outfield mix), 0 defensive runs and +20 replacement runs gives 31 runs, or 28 at 550 PA, which is about 2.9 WAR at 10 runs per win;
   - we round that down to **2.8 WAR in 2027** because his NPB strikeout rate is about 27%;
   - later seasons use the site's aging model for a 28-year-old position player.
-- **Model.** Dugout Value trade model **2026-10-25.1**. This version was recalibrated on 2020–26 free-agent contracts before this freeze. Its defaults:
-  - $11M per WAR, a 20% star premium above 2 WAR, 3% annual inflation and a 10% discount rate;
+- **Model.** Dugout Value trade model **2026-10-25.2** (see Amendment 1). This version was recalibrated on 2020–26 free-agent contracts before this freeze. Its defaults:
+  - $10.5M per WAR, a 10% star premium above 2 WAR, 3% annual inflation and a 10% discount rate;
   - roster burdens of 0.5 WAR (regulars) and 0.2 WAR (relievers);
   - a 50% premium for relievers in seasons projected above 0.8 WAR.
 
-  The calibration used FanGraphs' free-agent tracker, with projections at signing for the 2026 class. Hitters and starters signed for 1.00× the model's value in aggregate, and relievers above 0.8 WAR for 0.92×. Details are in `analysis/fa_market_calibration`.
+  The calibration used FanGraphs' free-agent tracker, with projections at signing for the 2026 class. Hitters and starters signed for 1.06× the model's value in aggregate, and relievers above 0.8 WAR for 0.96×. The 27 largest non-reliever contracts of 2020–26 (at least $150M in 2026 dollars, valued with a weighted three-year WAR average) signed for 0.94×. Details are in `analysis/fa_market_calibration`.
 
 ## Price rule
 
@@ -88,3 +88,9 @@ A player is scored once he signs a guaranteed MLB contract, through Opening Day 
 2. Publish the article with the frozen table and a link to these files.
 3. Capture the benchmarks when they appear.
 4. Score in a dated follow-up once the top 30 have signed, or by Opening Day 2027, whichever comes first.
+
+## Amendment 1 (October 25, 2026, before free agency opened)
+
+The first freeze (lock time 2026-10-25T22:08:19Z) used model 2026-10-25.1: $11M per WAR and a 20% star premium. It priced Tarik Skubal at 10 years and $533.6M. Before free agency opened, and before any benchmark or signing was observed, we checked those settings against the largest long-term contracts of 2020–26. At $11M and 20%, those deals signed for 0.87× the model (0.78× for deals of seven years or more); Gerrit Cole's nine-year deal signed for 0.81×. We changed the defaults to $10.5M and 10%, which gives 1.06× on the 2026 class and 0.94× on the largest deals, and re-froze under model 2026-10-25.2.
+
+Nothing else changed: not the rules for price, term, market reach or scoring, and not the inputs. The same 31 players are predicted, with the same terms, and every total is 4–9% lower. The first freeze's protocol, predictions and lock are kept in `superseded/` and listed in `LOCK-FA-2027.json`. Scoring uses this freeze. The first freeze is scored alongside it for reference only.
