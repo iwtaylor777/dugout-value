@@ -10,8 +10,9 @@ export const metadata: Metadata = pageMetadata({ title: "Methods & data", descri
 
 const longDate = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
 
-// Every figure in the trade-model sections comes from context/MODEL-NUMBERS.md (July 31, 2026 snapshot).
-// "Default settings" there means timingPreference 10 and valuationView "offseason".
+// The dollar figures in DISCOUNT_ROWS and FANGRAPHS_ROWS come from context/MODEL-NUMBERS.md (July 31, 2026 snapshot,
+// model 2026-10-17.1: $12M a win, 30% star premium). "Default settings" there means timingPreference 10 and
+// valuationView "offseason". They are frozen; the prose about the CURRENT defaults (model 2026-10-25.1) is live text.
 
 const FANGRAPHS_ROWS = [
   { fg: 36, player: "Samuel Basallo", model: "7th", gap: "29 places higher", value: "$177.3M", contract: "Controlled through 2034 · $76.4M salary · 26.9 fWAR", driver: "Years. Counting only seasons through 2031, the end of the published ZiPS series, moves him from 7th to 16th of the 50." },
@@ -33,7 +34,7 @@ const DISCOUNT_ROWS = [
 
 export default function Methods() {
   return <Publication active="methods"><JsonLd data={webPageJsonLd({ type: "TechArticle", title: "Methods & data", description: "How Dugout Value’s numbers are made: data sources and dates, the surplus-value model, what has been tested, and what is missing.", path: "/methods" })}/>
-    <header className="section-intro"><p className="eyebrow">How the numbers are made</p><h1>Methods & data</h1><p>The trade model does one calculation. It projects a player’s wins, prices each at $12 million (30% more for wins past a star threshold), subtracts his salary, discounts the future 10% a year, and adds up the years his team controls him, starting with 2027. The projections come from FanGraphs. The prices are assumptions. Neither the prices nor the value ranges have been checked against real trades, and this page says so wherever it matters.</p></header>
+    <header className="section-intro"><p className="eyebrow">How the numbers are made</p><h1>Methods & data</h1><p>The trade model does one calculation. It projects a player’s wins, prices each at $11 million (20% more for wins past a star threshold), subtracts his salary, discounts the future 10% a year, and adds up the years his team controls him, starting with 2027. The projections come from FanGraphs. The prices are assumptions. Neither the prices nor the value ranges have been checked against real trades, and this page says so wherever it matters.</p></header>
     <SnapshotNotice/>
     <div className="methods-layout">
       <nav className="methods-toc" aria-label="On this page">
@@ -65,8 +66,9 @@ export default function Methods() {
         </section>
 
         <section id="model" className="methods-group"><h3>Model assumptions</h3>
-          <p><strong>The price of a win.</strong> For major leaguers, the model converts each projected season of fWAR to dollars, subtracts salary, and adds up the seasons of club control. The default price is $12 million a win, 30% higher for each net win past two, and it rises 3% a year. A roster-spot allowance of 0.5 wins for regulars and 0.2 for relievers comes off each forecast first. These are assumptions, not observed trade-market prices.</p>
-          <p>That curve is richer than FanGraphs’. FanGraphs prices a win at roughly $7 million for the first win, $8.5 million for the second and $13 million after that. At default settings, before the 3% yearly rise, a 4-win season is priced about 14% above FanGraphs’ 2026 graduated scale ($47.4 million against $41.5 million) and a 6-win season about 16% above it ($78.6 million against $67.5 million).</p>
+          <p><strong>The price of a win.</strong> For major leaguers, the model converts each projected season of fWAR to dollars, subtracts salary, and adds up the seasons of club control. The default price is $11 million a win, 20% higher for each net win past two, and it rises 3% a year. A roster-spot allowance of 0.5 wins for regulars and 0.2 for relievers comes off each forecast first. A reliever projected for more than 0.8 wins in a season is priced 50% higher than that; lesser relievers get the base price. The $11 million price and the 20% and 50% premiums were set after a calibration against 2020–26 free-agent contracts, which is not published on this site. These are assumptions, not observed trade-market prices.</p>
+          <p>The dollar figures in the tables and examples below (Kevin McGonigle’s $382.4 million, Aaron Judge’s $18.2 million, the FanGraphs comparison) were computed with model 2026-10-17.1, the October 17 defaults of $12 million per win and a 30% star premium. The current tools use model 2026-10-25.1, so they will show different numbers.</p>
+          <p>That curve is close to FanGraphs’. FanGraphs prices a win at roughly $7 million for the first win, $8.5 million for the second and $13 million after that. At default settings, before the 3% yearly rise, a 4-win season is priced about 1% above FanGraphs’ 2026 graduated scale ($41.8 million against $41.5 million) and a 6-win season about 1% above it ($68.2 million against $67.5 million).</p>
 
           <p><strong>The discount.</strong> By default, future surplus is discounted 10% a year while the price of a win rises 3% a year, matching the rates FanGraphs uses for its prospect values. A no-discount scenario is available in the model settings.</p>
           <p>The July 31 comparison below shows how the defaults changed the board. Earlier versions of this site didn’t discount, which put Kevin McGonigle at $594.3 million. The discount alone brings him to $402.4 million, and dropping the rest of 2026 brings him to $382.4 million. It moves Aaron Judge the other way, because his costly seasons come last.</p>
@@ -91,11 +93,11 @@ export default function Methods() {
         </section>
 
         <section id="fangraphs" className="methods-group"><h3>Where the model disagrees with FanGraphs’ Trade Value list</h3>
-          <p>This comparison uses the archived July 31 player inputs. FanGraphs’ <a href="https://blogs.fangraphs.com/2026-trade-value-nos-21-30/">2026 Trade Value Series</a>, by Ben Clemens, ranks 50 players. The database carries each player’s rank: 48 major leaguers and two prospects, Jesús Made and Kade Anderson. Ranking those 50 by the model’s surplus value at default settings gives a Spearman correlation of <strong>0.603</strong> with the FanGraphs order. A correlation of 1 would be the same order. It was 0.600 before the discount and the offseason view.</p>
+          <p>This comparison uses the archived July 31 player inputs. FanGraphs’ <a href="https://blogs.fangraphs.com/2026-trade-value-nos-21-30/">2026 Trade Value Series</a>, by Ben Clemens, ranks 50 players. The database carries each player’s rank: 48 major leaguers and two prospects, Jesús Made and Kade Anderson. Ranking those 50 by the model’s surplus value at the October 17 default settings (model 2026-10-17.1) gives a Spearman correlation of <strong>0.603</strong> with the FanGraphs order. A correlation of 1 would be the same order. It was 0.600 before the discount and the offseason view.</p>
           <p>That is a benchmark comparison, not a backtest. FanGraphs’ list is another model’s judgment, not what happened to anyone, and the database holds ranks, not FanGraphs’ dollar figures, so I can compare orders but not amounts. Agreement is no proof the model is right, and disagreement is no proof it’s wrong. The six largest gaps follow.</p>
           <div className="article-table-wrap" tabIndex={0}>
             <table>
-              <caption>Largest rank gaps among the 50 players, July 31 inputs and default settings</caption>
+              <caption>Largest rank gaps among the 50 players, July 31 inputs and October 17 default settings</caption>
               <thead><tr><th scope="col" className="num">FanGraphs rank</th><th scope="col">Player and contract</th><th scope="col">Model rank of the 50</th><th scope="col" className="num">Surplus value</th><th scope="col">What drives the gap</th></tr></thead>
               <tbody>{FANGRAPHS_ROWS.map(row => <tr key={row.player}><td className="num">{row.fg}</td><th scope="row">{row.player}<br/><span className="contract-line">{row.contract}</span></th><td>{row.model}<br/><span className="contract-line">{row.gap}</span></td><td className="num">{row.value}</td><td className="wide">{row.driver}</td></tr>)}</tbody>
             </table>

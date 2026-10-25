@@ -220,6 +220,7 @@ type ModelSettings = {
   postseasonStarterBaselineWar: number;
   postseasonEquivalentSeason: number;
   relieverPremium: number;
+  relieverPremiumMinWar: number;
   inflation: number;
   minimumSalary: number;
   valuationView: "offseason" | "deadline";
@@ -542,6 +543,7 @@ const SETTING_LABELS: Record<
   postseasonStarterBaselineWar: ["October SP benchmark", (v) => `${v} WAR / 180`],
   postseasonEquivalentSeason: ["October workload equivalent", (v) => `${v}% season`],
   relieverPremium: ["Reliever premium", (v) => `${v}%`],
+  relieverPremiumMinWar: ["Reliever premium applies above", (v) => `${v} WAR`],
   inflation: ["WAR-price inflation", (v) => `${v}%`],
   minimumSalary: ["Minimum salary", (v) => `$${v}M`],
   valuationView: [
@@ -2730,7 +2732,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               <em>%</em>
             </label>
             <label>
-              <span>Optional reliever premium</span>
+              <span>Reliever premium</span>
               <NumericField
                 label="Reliever market premium"
                 value={settings.relieverPremium}
@@ -2740,6 +2742,18 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 }
               />
               <em>%</em>
+            </label>
+            <label>
+              <span>Reliever premium applies above</span>
+              <NumericField
+                label="Reliever premium applies to seasons projected above this WAR"
+                value={settings.relieverPremiumMinWar}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, relieverPremiumMinWar: value })
+                }
+              />
+              <em>WAR</em>
             </label>
             <label>
               <span>Custom deadline boost</span>
@@ -2816,9 +2830,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             <p>
               Net fWAR subtracts the role’s roster-spot allowance, then the
               first two wins use the base rate and additional wins receive the
-              star premium. FanGraphs pitcher WAR already includes a leverage
-              adjustment, so the extra reliever premium stays an optional team
-              preference rather than a hidden assumption. The discount rate
+              star premium. Relievers projected above the reliever
+              premium&apos;s WAR cutoff get the reliever premium on top, because
+              the free-agent market pays them more per WAR than the base price;
+              lesser relievers get none. The discount rate
               divides each season’s surplus by (1 + rate) for every year after{" "}
               {BASE_YEAR}; FanGraphs uses 10%, and its prospect values already
               include it. The offseason view drops the rest of {BASE_YEAR},
@@ -4521,26 +4536,28 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       scaled to the time remaining.
                     </p>
                     <p>
-                      Wins above that allowance are priced at $12 million per
+                      Wins above that allowance are priced at $11 million per
                       WAR. The first two net wins use that base price; each
-                      additional win is priced 30% higher, at $15.6 million.
+                      additional win is priced 20% higher, at $13.2 million.
                       Because the roster-spot allowance comes first, the default
                       premium begins at 2.5 projected WAR for a full-season
                       position player or starter—not at 2.0 raw WAR. The cutoff
                       is prorated along with the allowance for the rest of 2026.
                     </p>
                     <div className="risk-explainer">
-                      <span>Why a 30% premium after two net WAR?</span>
-                      <strong>30% is a calibration choice, not a measured constant.</strong>
+                      <span>Why a 20% premium after two net WAR?</span>
+                      <strong>20% is a calibration choice, not a measured constant.</strong>
                       <p>
                         The premium applies only to the marginal wins above the
                         cutoff, which makes the price curve smooth, with no value
                         cliff. At default settings a 4-WAR season is priced about
-                        14% above FanGraphs’ 2026 graduated scale ($47.4 million
-                        against $41.5 million), and a 6-WAR season about 16%
-                        above it ($78.6 million against $67.5 million). The
-                        premium has not been estimated from 2024–26 free-agent
-                        contracts.
+                        1% above FanGraphs’ 2026 graduated scale ($41.8 million
+                        against $41.5 million), and a 6-WAR season about 1%
+                        above it ($68.2 million against $67.5 million). The
+                        $11 million price and the 20% premium were set after a
+                        calibration against 2020–26 free-agent contracts; that
+                        calibration is not published on this site, and neither
+                        number has been checked against trades.
                       </p>
                     </div>
                     <p>
@@ -4548,9 +4565,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       a full-season position player or starter. It rewards
                       clearly above-average regulars without labeling every
                       useful starter a star. Both the premium and its net-WAR
-                      cutoff are editable. The default reliever premium is zero
-                      because FanGraphs pitcher WAR already recognizes
-                      leverage.
+                      cutoff are editable. Relievers get a separate 50%
+                      premium, but only in seasons projected above 0.8 WAR:
+                      the free-agent market pays those relievers about 50%
+                      more per WAR than the base price, while lesser relievers
+                      are priced at the base rate. Both numbers are editable.
                     </p>
                     <div className="risk-explainer">
                       <span>What does the July deadline scenario do?</span>
@@ -4837,9 +4856,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   <div>
                     <span>Default model card</span>
                     <dl>
-                      <div><dt>$12M</dt><dd>Base price per net WAR</dd></div>
+                      <div><dt>$11M</dt><dd>Base price per net WAR</dd></div>
                       <div><dt>0.5 / 0.2</dt><dd>Roster-spot allowance by role</dd></div>
-                      <div><dt>+30%</dt><dd>Marginal premium above two net WAR</dd></div>
+                      <div><dt>+20%</dt><dd>Marginal premium above two net WAR</dd></div>
+                      <div><dt>+50%</dt><dd>Reliever premium, seasons projected above 0.8 WAR</dd></div>
                       <div><dt>10%</dt><dd>Future-year discount, FanGraphs’ rate</dd></div>
                       <div><dt>2027 on</dt><dd>Offseason view: rest of 2026 excluded</dd></div>
                       <div><dt>3%</dt><dd>Annual market inflation</dd></div>

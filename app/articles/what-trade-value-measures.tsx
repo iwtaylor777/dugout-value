@@ -12,7 +12,7 @@ export const article: Article = {
   category: "Explainer",
   title: "Why Kevin McGonigle is worth 21 times Aaron Judge in trade",
   summary:
-    "At default settings (the offseason view, with July 31, 2026 data), the trade model puts McGonigle at $382.4 million of surplus value and Judge at $18.2 million. Judge is projected to be the better player in 2027, 5.8 fWAR to 5.4. The gap is salary and time: McGonigle is paid $150.0 million over eight seasons, Judge $200.0 million over five. These are model numbers, not asking prices.",
+    "At the October 17 default settings (the offseason view, with July 31, 2026 data), the trade model puts McGonigle at $382.4 million of surplus value and Judge at $18.2 million. Judge is projected to be the better player in 2027, 5.8 fWAR to 5.4. The gap is salary and time: McGonigle is paid $150.0 million over eight seasons, Judge $200.0 million over five. These are model numbers, not asking prices.",
   author: AUTHOR,
   published: "2026-10-16",
   dateLabel: "October 16, 2026",
@@ -27,7 +27,7 @@ export const article: Article = {
         In the trade model, Aaron Judge is worth $18.2 million and Kevin McGonigle is worth $382.4 million. Judge is projected to out-produce him next year, 5.8 fWAR (FanGraphs wins above replacement) to 5.4 in 2027. The model isn’t ranking players. It’s measuring surplus value: the wins a player is projected to produce, priced at what wins cost in free agency, minus what his team will pay him, added up over the years it controls him.
       </p>
       <p>
-        Every number in this piece uses July 31, 2026 data in the Offseason view (2027 on), the default. Projections through 2031 for Judge and McGonigle are ZiPS from FanGraphs’ 2026 Trade Value Series.
+        Every number in this piece uses July 31, 2026 data in the Offseason view (2027 on), the default. Projections through 2031 for Judge and McGonigle are ZiPS from FanGraphs’ 2026 Trade Value Series. These figures use model 2026-10-17.1, the October 17 defaults of $12 million per win and a 30% star premium. The current tools use model 2026-10-25.1, so they will show different numbers.
       </p>
 
       <h2>A fair contract is worth almost nothing</h2>
@@ -39,7 +39,7 @@ export const article: Article = {
       </p>
       <div className="article-table-wrap" tabIndex={0}>
         <table>
-          <caption>Aaron Judge, 2027–31 (July 31, 2026 data, default settings)</caption>
+          <caption>Aaron Judge, 2027–31 (July 31, 2026 data, October 17 default settings)</caption>
           <thead>
             <tr>
               <th scope="col">Season</th>
@@ -72,7 +72,7 @@ export const article: Article = {
       </p>
       <div className="article-table-wrap" tabIndex={0}>
         <table>
-          <caption>Kevin McGonigle, 2027–34 (July 31, 2026 data, default settings)</caption>
+          <caption>Kevin McGonigle, 2027–34 (July 31, 2026 data, October 17 default settings)</caption>
           <thead>
             <tr>
               <th scope="col">Season</th>

@@ -1,6 +1,6 @@
 import database from "../data/player-database.json";
-import ledger from "../data/ledger.json";
 import { initialSettings, valuePlayer } from "../../lib/value-model.mjs";
+import { TRADE_SHARE_MODEL_VERSION } from "../../lib/trade-share.mjs";
 
 export const profiles = [
   { id: "mlb-665742", name: "Juan Soto", deck: "How a player opt-out changes the Mets’ side of the value estimate." },
@@ -8,7 +8,9 @@ export const profiles = [
   { id: "mlb-592450", name: "Aaron Judge", deck: "A strong projection paired with a large remaining salary commitment." },
 ] as const;
 
-export const modelContext = { playerDataAsOf: database.meta.refreshed, modelCapturedAt: ledger.capturedAt, modelVersion: ledger.modelVersion };
+// The case studies are computed live with the current default settings, so they carry the
+// current model version. The ledger keeps its own pinned version for its October 17 record.
+export const modelContext = { playerDataAsOf: database.meta.refreshed, modelVersion: TRADE_SHARE_MODEL_VERSION };
 
 export function getProfile(id: string) {
   const profile = profiles.find(item => item.id === id);

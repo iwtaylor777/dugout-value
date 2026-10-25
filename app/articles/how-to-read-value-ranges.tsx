@@ -10,7 +10,7 @@ export const article: Article = {
   category: "Model guide",
   title: "Overlapping ranges don’t make a trade fair",
   summary:
-    "At default settings (the offseason view, with July 31, 2026 data), Paul Skenes comes out $4.2 million ahead of Julio Rodríguez in the trade builder, 3.9% of the larger side, and their ranges share $34.3 million of possible values. Neither number settles the deal. The ranges are fixed allowances, not confidence intervals, and they ignore a player’s age and experience.",
+    "At the October 17 default settings (the offseason view, with July 31, 2026 data), Paul Skenes comes out $4.2 million ahead of Julio Rodríguez in the trade builder, 3.9% of the larger side, and their ranges share $34.3 million of possible values. Neither number settles the deal. The ranges are fixed allowances, not confidence intervals, and they ignore a player’s age and experience.",
   author: AUTHOR,
   published: "2026-10-16",
   dateLabel: "October 16, 2026",
@@ -22,7 +22,7 @@ export const article: Article = {
         Put Julio Rodríguez on one side of the trade builder and Paul Skenes on the other. At the midpoint, Skenes is worth $107.9 million and Rodríguez $103.7 million, so Pittsburgh gives up $4.2 million more than Seattle, 3.9% of the larger side. Their ranges, $87.0–128.7 million for Skenes and $86.1–121.3 million for Rodríguez, overlap from $87.0 million to $121.3 million. It’s tempting to call that a fair trade. The ranges can’t carry that much weight.
       </p>
       <p>
-        The numbers here use July 31, 2026 data in the Offseason view (2027 on), the default.
+        The numbers here use July 31, 2026 data in the Offseason view (2027 on). These figures use model 2026-10-17.1, the October 17 defaults of $12 million per win and a 30% star premium. The current tools use model 2026-10-25.1, so they will show different numbers.
       </p>
 
       <h2>What the ranges are</h2>
@@ -43,7 +43,7 @@ export const article: Article = {
 
       <h2>Read the midpoint first</h2>
       <p>
-        The midpoint gap is the model’s actual answer. Under its default assumptions, Pittsburgh gives up $4.2 million more than Seattle. At $12 million a win, that’s about a third of a win. Overlapping ranges don’t erase that gap, and they don’t confirm it either. They tell you it’s small enough that the next step is checking which assumptions produce it.
+        The midpoint gap is the model’s actual answer. Under the October 17 default assumptions, Pittsburgh gives up $4.2 million more than Seattle. At $12 million a win, that’s about a third of a win. Overlapping ranges don’t erase that gap, and they don’t confirm it either. They tell you it’s small enough that the next step is checking which assumptions produce it.
       </p>
 
       <h2>Change an assumption that matters</h2>
@@ -63,7 +63,7 @@ export const article: Article = {
             </tr>
           </thead>
           <tbody>
-            <tr><th scope="row">Default: $12M a win, 30% star premium, 10% discount, 2027 on</th><td className="num">$103.7M</td><td className="num">$107.9M</td><td className="num">$4.2M</td><td className="num">3.9%</td></tr>
+            <tr><th scope="row">October 17 default: $12M a win, 30% star premium, 10% discount, 2027 on</th><td className="num">$103.7M</td><td className="num">$107.9M</td><td className="num">$4.2M</td><td className="num">3.9%</td></tr>
             <tr><th scope="row">$10M a win</th><td className="num">$78.0M</td><td className="num">$84.0M</td><td className="num">$6.0M</td><td className="num">7.2%</td></tr>
             <tr><th scope="row">No star premium</th><td className="num">$82.8M</td><td className="num">$89.5M</td><td className="num">$6.7M</td><td className="num">7.5%</td></tr>
             <tr><th scope="row">Win-now: 20% discount a year</th><td className="num">$87.9M</td><td className="num">$92.0M</td><td className="num">$4.1M</td><td className="num">4.5%</td></tr>
