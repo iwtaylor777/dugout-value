@@ -172,6 +172,7 @@ type MLBPlayer = {
   seasons: MLBSeason[];
   contractScenario?: ContractScenario;
   talentUpdate?: TalentUpdate;
+  seasonUpdate?: { season: number; method: string; adjustment2027?: number };
   futureProjectionUpdate?: FutureProjectionUpdate;
   agingModel?: AgingModel;
   threeYearProjection?: ThreeYearProjectionSeason[];
@@ -525,7 +526,9 @@ const fwarSourceLabel = (
     return "ZiPS, FanGraphs Trade Value Series";
   if (season.projectionBaselineWar !== undefined)
     return season.inSeasonAdjustment
-      ? "ZiPS plus in-season bridge"
+      ? player.seasonUpdate
+        ? `ZiPS plus ${player.seasonUpdate.season} season update`
+        : "ZiPS plus in-season bridge"
       : "ZiPS";
   return player.source.projection;
 };

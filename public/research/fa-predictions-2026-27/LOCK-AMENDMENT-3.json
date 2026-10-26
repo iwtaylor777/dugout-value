@@ -1,0 +1,42 @@
+{
+ "study": "Dugout Value free-agent contract predictions, 2026-27 offseason",
+ "amendment": 3,
+ "locked_utc": "2026-10-26T14:53:33Z",
+ "model_version": "2026-10-25.1",
+ "files": {
+  "PROTOCOL-FA-2027.md": "db2a1c1b8cd142adc103df4d9ae036a45aa557a55378bd5029356faaba52a4be",
+  "AMENDMENTS.md": "e4c32707c8da8eb5db8d67d917330fb280bfd0a2077c64c9b6d53fc40664b6ad",
+  "AMENDMENT-3.md": "e06d975494b902d195faf60a9e87150ed7da964ca103d5d273e4317086a721eb",
+  "predictions_frozen.json": "776c5e09da2984e8a251183e22730a99e47864fe5af0d46fdc2126920484fbda",
+  "predictions_frozen.csv": "f7a5503260f0ba9e4a6571c7a327d24934bf47465a812691a7074a3a8a7c47ba"
+ },
+ "inputs": {
+  "app/data/player-database.json (site database with the 2026 season update)": "f5c8705d2cb1fae7ff33129886a9a831088336815660610c8f6a718a56d0ee6d",
+  "FA pricing database (site database plus half fielding credit)": "3b49d50764b55b1c4444ec546e28d65556cf6ff8371a42f42b5f033f64569ba4",
+  "app/data/player-database.json before the update (refreshed 2026-10-18)": "2e55ed436bd5c103158c6377ab07c602aae744fa4e2d37e6dfe35defb27295c9",
+  "lib/value-model.mjs (2026-10-25.1)": "faff9392d2b36ba505a3146ce9a896e8f92822ed4120f026bf920263feb62170",
+  "lib/aging-curve.mjs": "c7b8ab4fbe377a2bdec6101e1199c4c0e43ece8a0fff0e207c93d50c5d75b5cc",
+  "mlbtr_list.txt (MLB Trade Rumors 2026-27 free-agent list, updated 2026-10-19)": "f272d8de92ae6bc3fa915edc6c0eb85bcfd2e846428f5ba7a42fe6f33070c931",
+  "amendment-3/season_update.py": "aa65c94bd22f42707851fac1d35a989d326eb2f4944ed218eebe7dba49d1cfe0",
+  "amendment-3/marcel.py": "15c1d64737b0a846af4cbe0974a2b57be26a8d3ec16e3a8087fa1c0d72a047c5",
+  "amendment-3/update2.py": "604c841d10ffe88f1bbd913f459d4eda6e4ea59856b7fb3892bae2dfd1809963",
+  "amendment-3/update2_params.json": "e8405fd19c260cbe9439de546e62d14bd90d2168ecdc68d8c860088e494a51fb",
+  "amendment-3/krate.py": "c2f7e6add1343f8f592d19817eb021f8b74930ef65754eff1b305d132afd51b2",
+  "amendment-3/krookie.py": "8c9133d8b3ee5627ea393539431830a0fe4c3a9c649480ead4787950fa5e858e",
+  "amendment-3/fa_fielding.py": "74464594159005346570dcd3da084346d324fe1887c3f535ffd94fbd2d0e2284",
+  "amendment-3/defense.mjs": "62d1658df59f3b0fb4547e3eb18471e86c2801b117c0b725695a7328b493eccd",
+  "amendment-3/defense2.mjs": "48dd528431f8185ca01977f53ba8d293c2ac74a30ff17c12fb26c9c38ae0dd3f",
+  "amendment-3/npb_fit.mjs": "e1b1b8335e41dd5098459c4281eef361891f080827dfedff3113798c502a88b6",
+  "amendment-3/predict_v3.mjs": "ee4cf5559b7f7976ead530d56422baee9ccd0d21eb0e7539b598b36893b0abae",
+  "amendment-3/select_v3.py": "f4b6ccccff31172ec01f6ce220db2661e1787cdc2a57ed4c40d84ad82809c5f4",
+  "amendment-3/freeze_a3.py": "c3945a7aec47295a17c5abe0b72a6d5bd07d1ea86462374e9ca826aed2f62143",
+  "amendment-3/sato_k017.json": "a1c7c41c23e591f8cad0c89edee5ea424218eaea9706ac6cf208ebd3da939e53",
+  "amendment-3/outputs.txt": "63ecd63e3769270618be5bc8dce7e346821725cc591fba63639cb760bc5914c6"
+ },
+ "earlier_locks": {
+  "first-freeze/LOCK-FA-2027.json": "94da80ab3fe0690ad3e1e8fa23cb8d7917ba4fb5d17dae4a6e4623ec79f178e2",
+  "LOCK-AMENDMENTS.json": "51818eb6b3df9639477e644179b185cfbb6286d7f0fbf119eb6c78932817593e",
+  "amendment-1-withdrawn/LOCK-FA-2027.json": "3e926934f07f72cf186cb08d4fe3eb7f925e9953cb56dd90d3388aa465dd7b96"
+ },
+ "note": "Amendment 3 replaces the scored predictions. Earlier freezes are kept and listed above."
+}
