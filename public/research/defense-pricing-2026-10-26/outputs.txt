@@ -1,0 +1,54 @@
+== reliab.py
+A) year-to-year correlation of per-600 runs (>=400 PA both years, non-catchers, excl. 2020)
+  bat  n=1178 r=0.525 sd=16.23 runs/600
+  bsr  n=1178 r=0.663 sd=3.18 runs/600
+  fld  n=1178 r=0.504 sd=6.32 runs/600
+  pos  n=1178 r=0.921 sd=6.07 runs/600
+B) persistence: slope of future (t+1..t+3, PA-weighted) per-600 on past 3-yr weighted per-600; non-catchers
+  bat  n=1239 persistence slope=0.662
+  bsr  n=1239 persistence slope=0.725
+  fld  n=1239 persistence slope=0.482
+  pos  n=1239 persistence slope=0.962
+C) average year-to-year change in runs per 600, by age (non-catchers, >=300 PA both years)
+   <=26 {'bat': 0.27, 'fld': 0.61, 'bsr': -0.21} n 631
+   27-29 {'bat': -2.08, 'fld': -0.69, 'bsr': -0.39} n 481
+   30-32 {'bat': -3.72, 'fld': -0.22, 'bsr': -0.36} n 346
+   33+ {'bat': -5.31, 'fld': -0.58, 'bsr': -0.31} n 169
+
+== predictive.py
+future WAR/600 per past run/600: off 0.065 fld 0.057 pos 0.076 | fld/off 0.88 pos/off 1.18
+   95% CI fld/off [0.66, 1.1]  pos/off [0.94, 1.44]
+future 3-yr PA per past run/600: off 14.7 fld 8.0 pos 4.7
+future 3-yr total WAR per past run/600: off 0.151 fld 0.108 pos 0.133 | fld/off 0.72 pos/off 0.88
+   95% CI fld/off [0.52, 0.91]  pos/off [0.65, 1.1]
+
+== theta_boot.mjs (market credit, signing-year demeaned)
+market credit for a fielding run relative to the model's full credit: best 0.65 (bootstrap 95% 0.35–0.8), n=195
+0:0.4597 0.1:0.4203 0.2:0.4024 0.3:0.3853 0.4:0.3698 0.5:0.3573 0.6:0.3429 0.7:0.3445 0.8:0.3546 0.9:0.3716 1:0.3950
+
+== theta2d.mjs (fielding and offense credit jointly)
+best (fielding credit, offense credit): [ 0.65, 1 ] ratio 0.65
+ratio bootstrap 95%: 0.29 - 0.83
+
+== proj_theta.mjs (2026 class priced on projections at signing)
+θ=0 resid var 1.0706 mean ratio 0.69
+θ=0.25 resid var 0.9934 mean ratio 0.68
+θ=0.5 resid var 0.9296 mean ratio 0.69
+θ=0.75 resid var 0.8745 mean ratio 0.70
+θ=1 resid var 0.8260 mean ratio 0.72
+θ=1.25 resid var 0.7850 mean ratio 0.74
+
+== projcheck.py (2026 projections vs actuals)
+zips: n=239 actual 2026 WAR/600 per projected win/600 — off 0.55, fld 0.43, pos -1.86 | fld/off 0.80 95% [0.21 1.38]
+steamer: n=206 actual 2026 WAR/600 per projected win/600 — off 0.59, fld 0.79, pos 1.28 | fld/off 1.35 95% [0.63 2.35]
+
+== market_weights2.py (log-linear weights, secondary)
+log AAV, no term control                 n=195 off 0.494 fld 0.072 pos 0.024 | fld/off 0.15 [-0.2   0.53] pos/off 0.05 [-0.27  0.32]
+log total value, no term control         n=195 off 0.875 fld 0.215 pos 0.222 | fld/off 0.25 [-0.05  0.59] pos/off 0.25 [-0.01  0.49]
+log AAV, with log(years)                 n=195 off 0.397 fld 0.036 pos -0.026 | fld/off 0.09 [-0.34  0.54] pos/off -0.07 [-0.5   0.26]
+log total, 3-yr WAR >= 2                 n=98 off 0.828 fld 0.283 pos 0.159 | fld/off 0.34 [-0.28  0.91] pos/off 0.19 [-0.15  0.54]
+
+== team.py
+runs allowed: per FIP-run 1.125 (se 0.042), per team fielding run -0.801 (se 0.101)  n=300 team-seasons
+runs scored: per batting run 0.845 (se 0.031), per baserunning run 1.444 (se 0.262)
+fielding run vs batting run conversion ratio: 95% [0.72 0.95 1.19]
