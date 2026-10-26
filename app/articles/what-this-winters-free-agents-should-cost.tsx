@@ -5,7 +5,7 @@ import { AUTHOR } from "./types";
 const FILES = "/research/fa-predictions-2026-27";
 
 /**
- * Frozen predictions (Amendment 4, model 2026-10-25.1): name, position, 2027 age,
+ * Frozen predictions (model 2026-10-25.1): name, position, 2027 age,
  * 2026 fWAR (null if under the update threshold), years, total and AAV ($M), flag.
  * Copied from predictions_frozen.json.
  */
@@ -53,11 +53,11 @@ export const article: Article = {
   author: AUTHOR,
   published: "2026-10-25",
   dateLabel: "October 25, 2026",
-  readTime: "9 min read",
+  readTime: "8 min read",
   relatedTool: { href: "/tools/rankings", label: "Value rankings: every player priced with the same model and projections" },
   evidence: {
     href: `${FILES}.tar.gz`,
-    label: "Frozen predictions, protocol and amendments, input hashes and calibration (download)",
+    label: "Frozen predictions, protocol, input hashes and calibration (download)",
   },
   body: (
     <>
@@ -80,7 +80,7 @@ export const article: Article = {
       </p>
 
       <h2>The predictions</h2>
-      <div className="article-table-wrap" tabIndex={0} role="region" aria-label="Free-agent contract predictions"><table><caption>Contract predictions, frozen before free agency opened (Amendment 4). Age is for the 2027 season; 2026 fWAR is from FanGraphs.</caption><thead><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th><th scope="col">Age</th><th scope="col">2026 fWAR</th><th scope="col">Years</th><th scope="col">Total</th><th scope="col">AAV</th><th scope="col">Flag</th></tr></thead><tbody>
+      <div className="article-table-wrap" tabIndex={0} role="region" aria-label="Free-agent contract predictions"><table><caption>Contract predictions, frozen before free agency opened. Age is for the 2027 season; 2026 fWAR is from FanGraphs.</caption><thead><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th><th scope="col">Age</th><th scope="col">2026 fWAR</th><th scope="col">Years</th><th scope="col">Total</th><th scope="col">AAV</th><th scope="col">Flag</th></tr></thead><tbody>
         {predictions.map(([name, pos, age, war26, years, total, aav, flag], i) => (
           <tr key={name}><td className="num">{i + 1}</td><th scope="row">{name}</th><td>{pos}</td><td className="num">{age}</td><td className="num">{war26 === null ? "—" : war26.toFixed(1)}</td><td className="num">{years}</td><td className="num">{money(total)}</td><td className="num">{money(aav)}</td><td>{flag ?? ""}</td></tr>
         ))}
@@ -108,14 +108,6 @@ export const article: Article = {
       </p>
       <p>
         The predictions, the protocol and the hashes of every input are in <a href={`${FILES}.tar.gz`}>the research bundle</a>, so anyone can check that nothing moved after the freeze. The model itself is the same one behind the site’s <Link href="/tools/rankings">value rankings</Link> and <Link href="/tools/trade">trade builder</Link>, which now use the same 2026-updated projections.
-      </p>
-
-      <h2>How this list changed before the market opened</h2>
-      <p>
-        This is the fourth set of numbers this article has carried, and every change came before free agency opened and before any signing. The first version, frozen on October 25, priced Skubal at $534 million. That evening I lowered the price per win to $10.5 million and the star premium to 10%, which put him at $486 million, after checking the model against the largest long-term contracts since 2020. I restored the original settings the next morning, because most of those contracts were signed from 2020 to 2023 and free-agent prices have since risen much faster than the model’s 3% inflation: players who signed from 2022 to 2024 got 80% to 85% of the model’s price, while last winter’s class got all of it.
-      </p>
-      <p>
-        Later on October 26, checking players who looked mispriced turned up a bigger problem. The projections behind the first version never saw the 2026 season, because the site’s in-season adjustment stopped when the season ended, so Arozarena was projected for 1.6 WAR after a 5.5-WAR season and Varsho for 2.5 after 0.8. Fixing that, along with the starters who had been tagged as relievers, a rule that compared Bichette’s opt-out across different numbers of years and the Sato translation, changed most of the list. That version also gave hitters only half credit for projected fielding, which I removed the same afternoon after <Link href="/analysis/teams-pay-less-for-defense">a closer look</Link> showed it double-counted a discount projections already make. The amendments, their timestamps and every earlier version are in the bundle, and these are the predictions that will be scored.
       </p>
 
       <h2>Methods in brief</h2>

@@ -82,7 +82,7 @@ export const article: Article = {
 
       <h2>What this means for the site’s numbers</h2>
       <p>
-        The trade model prices projected WAR, and projections already shrink a player’s fielding toward average, so it doesn’t need a separate defense discount and I’m not adding one. The free-agent predictions briefly made the opposite mistake. An earlier version of this analysis compared contracts with raw three-year WAR without allowing for each year’s price level, and it suggested half credit for fielding, which I applied to projected fielding runs. Projections already make that discount, so it counted twice, and I removed it before free agency opened. Jazz Chisholm Jr. went from $83.4 million to $97.7 million and Daulton Varsho from $24.2 million to $28.8 million.
+        The trade model prices projected WAR, and projections already shrink a player’s fielding toward average, so it doesn’t need a separate defense discount and I’m not adding one. For the same reason, this winter’s <Link href="/analysis/what-this-winters-free-agents-should-cost">free-agent contract predictions</Link> price projected fielding at full credit.
       </p>
 
       <h2>What I couldn’t test</h2>
