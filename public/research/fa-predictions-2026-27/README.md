@@ -1,21 +1,23 @@
 # Free-agent contract predictions, 2026–27
 
-These are frozen contract predictions for the 30 most valuable MLB free agents expected to reach the market, plus Teruaki Sato. They come from Dugout Value trade model 2026-10-25.1: $11 million per WAR, a 20% star premium, and a 50% reliever premium above 0.8 WAR. The projections are updated for the 2026 season, and non-catcher hitters get half credit for fielding runs.
+These are frozen contract predictions for the 30 most valuable MLB free agents expected to reach the market, plus Teruaki Sato. They come from Dugout Value trade model 2026-10-25.1: $11 million per WAR, a 20% star premium, and a 50% reliever premium above 0.8 WAR. The projections are updated for the 2026 season.
 
 Article: https://dugoutvalue.com/analysis/what-this-winters-free-agents-should-cost
 
 ## The scored predictions
 
-- `predictions_frozen.json` / `.csv`: the 31 predictions (Amendment 3) that will be scored, with their flags and the players excluded and why.
+- `predictions_frozen.json` / `.csv`: the 31 predictions (Amendment 4) that will be scored, with their flags and the players excluded and why.
 - `PROTOCOL-FA-2027.md`: the original protocol, covering what is predicted, the price and term rules, who reaches the market, and the scoring.
 - `AMENDMENT-3.md`: the changes made on October 26, before free agency opened.
   - Projections updated for the 2026 season.
   - Pitcher roles taken from 2026 usage.
   - A corrected opt-out rule.
   - An NPB translation fit on past signings.
-  - Half credit for fielding runs.
-- `LOCK-AMENDMENT-3.json`: SHA-256 hashes of the scored files, every input and every earlier lock, with the UTC time of the freeze (2026-10-26T14:53:33Z). Check any file with `sha256sum`.
-- `amendment-3/`: the scripts behind Amendment 3, with `outputs.txt`, the printed calibration results. The calibrations cover:
+  - Half credit for fielding runs, removed by Amendment 4.
+- `AMENDMENT-4.md`: removes Amendment 3's fielding credit, which double-counted a discount projections already make (see https://dugoutvalue.com/analysis/teams-pay-less-for-defense).
+- `LOCK-AMENDMENT-4.json`: SHA-256 hashes of the scored files, the inputs and every earlier lock, with the UTC time of the freeze (2026-10-26T19:35:41Z). Check any file with `sha256sum`.
+- `amendment-4/freeze_a4.py`: writes the Amendment 4 predictions files.
+- `amendment-3/`: Amendment 3's predictions and lock inputs (its lock, `LOCK-AMENDMENT-3.json`, is at the top of this folder), with the scripts behind it and `outputs.txt`, the printed calibration results. The calibrations cover:
   - the projection update (`marcel.py`, `update2.py`, `krate.py`, `krookie.py`, `season_update.py`);
   - fielding (`defense.mjs`, `defense2.mjs`, `fa_fielding.py`);
   - the NPB translation (`npb_fit.mjs`);

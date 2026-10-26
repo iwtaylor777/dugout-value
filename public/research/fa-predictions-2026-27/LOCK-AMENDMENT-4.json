@@ -1,0 +1,31 @@
+{
+ "study": "Dugout Value free-agent contract predictions, 2026-27 offseason",
+ "amendment": 4,
+ "locked_utc": "2026-10-26T19:35:41Z",
+ "model_version": "2026-10-25.1",
+ "files": {
+  "PROTOCOL-FA-2027.md": "db2a1c1b8cd142adc103df4d9ae036a45aa557a55378bd5029356faaba52a4be",
+  "AMENDMENTS.md": "e4c32707c8da8eb5db8d67d917330fb280bfd0a2077c64c9b6d53fc40664b6ad",
+  "AMENDMENT-3.md": "e06d975494b902d195faf60a9e87150ed7da964ca103d5d273e4317086a721eb",
+  "AMENDMENT-4.md": "1e2c1b64451e0306595408b8cc10496d76d8783c9db9fce4c0376f4aac72be46",
+  "predictions_frozen.json": "a9f44b4fc89cd1aa4840eaaeced526ad8b1e4856a31c31d953479184c2b6dc7a",
+  "predictions_frozen.csv": "25a06c0adb2badbc606f56c6686cd5a5081aa50bb7cb0b7a9a5a86912df8c1fa"
+ },
+ "inputs": {
+  "app/data/player-database.json (site database with the 2026 season update)": "f5c8705d2cb1fae7ff33129886a9a831088336815660610c8f6a718a56d0ee6d",
+  "lib/value-model.mjs (2026-10-25.1)": "faff9392d2b36ba505a3146ce9a896e8f92822ed4120f026bf920263feb62170",
+  "lib/aging-curve.mjs": "c7b8ab4fbe377a2bdec6101e1199c4c0e43ece8a0fff0e207c93d50c5d75b5cc",
+  "mlbtr_list.txt (MLB Trade Rumors 2026-27 free-agent list, updated 2026-10-19)": "f272d8de92ae6bc3fa915edc6c0eb85bcfd2e846428f5ba7a42fe6f33070c931",
+  "amendment-3/predict_v3.mjs": "ee4cf5559b7f7976ead530d56422baee9ccd0d21eb0e7539b598b36893b0abae",
+  "amendment-3/select_v3.py": "f4b6ccccff31172ec01f6ce220db2661e1787cdc2a57ed4c40d84ad82809c5f4",
+  "amendment-3/sato_k017.json": "a1c7c41c23e591f8cad0c89edee5ea424218eaea9706ac6cf208ebd3da939e53",
+  "amendment-4/freeze_a4.py": "dec0584992c28b163e12becf1f071750a9239f5f3c751ecda7292b10242bbd4a"
+ },
+ "earlier_locks": {
+  "LOCK-AMENDMENT-3.json": "258311d29caaa3feac6b9989fbf45a6bb3f4e33dd507bac695ee1a18b537ab35",
+  "first-freeze/LOCK-FA-2027.json": "94da80ab3fe0690ad3e1e8fa23cb8d7917ba4fb5d17dae4a6e4623ec79f178e2",
+  "LOCK-AMENDMENTS.json": "51818eb6b3df9639477e644179b185cfbb6286d7f0fbf119eb6c78932817593e",
+  "amendment-1-withdrawn/LOCK-FA-2027.json": "3e926934f07f72cf186cb08d4fe3eb7f925e9953cb56dd90d3388aa465dd7b96"
+ },
+ "note": "Amendment 4 removes the fielding-credit adjustment of Amendment 3 and replaces the scored predictions. Amendment 3's predictions are kept in amendment-3/."
+}

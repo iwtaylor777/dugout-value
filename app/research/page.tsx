@@ -32,11 +32,11 @@ export default function ResearchFiles() {
       <p>FanGraphs leaderboards and free-agent tracker data are not redistributed.</p>
     </section>
     <section id="fa-predictions-2027"><h2>Free-agent contract predictions, 2026–27</h2>
-      <p>Frozen before free agency opened. Years, total and AAV for the 30 most valuable MLB free agents the model expects to reach the market, plus Teruaki Sato, from trade model 2026-10-25.1. The scored version is Amendment 3 (October 26), which updated the projections for the 2026 season, took pitcher roles from 2026 usage, corrected the opt-out rule, fit the NPB translation on past signings and gave hitters half credit for fielding runs. Every earlier freeze is kept with its own lock. These predictions will be scored against actual contracts through Opening Day 2027.</p>
+      <p>Frozen before free agency opened. Years, total and AAV for the 30 most valuable MLB free agents the model expects to reach the market, plus Teruaki Sato, from trade model 2026-10-25.1. The scored version is Amendment 4 (October 26). It keeps Amendment 3’s changes, which updated the projections for the 2026 season, took pitcher roles from 2026 usage, corrected the opt-out rule and fit the NPB translation on past signings, and drops its half credit for fielding runs, which double-counted. Every earlier freeze is kept with its own lock. These predictions will be scored against actual contracts through Opening Day 2027.</p>
       <p><Link href="/analysis/what-this-winters-free-agents-should-cost">Read the predictions</Link>.</p>
       <ul>
         <li><a href="/research/fa-predictions-2026-27.tar.gz" download>Download the predictions, protocol, amendments, locks and calibration scripts</a></li>
-        <li><a href="/research/fa-predictions-2026-27/PROTOCOL-FA-2027.md">Protocol</a>, <a href="/research/fa-predictions-2026-27/AMENDMENT-3.md">Amendment 3</a> and <a href="/research/fa-predictions-2026-27/LOCK-AMENDMENT-3.json">its checksums and lock time</a></li>
+        <li><a href="/research/fa-predictions-2026-27/PROTOCOL-FA-2027.md">Protocol</a>, <a href="/research/fa-predictions-2026-27/AMENDMENT-3.md">Amendment 3</a>, <a href="/research/fa-predictions-2026-27/AMENDMENT-4.md">Amendment 4</a> and <a href="/research/fa-predictions-2026-27/LOCK-AMENDMENT-4.json">its checksums and lock time</a></li>
         <li><a href="/research/fa-predictions-2026-27/predictions_frozen.csv">Predictions (CSV)</a> and <a href="/research/fa-predictions-2026-27/predictions_frozen.json">with flags and exclusions (JSON)</a></li>
       </ul>
       <p>The MLB Trade Rumors free-agent list and FanGraphs data are not redistributed; their checksums are in the locks.</p>

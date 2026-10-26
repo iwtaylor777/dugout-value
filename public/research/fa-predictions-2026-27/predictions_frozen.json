@@ -1,6 +1,6 @@
 {
  "model_version": "2026-10-25.1",
- "amendment": "Amendment 3 (2026-10-26): 2026 season update to projections, pitcher roles from 2026 usage, opt-out rule on the remaining years, NPB translation k=0.17, half credit for fielding runs (non-catcher hitters).",
+ "amendment": "Amendment 4 (2026-10-26): Amendment 3 without the fielding-credit adjustment. Projections updated for 2026, pitcher roles from 2026 usage, opt-out rule on the remaining years, NPB translation k=0.17.",
  "settings": {
   "dollarsPerWar": 11,
   "starPremium": 20,
@@ -10,12 +10,11 @@
   "inflation": 3,
   "timingPreference": 10,
   "regularRosterWar": 0.5,
-  "relieverRosterWar": 0.2,
-  "fieldingCredit": 0.5
+  "relieverRosterWar": 0.2
  },
  "general_flag": "If a player receives a qualifying offer (decided within five days of the World Series), the draft-pick cost should push his contract below the model; scored only for players who receive one.",
  "list_rule": "30 highest predicted totals among MLB free agents expected to reach the market, plus Teruaki Sato; ties broken by AAV, then by surname.",
- "generated_utc": "2026-10-26T14:50:25.708Z",
+ "generated_utc": "2026-10-26T19:34:58.750Z",
  "predictions": [
   {
    "rank": 1,
@@ -36,40 +35,23 @@
   },
   {
    "rank": 2,
-   "player": "Randy Arozarena",
-   "team_2026": "SEA",
-   "position": "LF",
-   "age_2027": 32,
-   "role": "position",
-   "war_2026": 5.5,
-   "war_2027": 2.9,
-   "war_path": "2.9 / 2.4 / 2 / 1.6",
-   "years": 4,
-   "total_musd": 84.2,
-   "aav_musd": 21,
-   "contract_note": "",
-   "flag_direction": "",
-   "flag": ""
-  },
-  {
-   "rank": 3,
    "player": "Jazz Chisholm Jr.",
    "team_2026": "NYY",
    "position": "2B",
    "age_2027": 29,
    "role": "position",
    "war_2026": 3.5,
-   "war_2027": 2.5,
-   "war_path": "2.5 / 2.4 / 2.2 / 1.9",
+   "war_2027": 2.8,
+   "war_path": "2.8 / 2.7 / 2.4 / 2.2",
    "years": 4,
-   "total_musd": 83.4,
-   "aav_musd": 20.9,
+   "total_musd": 97.7,
+   "aav_musd": 24.4,
    "contract_note": "",
    "flag_direction": "",
    "flag": ""
   },
   {
-   "rank": 4,
+   "rank": 3,
    "player": "Kris Bubic",
    "team_2026": "LAD",
    "position": "SP",
@@ -86,7 +68,7 @@
    "flag": ""
   },
   {
-   "rank": 5,
+   "rank": 4,
    "player": "Teruaki Sato",
    "team_2026": "HAN (NPB)",
    "position": "3B",
@@ -103,7 +85,7 @@
    "flag": "The signing team also pays Hanshin a release fee (20% of the first $25M, 17.5% of the next $25M, 15% above $50M), which should push his own contract below his value. His projection is an NPB translation fit on six Japanese hitters and is the least certain in the set."
   },
   {
-   "rank": 6,
+   "rank": 5,
    "player": "Trevor Rogers",
    "team_2026": "BAL",
    "position": "SP",
@@ -120,41 +102,41 @@
    "flag": ""
   },
   {
-   "rank": 7,
-   "player": "Trent Grisham",
-   "team_2026": "NYY",
-   "position": "CF",
-   "age_2027": 31,
+   "rank": 6,
+   "player": "Randy Arozarena",
+   "team_2026": "SEA",
+   "position": "LF",
+   "age_2027": 32,
    "role": "position",
-   "war_2026": 0.7,
-   "war_2027": 2.3,
-   "war_path": "2.3 / 2.1 / 1.7 / 1.3",
+   "war_2026": 5.5,
+   "war_2027": 2.7,
+   "war_path": "2.7 / 2.2 / 1.8 / 1.4",
    "years": 4,
-   "total_musd": 65.1,
-   "aav_musd": 16.3,
+   "total_musd": 74.2,
+   "aav_musd": 18.6,
    "contract_note": "",
    "flag_direction": "",
    "flag": ""
   },
   {
-   "rank": 8,
+   "rank": 7,
    "player": "Seiya Suzuki",
    "team_2026": "CHC",
    "position": "RF",
    "age_2027": 33,
    "role": "position",
    "war_2026": 4.5,
-   "war_2027": 2.5,
-   "war_path": "2.5 / 1.9 / 1.5 / 1",
+   "war_2027": 2.7,
+   "war_path": "2.7 / 2.1 / 1.6 / 1.2",
    "years": 4,
-   "total_musd": 59.8,
-   "aav_musd": 14.9,
+   "total_musd": 68.6,
+   "aav_musd": 17.1,
    "contract_note": "",
    "flag_direction": "",
    "flag": ""
   },
   {
-   "rank": 9,
+   "rank": 8,
    "player": "Adrian Morejon",
    "team_2026": "SDP",
    "position": "RP",
@@ -171,7 +153,7 @@
    "flag": ""
   },
   {
-   "rank": 10,
+   "rank": 9,
    "player": "Freddy Peralta",
    "team_2026": "TBR",
    "position": "SP",
@@ -188,7 +170,7 @@
    "flag": ""
   },
   {
-   "rank": 11,
+   "rank": 10,
    "player": "Sandy Alcantara",
    "team_2026": "MIA",
    "position": "SP",
@@ -203,6 +185,23 @@
    "contract_note": "club 21 buyout 2",
    "flag_direction": "condition",
    "flag": "Assumes Miami declines his $21M club option ($2M buyout), which the model expects because his 2027 market value is below the net cost."
+  },
+  {
+   "rank": 11,
+   "player": "Trent Grisham",
+   "team_2026": "NYY",
+   "position": "CF",
+   "age_2027": 31,
+   "role": "position",
+   "war_2026": 0.7,
+   "war_2027": 2,
+   "war_path": "2 / 1.8 / 1.4 / 1.1",
+   "years": 4,
+   "total_musd": 52,
+   "aav_musd": 13,
+   "contract_note": "",
+   "flag_direction": "",
+   "flag": ""
   },
   {
    "rank": 12,
@@ -257,17 +256,17 @@
   },
   {
    "rank": 15,
-   "player": "Gleyber Torres",
-   "team_2026": "DET",
-   "position": "2B",
-   "age_2027": 30,
+   "player": "Ian Happ",
+   "team_2026": "CHC",
+   "position": "LF",
+   "age_2027": 33,
    "role": "position",
-   "war_2026": 1.0,
+   "war_2026": 2.6,
    "war_2027": 2.1,
-   "war_path": "2.1 / 1.7 / 1.4",
+   "war_path": "2.1 / 1.5 / 1",
    "years": 3,
-   "total_musd": 43.6,
-   "aav_musd": 14.5,
+   "total_musd": 37,
+   "aav_musd": 12.3,
    "contract_note": "",
    "flag_direction": "",
    "flag": ""
@@ -308,6 +307,23 @@
   },
   {
    "rank": 18,
+   "player": "Daulton Varsho",
+   "team_2026": "HOU",
+   "position": "CF",
+   "age_2027": 31,
+   "role": "position",
+   "war_2026": 0.8,
+   "war_2027": 1.8,
+   "war_path": "1.8 / 1.7",
+   "years": 2,
+   "total_musd": 28.8,
+   "aav_musd": 14.4,
+   "contract_note": "",
+   "flag_direction": "",
+   "flag": ""
+  },
+  {
+   "rank": 19,
    "player": "Brandon Woodruff",
    "team_2026": "MIL",
    "position": "SP",
@@ -324,7 +340,24 @@
    "flag": ""
   },
   {
-   "rank": 19,
+   "rank": 20,
+   "player": "Gleyber Torres",
+   "team_2026": "DET",
+   "position": "2B",
+   "age_2027": 30,
+   "role": "position",
+   "war_2026": 1.0,
+   "war_2027": 1.9,
+   "war_path": "1.9 / 1.5",
+   "years": 2,
+   "total_musd": 27.7,
+   "aav_musd": 13.9,
+   "contract_note": "",
+   "flag_direction": "",
+   "flag": ""
+  },
+  {
+   "rank": 21,
    "player": "David Peterson",
    "team_2026": "CHC",
    "position": "SP",
@@ -341,24 +374,7 @@
    "flag": ""
   },
   {
-   "rank": 20,
-   "player": "J.P. Crawford",
-   "team_2026": "SEA",
-   "position": "SS",
-   "age_2027": 32,
-   "role": "position",
-   "war_2026": 1.2,
-   "war_2027": 1.8,
-   "war_path": "1.8 / 1.4",
-   "years": 2,
-   "total_musd": 25.4,
-   "aav_musd": 12.7,
-   "contract_note": "",
-   "flag_direction": "",
-   "flag": ""
-  },
-  {
-   "rank": 21,
+   "rank": 22,
    "player": "Ryan Jeffers",
    "team_2026": "MIN",
    "position": "C",
@@ -370,23 +386,6 @@
    "years": 2,
    "total_musd": 25.4,
    "aav_musd": 12.7,
-   "contract_note": "",
-   "flag_direction": "",
-   "flag": ""
-  },
-  {
-   "rank": 22,
-   "player": "Daulton Varsho",
-   "team_2026": "HOU",
-   "position": "CF",
-   "age_2027": 31,
-   "role": "position",
-   "war_2026": 0.8,
-   "war_2027": 1.6,
-   "war_path": "1.6 / 1.5",
-   "years": 2,
-   "total_musd": 24.2,
-   "aav_musd": 12.1,
    "contract_note": "",
    "flag_direction": "",
    "flag": ""
@@ -410,23 +409,6 @@
   },
   {
    "rank": 24,
-   "player": "Ian Happ",
-   "team_2026": "CHC",
-   "position": "LF",
-   "age_2027": 33,
-   "role": "position",
-   "war_2026": 2.6,
-   "war_2027": 1.8,
-   "war_path": "1.8 / 1.2",
-   "years": 2,
-   "total_musd": 23.2,
-   "aav_musd": 11.6,
-   "contract_note": "",
-   "flag_direction": "",
-   "flag": ""
-  },
-  {
-   "rank": 25,
    "player": "Brandon Lowe",
    "team_2026": "PIT",
    "position": "2B",
@@ -443,7 +425,7 @@
    "flag": ""
   },
   {
-   "rank": 26,
+   "rank": 25,
    "player": "Dustin May",
    "team_2026": "MIL",
    "position": "SP",
@@ -460,7 +442,7 @@
    "flag": ""
   },
   {
-   "rank": 27,
+   "rank": 26,
    "player": "Foster Griffin",
    "team_2026": "CLE",
    "position": "SP",
@@ -477,24 +459,7 @@
    "flag": ""
   },
   {
-   "rank": 28,
-   "player": "Gavin Lux",
-   "team_2026": "TBR",
-   "position": "2B",
-   "age_2027": 29,
-   "role": "position",
-   "war_2026": null,
-   "war_2027": 1.5,
-   "war_path": "1.5 / 1.4",
-   "years": 2,
-   "total_musd": 21.9,
-   "aav_musd": 10.9,
-   "contract_note": "",
-   "flag_direction": "below",
-   "flag": "He did not play in the majors in 2026, so his projection is unchanged from spring ZiPS and does not reflect the lost season."
-  },
-  {
-   "rank": 29,
+   "rank": 27,
    "player": "Michael Soroka",
    "team_2026": "ARI",
    "position": "SP",
@@ -511,7 +476,7 @@
    "flag": ""
   },
   {
-   "rank": 30,
+   "rank": 28,
    "player": "Clay Holmes",
    "team_2026": "CHC",
    "position": "SP",
@@ -528,13 +493,47 @@
    "flag": "Assumes he opts out of the $12M left on his deal, which the model expects by a narrow margin."
   },
   {
+   "rank": 29,
+   "player": "Patrick Sandoval",
+   "team_2026": "BOS",
+   "position": "SP",
+   "age_2027": 31,
+   "role": "starter",
+   "war_2026": 1.3,
+   "war_2027": 1.4,
+   "war_path": "1.4 / 1.3",
+   "years": 2,
+   "total_musd": 19.6,
+   "aav_musd": 9.8,
+   "contract_note": "",
+   "flag_direction": "",
+   "flag": ""
+  },
+  {
+   "rank": 30,
+   "player": "Brady Singer",
+   "team_2026": "CIN",
+   "position": "SP",
+   "age_2027": 31,
+   "role": "starter",
+   "war_2026": 0.1,
+   "war_2027": 1.5,
+   "war_path": "1.5 / 1.2",
+   "years": 2,
+   "total_musd": 19.6,
+   "aav_musd": 9.8,
+   "contract_note": "",
+   "flag_direction": "",
+   "flag": ""
+  },
+  {
    "rank": 31,
-   "player": "Jake Bauers",
-   "team_2026": "MIL",
-   "position": "1B",
-   "age_2027": 32,
+   "player": "Tyler Stephenson",
+   "team_2026": "CIN",
+   "position": "C",
+   "age_2027": 31,
    "role": "position",
-   "war_2026": 3.6,
+   "war_2026": 1.3,
    "war_2027": 1.5,
    "war_path": "1.5 / 1.2",
    "years": 2,
@@ -549,17 +548,9 @@
   {
    "player": "Ronald Acuña Jr.",
    "reason": "club option likely exercised",
-   "model_total_musd": 180.6,
+   "model_total_musd": 157.2,
    "years": 6,
    "note": "club 17 buyout 10"
-  },
-  {
-   "player": "Bo Bichette",
-   "reason": "likely stays",
-   "model_total_musd": 91.4,
-   "years": 4,
-   "note": "optout 2y 84 buyout 5",
-   "market_value_remaining_years_musd": 50.1
   },
   {
    "player": "Garrett Whitlock",
@@ -567,6 +558,14 @@
    "model_total_musd": 82.4,
    "years": 4,
    "note": "club 8.25 buyout 1"
+  },
+  {
+   "player": "Bo Bichette",
+   "reason": "likely stays",
+   "model_total_musd": 81.2,
+   "years": 4,
+   "note": "optout 2y 84 buyout 5",
+   "market_value_remaining_years_musd": 44.9
   },
   {
    "player": "Drew Rasmussen",
