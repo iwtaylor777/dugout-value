@@ -1,0 +1,24 @@
+{
+ "locked_utc": "2026-10-26T13:35:35Z",
+ "scored_freeze": {
+  "lock": "LOCK-FA-2027.json",
+  "lock_sha256": "94da80ab3fe0690ad3e1e8fa23cb8d7917ba4fb5d17dae4a6e4623ec79f178e2",
+  "locked_utc": "2026-10-25T22:08:19Z",
+  "model_version": "2026-10-25.1"
+ },
+ "AMENDMENTS.md": "e4c32707c8da8eb5db8d67d917330fb280bfd0a2077c64c9b6d53fc40664b6ad",
+ "amendment-1-withdrawn": {
+  "LOCK-FA-2027.json": "3e926934f07f72cf186cb08d4fe3eb7f925e9953cb56dd90d3388aa465dd7b96",
+  "PROTOCOL-FA-2027.md": "4e86f76275ea76594085a522bdfd7ca2aa6ab9d02005cb3d30065948edbf9cbc",
+  "freeze_v2.py": "87a9cd9457e8dace5b3b5552c419018096805041bcd48c3c19d746e1278b2c5d",
+  "predictions_frozen.csv": "cf9bdf867de23916ad903f67630ba103a97b31307253633a1a9fb578c220a344",
+  "predictions_frozen.json": "88ad427090b34203c4c4f9e1a9137704a6d5137016136bd5d33a43ee5f6d0d92"
+ },
+ "calibration/amendment-2": {
+  "pressure.mjs": "c57d34db478acf54dd6910552d25c7f524f21ae11f8b71b898cb7ea140dd6bb7",
+  "pressure_output.txt": "91571a10edfcaf4e1acbd9a0efced743c78545cd2c69b9bb81c44f9324027976",
+  "recent.mjs": "9a703d90c14cb4eae60af0b144ff0dabcc760091bdeaa6d62ffa6eea166430f3",
+  "recent_output.txt": "3a92d2bb0080b13aa7d885120b65dfc0ee1d6dc611e8d1e7b3ecd50282a12ebb"
+ },
+ "note": "Amendment 2 withdraws Amendment 1 and restores the first freeze as the scored predictions, before free agency opened."
+}

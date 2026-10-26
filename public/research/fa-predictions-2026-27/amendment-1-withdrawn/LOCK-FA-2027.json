@@ -1,0 +1,34 @@
+{
+ "study": "Dugout Value free-agent contract predictions, 2026-27 offseason",
+ "locked_utc": "2026-10-25T22:20:54Z",
+ "model_version": "2026-10-25.2",
+ "amendment": "Amendment 1: re-frozen with model 2026-10-25.2 ($10.5M per WAR, 10% star premium) before free agency opened. The first freeze (model 2026-10-25.1) is kept in superseded/ with its own lock.",
+ "files": {
+  "PROTOCOL-FA-2027.md": "4e86f76275ea76594085a522bdfd7ca2aa6ab9d02005cb3d30065948edbf9cbc",
+  "predictions_frozen.json": "88ad427090b34203c4c4f9e1a9137704a6d5137016136bd5d33a43ee5f6d0d92",
+  "predictions_frozen.csv": "cf9bdf867de23916ad903f67630ba103a97b31307253633a1a9fb578c220a344"
+ },
+ "inputs": {
+  "mlbtr_list.txt (MLB Trade Rumors 2026-27 free-agent list, updated 2026-10-19)": "f272d8de92ae6bc3fa915edc6c0eb85bcfd2e846428f5ba7a42fe6f33070c931",
+  "sato.json (translated NPB projection)": "e924752c4ba728c2ba5a3ace280c4420fc0e49bf741e73b49a83fff647d64a26",
+  "app/data/player-database.json (refreshed 2026-10-18)": "2e55ed436bd5c103158c6377ab07c602aae744fa4e2d37e6dfe35defb27295c9",
+  "lib/value-model.mjs (2026-10-25.2)": "1d0e6aae70ecf833a98421762ad21832b9733908c8e89cc74460ffedc6cbacef",
+  "lib/aging-curve.mjs": "c7b8ab4fbe377a2bdec6101e1199c4c0e43ece8a0fff0e207c93d50c5d75b5cc",
+  "predict_lib.mjs": "ba376b888bc37fdc23e284599938170e7dfec01efa980354e54854a1d28a8296",
+  "select.py (market reach and list)": "18ee4ee097952e1388e6bf2f8abf8cfa60973bb158b02adf90a4ff6f1eed1258",
+  "freeze_v2.py (writes the predictions files)": "87a9cd9457e8dace5b3b5552c419018096805041bcd48c3c19d746e1278b2c5d",
+  "mega.mjs (calibration against the largest contracts)": "e44b4a08fcda9e2ca64e65a472a8aaf793c0e41832606998d626b8a9b5bfa188",
+  "FanGraphs free-agent tracker 2020-2027 (calibration)": "5e6fdd429125172bfb5016f228601e121c3954a7e98570c7fd37c4641d310021"
+ },
+ "superseded_first_freeze": {
+  "locked_utc": "2026-10-25T22:08:19Z",
+  "model_version": "2026-10-25.1",
+  "files": {
+   "superseded/PROTOCOL-FA-2027.md": "db2a1c1b8cd142adc103df4d9ae036a45aa557a55378bd5029356faaba52a4be",
+   "superseded/predictions_frozen.json": "08d8bb7f9aa39a8ca09b5e78e273c6668d6990694eb5ad7e4195e51b93d08213",
+   "superseded/predictions_frozen.csv": "ea485ac582bdad70087770742bf7b63da1c09b8a153a159dfe9a345dc0b80287",
+   "superseded/LOCK-FA-2027.json": "94da80ab3fe0690ad3e1e8fa23cb8d7917ba4fb5d17dae4a6e4623ec79f178e2"
+  }
+ },
+ "reproduction_check": "predict_lib.mjs, pricing every season with the site's 2026-10-25.2 defaults and nothing overridden, reproduces all 242 candidate rows; select.py gives the same 31 players and exclusions."
+}
