@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import databaseJson from "./data/player-database.json";
 import playoffOddsJson from "./data/playoff-odds.json";
+import dvProjectionsJson from "./data/dv-projections.json";
 import {
   effectiveSeasons,
   initialSettings as modelInitialSettings,
@@ -181,6 +182,7 @@ type MLBPlayer = {
   rookieMode?: RookieMode;
   lastProspect?: LastProspect | null;
   custom?: boolean;
+  dvProjection?: boolean;
 };
 type ProspectPlayer = {
   id: string;
@@ -225,6 +227,14 @@ type ModelSettings = {
   inflation: number;
   minimumSalary: number;
   valuationView: "offseason" | "deadline";
+  projectionSource: ProjectionSource;
+};
+type ProjectionSource = "zips" | "dv";
+type DvProjectionEntry = {
+  three: Record<string, number>;
+  seasons: Record<string, number>;
+  rate2027?: number | null;
+  pt2027?: number | null;
 };
 type ValueResult = {
   total: number;
@@ -325,7 +335,41 @@ const PROJECTION_YEARS = [BASE_YEAR, BASE_YEAR + 1, BASE_YEAR + 2];
 const initialPlayers = Object.fromEntries(
   database.players.map((player) => [player.id, player]),
 );
-const initialSettings = modelInitialSettings as ModelSettings;
+const initialSettings = {
+  ...(modelInitialSettings as Omit<ModelSettings, "projectionSource">),
+  projectionSource: "zips",
+} as ModelSettings;
+const dvProjections = dvProjectionsJson as unknown as {
+  meta: { model: string; built: string; players: number };
+  players: Record<string, DvProjectionEntry>;
+};
+const DV_MODEL_LABEL = dvProjections.meta.model;
+// Swap a player's projected WAR for the Dugout Value projections. Players the
+// model can't project (no MLB history) keep their ZiPS-based numbers.
+const withProjectionSource = <P extends Player>(player: P, source: ProjectionSource): P => {
+  if (source !== "dv" || player.kind !== "mlb" || player.custom) return player;
+  const dv = dvProjections.players[player.id];
+  if (!dv) return player;
+  // A WAR the user typed in wins over either projection source.
+  const original = initialPlayers[player.id];
+  const untouched = (season: MLBSeason) =>
+    original?.kind === "mlb" &&
+    original.seasons.some((item) => item.year === season.year && item.war === season.war);
+  return {
+    ...player,
+    dvProjection: true,
+    seasons: player.seasons.map((season) =>
+      dv.seasons[String(season.year)] !== undefined && !season.ros && untouched(season)
+        ? { ...season, war: dv.seasons[String(season.year)] }
+        : season,
+    ),
+    threeYearProjection: player.threeYearProjection?.map((season) =>
+      dv.three[String(season.year)] !== undefined
+        ? { ...season, war: dv.three[String(season.year)], inSeasonAdjustment: 0 }
+        : season,
+    ),
+  } as P;
+};
 const TAB_PATHS: Record<ActiveTab, string> = {
   trade: "/tools/trade",
   discover: "/tools/finder",
@@ -413,8 +457,11 @@ const isSharedPlayer = (value: unknown): value is Player => {
     isFiniteNumber(value.adjustment)
   );
 };
-const sharedSettings = (value: unknown): ModelSettings =>
-  restoreSharedSettings(value, initialSettings) as ModelSettings;
+const sharedSettings = (value: unknown): ModelSettings => ({
+  ...(restoreSharedSettings(value, initialSettings) as ModelSettings),
+  projectionSource:
+    isRecord(value) && value.projectionSource === "dv" ? "dv" : "zips",
+});
 const prettyDate = (date: string) =>
   new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -521,6 +568,7 @@ const fwarSourceLabel = (
 ) => {
   if (player.custom) return "Manual entry";
   if (season.ros) return "FanGraphs Depth Charts rest of season";
+  if (player.dvProjection) return season.year > BASE_YEAR + 2 ? `${DV_MODEL_LABEL}, extended by the aging model` : DV_MODEL_LABEL;
   if (extrapolated) return "Dugout Value aging model";
   if (player.futureProjectionUpdate?.projections?.[String(season.year)] !== undefined)
     return "ZiPS, FanGraphs Trade Value Series";
@@ -552,6 +600,10 @@ const SETTING_LABELS: Record<
   valuationView: [
     "Valuation view",
     (v) => viewLabel(v as ModelSettings["valuationView"]),
+  ],
+  projectionSource: [
+    "Projection source",
+    (v) => (v === "dv" ? "Dugout Value" : "ZiPS"),
   ],
 };
 const changedSettings = (settings: ModelSettings) =>
@@ -1174,29 +1226,43 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
 
   const teamName = (abbr: string) =>
     database.teams.find((team) => team.abbr === abbr)?.name ?? abbr;
+  // Projected WAR under the selected projection source; edits and overrides
+  // still live on `players`.
+  const sourcedPlayers = useMemo(
+    () =>
+      settings.projectionSource === "dv"
+        ? (Object.fromEntries(
+            Object.entries(players).map(([id, player]) => [
+              id,
+              withProjectionSource(player, "dv"),
+            ]),
+          ) as Record<string, Player>)
+        : players,
+    [players, settings.projectionSource],
+  );
   const values = useMemo(
     () =>
       Object.fromEntries(
-        Object.values(players).map((player) => [
+        Object.values(sourcedPlayers).map((player) => [
           player.id,
           valuePlayer(player, settings, database) as ValueResult,
         ]),
       ),
-    [players, settings],
+    [sourcedPlayers, settings],
   );
-  const playerList = useMemo(() => Object.values(players), [players]);
+  const playerList = useMemo(() => Object.values(sourcedPlayers), [sourcedPlayers]);
   // Match offer prices to the season used for roster comparisons.
   const discoveryValues = useMemo(() => {
     if (settings.valuationView === DISCOVERY_VIEW) return values;
     if (activeTab !== "discover") return {} as Record<string, ValueResult>;
     const deadlineSettings = { ...settings, valuationView: DISCOVERY_VIEW };
     return Object.fromEntries(
-      Object.values(players).map((player) => [
+      Object.values(sourcedPlayers).map((player) => [
         player.id,
         valuePlayer(player, deadlineSettings, database) as ValueResult,
       ]),
     );
-  }, [activeTab, players, settings, values]);
+  }, [activeTab, sourcedPlayers, settings, values]);
   const discoveryNeeds = useMemo(
     () =>
       rankTeamNeeds(
@@ -1363,7 +1429,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
   );
   const downloadCsv = () => {
     const csv = buildTradeCsv({
-      players,
+      players: sourcedPlayers,
       values,
       settings,
       leftTeam,
@@ -1427,9 +1493,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
       : unavailablePackagePlayers.length > 1
         ? `${unavailablePackagePlayers.length} players in this trade were listed on the IL in the source snapshot`
         : "";
+  const selectedSourced = sourcedPlayers[selectedId];
   const selectedSeasons =
-    selected?.kind === "mlb"
-      ? (effectiveSeasons(selected) as MLBSeason[])
+    selectedSourced?.kind === "mlb"
+      ? (effectiveSeasons(selectedSourced) as MLBSeason[])
       : [];
   const rankedPlayers = useMemo(() => {
     const query = rankingSearch.trim().toLowerCase();
@@ -1479,7 +1546,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               .includes(query)
           : true,
       )
-      .map((player) => {
+      .map((original) => {
+        const player = withProjectionSource(original, settings.projectionSource);
         const seasons = Object.fromEntries(
           (player.threeYearProjection ?? []).map((season) => [
             season.year,
@@ -1514,6 +1582,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
     projectionSearch,
     projectionSort,
     projectionTeam,
+    settings.projectionSource,
   ]);
   const allYears = Array.from(
     new Set(
@@ -2524,6 +2593,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             <strong>{viewLabel(settings.valuationView)}</strong>
           </div>
           <div>
+            <span>Projections</span>
+            <strong>{settings.projectionSource === "dv" ? "Dugout Value" : "ZiPS"}</strong>
+          </div>
+          <div>
             <span>Roster-spot allowance</span>
             <strong>
               {settings.regularRosterWar.toFixed(1)} /{" "}
@@ -2591,6 +2664,29 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 >
                   {viewLabel("deadline")}
                   <small>{SEASON_COMPLETE ? "No remaining production or salary in 2026" : `Includes the rest of ${BASE_YEAR}`}</small>
+                </button>
+              </div>
+            </div>
+            <div className="timing-presets view-presets">
+              <span>Projection source</span>
+              <div>
+                <button
+                  type="button"
+                  className={settings.projectionSource === "zips" ? "is-active" : ""}
+                  aria-pressed={settings.projectionSource === "zips"}
+                  onClick={() => setSettings({ ...settings, projectionSource: "zips" })}
+                >
+                  ZiPS
+                  <small>FanGraphs ZiPS plus the {BASE_YEAR} season update</small>
+                </button>
+                <button
+                  type="button"
+                  className={settings.projectionSource === "dv" ? "is-active" : ""}
+                  aria-pressed={settings.projectionSource === "dv"}
+                  onClick={() => setSettings({ ...settings, projectionSource: "dv" })}
+                >
+                  Dugout Value
+                  <small>Our projections through {BASE_YEAR}; ZiPS where we have no MLB history</small>
                 </button>
               </div>
             </div>
@@ -2982,7 +3078,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               </div>
             </div>
             <TradeSensitivity
-              players={players}
+              players={sourcedPlayers}
               settings={settings}
               leftIds={leftIds}
               rightIds={rightIds}
@@ -3184,7 +3280,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 >
                   <div>
                     <span>Projection</span>
-                    <strong>{selected.source.projection}</strong>
+                    <strong>
+                      {selectedSourced?.kind === "mlb" && selectedSourced.dvProjection
+                        ? `${DV_MODEL_LABEL} (switch to ZiPS in model assumptions)`
+                        : selected.source.projection}
+                    </strong>
                   </div>
                   <div>
                     <span>
@@ -3458,6 +3558,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       </button>
                     </div>
                     {selected.talentUpdate &&
+                      settings.projectionSource === "zips" &&
                       selectedSeasons.some(
                         (season) =>
                           season.projectionBaselineWar !== undefined,
@@ -4051,6 +4152,21 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   <option value="starter">Starting pitchers</option>
                   <option value="reliever">Relief pitchers</option>
                   <option value="two-way">Two-way players</option>
+                </select>
+              </label>
+              <label>
+                <span>Projections</span>
+                <select
+                  value={settings.projectionSource}
+                  onChange={(event) =>
+                    setSettings({
+                      ...settings,
+                      projectionSource: event.target.value as ProjectionSource,
+                    })
+                  }
+                >
+                  <option value="zips">ZiPS</option>
+                  <option value="dv">Dugout Value</option>
                 </select>
               </label>
               <label>
