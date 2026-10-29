@@ -14,7 +14,7 @@ export const article: Article = {
   author: AUTHOR,
   published: "2026-10-29",
   dateLabel: "October 29, 2026",
-  readTime: "9 min read",
+  readTime: "11 min read",
   relatedTool: { href: "/tools/projections", label: "See the projections" },
   evidence: {
     href: `${FILES}.tar.gz`,
@@ -28,7 +28,16 @@ export const article: Article = {
 
       <h2>How it works</h2>
       <p>
-        The model projects each player’s rates from his recent seasons, with every input set relative to that season’s league. Rather than fixing in advance how much one season should count against three, it gives the model the same statistic shrunk toward average at three different strengths and lets it learn how quickly each one stabilizes. Hitters also get their minor-league track record at AAA, AA and A from MLB’s own data. Each projection blends a gradient-boosted tree model with a ridge regression, and each season is fit only on seasons that came before it.
+        The model starts from what a player has done in his last five seasons (three for pitchers), but it reads more than the results. For hitters, the inputs include the Statcast measures behind each season: expected wOBA, exit velocity, barrel and hard-hit rates, launch angle, plus plate discipline (chase rate, contact rate on pitches in the zone, swinging strikes), batted-ball mix, speed, age and position. For pitchers, they include strikeout, walk and home run rates, velocity, the quality of contact allowed, called strikes plus whiffs, and FanGraphs’ pitch-quality grades for stuff and command. Every input is set relative to that season’s league average, so changes in the run environment, like the 2023 rule changes, don’t show up as changes in the player.
+      </p>
+      <p>
+        The main design choice is how to handle small samples. A traditional system weights the last three seasons in a fixed ratio and pulls every player toward average by a fixed amount. That treats all statistics the same, even though a hitter’s strikeout rate means something after a month and his batting average on balls in play barely means anything after a season. For hitters, this model is given each statistic three ways, pulled toward average lightly, moderately and heavily (as if 60, 250 or 1,000 plate appearances of league-average play were added), and it learns which version predicts best for each one. For pitchers, it sees each of the last three seasons on its own and a 3-2-1 weighted average, and it learns how much to trust each.
+      </p>
+      <p>
+        Hitters also get up to three seasons of minor-league stats at AAA, AA and Class A from MLB’s own data, each compared with the average at that level and paired with the player’s age there. That matters most for players with short big-league records. Two different models then read the same inputs, and their predictions are averaged: a gradient-boosted tree model, which can find interactions such as a profile that ages differently from another, and a ridge regression, which is steadier with thin data. For hitters, the models predict wOBA and the other rates directly. For pitchers, they predict strikeouts, walks and home runs per inning separately and combine them into FIP, averaged with a model that predicts FIP directly.
+      </p>
+      <p>
+        WAR comes from its own model, which reads the same inputs plus each player’s past fielding, baserunning and positional runs. Playing time comes from another one. Every model for a given season is fit only on seasons that came before it, so a 2025 projection never sees 2025.
       </p>
 
       <h2>The holdout</h2>
