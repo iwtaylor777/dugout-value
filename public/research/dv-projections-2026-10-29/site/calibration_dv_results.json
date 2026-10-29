@@ -1,0 +1,145 @@
+{
+ "2026 class, FanGraphs projection + aging curve": {
+  "n": 36,
+  "best": {
+   "D": 11,
+   "P": 40,
+   "mse": 0.0971
+  },
+  "bestD_atP20": {
+   "D": 11,
+   "mse": 0.0976
+  },
+  "mse_at_11_20": 0.0976
+ },
+ "2026 class, Dugout Value paths": {
+  "n": 36,
+  "best": {
+   "D": 14.25,
+   "P": 40,
+   "mse": 0.2143
+  },
+  "bestD_atP20": {
+   "D": 14.5,
+   "mse": 0.2157
+  },
+  "mse_at_11_20": 0.2891
+ },
+ "2026 class, Dugout Value 2027 level + standard aging curve": {
+  "n": 36,
+  "best": {
+   "D": 13.75,
+   "P": 40,
+   "mse": 0.1894
+  },
+  "bestD_atP20": {
+   "D": 13.75,
+   "mse": 0.1898
+  },
+  "mse_at_11_20": 0.2419
+ },
+ "2021-26, Dugout Value paths": {
+  "n": 304,
+  "best": {
+   "D": 10.5,
+   "P": 30,
+   "mse": 0.3503
+  },
+  "bestD_atP20": {
+   "D": 10.5,
+   "mse": 0.3504
+  },
+  "mse_at_11_20": 0.3519
+ },
+ "2021-26, Dugout Value first year + standard aging curve": {
+  "n": 304,
+  "best": {
+   "D": 10.5,
+   "P": 0,
+   "mse": 0.3439
+  },
+  "bestD_atP20": {
+   "D": 10.25,
+   "mse": 0.3447
+  },
+  "mse_at_11_20": 0.3483
+ },
+ "2021, Dugout Value paths": {
+  "n": 43,
+  "best": {
+   "D": 9.75,
+   "P": 0,
+   "mse": 0.319
+  },
+  "bestD_atP20": {
+   "D": 9.75,
+   "mse": 0.3195
+  },
+  "mse_at_11_20": 0.335
+ },
+ "2022, Dugout Value paths": {
+  "n": 66,
+  "best": {
+   "D": 8,
+   "P": 40,
+   "mse": 0.3411
+  },
+  "bestD_atP20": {
+   "D": 8.25,
+   "mse": 0.3439
+  },
+  "mse_at_11_20": 0.4312
+ },
+ "2023, Dugout Value paths": {
+  "n": 61,
+  "best": {
+   "D": 11.75,
+   "P": 0,
+   "mse": 0.3305
+  },
+  "bestD_atP20": {
+   "D": 11.75,
+   "mse": 0.3313
+  },
+  "mse_at_11_20": 0.335
+ },
+ "2024, Dugout Value paths": {
+  "n": 44,
+  "best": {
+   "D": 10.75,
+   "P": 0,
+   "mse": 0.3074
+  },
+  "bestD_atP20": {
+   "D": 10.5,
+   "mse": 0.3076
+  },
+  "mse_at_11_20": 0.3088
+ },
+ "2025, Dugout Value paths": {
+  "n": 49,
+  "best": {
+   "D": 12.25,
+   "P": 10,
+   "mse": 0.3081
+  },
+  "bestD_atP20": {
+   "D": 12.25,
+   "mse": 0.3082
+  },
+  "mse_at_11_20": 0.3182
+ },
+ "2026, Dugout Value paths": {
+  "n": 41,
+  "best": {
+   "D": 12.75,
+   "P": 40,
+   "mse": 0.3288
+  },
+  "bestD_atP20": {
+   "D": 12.75,
+   "mse": 0.3315
+  },
+  "mse_at_11_20": 0.3533
+ }
+}

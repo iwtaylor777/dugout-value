@@ -32,7 +32,7 @@ export default function About() {
         </section>
         <section aria-labelledby="rules">
           <h2 id="rules">Sources and model settings</h2>
-          <p>ZiPS and FanGraphs Depth Charts supply the public projections. The trade model applies its own settings for the price of a win, discounting, and value ranges. You can change many of those settings in the tools; the <Link href="/methods">methods page</Link> explains the calculation and its limits.</p>
+          <p>The tools use Dugout Value’s own projections by default, with ZiPS available as an option; FanGraphs Depth Charts supplies in-season playing time. The trade model applies its own settings for the price of a win, discounting, and value ranges. You can change many of those settings in the tools; the <Link href="/methods">methods page</Link> explains the calculation and its limits.</p>
         </section>
         <section aria-labelledby="contact">
           <h2 id="contact">Reach Ian Taylor or report an error</h2>

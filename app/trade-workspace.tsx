@@ -233,8 +233,9 @@ type ProjectionSource = "zips" | "dv";
 type DvProjectionEntry = {
   three: Record<string, number>;
   seasons: Record<string, number>;
-  rate2027?: number | null;
-  pt2027?: number | null;
+  rate?: Record<string, number> | null;
+  pt?: Record<string, number> | null;
+  unit?: string | null;
 };
 type ValueResult = {
   total: number;
@@ -337,7 +338,7 @@ const initialPlayers = Object.fromEntries(
 );
 const initialSettings = {
   ...(modelInitialSettings as Omit<ModelSettings, "projectionSource">),
-  projectionSource: "zips",
+  projectionSource: "dv",
 } as ModelSettings;
 const dvProjections = dvProjectionsJson as unknown as {
   meta: { model: string; built: string; players: number };
@@ -346,6 +347,14 @@ const dvProjections = dvProjectionsJson as unknown as {
 const DV_MODEL_LABEL = dvProjections.meta.model;
 // Swap a player's projected WAR for the Dugout Value projections. Players the
 // model can't project (no MLB history) keep their ZiPS-based numbers.
+const playingTimeLine = (dv: DvProjectionEntry, year: number) => {
+  const rate = dv.rate?.[String(year)];
+  const pt = dv.pt?.[String(year)];
+  if (rate === undefined || pt === undefined || !dv.unit)
+    return "Dugout Value · hitting + pitching";
+  const unit = dv.unit.endsWith("IP") ? "IP" : "PA";
+  return `${rate.toFixed(1)} per ${dv.unit} × ${Math.round(pt)} ${unit}`;
+};
 const withProjectionSource = <P extends Player>(player: P, source: ProjectionSource): P => {
   if (source !== "dv" || player.kind !== "mlb" || player.custom) return player;
   const dv = dvProjections.players[player.id];
@@ -358,6 +367,13 @@ const withProjectionSource = <P extends Player>(player: P, source: ProjectionSou
   return {
     ...player,
     dvProjection: true,
+    // Dugout Value projects 2027–31 directly; only later seasons are aging-curve extensions.
+    agingModel: player.agingModel
+      ? {
+          ...player.agingModel,
+          anchorYear: Math.max(Number(player.agingModel.anchorYear) || 0, BASE_YEAR + 5),
+        }
+      : player.agingModel,
     seasons: player.seasons.map((season) =>
       dv.seasons[String(season.year)] !== undefined && !season.ros && untouched(season)
         ? { ...season, war: dv.seasons[String(season.year)] }
@@ -568,7 +584,7 @@ const fwarSourceLabel = (
 ) => {
   if (player.custom) return "Manual entry";
   if (season.ros) return "FanGraphs Depth Charts rest of season";
-  if (player.dvProjection) return season.year > BASE_YEAR + 2 ? `${DV_MODEL_LABEL}, extended by the aging model` : DV_MODEL_LABEL;
+  if (player.dvProjection) return season.year > BASE_YEAR + 5 ? `${DV_MODEL_LABEL}, extended by the aging model` : DV_MODEL_LABEL;
   if (extrapolated) return "Dugout Value aging model";
   if (player.futureProjectionUpdate?.projections?.[String(season.year)] !== undefined)
     return "ZiPS, FanGraphs Trade Value Series";
@@ -1494,6 +1510,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
         ? `${unavailablePackagePlayers.length} players in this trade were listed on the IL in the source snapshot`
         : "";
   const selectedSourced = sourcedPlayers[selectedId];
+  const selectedAging =
+    selectedSourced?.kind === "mlb" ? selectedSourced.agingModel : undefined;
   const selectedSeasons =
     selectedSourced?.kind === "mlb"
       ? (effectiveSeasons(selectedSourced) as MLBSeason[])
@@ -1548,22 +1566,29 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
       )
       .map((original) => {
         const player = withProjectionSource(original, settings.projectionSource);
-        const seasons = Object.fromEntries(
-          (player.threeYearProjection ?? []).map((season) => [
-            season.year,
-            season,
-          ]),
-        ) as Record<number, ThreeYearProjectionSeason>;
+        const bySeason = (list?: ThreeYearProjectionSeason[]) =>
+          Object.fromEntries(
+            (list ?? []).map((season) => [season.year, season]),
+          ) as Record<number, ThreeYearProjectionSeason>;
+        const seasons = bySeason(player.threeYearProjection);
+        const zipsSeasons = bySeason(original.threeYearProjection);
+        const dv = player.dvProjection ? dvProjections.players[player.id] : undefined;
         const total = PROJECTION_YEARS.reduce(
           (sum, year) => sum + Number(seasons[year]?.war ?? 0),
           0,
         );
-        const change = PROJECTION_YEARS.slice(1).reduce(
-          (sum, year) =>
-            sum + Number(seasons[year]?.inSeasonAdjustment ?? 0),
-          0,
-        );
-        return { player, seasons, total, change };
+        const change = dv
+          ? PROJECTION_YEARS.slice(1).reduce(
+              (sum, year) =>
+                sum + Number(seasons[year]?.war ?? 0) - Number(zipsSeasons[year]?.war ?? 0),
+              0,
+            )
+          : PROJECTION_YEARS.slice(1).reduce(
+              (sum, year) =>
+                sum + Number(seasons[year]?.inSeasonAdjustment ?? 0),
+              0,
+            );
+        return { player, seasons, total, change, dv };
       })
       .sort((left, right) => {
         if (projectionSort === "name")
@@ -2250,6 +2275,24 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
     );
   };
 
+  const projectionSourceControl = () => (
+    <label className="projection-source-control">
+      <span>Projections</span>
+      <select
+        value={settings.projectionSource}
+        onChange={(event) =>
+          setSettings({
+            ...settings,
+            projectionSource: event.target.value as ProjectionSource,
+          })
+        }
+      >
+        <option value="dv">Dugout Value</option>
+        <option value="zips">ZiPS</option>
+      </select>
+    </label>
+  );
+
   const renderDiscovery = () => (
     <section className="discovery-panel" aria-label="Trade discovery tool">
       <header className="discovery-heading">
@@ -2277,6 +2320,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
       </p>
 
       <div className="discovery-controls">
+        {projectionSourceControl()}
         <label>
           <span>Your team</span>
           <select
@@ -2672,21 +2716,21 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               <div>
                 <button
                   type="button"
+                  className={settings.projectionSource === "dv" ? "is-active" : ""}
+                  aria-pressed={settings.projectionSource === "dv"}
+                  onClick={() => setSettings({ ...settings, projectionSource: "dv" })}
+                >
+                  Dugout Value
+                  <small>Our model, data through {BASE_YEAR}, full-season playing time; ZiPS for players without MLB history</small>
+                </button>
+                <button
+                  type="button"
                   className={settings.projectionSource === "zips" ? "is-active" : ""}
                   aria-pressed={settings.projectionSource === "zips"}
                   onClick={() => setSettings({ ...settings, projectionSource: "zips" })}
                 >
                   ZiPS
                   <small>FanGraphs ZiPS plus the {BASE_YEAR} season update</small>
-                </button>
-                <button
-                  type="button"
-                  className={settings.projectionSource === "dv" ? "is-active" : ""}
-                  aria-pressed={settings.projectionSource === "dv"}
-                  onClick={() => setSettings({ ...settings, projectionSource: "dv" })}
-                >
-                  Dugout Value
-                  <small>Our projections through {BASE_YEAR}; ZiPS where we have no MLB history</small>
                 </button>
               </div>
             </div>
@@ -3205,7 +3249,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   {selected.kind === "mlb" &&
                   selectedValue?.extrapolatedShare != null &&
                   selectedValue.extrapolatedShare > 0.2
-                    ? `${Math.round(selectedValue.extrapolatedShare * 100)}% of the value comes from seasons after ${selected.agingModel?.anchorYear ?? "the last published ZiPS season"}, which the aging model extrapolates. `
+                    ? `${Math.round(selectedValue.extrapolatedShare * 100)}% of the value comes from seasons after ${selectedAging?.anchorYear ?? "the last projected season"}, which the aging model extrapolates. `
                     : ""}
                   {valuationBasisLabel(selectedValue)
                     ? `Valued on ${valuationBasisLabel(selectedValue).toLowerCase()}.`
@@ -3282,9 +3326,18 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                     <span>Projection</span>
                     <strong>
                       {selectedSourced?.kind === "mlb" && selectedSourced.dvProjection
-                        ? `${DV_MODEL_LABEL} (switch to ZiPS in model assumptions)`
+                        ? DV_MODEL_LABEL
                         : selected.source.projection}
                     </strong>
+                    {selectedSourced?.kind === "mlb" &&
+                      selectedSourced.dvProjection &&
+                      dvProjections.players[selectedSourced.id] && (
+                        <small>
+                          {BASE_YEAR + 1}:{" "}
+                          {playingTimeLine(dvProjections.players[selectedSourced.id], BASE_YEAR + 1)}
+                          {" "}(full season)
+                        </small>
+                      )}
                   </div>
                   <div>
                     <span>
@@ -3655,20 +3708,20 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                           )}
                         </div>
                       )}
-                    {selected.agingModel &&
+                    {selectedAging &&
                       selectedSeasons.some(
-                        (season) => season.year > selected.agingModel!.anchorYear,
+                        (season) => season.year > selectedAging.anchorYear,
                       ) && (
                         <div className="talent-update-card">
                           <div className="talent-update-head">
                             <div>
                               <span>Long-range aging</span>
                               <strong>
-                                ZiPS anchored · {selected.agingModel.profile}
+                                {selectedSourced?.kind === "mlb" && selectedSourced.dvProjection ? "Dugout Value anchored" : "ZiPS anchored"} · {selectedAging.profile}
                               </strong>
                             </div>
                             <small>
-                              Starts after {selected.agingModel.anchorYear}
+                              Starts after {selectedAging.anchorYear}
                             </small>
                           </div>
                           <p>
@@ -3681,9 +3734,12 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                           <details>
                             <summary>What is player-specific here?</summary>
                             <p>
-                              {selected.agingModel.profile === "two-way"
+                              {selectedSourced?.kind === "mlb" && selectedSourced.dvProjection
+                                ? `Through ${BASE_YEAR + 5}, Dugout Value projects each season directly, so the aging path is the player’s own. After that, the site’s ZiPS-anchored aging curve continues from his ${BASE_YEAR + 5} level. `
+                                : ""}
+                              {selectedAging.profile === "two-way"
                                 ? "Hitting and pitching are aged separately with their own ZiPS rates, workloads, and role curves, then recombined."
-                                : `The model reads the change between the last two ZiPS seasons in both fWAR per ${selected.agingModel.unitLabel}${selected.agingModel.rateTrend === null ? "" : ` (${signedWar(selected.agingModel.rateTrend)})`}${selected.agingModel.workloadRetention === null ? "." : ` and projected workload (${Math.round(selected.agingModel.workloadRetention * 100)}% retained).`}`}
+                                : `The model reads the change between the last two ZiPS seasons in both fWAR per ${selectedAging.unitLabel}${selectedAging.rateTrend === null ? "" : ` (${signedWar(selectedAging.rateTrend)})`}${selectedAging.workloadRetention === null ? "." : ` and projected workload (${Math.round(selectedAging.workloadRetention * 100)}% retained).`}`}
                               {" "}That signal receives 35% weight in the first
                               added year and fades quickly. The population
                               curve carries the rest, steepening in the
@@ -4076,20 +4132,40 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               <div>
                 <span>2026–2028 forecast board</span>
                 <h2>Three-year projection snapshot</h2>
-                <p>
-                  2026 has no remaining fWAR. The 2027
-                  and 2028 columns begin with published ZiPS, then carry forward
-                  a conservative, role-aware share of the ZiPS in-season talent
-                  change. Exception: for the 50 players in FanGraphs’ 2026
-                  Trade Value Series, 2027–31 use that series’ published ZiPS
-                  as-is, with no Dugout Value adjustment.
-                </p>
-                <Link
-                  className="tool-article-link"
-                  href="/analysis/when-a-better-fit-isnt-a-better-forecast"
-                >
-                  How the projections adjust ZiPS, and the test that failed →
-                </Link>
+                {settings.projectionSource === "dv" ? (
+                  <p>
+                    2026 has no remaining fWAR. The 2027 and 2028 columns are
+                    Dugout Value projections: our model’s WAR rate, using data
+                    through 2026, times a full season of playing time. Each
+                    player follows his own projected aging path through 2031.
+                    Players without 100 PA or 20 IP in 2024–26 show ZiPS. Switch
+                    to ZiPS with the Projections menu below.
+                  </p>
+                ) : (
+                  <p>
+                    2026 has no remaining fWAR. The 2027
+                    and 2028 columns begin with published ZiPS, then carry forward
+                    a conservative, role-aware share of the ZiPS in-season talent
+                    change. Exception: for the 50 players in FanGraphs’ 2026
+                    Trade Value Series, 2027–31 use that series’ published ZiPS
+                    as-is, with no Dugout Value adjustment.
+                  </p>
+                )}
+                {settings.projectionSource === "dv" ? (
+                  <Link
+                    className="tool-article-link"
+                    href="/analysis/our-projections-replace-zips"
+                  >
+                    How our projections were built and tested →
+                  </Link>
+                ) : (
+                  <Link
+                    className="tool-article-link"
+                    href="/analysis/when-a-better-fit-isnt-a-better-forecast"
+                  >
+                    How the projections adjust ZiPS, and the test that failed →
+                  </Link>
+                )}
               </div>
               <strong>
                 {projectedPlayers.length}{" "}
@@ -4099,12 +4175,19 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             <div className="projection-board-note">
               <div>
                 <span>What the small line means</span>
-                <strong>Published ZiPS baseline + rolling update</strong>
+                <strong>
+                  {settings.projectionSource === "dv"
+                    ? "WAR rate × full-season playing time"
+                    : "Published ZiPS baseline + rolling update"}
+                </strong>
               </div>
               <p>
                 This is a projection table, not a value ranking. Salary,
                 service time, roster-spot allowance, and contract control are
                 not part of these fWAR totals.
+                {settings.projectionSource === "dv"
+                  ? " Dugout Value playing time is a full season: the larger of our expected playing time and the player’s healthy 2024–26 workload. Players without enough MLB history show ZiPS."
+                  : ""}
               </p>
             </div>
             <div className="projection-filters">
@@ -4154,21 +4237,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   <option value="two-way">Two-way players</option>
                 </select>
               </label>
-              <label>
-                <span>Projections</span>
-                <select
-                  value={settings.projectionSource}
-                  onChange={(event) =>
-                    setSettings({
-                      ...settings,
-                      projectionSource: event.target.value as ProjectionSource,
-                    })
-                  }
-                >
-                  <option value="zips">ZiPS</option>
-                  <option value="dv">Dugout Value</option>
-                </select>
-              </label>
+              {projectionSourceControl()}
               <label>
                 <span>Sort by</span>
                 <select
@@ -4195,11 +4264,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   <span>2027</span>
                   <span>2028</span>
                   <span>2026–28</span>
-                  <span>Talent signal</span>
+                  <span>{settings.projectionSource === "dv" ? "Compared with ZiPS" : "Talent signal"}</span>
                   <span />
                 </div>
                 {projectedPlayers.slice(0, projectionVisible).map(
-                  ({ player, seasons, total, change }) => (
+                  ({ player, seasons, total, change, dv }) => (
                     <article className="three-year-row" key={player.id}>
                       <div className="projection-player">
                         <strong>{player.name}</strong>
@@ -4216,6 +4285,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                             <strong>{season?.war.toFixed(1) ?? "—"}</strong>
                             {year === BASE_YEAR ? (
                               <small>Depth Charts RoS</small>
+                            ) : dv ? (
+                              <small>{playingTimeLine(dv, year)}</small>
                             ) : player.futureProjectionUpdate ? (
                               <small>ZiPS source</small>
                             ) : (
@@ -4236,7 +4307,9 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                         className={`projection-signal ${change > 0 ? "positive" : change < 0 ? "negative" : ""}`}
                       >
                         <strong>
-                          {player.futureProjectionUpdate
+                          {dv
+                            ? `${signedWar(Math.abs(change) < 0.05 ? 0 : change)} vs ZiPS`
+                            : player.futureProjectionUpdate
                             ? "Official ZiPS"
                             : player.talentUpdate?.rateChange === null
                             ? "Split update"
@@ -4245,7 +4318,9 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                               : "No update"}
                         </strong>
                         <small>
-                          {player.futureProjectionUpdate
+                          {dv
+                            ? "Dugout Value minus ZiPS, 2027–28"
+                            : player.futureProjectionUpdate
                             ? `FanGraphs Trade Value #${player.futureProjectionUpdate.rank}`
                             : change === 0
                             ? "future curve unchanged"
@@ -4343,6 +4418,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   ))}
                 </select>
               </label>
+              {projectionSourceControl()}
               <div className="ranking-type" aria-label="Player type">
                 <span>Player type</span>
                 <div>
@@ -4421,7 +4497,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                           {extrapolatedShare > 0.2 ? (
                             <em
                               className="extrapolated-note"
-                              title={`${Math.round(extrapolatedShare * 100)}% of this value comes from seasons after ${(player.kind === "mlb" && player.agingModel?.anchorYear) || "the last published ZiPS season"}, which the aging model extends`}
+                              title={`${Math.round(extrapolatedShare * 100)}% of this value comes from seasons after ${(sourcedPlayers[player.id]?.kind === "mlb" && (sourcedPlayers[player.id] as MLBPlayer).agingModel?.anchorYear) || "the last projected season"}, which the aging model extends`}
                             >
                               extrapolated {Math.round(extrapolatedShare * 100)}%
                             </em>

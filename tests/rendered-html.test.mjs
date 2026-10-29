@@ -20,9 +20,9 @@ test("trade route presents the reviewed snapshot, the offseason default and the 
   assert.match(html, /<h1>Trade builder<\/h1>/);
   assert.match(html, /Tool data checked <!-- -->October 18, 2026/);
   assert.match(html, /Off · 2026 season complete/);
-  assert.match(html, /Pittsburgh Pirates give up \$15\.0M more at the midpoint/);
-  assert.match(html, /15\.1% of the larger side/);
-  assert.match(html, /The ranges overlap, so the gap is small next to the model’s allowances/);
+  assert.match(html, /Pittsburgh Pirates give up \$50\.5M more at the midpoint/);
+  assert.match(html, /60\.8% of the larger side/);
+  assert.match(html, /The ranges don’t overlap/);
   assert.match(html, /Why this result\?/);
   assert.match(html, /href="\/analysis\/how-to-read-value-ranges"/);
   assert.match(html, /It isn’t a confidence interval/);

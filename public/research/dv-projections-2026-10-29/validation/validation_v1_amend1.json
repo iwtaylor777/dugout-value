@@ -1,0 +1,487 @@
+{
+ "E hitters: proj wOBA vs RE24/PA pooled 2024-26": {
+  "n": 952,
+  "corr": {
+   "dv": 0.5525,
+   "zips": 0.5237,
+   "steamer": 0.538,
+   "marcel": 0.4567,
+   "last": 0.3972
+  },
+  "same_season_actual": 0.9039,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    0.0054,
+    0.0533
+   ],
+   "steamer": [
+    -0.0089,
+    0.0389
+   ],
+   "marcel": [
+    0.0593,
+    0.1323
+   ],
+   "last": [
+    0.1098,
+    0.1979
+   ]
+  }
+ },
+ "E hitters: proj wOBA vs RE24/PA 2023": {
+  "n": 313,
+  "corr": {
+   "dv": 0.5378,
+   "zips": 0.522,
+   "steamer": 0.5333,
+   "marcel": 0.4653,
+   "last": 0.4014
+  },
+  "same_season_actual": 0.9063,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0436,
+    0.0751
+   ],
+   "steamer": [
+    -0.0478,
+    0.0517
+   ],
+   "marcel": [
+    0.0223,
+    0.1218
+   ],
+   "last": [
+    0.0619,
+    0.2115
+   ]
+  }
+ },
+ "E hitters: proj wOBA vs RE24/PA 2024": {
+  "n": 333,
+  "corr": {
+   "dv": 0.5851,
+   "zips": 0.5486,
+   "steamer": 0.5644,
+   "marcel": 0.5269,
+   "last": 0.3974
+  },
+  "same_season_actual": 0.9204,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0063,
+    0.0818
+   ],
+   "steamer": [
+    -0.0188,
+    0.0613
+   ],
+   "marcel": [
+    0.0052,
+    0.1149
+   ],
+   "last": [
+    0.1235,
+    0.2529
+   ]
+  }
+ },
+ "E hitters: proj wOBA vs RE24/PA 2025": {
+  "n": 307,
+  "corr": {
+   "dv": 0.5677,
+   "zips": 0.5643,
+   "steamer": 0.5641,
+   "marcel": 0.5121,
+   "last": 0.4809
+  },
+  "same_season_actual": 0.9005,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.034,
+    0.0415
+   ],
+   "steamer": [
+    -0.0331,
+    0.0415
+   ],
+   "marcel": [
+    0.0005,
+    0.1175
+   ],
+   "last": [
+    0.0136,
+    0.1634
+   ]
+  }
+ },
+ "E hitters: proj wOBA vs RE24/PA 2026": {
+  "n": 312,
+  "corr": {
+   "dv": 0.4986,
+   "zips": 0.4566,
+   "steamer": 0.4805,
+   "marcel": 0.3672,
+   "last": 0.3152
+  },
+  "same_season_actual": 0.896,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0083,
+    0.0924
+   ],
+   "steamer": [
+    -0.0267,
+    0.0702
+   ],
+   "marcel": [
+    0.0684,
+    0.1977
+   ],
+   "last": [
+    0.0953,
+    0.2753
+   ]
+  }
+ },
+ "E pitchers: proj FIP vs RE24 allowed/TBF pooled 2024-26": {
+  "n": 942,
+  "corr": {
+   "dv": -0.3651,
+   "zips": -0.3391,
+   "steamer": -0.3552,
+   "marcel": -0.309,
+   "last": -0.276
+  },
+  "same_season_actual": -0.7097,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0655,
+    0.0122
+   ],
+   "steamer": [
+    -0.0484,
+    0.0288
+   ],
+   "marcel": [
+    -0.0968,
+    -0.0158
+   ],
+   "last": [
+    -0.1343,
+    -0.0429
+   ]
+  }
+ },
+ "E pitchers: proj FIP vs RE24 allowed/TBF 2023": {
+  "n": 323,
+  "corr": {
+   "dv": -0.4288,
+   "zips": -0.3548,
+   "marcel": -0.2846,
+   "last": -0.2577
+  },
+  "same_season_actual": -0.7418,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.138,
+    -0.0129
+   ],
+   "marcel": [
+    -0.2233,
+    -0.0623
+   ],
+   "last": [
+    -0.2536,
+    -0.0812
+   ]
+  }
+ },
+ "E pitchers: proj FIP vs RE24 allowed/TBF 2024": {
+  "n": 313,
+  "corr": {
+   "dv": -0.3074,
+   "zips": -0.2921,
+   "steamer": -0.3048,
+   "marcel": -0.263,
+   "last": -0.2351
+  },
+  "same_season_actual": -0.6808,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0847,
+    0.055
+   ],
+   "steamer": [
+    -0.0655,
+    0.0532
+   ],
+   "marcel": [
+    -0.1109,
+    0.0238
+   ],
+   "last": [
+    -0.1509,
+    0.0134
+   ]
+  }
+ },
+ "E pitchers: proj FIP vs RE24 allowed/TBF 2025": {
+  "n": 310,
+  "corr": {
+   "dv": -0.402,
+   "zips": -0.3918,
+   "steamer": -0.4131,
+   "marcel": -0.3645,
+   "last": -0.3247
+  },
+  "same_season_actual": -0.7258,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0788,
+    0.0536
+   ],
+   "steamer": [
+    -0.0529,
+    0.0707
+   ],
+   "marcel": [
+    -0.1022,
+    0.0224
+   ],
+   "last": [
+    -0.1466,
+    -0.0128
+   ]
+  }
+ },
+ "E pitchers: proj FIP vs RE24 allowed/TBF 2026": {
+  "n": 319,
+  "corr": {
+   "dv": -0.3838,
+   "zips": -0.3172,
+   "steamer": -0.3406,
+   "marcel": -0.3,
+   "last": -0.2545
+  },
+  "same_season_actual": -0.7256,
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.1333,
+    -0.0068
+   ],
+   "steamer": [
+    -0.1152,
+    0.0236
+   ],
+   "marcel": [
+    -0.1628,
+    -0.0069
+   ],
+   "last": [
+    -0.2187,
+    -0.0435
+   ]
+  }
+ },
+ "W2 wins per 162, separate hitter/pitcher slopes, pooled 2024-26 (n=90)": {
+  "dv": {
+   "loso_rmse_split": 7.683,
+   "loso_rmse_total": 7.745,
+   "slopes_hit_pit": [
+    1.039,
+    1.676
+   ]
+  },
+  "zips": {
+   "loso_rmse_split": 8.306,
+   "loso_rmse_total": 8.38,
+   "slopes_hit_pit": [
+    0.808,
+    1.358
+   ]
+  },
+  "steamer": {
+   "loso_rmse_split": 7.884,
+   "loso_rmse_total": 8.009,
+   "slopes_hit_pit": [
+    0.909,
+    1.618
+   ]
+  },
+  "marcel": {
+   "loso_rmse_split": 7.976,
+   "loso_rmse_total": 7.943,
+   "slopes_hit_pit": [
+    1.397,
+    1.313
+   ]
+  },
+  "last": {
+   "loso_rmse_split": 7.453,
+   "loso_rmse_total": 7.427,
+   "slopes_hit_pit": [
+    0.848,
+    0.704
+   ]
+  },
+  "rmse_diff_ci (dv minus; negative = dv better)": {
+   "zips": [
+    -1.112,
+    0.253
+   ],
+   "steamer": [
+    -0.639,
+    0.601
+   ],
+   "marcel": [
+    -0.725,
+    0.317
+   ],
+   "last": [
+    -0.431,
+    1.2
+   ]
+  }
+ },
+ "P hitters pooled 2024-26": {
+  "n": 124,
+  "corr": {
+   "dv": 0.821,
+   "zips": 0.8383,
+   "steamer": 0.8141,
+   "marcel": 0.8436,
+   "last": 0.7785
+  },
+  "R2": {
+   "dv": 0.674,
+   "zips": 0.7028,
+   "steamer": 0.6627,
+   "marcel": 0.7116,
+   "last": 0.6061
+  },
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0621,
+    0.0339
+   ],
+   "steamer": [
+    -0.0286,
+    0.0534
+   ],
+   "marcel": [
+    -0.0622,
+    0.0262
+   ],
+   "last": [
+    -0.015,
+    0.1185
+   ]
+  }
+ },
+ "P hitters pooled 2023-26": {
+  "n": 176,
+  "corr": {
+   "dv": 0.7825,
+   "zips": 0.7672,
+   "steamer": 0.7754,
+   "marcel": 0.7892,
+   "last": 0.7186
+  },
+  "R2": {
+   "dv": 0.6124,
+   "zips": 0.5886,
+   "steamer": 0.6013,
+   "marcel": 0.6229,
+   "last": 0.5163
+  },
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0295,
+    0.0584
+   ],
+   "steamer": [
+    -0.0286,
+    0.0445
+   ],
+   "marcel": [
+    -0.044,
+    0.0308
+   ],
+   "last": [
+    -0.0,
+    0.1341
+   ]
+  }
+ },
+ "P pitchers pooled 2024-26": {
+  "n": 187,
+  "corr": {
+   "dv": 0.7279,
+   "zips": 0.6865,
+   "steamer": 0.7012,
+   "marcel": 0.7028,
+   "last": 0.68
+  },
+  "R2": {
+   "dv": 0.5298,
+   "zips": 0.4712,
+   "steamer": 0.4917,
+   "marcel": 0.4939,
+   "last": 0.4624
+  },
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    0.004,
+    0.0814
+   ],
+   "steamer": [
+    -0.0027,
+    0.0574
+   ],
+   "marcel": [
+    -0.0137,
+    0.064
+   ],
+   "last": [
+    -0.0233,
+    0.1203
+   ]
+  }
+ },
+ "P all free agents pooled 2024-26": {
+  "n": 311,
+  "corr": {
+   "dv": 0.7692,
+   "zips": 0.7472,
+   "steamer": 0.7493,
+   "marcel": 0.7589,
+   "last": 0.7229
+  },
+  "R2": {
+   "dv": 0.5917,
+   "zips": 0.5584,
+   "steamer": 0.5615,
+   "marcel": 0.5759,
+   "last": 0.5227
+  },
+  "corr_diff_ci (dv minus)": {
+   "zips": [
+    -0.0095,
+    0.0556
+   ],
+   "steamer": [
+    -0.0044,
+    0.0487
+   ],
+   "marcel": [
+    -0.0217,
+    0.046
+   ],
+   "last": [
+    -0.0005,
+    0.101
+   ]
+  }
+ }
+}

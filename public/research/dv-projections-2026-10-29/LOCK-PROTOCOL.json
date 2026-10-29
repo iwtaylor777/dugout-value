@@ -1,0 +1,25 @@
+{
+ "locked_utc": "2026-10-27T23:50:03Z",
+ "PROTOCOL-PROJECTIONS.md": "02c0d8017f0fbc08b5d1ffd36f0c6e78a03dd5271ed4dbef883a27e7a4269c79",
+ "archive/manifest.json": "084ea435b3418d00c71576cc16d5d225e63cdeb94459c88b1d98193c7fd37511",
+ "benchmarks": {
+  "2023-steamer-bat.json": "3be6d54a9c65a7d3fdfbfd4ceaf8b1101e73053f5ff3151c004aa5c5e709fa1a",
+  "2023-zips-bat.json": "aae6989c250c565ade5004cbd010dc7af53795a213c79d9ff0ed8dbd968e7710",
+  "2023-zips-pit.json": "7e0be639ea8fe58f482c20423eeecc0a3b0f33b164218df197ed51d2a2a13657",
+  "2024-steamer-bat.json": "f9a13364d51311911222539c376e69f03b33be918ff064b87bba6208783bd95d",
+  "2024-steamer-pit.json": "003cb291a32f9999f7f9ddfaf544e3cde6e7c8b4e51770d5828735780898a2e2",
+  "2024-zips-bat.json": "c97a42638edbee5d7017b1b426c9a932354caf0d2e870e62a331842c99aedc2b",
+  "2024-zips-pit.json": "1d52315a110f6bac536b49bb50a737fede194ce73a1bb240a13b3ebad3850710",
+  "2025-atc-bat.json": "95f6319b18b1db0646e254ea2b863a1cdfe24b9bfc2b3c24f0c6e5c3dde82ed4",
+  "2025-fangraphsdc-bat.json": "5552279d8ab6e85134a29e5f95646638e95ac31c89ade506022adc37a82a1504",
+  "2025-fangraphsdc-pit.json": "ae34f14ef087883a14b828f186c699f0111e38ecf7c2f2f297165c86c0f15aec",
+  "2025-steamer-bat.json": "14d2e151bfd2327cb6412f92721479478a4a84412f5b53d44bd9a02950e33cff",
+  "2025-steamer-pit.json": "3b4ef0c9c4c13bbd84736ef649367750ae368c6840aa9da95de98f874d9208d3",
+  "2025-zips-bat.json": "528b9e798e49622b51259291a1e51731a8acbc7f01be238d1e858dfba7dc23b9",
+  "2025-zips-pit.json": "7abadf09f399eb6b987b53b8f83adad1c1f849e3336f357a7c3ad5e31562a7b5",
+  "2026-steamer-bat.json": "2a0031f77a11b047da4ae62b81990823aed9fa8e28bfdc4170b2c3ff35615cf2",
+  "2026-steamer-pit.json": "4ee5b6d80c6b0aba042f8b547eb4d5e98f922a88da3da82c690502b5aee356d5",
+  "2026-zips-bat.json": "f3e2c7144662928013be62b33bb7d06a2fdb30457cacb5b12a227f71762e593f",
+  "2026-zips-pit.json": "d60ec91ef2404323e5bb54e27cb04a58dc5bab5ac8e4b144e99fbbc93c7ddcf3"
+ }
+}

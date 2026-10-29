@@ -1,0 +1,36 @@
+{
+ "model": "Dugout Value projections v1",
+ "locked_utc": "2026-10-28T00:08:15Z",
+ "code": {
+  "model-v1/data.py": "5a28ac24062487c14c4efd6963c291e3a9e7bfb3734706fb0ac3a42d4a3661e8",
+  "model-v1/diag.py": "989d567414dd664af6967a4833e4f7d8461ec245bdb69f895c464035a1593a7d",
+  "model-v1/dvp.py": "2e397999bc81f757dd1b04835b803c2f891055ffb3bf376cf3e0127567c9ee76",
+  "model-v1/exp_k.py": "1b4ede869fc0780f327b008945e6cca3456c9a9bd3bd681202c545dcb2cc4d6c",
+  "model-v1/feat_bat.py": "9e5cb60f403cc3315a50b5ce58afbf1483ef3f50edb82f95203d664d07aab1df",
+  "model-v1/feat_bat2.py": "ed8cd71726b161567522592f356d53924bbd187feb201e2422f526fe5eac0899",
+  "model-v1/feat_pit.py": "0359c312a788fef5aa238fd307c30a91cae0027795b7f79728754bca1e0a867a",
+  "model-v1/marcel_base.py": "54502ea923243f9752540bb92d4e6e5ae2365feed80816fbc43877d286f7f228",
+  "model-v1/milb.py": "160419b5b160cb4060df5ca4863869faded6a5c971b3bc8597725bfe00dacb55",
+  "model-v1/model_bat_v1.py": "1f2a6c049c6e9c2e4377bdd2681070601e7efabe0a246f2049632a0dc42f0866",
+  "model-v1/model_bat_v2.py": "d791252c7e2fd9e28fa929afbb2c4491d39bc7258acca21ebb242201b97a60ba",
+  "model-v1/model_pit_v1.py": "f9a52b4b1bd11ab5df2ba4722c9c173754a5d938ba96b6a20793732c234662a7",
+  "model-v1/model_pit_v2.py": "74dd5bca943144ec5fd19ccc45b6a1b1d525c8a761f25592bab057356cd25ee1",
+  "model-v1/pooled.py": "dd7c2807af4a04250bb79b23942f08e4f46b42e02f141326414032c879c6b22c",
+  "model-v1/run_dev.py": "f321d686c0b31fb7a51c99926de1987a255597fc7538fa34927650a705aa2bca",
+  "model-v1/run_eval.py": "86bccc0233abd6dfa709933d30d65b1786c53320b05992780b2b03298a5f8065",
+  "model-v1/score.py": "1c8e621a6890c6979a3c5b2daac185d0b41f4e12f32e40fa6e0fd5ec6c5c45bc"
+ },
+ "DEVLOG.md": "5754dd80b2530295abc038aaad017981582df350999341b1c73904577febaedb",
+ "eval_dev-v9.json": "ea7d0ed18e0eb38ec170db0f0ef0ba330e6bf2795f770e0c4349a6f1098be9fd",
+ "protocol": "02c0d8017f0fbc08b5d1ffd36f0c6e78a03dd5271ed4dbef883a27e7a4269c79",
+ "holdout_runs_before_this_lock": 0,
+ "holdout_run_1": {
+  "utc": "2026-10-28T00:09:31Z",
+  "file": "eval_holdout-v1.json",
+  "sha256": "5661d0d8285407a5552fe2d60c22473c1d1129db3bbe09ee8570edfdf030c5ac",
+  "win_rule": {
+   "bat": true,
+   "pit": true
+  }
+ }
+}

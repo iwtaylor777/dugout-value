@@ -1,0 +1,6 @@
+{
+ "file": "VALIDATION-AMENDMENT-1.md",
+ "sha256": "d8e8f7e11236e682d34a7f2fb8fdaf970aae5e426b91a5fb201d530ad503c97b",
+ "locked_utc": "2026-10-28T00:25:13Z",
+ "note": "Locked after W/R/A scored (validation/validation_v1.json sha256 9e1c70e955aed0f0b966b0a1ab3826a3070640856bf2630680608e8611f0f70f), before E, W2 and P were computed."
+}
