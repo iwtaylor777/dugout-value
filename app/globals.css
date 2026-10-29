@@ -2418,6 +2418,17 @@ footer {
   letter-spacing: normal;
   text-transform: none;
 }
+.three-year-table.future-only {
+  min-width: 840px;
+}
+.future-only .three-year-row {
+  grid-template-columns:
+    minmax(200px, 1.35fr)
+    repeat(2, minmax(100px, 0.7fr))
+    minmax(70px, 0.5fr)
+    minmax(165px, 1fr)
+    90px;
+}
 .projection-player strong,
 .projection-player small,
 .projection-war-cell strong,

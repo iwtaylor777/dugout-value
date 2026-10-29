@@ -562,6 +562,10 @@ const discountLabel = (rate: number) =>
 const viewLabel = (view: ModelSettings["valuationView"]) =>
   view === "offseason" ? `Offseason view (${BASE_YEAR + 1} on)` : "Include 2026";
 const SEASON_COMPLETE = database.meta.seasonRemainingFraction === 0;
+const VISIBLE_PROJECTION_YEARS = PROJECTION_YEARS.filter(
+  (year) => !SEASON_COMPLETE || year > BASE_YEAR,
+);
+const PROJECTION_YEAR_RANGE = `${VISIBLE_PROJECTION_YEARS[0]}–${VISIBLE_PROJECTION_YEARS.at(-1)}`;
 const savedForecastLabel = (player: MLBPlayer) => {
   if (player.futureProjectionUpdate) return "Trade Value Series ZiPS";
   const provider = player.source.projection.includes("Steamer") ? "Steamer" : "ZiPS";
@@ -1567,7 +1571,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
       )
       .filter((player) =>
         query
-          ? `${player.name} ${player.team} ${displayPosition(player)}`
+          ? `${player.name} ${player.team} ${teamName(player.team)} ${displayPosition(player)}`
               .toLowerCase()
               .includes(query)
           : true,
@@ -1581,7 +1585,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
         const seasons = bySeason(player.threeYearProjection);
         const zipsSeasons = bySeason(original.threeYearProjection);
         const dv = player.dvProjection ? dvProjections.players[player.id] : undefined;
-        const total = PROJECTION_YEARS.reduce(
+        const total = VISIBLE_PROJECTION_YEARS.reduce(
           (sum, year) => sum + Number(seasons[year]?.war ?? 0),
           0,
         );
@@ -2828,7 +2832,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 {selected.kind === "mlb" && (
                   <p className="ros-note">
                     {SEASON_COMPLETE ? (
-                      <><strong>The {BASE_YEAR} season is complete.</strong> Value starts in {BASE_YEAR + 1}. The historical salary is retained for arbitration estimates.</>
+                      <><strong>Value starts in {BASE_YEAR + 1}.</strong> The {BASE_YEAR} season is complete.</>
                     ) : settings.valuationView === "offseason" ? (
                       <>
                         <strong>
@@ -2844,7 +2848,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                         remaining season.
                       </>
                     )}{" "}
-                    Future arbitration starts from the full-year salary (
+                    {selectedSeasons.some((season) => season.salaryMode.startsWith("arb")) && <> Future arbitration starts from the full-year salary (
                     {money(
                       selectedSeasons[0]?.annualSalary ??
                         selectedSeasons[0]?.salary ??
@@ -2854,7 +2858,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                     platform stats against the player&apos;s arbitration class. For
                     repeat-eligible players, it also carries the previous award
                     into a performance-based raise path; neither input controls
-                    the estimate by itself.
+                    the estimate by itself.</>}
                   </p>
                 )}
                 {selected.kind === "mlb" &&
@@ -3082,7 +3086,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                             </small>
                           </div>
                           <p>
-                            Direct ZiPS seasons stay unchanged. Later years age
+                            {`Direct ${selectedSourced?.kind === "mlb" && selectedSourced.dvProjection ? "Dugout Value" : "ZiPS"} forecasts stay unchanged. Later years age `}
                             projected production rate and playing time
                             separately, using a capped portion of ZiPS&apos;s recent
                             player-specific slope plus a nonlinear age and role
@@ -3469,7 +3473,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 : activeTab === "discover"
                   ? "Pick a team and compare projected upgrades at its weakest positions."
                   : activeTab === "projections"
-                    ? `fWAR for ${PROJECTION_YEARS[0]} through ${PROJECTION_YEARS[2]} for ${database.meta.mlbCount.toLocaleString("en-US")} major leaguers. Source dates and model adjustments are shown.`
+                    ? `fWAR forecasts for ${PROJECTION_YEAR_RANGE}, with source notes and model adjustments.`
                     : "The 100 players and prospects with the most modeled surplus value."}
             </p>
           </div>
@@ -4130,15 +4134,15 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
         ) : activeTab === "projections" ? (
           <section
             className="projections-panel"
-            aria-label="Three-year player projection snapshot"
+            aria-label="Player projection snapshot"
           >
             <div className="rankings-heading projections-heading">
               <div>
-                <span>2026–2028 forecast board</span>
-                <h2>Three-year projection snapshot</h2>
+                <span>{PROJECTION_YEAR_RANGE} forecast board</span>
+                <h2>Player projection snapshot</h2>
                 {settings.projectionSource === "dv" ? (
                   <p>
-                    2026 has no remaining fWAR. The 2027 and 2028 columns are
+                    The 2027 and 2028 columns are
                     Dugout Value projections: our model’s WAR rate, using data
                     through 2026, times a full season of playing time. Each
                     player follows his own projected aging path through 2031.
@@ -4147,7 +4151,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   </p>
                 ) : (
                   <p>
-                    2026 has no remaining fWAR. The 2027
+                    The 2027
                     and 2028 columns use the latest ZiPS forecasts we have,
                     including our season-end adjustments where available.
                     Players covered by FanGraphs’ 2026 Trade Value Series use
@@ -4260,11 +4264,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 </select>
               </label>
             </div>
-            <div className="three-year-table-wrap" tabIndex={0} aria-label="Scrollable three-year projection table">
-              <div className="three-year-table">
+            <div className="three-year-table-wrap" tabIndex={0} aria-label={`Scrollable ${PROJECTION_YEAR_RANGE} projection table`}>
+              <div className={`three-year-table${SEASON_COMPLETE ? " future-only" : ""}`}>
                 <div className="three-year-row three-year-head">
                   <span>Player</span>
-                  <span>{SEASON_COMPLETE ? "2026 complete" : "2026 RoS"}</span>
+                  {!SEASON_COMPLETE && <span>2026 RoS</span>}
                   <span>2027</span>
                   <span>2028</span>
                   <span>{SEASON_COMPLETE ? "2027–28" : "2026–28"}</span>
@@ -4281,14 +4285,14 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                           Age {player.age}
                         </small>
                       </div>
-                      {PROJECTION_YEARS.map((year) => {
+                      {VISIBLE_PROJECTION_YEARS.map((year) => {
                         const season = seasons[year];
                         const adjustment = season?.inSeasonAdjustment ?? 0;
                         return (
                           <div className="projection-war-cell" key={year}>
-                            <strong>{year === BASE_YEAR && SEASON_COMPLETE ? "—" : season?.war.toFixed(1) ?? "—"}</strong>
+                            <strong>{season?.war.toFixed(1) ?? "—"}</strong>
                             {year === BASE_YEAR ? (
-                              <small>{SEASON_COMPLETE ? "Season complete" : "Depth Charts RoS"}</small>
+                              <small>Depth Charts RoS</small>
                             ) : dv ? (
                               <small>{playingTimeLine(dv, year)}</small>
                             ) : player.futureProjectionUpdate ? (
@@ -4338,8 +4342,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       <button
                         type="button"
                         aria-haspopup="dialog"
-                      aria-label={`Why this value for ${player.name}`}
-                      onClick={() => openPlayerEditor(player.id, "projections")}
+                        aria-label={`Why this value for ${player.name}`}
+                        onClick={() => openPlayerEditor(player.id, "projections")}
                       >
                         Why this value
                       </button>
@@ -4374,7 +4378,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       setProjectionVisible((count) => count + PROJECTION_PAGE)
                     }
                   >
-                    Show {PROJECTION_PAGE} more
+                    Show {Math.min(PROJECTION_PAGE, projectedPlayers.length - projectionVisible)} more
                   </button>
                 )}
               </div>
