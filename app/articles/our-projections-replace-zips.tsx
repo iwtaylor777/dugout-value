@@ -86,7 +86,7 @@ export const article: Article = {
       </figure>
 
       <p>
-        The separate models regress harder at long range than an aging curve does, and that is where most of the site’s values change. A young star’s fifth season ahead is projected closer to average than ZiPS projects it, and the backtests say that is correct on average: across all distances, the models’ forecasts were, if anything, not regressed enough. Because surplus value for a cheap, controlled young player comes mostly from those later seasons, many of them lose value. Across the 1,127 players with Dugout Value projections and a contract on the board, total surplus is 36% lower than under ZiPS, even though projected 2027 WAR is nearly the same on average (1.11 against 1.15).
+        The separate models regress harder at long range than an aging curve does, and that is where most of the site’s values change. A young star’s fifth season ahead is projected closer to average than a standard aging curve would put it, and the backtests say that is right on average: at every distance, the models’ forecasts were, if anything, not regressed enough. I don’t have archived multi-year ZiPS to test against directly. Because surplus value for a cheap, controlled young player comes mostly from those later seasons, many of them lose value. Across the 1,127 players with Dugout Value projections and a contract on the board, total surplus is 36% lower than under ZiPS, even though projected 2027 WAR is nearly the same on average (1.11 against 1.15).
       </p>
 
       <h2>Playing time and the price of a win</h2>
