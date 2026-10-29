@@ -3701,6 +3701,9 @@ footer {
   margin-right: 12px;
   margin-left: 12px;
 }
+.editor-advanced[open] > summary { margin-bottom: 12px; }
+.projection-baseline-note { margin: 8px 24px 20px; font-size: 12px; line-height: 1.7; color: var(--muted); }
+.projection-baseline-note a { color: var(--red-dark); }
 .editor-advanced[open] > :last-child {
   margin-bottom: 12px;
 }
