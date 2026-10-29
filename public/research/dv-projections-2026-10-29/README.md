@@ -1,6 +1,6 @@
 # Dugout Value projections: validation files (October 29, 2026)
 
-These files go with the article "Our own projections match ZiPS, so the tools now use them".
+These files go with the article "Introducing DV Projections, which match or beat ZiPS".
 
 ## Locks
 

@@ -8,7 +8,7 @@ const FILES = "/research/dv-projections-2026-10-29";
 export const article: Article = {
   slug: "our-projections-replace-zips",
   category: "Research",
-  title: "Our own projections match ZiPS, so the tools now use them",
+  title: "Introducing DV Projections, which match or beat ZiPS",
   summary:
     "On a locked 2025–26 holdout, Dugout Value projections tied ZiPS and Steamer for hitters and beat ZiPS for pitchers, and they line up with run value and free-agent pay at least as well. They also regress long-range forecasts harder than a standard aging curve, which lowers the value of many young players.",
   author: AUTHOR,
