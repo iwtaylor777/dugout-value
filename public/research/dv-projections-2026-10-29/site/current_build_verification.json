@@ -1,0 +1,9 @@
+{
+  "players": 1245,
+  "changed_player_records": 0,
+  "metadata_equal": true,
+  "byte_equal": true,
+  "published_sha256": "bd7d1f70191739f68b1481d43b8274bacc58c8e32b23cd6c662209ff67c2f6a0",
+  "rebuilt_sha256": "bd7d1f70191739f68b1481d43b8274bacc58c8e32b23cd6c662209ff67c2f6a0",
+  "method": "Rebuild from the existing current forecast inputs; does not refit or retune rates."
+}

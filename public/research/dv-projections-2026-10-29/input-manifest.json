@@ -1,0 +1,574 @@
+[
+  {
+    "path": "raw/fg_bat_2010.json",
+    "source": "existing local cache: fg-bat-2010-type8.json",
+    "sha256": "11fc23af0cb6dac823d2e2c204547f2047008c918bbf715a387a61ad9eb2cdbf"
+  },
+  {
+    "path": "raw/fg_bat_2011.json",
+    "source": "existing local cache: fg-bat-2011-type8.json",
+    "sha256": "a680e777a76fcabb441384ce50fa519393464c83f5671fc4067d04cde51963a9"
+  },
+  {
+    "path": "raw/fg_bat_2012.json",
+    "source": "existing local cache: fg-bat-2012-type8.json",
+    "sha256": "b0c50265723fc98f53e29f842cf355efa31906438611e9aeb54a6d24d1a723c8"
+  },
+  {
+    "path": "raw/fg_bat_2013.json",
+    "source": "existing local cache: fg-bat-2013-type8.json",
+    "sha256": "de9f7696aa8de1781678f70c765dac35a8727e0e88dc84bc6499a8ad4e09ef01"
+  },
+  {
+    "path": "raw/fg_bat_2014.json",
+    "source": "existing local cache: fg-bat-2014-type8.json",
+    "sha256": "554dbc9c21aee64b81ed31e35a9d1fd46eb4d354a2ca151feda21664fa5a6156"
+  },
+  {
+    "path": "raw/fg_bat_2015.json",
+    "source": "existing local cache: fg_bat_2015.json",
+    "sha256": "d457e9be89aa5dedcd485f10f1dedba279f7700d6815ad95aa707383d1a85eb4"
+  },
+  {
+    "path": "raw/fg_bat_2016.json",
+    "source": "existing local cache: fg_bat_2016.json",
+    "sha256": "bd6e4164e8b3e4b94bd3b5529a808682013b0e9cf585a2621fcdb958fcb7155d"
+  },
+  {
+    "path": "raw/fg_bat_2017.json",
+    "source": "existing local cache: fg_bat_2017.json",
+    "sha256": "f4818faa132c2ea22e9dcaaa6dcf9d5d52981857054bf1cd3f3372370a6e5384"
+  },
+  {
+    "path": "raw/fg_bat_2018.json",
+    "source": "existing local cache: fg_bat_2018.json",
+    "sha256": "7aa403c97608e3383f68203564cf3d1a3cc184179372b1b443f1830a6a430bf5"
+  },
+  {
+    "path": "raw/fg_bat_2019.json",
+    "source": "existing local cache: fg_bat_2019.json",
+    "sha256": "0715007f8a39beccf7b27b972bef16aa8361bb2f83118e5fd0385ec38c7beea7"
+  },
+  {
+    "path": "raw/fg_bat_2020.json",
+    "source": "existing local cache: fg_bat_2020.json",
+    "sha256": "c5467cc62137af4dda678c16be6d7c87474c3dc7be9f7bf3c2b084fd1d70efd3"
+  },
+  {
+    "path": "raw/fg_bat_2021.json",
+    "source": "existing local cache: fg_bat_2021.json",
+    "sha256": "89e7523d6dc9b258fdc302a471d0cedc11025fa21350c4547ee4020b76978bd4"
+  },
+  {
+    "path": "raw/fg_bat_2022.json",
+    "source": "existing local cache: fg_bat_2022.json",
+    "sha256": "5d053e0ef38e5ccfbd6a1a0ad05ca7002886172917f2aa0a4637f007484b4a9a"
+  },
+  {
+    "path": "raw/fg_bat_2023.json",
+    "source": "existing local cache: fg_bat_2023.json",
+    "sha256": "50c177628fdebb3a4543c68ea4f7f1192ecafb89664aadd4fc951ece41585a61"
+  },
+  {
+    "path": "raw/fg_bat_2024.json",
+    "source": "existing local cache: fg_bat_2024.json",
+    "sha256": "044a3af6dce8ac75f5660322a0a2cfdbafa412c886b61fbb9a344912163ae47e"
+  },
+  {
+    "path": "raw/fg_bat_2025.json",
+    "source": "existing local cache: fg_bat_2025.json",
+    "sha256": "43cf8603f2e2dbb669525798af4ae55e243a0838988b57ec1612f37c40588720"
+  },
+  {
+    "path": "raw/fg_bat_2026.json",
+    "source": "existing local cache: fg_bat_2026.json",
+    "sha256": "5eb006b4d1a113a505b3820397724bbb6390271d39c0344f9a43b125ee369926"
+  },
+  {
+    "path": "raw/fg_pit_2015.json",
+    "source": "existing local cache: fg_pit_2015.json",
+    "sha256": "bb20471c24f187827a7af1b9d82ba36e571994e1bebdf4b5b4daded8e5896428"
+  },
+  {
+    "path": "raw/fg_pit_2016.json",
+    "source": "existing local cache: fg_pit_2016.json",
+    "sha256": "8ef0b1619a6c04fb13b8c66fbe3887e3e6a871911bb9e79b002c3ee3c667501d"
+  },
+  {
+    "path": "raw/fg_pit_2017.json",
+    "source": "existing local cache: fg_pit_2017.json",
+    "sha256": "9d46e1240aea2567a9487d73b7b4970034fca5b28e56269a4ddb66f5f2315053"
+  },
+  {
+    "path": "raw/fg_pit_2018.json",
+    "source": "existing local cache: fg_pit_2018.json",
+    "sha256": "92e902f10e56b4e529898ee54107d5fe816ad2ae753fe861eeb48df2217df64e"
+  },
+  {
+    "path": "raw/fg_pit_2019.json",
+    "source": "existing local cache: fg_pit_2019.json",
+    "sha256": "ef3ff4e35642a3b0308440aca0e2b6ddce5d27b932a20b78925fb3ef59ad15f6"
+  },
+  {
+    "path": "raw/fg_pit_2020.json",
+    "source": "existing local cache: fg_pit_2020.json",
+    "sha256": "96221383596f3a649f5bb019563de8fc3e2fb45d3e6e7244667b356c078190eb"
+  },
+  {
+    "path": "raw/fg_pit_2021.json",
+    "source": "existing local cache: fg_pit_2021.json",
+    "sha256": "fbafff5d951cff48c13bd4041ce471705a98477172df72a21824fb6e26fa47e5"
+  },
+  {
+    "path": "raw/fg_pit_2022.json",
+    "source": "existing local cache: fg_pit_2022.json",
+    "sha256": "f6f9179d7dd8d6bbbfbe3391bf014f878cfeccd00207e83dde5c6db7830830b4"
+  },
+  {
+    "path": "raw/fg_pit_2023.json",
+    "source": "existing local cache: fg_pit_2023.json",
+    "sha256": "9a2ee2a1b2d336a88b859e1794a1a04f20870e19596303940901b9f8a972abb5"
+  },
+  {
+    "path": "raw/fg_pit_2024.json",
+    "source": "existing local cache: fg_pit_2024.json",
+    "sha256": "ce533a4863c95e881eb0d31bf9d24f9a4de5357dc401abd0107c04b4278c3f2e"
+  },
+  {
+    "path": "raw/fg_pit_2025.json",
+    "source": "existing local cache: fg_pit_2025.json",
+    "sha256": "73a9edd6faafc7323cff63698c4090605a6ad4129d1430f70ada8f83b31ecd77"
+  },
+  {
+    "path": "raw/fg_pit_2026.json",
+    "source": "existing local cache: fg_pit_2026.json",
+    "sha256": "13ec650f31c9dc75644ed12481c79f29dbc42488904d4f04f43c1b9ac9a36c1c"
+  },
+  {
+    "path": "raw/fg_pit_2010.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2010&season1=2010&ind=1&pageitems=10000&pagenum=1",
+    "rows": 635,
+    "sha256": "524fc68fd2be539b5f97b278a12722d7c60d177ab3c3d6e7cf6e9ee957277130",
+    "response_sha256": "524fc68fd2be539b5f97b278a12722d7c60d177ab3c3d6e7cf6e9ee957277130"
+  },
+  {
+    "path": "raw/fg_pit_2011.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2011&season1=2011&ind=1&pageitems=10000&pagenum=1",
+    "rows": 662,
+    "sha256": "7dfbdbce94857b53f29e42a2b537a58b9ad5eff2be980321b7d9669c4b50d008",
+    "response_sha256": "7dfbdbce94857b53f29e42a2b537a58b9ad5eff2be980321b7d9669c4b50d008"
+  },
+  {
+    "path": "raw/fg_pit_2012.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2012&season1=2012&ind=1&pageitems=10000&pagenum=1",
+    "rows": 662,
+    "sha256": "b5c9e7af6deecd9485a8300dfb3effdcc3b85b3f5b1a6f137c69d2412a8b1150",
+    "response_sha256": "b5c9e7af6deecd9485a8300dfb3effdcc3b85b3f5b1a6f137c69d2412a8b1150"
+  },
+  {
+    "path": "raw/fg_pit_2013.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2013&season1=2013&ind=1&pageitems=10000&pagenum=1",
+    "rows": 679,
+    "sha256": "e72d013bc6d85efede68c1573b63f32c2bf9986c637eb78117570c05b44bd71a",
+    "response_sha256": "e72d013bc6d85efede68c1573b63f32c2bf9986c637eb78117570c05b44bd71a"
+  },
+  {
+    "path": "raw/fg_pit_2014.json",
+    "url": "https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=0&type=8&season=2014&season1=2014&ind=1&pageitems=10000&pagenum=1",
+    "rows": 692,
+    "sha256": "0cf6b66fc5fa50a35e6ba1907475d9c8e5d94974be8db66ab901221af8da20f9",
+    "response_sha256": "0cf6b66fc5fa50a35e6ba1907475d9c8e5d94974be8db66ab901221af8da20f9"
+  },
+  {
+    "path": "milb/2013-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2013&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1488,
+    "sha256": "ba084344a2bd6d6de804b10112419eba941c2ca973b887ca85ee62ab84d3f20f",
+    "response_sha256": "c5732b8765ccd94f1c4be39593ba020d6443f8b552e045e19ec9aada5bbe53c7"
+  },
+  {
+    "path": "milb/2013-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2013&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 1072,
+    "sha256": "4a5938c6527df2351901d65531e6559ec1d90cc1719cd521a1a76f4e708c8252",
+    "response_sha256": "1501c7f0ca7715490e7ec4474e375dd7ea25046cb61d45b6bd23886b57bce85a"
+  },
+  {
+    "path": "milb/2013-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2013&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 763,
+    "sha256": "955a624c18adafb884188a5b5cb50c2369615132523818872e6d08e0af3676f1",
+    "response_sha256": "a379abacf837b6101f363d1ddf25b2a822bd525804e79e70d562180b708adb4d"
+  },
+  {
+    "path": "milb/2013-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2013&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 701,
+    "sha256": "a3785cd9fa90bb2fbc8630058322177a9777afd184deaa8d5b710af06affd9bf",
+    "response_sha256": "fa6ba0719ac525db0434456ee37ba662145e83257fd62f7ed2500a52f2c66c88"
+  },
+  {
+    "path": "milb/2014-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2014&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1510,
+    "sha256": "caa8605a8f0489fe9e507f79b9313af0dc2a36dc3018b74d6a6284fc253ec464",
+    "response_sha256": "52c1425e14c020b1dafdf53e8001a48b25bdfb01c9cd5ba8790d1d38a39913dd"
+  },
+  {
+    "path": "milb/2014-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2014&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 1090,
+    "sha256": "238c6301f7df349367c528b0dbc351c62e6c4b03a2c730e7e279365a66473e77",
+    "response_sha256": "acf7e15c9d10c5f826dc42e0b543f955383e54f31fdd97884d1173c7749acf50"
+  },
+  {
+    "path": "milb/2014-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2014&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 757,
+    "sha256": "0982b40f6e1f3b075851ffd820e5416c9e0052ac36e536f7d8ed73b07805557d",
+    "response_sha256": "423f717968f9fe3c5917f92bcb50b20338f898479022dcc485cc8b5662c5e88f"
+  },
+  {
+    "path": "milb/2014-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2014&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 701,
+    "sha256": "7cdf3e6ff988789b032412817e5182ab093b4f96dfa25ffe1a81e58a6534a8a4",
+    "response_sha256": "0286c9d078319db7c61b8511b12b7e42d0f23678ffde7799014ca326580e3d85"
+  },
+  {
+    "path": "milb/2015-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2015&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1562,
+    "sha256": "d20d040c209a1f16119267387de03ec8c3b4692e9ffe7426ff3a03993b405343",
+    "response_sha256": "874e48d7e817296bb56420c4bb4c0025653426e8f2a704507f7602f0fb2c2498"
+  },
+  {
+    "path": "milb/2015-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2015&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 1142,
+    "sha256": "22c11940e1074e0b491a0c9589c5810cb06b9cc7b8f950e4de78b5f4888a98d7",
+    "response_sha256": "d329c8e59ca326a1a78bc384b3482123f2887346083d3003b5ac5fcd65e57767"
+  },
+  {
+    "path": "milb/2015-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2015&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 770,
+    "sha256": "1ff1e8709efa9ddcc4a461b2d939f63f9b1404c8632491105eff150ddf0c71ff",
+    "response_sha256": "08e5aa7219deb6688d5b96f3f48dd0e28f3acb8af308196a9e19352b68d008b9"
+  },
+  {
+    "path": "milb/2015-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2015&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 722,
+    "sha256": "f32e44f1d4fcf84140b0addcc703a375e6d605bd1e06c86b0e0c0be461a1958f",
+    "response_sha256": "e02b2b2e470ea6600fa48315d8c2929f1addf39f9bccef2b7eb736e357bf62ef"
+  },
+  {
+    "path": "milb/2016-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2016&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1627,
+    "sha256": "5f5133bfaaba09fd87b027575f3fdcf74142fae20855644683597b375775410e",
+    "response_sha256": "d19a0fd0a1b2b816b6266b136329db208fb62bc2e7c8fc691a30e914003fc111"
+  },
+  {
+    "path": "milb/2016-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2016&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 1133,
+    "sha256": "02bbd62e29f830c76b6a0beeb677cdfc4b466b507fb8501e456ac0e8c560fe5a",
+    "response_sha256": "59c236adee1b294154eee5ed28bc82568be38a36b626c9e96258f6df6ba12653"
+  },
+  {
+    "path": "milb/2016-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2016&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 780,
+    "sha256": "38e0daa4dc03c390174807010eadf17317c2f2076bda2f92fdfbac0d7e59174a",
+    "response_sha256": "82d83ee5b307aedd20df3868a36d9812fba969a7129ed9046b50303ce0be9c47"
+  },
+  {
+    "path": "milb/2016-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2016&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 710,
+    "sha256": "83a7cace5e851780661ffc6bb8a26038b43e7009e989bf1b266d2d2706f50a92",
+    "response_sha256": "2b71c3021b95c7ec130b7f74291336d3f33dabe38c230e8b4d9a0805b175cf06"
+  },
+  {
+    "path": "milb/2017-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2017&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1592,
+    "sha256": "5d72f8ad137167a593e77320ebd9be3a63be32285f59cee102343f409b37c759",
+    "response_sha256": "6f74ee9ea082ae45ee33a5680acc4c43be4124a41e65c60162ea9af34dd9c3ec"
+  },
+  {
+    "path": "milb/2017-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2017&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 1132,
+    "sha256": "f8e04a31c70a5b5b16b6b201dba4507046a189dec9545d894fea51b83e970bf7",
+    "response_sha256": "86568874f4feb2f25962dc604f3a7e3b0b4af22bdb10ba4cb1a97755b5baa405"
+  },
+  {
+    "path": "milb/2017-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2017&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 829,
+    "sha256": "b52808f57fb5e32257dae83e9838dc395069ad7e2794995f67c636c81731a20c",
+    "response_sha256": "1283386bc50892c0f49bb17cb4aa771f80f8b9edc45d81e6803aa270111f3945"
+  },
+  {
+    "path": "milb/2017-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2017&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 729,
+    "sha256": "573796dc09bec7fb03d177dd021ba95bc3b89071467aa351ccb0f4eb1689272a",
+    "response_sha256": "f4a3c9bcd3db03f63f4ccfb9f39aa5dadbeb12a8f612e615557ec076d6cba379"
+  },
+  {
+    "path": "milb/2018-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2018&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1297,
+    "sha256": "c552b571f015d0ed82b2a501fc61ef80a8a802a0d968bc42967721ee55c5a9b0",
+    "response_sha256": "289123735f896efcec3f7b01a797d37bdbb54378e5e9b4af0b56780e701953ba"
+  },
+  {
+    "path": "milb/2018-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2018&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 1147,
+    "sha256": "308b486d8100c1d0e3d5c9861c0d501f8dfaf5eb50055521f53407a0f7cb5411",
+    "response_sha256": "4ab7d939cf6226d840da0d78bbb8cff6c6e8f961920d7412ef79d6679b6075cd"
+  },
+  {
+    "path": "milb/2018-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2018&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 800,
+    "sha256": "9aa8beba6ad1928c300d093c8676fdd6b5ad9ea0b4cf87f1324cef9b264cc5a2",
+    "response_sha256": "774d2004aa6e4dd69a43a66d9855cc3901f4cf191ff3e37050db75c1888115ef"
+  },
+  {
+    "path": "milb/2018-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2018&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 734,
+    "sha256": "b741403e1f7e3dac758679625ac365a6f34306d222628da44485d1a71264f844",
+    "response_sha256": "6ae1487b3ab10bf188e6650b84f85eaf7b3e92a61f40a3bdf2d3d26d70c0ed14"
+  },
+  {
+    "path": "milb/2019-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2019&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1665,
+    "sha256": "8631f545a8e03b62e58d4f0c4ac0c4bbec7cf807aa6f531936092a0032846af6",
+    "response_sha256": "528496c50269e116c03a1199bff8f935b265fb1a549e29f4c6c620771b852324"
+  },
+  {
+    "path": "milb/2019-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2019&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 1142,
+    "sha256": "d6e4951f145087ad221a6eb707c9459c3e3db784eb92759347c964107df75ee2",
+    "response_sha256": "c10971c0ada2bcc8c71c56d04859efb0e3c7be36fbf055d0908c5e6df3a74e56"
+  },
+  {
+    "path": "milb/2019-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2019&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 824,
+    "sha256": "3a6327bcc61a432434ef7d91321f01def835d49c611f623591802271395032c4",
+    "response_sha256": "20118800fff48f4e504301076bafaa93b7444ead3fb9b8f3e3a77c196033522b"
+  },
+  {
+    "path": "milb/2019-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2019&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 756,
+    "sha256": "25f572684fbbb73c6313041d463030d0a9f4f6cc23e65216966ba926afa90605",
+    "response_sha256": "5af7e9f3ee27ec4149f30553b9bb74b326dd410f0f04068dd87f589828aea65d"
+  },
+  {
+    "path": "milb/2020-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2020&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 0,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "response_sha256": "3776d374a81adf28991f9fef8391ffccc35f0a351f1a432c3871b7a0b043568c"
+  },
+  {
+    "path": "milb/2020-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2020&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 0,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "response_sha256": "3776d374a81adf28991f9fef8391ffccc35f0a351f1a432c3871b7a0b043568c"
+  },
+  {
+    "path": "milb/2020-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2020&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 0,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "response_sha256": "3776d374a81adf28991f9fef8391ffccc35f0a351f1a432c3871b7a0b043568c"
+  },
+  {
+    "path": "milb/2020-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2020&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 0,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "response_sha256": "3776d374a81adf28991f9fef8391ffccc35f0a351f1a432c3871b7a0b043568c"
+  },
+  {
+    "path": "milb/2021-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2021&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1506,
+    "sha256": "6cfb318eb9c94d31cdc882882b3213fc94a96ac7f87c2e870aa77966d683d3e0",
+    "response_sha256": "f62b3b0a6acd77b9e4d97a514dfddf4859a0ffc22bbb3395b832ab17378c90c5"
+  },
+  {
+    "path": "milb/2021-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2021&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 916,
+    "sha256": "8bc658924031dc28f0e71abe878ecf303e9b71561390240962801268f87fe316",
+    "response_sha256": "ceefaf8bdaa3872d68bf36f22abbd499204c293a5b53f6f06d5432054af5f423"
+  },
+  {
+    "path": "milb/2021-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2021&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 837,
+    "sha256": "6c35752d5db861b22a168fb2931f0a435c038b55775107d4ae5d0c1e37f586c6",
+    "response_sha256": "cf976ecb2c0a0774d93c72a914049582b29f2a05107eb248c5b7567e32db9415"
+  },
+  {
+    "path": "milb/2021-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2021&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 908,
+    "sha256": "a5f11578cf0ccb9fafa763f46fd91822b9ec8b9f7f80ee831b5dcd50e3e37c17",
+    "response_sha256": "f3ec5948477f4ebdf9ca77c6805843234b010823a3fea53272e9ea91ea8056ea"
+  },
+  {
+    "path": "milb/2022-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2022&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 1014,
+    "sha256": "f6c7a490976c977d55b8d2cb6056abfb85dec0074875f9f93022cd964e78855c",
+    "response_sha256": "84aae5b68b7b0b2a303d67732140412264bfc53af68ed5a3c5dd16f65b55dd19"
+  },
+  {
+    "path": "milb/2022-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2022&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 770,
+    "sha256": "844c76317c5ef3b8b7cbd5d912b924ab4e85b825bfb84f2088f082b61986e174",
+    "response_sha256": "37fa6cc652c024481f42fe9529514644b853b8ba7b4fa0d7e475bb349d5522a4"
+  },
+  {
+    "path": "milb/2022-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2022&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 795,
+    "sha256": "aca27a631d64587a8adb16ab758d1f43ca581aad03647156c784d6a865e781e1",
+    "response_sha256": "82dd69f5fd20dd7ce14412e0ce46e9b04e4f063b4c9389d1c9f08a62afea5673"
+  },
+  {
+    "path": "milb/2022-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2022&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 945,
+    "sha256": "a76636ffa48dd734362e98448fe2e6de46efe7b399c600163133e4b23cf3d272",
+    "response_sha256": "0c4fcb8cb9fd4f350e456ef9403d811380753851292af20753574ace770669a6"
+  },
+  {
+    "path": "milb/2023-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2023&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 931,
+    "sha256": "2bc9d8cf3f34db6d4b05073661e816ca257efcfd07da514d46eb3abfb14121a7",
+    "response_sha256": "de2c8689aa227d579a12ad6ad3ed63bdc808f5b4878cbf58c4e45c5fd6db1300"
+  },
+  {
+    "path": "milb/2023-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2023&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 801,
+    "sha256": "44a5dd4cc80264bd5cf9f103ff66c509cf7fb5b303c32dce80823aefc7de1ec5",
+    "response_sha256": "c7c2092c6ba1143ca703cc3c0dad55cb479ac5f5705c9273f8d98c1340f9299c"
+  },
+  {
+    "path": "milb/2023-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2023&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 789,
+    "sha256": "dae501a9850a395e76c3350ac000ca2520fd361d9422a337faa4c2ab770c3b23",
+    "response_sha256": "15464c407c09b29ce44e5655f4a00a6694eecef02db978fb74f629a7a07d725a"
+  },
+  {
+    "path": "milb/2023-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2023&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 917,
+    "sha256": "8fab54036413ad81b82008590578eb970211935d1638caf7c1947705daaab8b8",
+    "response_sha256": "5f1e2ab8b6e52cfb8874365d085186d8754967372ccb51398110f9bddbab28f3"
+  },
+  {
+    "path": "milb/2024-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2024&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 885,
+    "sha256": "3acb54f23f056184d00553cc1c716bbb3bdb5dd281dd3d22bcfcdaf1029a06b8",
+    "response_sha256": "aeecc0e93f362a6b2b8d2c207ecae21a06ed2914bb7cfebe5860f3e9527e439a"
+  },
+  {
+    "path": "milb/2024-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2024&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 742,
+    "sha256": "80fe5d8944b2793d79ad5df02aa906a506c6bf6249177fa2c4606855e6eaaed0",
+    "response_sha256": "31fb9420705bf79e63315a541d7b51e2a05897ec7151fe342aafb702f11d2d69"
+  },
+  {
+    "path": "milb/2024-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2024&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 769,
+    "sha256": "f57cca33997484ce7b8cdfcc12665a20758699a5487177a4399e2c67a8a99323",
+    "response_sha256": "010a50cf3edc5b040fd4eb01499b0e3666ccc28d5baaff14511344e2bd9fbb08"
+  },
+  {
+    "path": "milb/2024-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2024&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 905,
+    "sha256": "fc7a62baa8b6ed2eedfd878c677a4cf0aecd5b6f35ae2cb2f7210e5fc4ab9838",
+    "response_sha256": "f6b481e7b78f7b20817d4ad2710a3a87bd625fc03e39fdf25d53ede00e0b9433"
+  },
+  {
+    "path": "milb/2025-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2025&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 920,
+    "sha256": "846b3fb781e5fa1b4368dddf129a454e8bb920d289ad87e34f542481ce1ec0c2",
+    "response_sha256": "e7d84f7975b4957bf631200e544e367ce3e17bdbf706fe04d401e8143155883f"
+  },
+  {
+    "path": "milb/2025-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2025&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 772,
+    "sha256": "052ca71372cd8ded96b09ade4770e6e47042af76521bcf4ac51d04c3cdea3fd1",
+    "response_sha256": "13a4dce8e69bfe1d41b44b6b2351607124b4f4ce0b1d54316c0b7ee0a543ee5e"
+  },
+  {
+    "path": "milb/2025-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2025&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 789,
+    "sha256": "4bd617c713eadb7061253ebb7a782cc4d04aa5fbeb06899e5415215de1f1f893",
+    "response_sha256": "dec286d4ab596d4421fdd3fe07b7644de9d15d17eb6c3fffd8b132ec5f440e72"
+  },
+  {
+    "path": "milb/2025-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2025&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 922,
+    "sha256": "8a5983ed1a54402feaa431983a3f59f150707c0153b62c52d2ec7c75e04d6f50",
+    "response_sha256": "400fe9a9c3ec3c094d7414756f8576b0b7a82a2c137afb6c71094020eb5c5527"
+  },
+  {
+    "path": "milb/2026-11-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2026&sportIds=11&limit=10000&playerPool=ALL",
+    "rows": 927,
+    "sha256": "aabee3f64cd4fb0a57cddebfb988abe72178524463babfe09c16f596a8a734a4",
+    "response_sha256": "696e0c9a9d74a4a2dcfdbe953623ec5ccd4d44b3e4be5593f82ea29e5772f47e"
+  },
+  {
+    "path": "milb/2026-12-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2026&sportIds=12&limit=10000&playerPool=ALL",
+    "rows": 830,
+    "sha256": "9b547367f0fc9fd153853ff75f146605f3f3b1fe6bd6dc91a45850ced0a6bdad",
+    "response_sha256": "7502710a84482a28faba00ae1a09789d6f9df06e79f3c2cf03e8c224b1dc9024"
+  },
+  {
+    "path": "milb/2026-13-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2026&sportIds=13&limit=10000&playerPool=ALL",
+    "rows": 837,
+    "sha256": "d8608d8dd3289528bdda2d9529d762389e7f76a1331b4cd5b91b2e61ca391843",
+    "response_sha256": "93e608f267b39345da15178d28f23b7b6db4d4a7f5b340bff861f07cca7e86db"
+  },
+  {
+    "path": "milb/2026-14-hitting.json",
+    "url": "https://statsapi.mlb.com/api/v1/stats?stats=season&group=hitting&season=2026&sportIds=14&limit=10000&playerPool=ALL",
+    "rows": 979,
+    "sha256": "5e1fbb53b7a3e545a06ff36609cdacb8dfa12c5bdbe05b647ff9b095e0fa9589",
+    "response_sha256": "c5b232320f5b419f0ac6aa49a57e5c9e6a4bd425fb7229a14dffa09b930d9ce8"
+  }
+]

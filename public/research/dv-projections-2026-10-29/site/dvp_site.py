@@ -1,5 +1,7 @@
 """Site outputs: WAR rate and playing time at horizons 1-2, so projections can feed the trade model.
 Horizon h means: data through season T-h, predicting season T."""
+import runtime
+runtime.configure()
 import numpy as np, warnings; warnings.filterwarnings('ignore')
 from dvp import blend_fit, LB, LP, anchor
 from data import seasons, league
@@ -14,12 +16,12 @@ def has_history(h,last,wkey):
         v=fnum(h.get(last-l,{}).get(wkey)) if last-l in h else 0.0
         t+=0.0 if np.isnan(v) else v
     return t>0
-def fit(kind,T,h=1,fv='v1'):
+def fit(kind,T,h=1,fv='v1',cutoff=None):
     """Returns {pid: dict(rate=WAR per 600 PA or 180 IP, pt=PA or IP, war=total)} for season T using data through T-h."""
     F,Lr,wkey,start=_feat(kind,fv); D=seasons(kind); unit=600 if kind=='bat' else 180
     Lg=LB if kind=='bat' else LP; rk='WAR600' if kind=='bat' else 'WAR180'
     XR=[];YR=[];WR=[];XP=[];YP=[]
-    for t in range(start+h-1,T):
+    for t in runtime.training_years(start,T,h,cutoff):
         if t==2020: continue
         tf=t-h+1  # pretend-target season whose lags end at t-h
         for pid,hh in D.items():
@@ -29,6 +31,7 @@ def fit(kind,T,h=1,fv='v1'):
             XP.append(x); YP.append(n)
             if r and n>=(100 if kind=='bat' else 20) and not np.isnan(fnum(r.get('WAR'))):
                 XR.append(x); YR.append(fnum(r['WAR'])/n*unit-Lg[t][rk]); WR.append(n)
+    if not XR: return {}  # No observable training outcomes at this horizon yet.
     keys=sorted(XR[0].keys()); M=lambda X: np.array([[x[k] for k in keys] for x in X],float)
     Xt=[];ids=[]
     for pid,hh in D.items():
