@@ -1,0 +1,6 @@
+{
+ "file": "AMENDMENT-1-VALUE-WAR.md",
+ "sha256": "f57c7a774c30662916dfdc31c7888098d277e13aa560cbe27cf7438c0fe9e35c",
+ "locked_utc": "2026-10-29T14:32:40Z",
+ "note": "After a development look at T1 on 2016 splits 0-2; before any holdout computation or DV parameter tuning."
+}

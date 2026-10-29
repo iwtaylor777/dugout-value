@@ -1,0 +1,38 @@
+{
+ "model": "DV WAR v1",
+ "locked_utc": "2026-10-29T18:40:21Z",
+ "params": {
+  "lam_b": 0.5,
+  "sig_b": 0,
+  "kap": 1,
+  "lam_p": 0,
+  "kap_hr": 0.5,
+  "lam_hr": 1,
+  "sig_p": 0.5,
+  "gam_p": 0,
+  "lam_f": 0.5,
+  "gam_c": 1
+ },
+ "files": {
+  "src/attrib.py": "6b8cad7829f9f91912f1eecfd66a0b2de319380989641363b6cb63e1ff807ac6",
+  "src/check_fld.py": "6ba17de9f7360eed9874585f3c33b125de8ae2b08c7dc3f93f3edf5f2f28e71b",
+  "src/driver.py": "9429ed4fe3613c135c6950f11bc681d496aadd375bb9e7b8bb1701fec1ef5b59",
+  "src/dvwar.py": "4732cc46137a4d39899b365722ca23a59b1c26edcc762a0d2a7e92907cbab360",
+  "src/eval_season.py": "49688772accc4e4a03ff8496088b67b3d79f7ee9dfff8617bdbbf96d58fb9802",
+  "src/evalsplit.py": "8c647d498df322ec4df750e8ee2dd9ca839d3379a82bf9a375cd92ede28e9042",
+  "src/events.py": "38fa907b45ffd6e40b798f18a28d70048ad8ccd0a1adcc91129c05178ad2b50d",
+  "src/fetch_statcast.py": "c1d4737f1e539f4fa28ba4671218c215470e0317caa18443b260379f2c894249",
+  "src/fg.py": "444e2e92dc2d9d271be87a49d7d286ce4cb9820ee669f1a171823484fc2aab11",
+  "src/season.py": "eba578f6f183777f076811e44d6b67cea8978a3fdfc4cc0fec022ffcec07b273",
+  "src/split.py": "e1a2a901cd26fb3518e03004ac6f49a75a88b4cda46f029e891ff2a5653f9625",
+  "src/tune.py": "8a181cb44df83a94ad1cc9130bce96818aba39b1efc9c1a938645164b8cfe5f7",
+  "tune_dev.json": "a98ae3d923e9a6b5529c004271c0de8f10d0abaf03697034e6117d0ab59cc0ae"
+ },
+ "note": "Locked after development tuning on 2016-19, 2021. No holdout (2022-26) component, split or team result had been computed.",
+ "post_lock_changes": {
+  "src/dvwar.py": "4e6387d45a76dec210878460508208273d4d2139252ee83d13163e48c02fc34b",
+  "src/eval_season.py": "1955c9fbbe50fb5e409e1e6c7ae901b8b33a4f0b0ae3570950646a96b8871343",
+  "src/run_holdout.py": "734a5317e3a5e2ebf97cc312062c9444957a63b034d3c1f9355619f81e0d286d"
+ },
+ "post_lock_note": "Season-level secondary-test code only. Before the holdout run: centering of DV-FIP differences in dvwar.py; column-name fix in eval_season.py; run_holdout.py written. After the holdout run: eval_season.py win targets switched to official MLB standings (T3/T4 wins rows only; run-based results identical). See DEVLOG-WAR.md."
+}
