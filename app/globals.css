@@ -3877,38 +3877,55 @@ footer {
   color: var(--muted);
   font-weight: 600;
 }
-.drivers-banner {
+.ranking-tags .adjusted-chip { color: var(--green); background: #e5eddf; border: 1px solid #b9cbb7; }
+.player-value-dialog {
+  width: min(960px, calc(100vw - 40px));
+  max-width: none;
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 24px 80px #142d3d40;
+  overscroll-behavior: contain;
+}
+.player-value-dialog::backdrop { background: #142d3d99; }
+.value-dialog-bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px 16px;
-  margin: 0 0 14px;
-  padding: 12px 16px;
-  border: 1px solid var(--gold);
-  border-left: 5px solid var(--red);
-  background: #fff6e7;
-  color: var(--ink);
+  gap: 16px;
+  padding: 18px 24px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
 }
-.drivers-banner p {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 650;
-  line-height: 1.4;
-}
-.drivers-banner button {
-  padding: 7px 12px;
-  border: 1px solid var(--navy);
+.value-dialog-bar strong { font-size: 14px; }
+.value-dialog-bar p, .value-dialog-note { font-size: 12px; line-height: 1.5; color: var(--muted); margin: 4px 0 0; }
+.value-dialog-bar button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--navy);
-  color: var(--white);
-  font-size: 12px;
-  font-weight: 700;
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
 }
-@media (max-width: 1250px) {
-  .trade-shell.drivers-mode .editor {
-    order: -1;
-  }
+.value-dialog-bar button:hover { border-color: var(--red); }
+.value-dialog-bar button span { margin-left: 10px; font-size: 20px; }
+.value-dialog-content { padding: 24px; }
+.value-dialog-content .editor { width: 100%; padding: 0; border: 0; box-shadow: none; background: transparent; position: static; }
+.value-dialog-note { margin: 0; padding: 0 24px 22px; }
+@media (max-width: 600px) {
+  .player-value-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 24px); border-radius: 8px; }
+  .value-dialog-bar { padding: 12px 16px; }
+  .value-dialog-content { padding: 18px 16px; }
+  .value-dialog-note { padding: 0 16px 18px; }
 }
 .editor .pending-fa-note {
   margin: 0 0 8px;

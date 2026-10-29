@@ -42,6 +42,7 @@
     "examples/**/*",
     "worker/**/*",
     "public/research",
+    "tmp",
     "dist"
   ]
 }

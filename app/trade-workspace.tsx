@@ -12,6 +12,7 @@ import {
   valuePlayer,
 } from "../lib/value-model.mjs";
 import { SnapshotNotice } from "./site-shell";
+import { PlayerValueDialog } from "./player-value-dialog";
 import { buildTradeShareUrl, decodeTradeState, isLegacySettingsLink, resolveSharedPlayerId, restoreSharedSettings, sharedModelWarning, sharedSnapshotWarning, TRADE_SHARE_MODEL_VERSION } from "../lib/trade-share.mjs";
 import {
   MAX_CASH_AMOUNT,
@@ -1421,11 +1422,6 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
   const selected = players[selectedId];
   const selectedAdjusted = isAdjusted(selected);
   const selectedValue = selected ? values[selected.id] : undefined;
-  const showDriversBanner =
-    Boolean(driversOrigin && selected) &&
-    driversOrigin?.id === selectedId &&
-    !leftIds.includes(selectedId) &&
-    !rightIds.includes(selectedId);
   const baselineChanges = useMemo(
     () => [
       ...changedSettings(settings),
@@ -1516,11 +1512,15 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
     selectedSourced?.kind === "mlb"
       ? (effectiveSeasons(selectedSourced) as MLBSeason[])
       : [];
-  const rankedPlayers = useMemo(() => {
-    const query = rankingSearch.trim().toLowerCase();
-    return Object.values(players)
+  const leagueRankings = useMemo(() => Object.values(players)
       .filter((player) => !player.custom)
       .filter((player) => !values[player.id]?.pendingFreeAgent)
+      .sort((a, b) => (values[b.id]?.total ?? 0) - (values[a.id]?.total ?? 0)),
+    [players, values]);
+  const leagueRanks = useMemo(() => new Map(leagueRankings.map((player, index) => [player.id, index + 1])), [leagueRankings]);
+  const rankedPlayers = useMemo(() => {
+    const query = rankingSearch.trim().toLowerCase();
+    return leagueRankings
       .filter((player) => rankingType === "all" || player.kind === rankingType)
       .filter((player) => rankingTeam === "ALL" || player.team === rankingTeam)
       .filter((player) =>
@@ -1536,9 +1536,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               .includes(query)
           : true,
       )
-      .sort((a, b) => (values[b.id]?.total ?? 0) - (values[a.id]?.total ?? 0))
       .slice(0, 100);
-  }, [players, rankingSearch, rankingTeam, rankingType, values]);
+  }, [leagueRankings, rankingSearch, rankingTeam, rankingType]);
   const projectedPlayers = useMemo(() => {
     const query = projectionSearch.trim().toLowerCase();
     return Object.values(players)
@@ -1756,21 +1755,20 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
     }
     setSelectedId(id);
     setAdvancedOpen(true);
-    if (from) goToTab("trade");
+    if (from) return;
     window.setTimeout(() => {
       if (window.innerWidth <= 1250) {
         document
-          .getElementById(from ? "drivers-banner" : "player-editor")
+          .getElementById("player-editor")
           ?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }, 0);
   };
   const backFromDrivers = () => {
     if (!driversOrigin) return;
-    const { from, previousId } = driversOrigin;
+    const { previousId } = driversOrigin;
     setDriversOrigin(null);
     if (players[previousId]) setSelectedId(previousId);
-    goToTab(from);
   };
   const removePlayer = (side: "left" | "right", id: string) => {
     (side === "left" ? setLeftIds : setRightIds)((ids) =>
@@ -2554,660 +2552,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
     </section>
   );
 
-  return (
-    <div className="tool-workspace">
-      <div className="page" id="top">
-        <section className="intro">
-          <div>
-            <p className="kicker">Dugout Value tools</p>
-            <h1>
-              {activeTab === "trade"
-                ? "Trade builder"
-                : activeTab === "discover"
-                  ? "Trade finder"
-                  : activeTab === "projections"
-                    ? "Player projections"
-                    : "Value rankings"}
-            </h1>
-            <p className="lede">
-              {activeTab === "trade"
-                ? "Put two packages side by side. See each one’s surplus value by year, then change the assumptions you disagree with."
-                : activeTab === "discover"
-                  ? "Pick a team and compare projected upgrades at its weakest positions."
-                  : activeTab === "projections"
-                    ? `fWAR for ${PROJECTION_YEARS[0]} through ${PROJECTION_YEARS[2]} for ${database.meta.mlbCount.toLocaleString("en-US")} major leaguers. Source dates and model adjustments are shown.`
-                    : "The 100 players and prospects with the most modeled surplus value."}
-            </p>
-          </div>
-        </section>
-        <div className="workspace-bar">
-          <nav className="workspace-tabs" aria-label="Analysis tools">
-            {(["trade", "discover", "projections", "rankings"] as const).map((tab) => (
-              <a
-                key={tab}
-                href={TAB_PATHS[tab]}
-                aria-current={activeTab === tab ? "page" : undefined}
-                className={activeTab === tab ? "is-active" : ""}
-                onClick={(event) => {
-                  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                  event.preventDefault();
-                  goToTab(tab);
-                }}
-              >
-                <span className="tab-long">{tab === "trade" ? "Trade builder" : tab === "discover" ? "Trade finder" : tab === "projections" ? "Player projections" : "Value rankings"}</span>
-                <span className="tab-short" aria-hidden="true">{tab === "trade" ? "Trade" : tab === "discover" ? "Finder" : tab === "projections" ? "Projections" : "Rankings"}</span>
-              </a>
-            ))}
-          </nav>
-          {activeTab === "trade" && (
-            <div className="tool-toolbar" role="group" aria-label="Trade actions">
-              <button type="button" className="toolbar-button" onClick={openMethod}>
-                Calculation
-              </button>
-              <button type="button" className="toolbar-button" onClick={resetTrade}>
-                Load example
-              </button>
-              <button type="button" className="toolbar-button primary" onClick={newTrade}>
-                New trade
-              </button>
-            </div>
-          )}
-        </div>
-        <SnapshotNotice />
-        {snapshotWarning && <p className="snapshot-warning" role="alert">{snapshotWarning}</p>}
-        {activeTab === "trade" &&
-          finderNotice &&
-          settings.valuationView === DISCOVERY_VIEW && (
-            <p className="view-notice" role="status">{finderNotice}</p>
-          )}
-        {activeTab === "trade" ? (
-          <>
-        <details className="assumptions">
-          <summary>Model assumptions · {viewLabel(settings.valuationView)} · {discountLabel(settings.timingPreference).short} · edit values</summary>
-        <section className="model-strip">
-          <div>
-            <span>Value per projected win</span>
-            <strong>
-              ${settings.dollarsPerWar}M + {settings.starPremium}% above{" "}
-              {settings.starThreshold} net WAR
-            </strong>
-          </div>
-          <div>
-            <span>Valuation view</span>
-            <strong>{viewLabel(settings.valuationView)}</strong>
-          </div>
-          <div>
-            <span>Projections</span>
-            <strong>{settings.projectionSource === "dv" ? "Dugout Value" : "ZiPS"}</strong>
-          </div>
-          <div>
-            <span>Roster-spot allowance</span>
-            <strong>
-              {settings.regularRosterWar.toFixed(1)} /{" "}
-              {settings.relieverRosterWar.toFixed(1)} fWAR by role
-            </strong>
-          </div>
-          <div>
-            <span>Discount rate</span>
-            <strong>{discountLabel(settings.timingPreference).long}</strong>
-          </div>
-          <button
-            type="button"
-            className={`deadline-toggle ${settings.valuationView === "deadline" && settings.deadlineBoost > 0 ? "is-active" : ""}`}
-            aria-pressed={settings.valuationView === "deadline" && settings.deadlineBoost > 0}
-            disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
-            title={
-              settings.valuationView === "offseason"
-                ? DEADLINE_SCENARIO_REASON
-                : undefined
-            }
-            onClick={() =>
-              setSettings({
-                ...settings,
-                deadlineBoost: settings.deadlineBoost > 0 ? 0 : 15,
-              })
-            }
-          >
-            <span>July deadline scenario</span>
-            <strong>
-              {settings.valuationView === "offseason"
-                ? SEASON_COMPLETE ? "Off · 2026 season complete" : "Off · in-season view only"
-                : settings.deadlineBoost > 0
-                  ? "On · current wins + October"
-                  : "Off · baseline value"}
-            </strong>
-          </button>
-        </section>
-          <section className="assumption-panel">
-            <div className="timing-presets view-presets">
-              <span>Valuation view</span>
-              <div>
-                <button
-                  type="button"
-                  className={
-                    settings.valuationView === "offseason" ? "is-active" : ""
-                  }
-                  aria-pressed={settings.valuationView === "offseason"}
-                  onClick={() =>
-                    setSettings({ ...settings, valuationView: "offseason" })
-                  }
-                >
-                  {viewLabel("offseason")}
-                  <small>Drops the rest of {BASE_YEAR}; pending free agents leave the board</small>
-                </button>
-                <button
-                  type="button"
-                  className={
-                    settings.valuationView === "deadline" ? "is-active" : ""
-                  }
-                  aria-pressed={settings.valuationView === "deadline"}
-                  disabled={SEASON_COMPLETE}
-                  onClick={() =>
-                    setSettings({ ...settings, valuationView: "deadline" })
-                  }
-                >
-                  {viewLabel("deadline")}
-                  <small>{SEASON_COMPLETE ? "No remaining production or salary in 2026" : `Includes the rest of ${BASE_YEAR}`}</small>
-                </button>
-              </div>
-            </div>
-            <div className="timing-presets view-presets">
-              <span>Projection source</span>
-              <div>
-                <button
-                  type="button"
-                  className={settings.projectionSource === "dv" ? "is-active" : ""}
-                  aria-pressed={settings.projectionSource === "dv"}
-                  onClick={() => setSettings({ ...settings, projectionSource: "dv" })}
-                >
-                  Dugout Value
-                  <small>Our model, data through {BASE_YEAR}, full-season playing time; ZiPS for players without MLB history</small>
-                </button>
-                <button
-                  type="button"
-                  className={settings.projectionSource === "zips" ? "is-active" : ""}
-                  aria-pressed={settings.projectionSource === "zips"}
-                  onClick={() => setSettings({ ...settings, projectionSource: "zips" })}
-                >
-                  ZiPS
-                  <small>FanGraphs ZiPS plus the {BASE_YEAR} season update</small>
-                </button>
-              </div>
-            </div>
-            <div className="timing-presets discount-presets">
-              <span>Discount rate</span>
-              <div>
-                {DISCOUNT_PRESETS.map((preset) => (
-                  <button
-                    type="button"
-                    key={preset.value}
-                    className={
-                      settings.timingPreference === preset.value
-                        ? "is-active"
-                        : ""
-                    }
-                    aria-pressed={settings.timingPreference === preset.value}
-                    onClick={() =>
-                      setSettings({
-                        ...settings,
-                        timingPreference: preset.value,
-                      })
-                    }
-                  >
-                    {preset.label}
-                    <small>{preset.note}</small>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="timing-presets deadline-presets">
-              <span>July deadline scenario</span>
-              <div>
-                <button
-                  type="button"
-                  disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
-                  className={
-                    settings.valuationView === "deadline" &&
-                    settings.deadlineBoost === 0
-                      ? "is-active"
-                      : ""
-                  }
-                  onClick={() =>
-                    setSettings({ ...settings, deadlineBoost: 0 })
-                  }
-                >
-                  Off
-                  <small>No deadline adjustment</small>
-                </button>
-                <button
-                  type="button"
-                  disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
-                  className={
-                    settings.valuationView === "deadline" &&
-                    settings.deadlineBoost > 0
-                      ? "is-active"
-                      : ""
-                  }
-                  onClick={() =>
-                    setSettings({ ...settings, deadlineBoost: 15 })
-                  }
-                >
-                  On
-                  <small>Current wins + October SP value</small>
-                </button>
-              </div>
-              {settings.valuationView === "offseason" && (
-                <small className="preset-reason">
-                  {DEADLINE_SCENARIO_REASON}
-                </small>
-              )}
-            </div>
-            <label>
-              <span>Base dollars per WAR</span>
-              <NumericField
-                label="Dollars per WAR"
-                value={settings.dollarsPerWar}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, dollarsPerWar: value })
-                }
-              />
-            </label>
-            <label>
-              <span>Star premium</span>
-              <NumericField
-                label="Star premium"
-                value={settings.starPremium}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, starPremium: value })
-                }
-              />
-              <em>%</em>
-            </label>
-            <label>
-              <span>Premium starts after</span>
-              <NumericField
-                label="Net WAR before the star premium begins"
-                value={settings.starThreshold}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, starThreshold: value })
-                }
-              />
-              <em>net WAR</em>
-            </label>
-            <label>
-              <span>Roster-spot allowance: hitters / SP</span>
-              <NumericField
-                label="Roster-spot allowance for position players and starters"
-                value={settings.regularRosterWar}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, regularRosterWar: value })
-                }
-              />
-              <em>WAR</em>
-            </label>
-            <label>
-              <span>Roster-spot allowance: relievers</span>
-              <NumericField
-                label="Roster-spot allowance for relievers"
-                value={settings.relieverRosterWar}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, relieverRosterWar: value })
-                }
-              />
-              <em>WAR</em>
-            </label>
-            <label>
-              <span>Custom discount rate</span>
-              <NumericField
-                label="Custom discount rate, percent per year"
-                value={settings.timingPreference}
-                min={0}
-                max={100}
-                onChange={(value) =>
-                  setSettings({ ...settings, timingPreference: value })
-                }
-              />
-              <em>%</em>
-            </label>
-            <label>
-              <span>Reliever premium</span>
-              <NumericField
-                label="Reliever market premium"
-                value={settings.relieverPremium}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, relieverPremium: value })
-                }
-              />
-              <em>%</em>
-            </label>
-            <label>
-              <span>Reliever premium applies above</span>
-              <NumericField
-                label="Reliever premium applies to seasons projected above this WAR"
-                value={settings.relieverPremiumMinWar}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, relieverPremiumMinWar: value })
-                }
-              />
-              <em>WAR</em>
-            </label>
-            <label>
-              <span>Custom deadline boost</span>
-              <NumericField
-                label="Custom deadline boost"
-                value={settings.deadlineBoost}
-                disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
-                min={0}
-                max={50}
-                onChange={(value) =>
-                  setSettings({ ...settings, deadlineBoost: value })
-                }
-              />
-              <em>%</em>
-            </label>
-            <label>
-              <span>October SP benchmark</span>
-              <NumericField
-                label="Net displaced starter baseline"
-                disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
-                value={settings.postseasonStarterBaselineWar}
-                min={0}
-                max={10}
-                onChange={(value) =>
-                  setSettings({
-                    ...settings,
-                    postseasonStarterBaselineWar: value,
-                  })
-                }
-              />
-              <em>WAR / 180</em>
-            </label>
-            <label>
-              <span>October workload equivalent</span>
-              <NumericField
-                label="Postseason equivalent share of a season"
-                disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
-                value={settings.postseasonEquivalentSeason}
-                min={0}
-                max={100}
-                onChange={(value) =>
-                  setSettings({
-                    ...settings,
-                    postseasonEquivalentSeason: value,
-                  })
-                }
-              />
-              <em>% season</em>
-            </label>
-            <label>
-              <span>WAR-price inflation</span>
-              <NumericField
-                label="WAR inflation"
-                value={settings.inflation}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, inflation: value })
-                }
-              />
-              <em>%</em>
-            </label>
-            <label>
-              <span>2026 minimum salary</span>
-              <NumericField
-                label="Minimum salary"
-                value={settings.minimumSalary}
-                min={0}
-                onChange={(value) =>
-                  setSettings({ ...settings, minimumSalary: value })
-                }
-              />
-              <em>M</em>
-            </label>
-            <p>
-              Net fWAR subtracts the role’s roster-spot allowance, then the
-              first two wins use the base rate and additional wins receive the
-              star premium. Relievers projected above the reliever
-              premium&apos;s WAR cutoff get the reliever premium on top, because
-              the free-agent market pays them more per WAR than the base price;
-              lesser relievers get none. The discount rate
-              divides each season’s surplus by (1 + rate) for every year after{" "}
-              {BASE_YEAR}; FanGraphs uses 10%, and its prospect values already
-              include it. The offseason view drops the rest of {BASE_YEAR},
-              whose regular season is over. The deadline scenario is disabled after
-              the regular season. During the season, it raises the market value of
-              rest-of-{BASE_YEAR} production and gives top starters an October
-              rotation term above a two-WAR net benchmark. It never changes
-              salary, option costs, future seasons, or prospect values.
-            </p>
-          </section>
-        </details>
-
-        {showDriversBanner && selected && driversOrigin && (
-          <div className="drivers-banner" id="drivers-banner" role="status">
-            <p>
-              {`Showing ${selected.name}'s value drivers. He isn't part of the trade below.`}
-            </p>
-            <button type="button" onClick={backFromDrivers}>
-              ← Back to {driversOrigin.from}
-            </button>
-          </div>
-        )}
-        <section
-          className={`trade-shell${showDriversBanner ? " drivers-mode" : ""}`}
-        >
-          <div className="trade-board">
-            <div className="package-explainer">
-              <span>How to read this</span>
-              <strong>Each column is what that team gives up.</strong>
-            </div>
-            <div className="trade-sides">
-              {renderTeamSide({
-                side: "left",
-                team: leftTeam,
-                ids: leftIds,
-                total: leftTotal,
-              })}
-              {renderTeamSide({
-                side: "right",
-                team: rightTeam,
-                ids: rightIds,
-                total: rightTotal,
-              })}
-              <div
-                className="trade-verdict"
-                aria-label="Trade comparison scoreboard"
-              >
-                <div className="scoreboard-line">
-                  <div className="scoreboard-team">
-                    <span>{leftTeam} package</span>
-                    <strong>{money(leftTotal)}</strong>
-                    <small>
-                      Range {rangeText(leftLow, leftHigh)}
-                    </small>
-                  </div>
-                  <div className="scoreboard-center">
-                    <strong>{verdictHeadline}</strong>
-                    {(verdictState === "overlap" || verdictState === "clear") && (
-                      <small className="gap-share">{gapDetailText}</small>
-                    )}
-                    <span
-                      className={`verdict-stamp ${verdictState === "clear" ? "" : "balanced"}`}
-                    >
-                      {verdictStamp}
-                    </span>
-                    <p>{verdictSentence}</p>
-                  </div>
-                  <div className="scoreboard-team scoreboard-team-right">
-                    <span>{rightTeam} package</span>
-                    <strong>{money(rightTotal)}</strong>
-                    <small>
-                      Range {rangeText(rightLow, rightHigh)}
-                    </small>
-                  </div>
-                </div>
-                {(verdictState === "even" || verdictState === "overlap" || verdictState === "clear") && (
-                  <>
-                    <p className="scoreboard-range-note">
-                      Each range adds a set allowance for player risk, injury, and years of control. It isn’t a confidence interval, and it doesn’t say whether a club would agree. To test a setting, change it in the assumptions panel above.
-                    </p>
-                    <p className="scoreboard-links">
-                      <button type="button" className="text-button" onClick={openMethod}>
-                        Why this result? →
-                      </button>
-                      <Link href="/analysis/how-to-read-value-ranges">How to read ranges →</Link>
-                    </p>
-                  </>
-                )}
-                {(tradeProtectionSummary || availabilitySummary) && (
-                  <div className="scoreboard-context">
-                    {tradeProtectionSummary && (
-                      <p className="trade-caveat">
-                        {tradeProtectionSummary}. {protectedPackagePlayers.length === 1 ? "His value isn’t reduced for it." : "Their values aren’t reduced for it."}
-                      </p>
-                    )}
-                    {availabilitySummary && (
-                      <p className="trade-caveat availability-caveat">
-                        {availabilitySummary}. The range is wider. The projection already accounts for missed time, so the midpoint isn’t cut again.
-                      </p>
-                    )}
-                  </div>
-                )}
-                {consolidation && (
-                  <div className="package-shape-note">
-                    <span>Package shape</span>
-                    <strong>
-                      {teamName(
-                        consolidation.headlinerSide === "left"
-                          ? leftTeam
-                          : rightTeam,
-                      )} give up the best player in the deal
-                    </strong>
-                    <p>
-                      The totals are close, but the other side is paying in
-                      quantity. Teams usually want a premium for the best
-                      player in a deal, and this model doesn’t add one. A close
-                      total here probably understates what{" "}
-                      {teamName(
-                        consolidation.headlinerSide === "left"
-                          ? leftTeam
-                          : rightTeam,
-                      )} would ask for.
-                    </p>
-                  </div>
-                )}
-                <div className="scoreboard-actions">
-                  <div className="trade-actions">
-                    <button onClick={swapTeams}>Swap teams</button>
-                    <button className="share-trade" onClick={copyTradeLink}>
-                      Copy trade link
-                    </button>
-                  </div>
-                  <small className="share-status" aria-live="polite">
-                    {shareStatus === "loaded"
-                      ? "Shared trade loaded"
-                      : shareStatus === "copied"
-                        ? "Link copied"
-                        : shareStatus === "error"
-                          ? "Couldn’t copy link"
-                          : "Link saves players, cash, and any edits."}
-                  </small>
-                </div>
-              </div>
-            </div>
-            <TradeSensitivity
-              players={sourcedPlayers}
-              settings={settings}
-              leftIds={leftIds}
-              rightIds={rightIds}
-              leftCash={leftCash}
-              rightCash={rightCash}
-              leftTeam={leftTeam}
-              rightTeam={rightTeam}
-            />
-            <section className="year-ledger">
-              <div className="section-title">
-                <div>
-                  <span>Control years</span>
-                  <h2>Value by control year</h2>
-                </div>
-              </div>
-              {allYears.length || leftCash > 0 || rightCash > 0 ? (
-                  <div className="ledger-table">
-                    <div className="ledger-row ledger-head">
-                      <span>Year</span>
-                      <span>{leftTeam} package</span>
-                      <span>Annual comparison</span>
-                      <span>{rightTeam} package</span>
-                    </div>
-                    {ledgerYears.map((year) => {
-                      const lv = sideYearValue(leftIds, year),
-                        rv = sideYearValue(rightIds, year);
-                      if (yearIsExcluded(year))
-                        return (
-                          <div className="ledger-row ledger-excluded" key={year}>
-                            <strong>{year}</strong>
-                            <span>—</span>
-                            <small>Not counted: the {year} regular season is over</small>
-                            <span>—</span>
-                          </div>
-                        );
-                      return (
-                        <div className="ledger-row" key={year}>
-                          <strong>{year}</strong>
-                          <span>{money(lv)}</span>
-                          <div className="year-bars">
-                            <i
-                              className={`left-bar ${lv < 0 ? "negative" : ""}`}
-                              style={{ width: `${barWidth(lv)}%` }}
-                            />
-                            <b />
-                            <i
-                              className={`right-bar ${rv < 0 ? "negative" : ""}`}
-                              style={{ width: `${barWidth(rv)}%` }}
-                            />
-                          </div>
-                          <span>{money(rv)}</span>
-                        </div>
-                      );
-                    })}
-                    {(leftCash > 0 || rightCash > 0) && (
-                      <div className="ledger-row cash-ledger-row">
-                        <strong>Cash / relief</strong>
-                        <span>{money(leftCash)}</span>
-                        <div className="year-bars">
-                          <i
-                            className="left-bar"
-                            style={{
-                              width: `${leftCash > 0 ? Math.max(2, (leftCash / maxYearValue) * 96) : 0}%`,
-                            }}
-                          />
-                          <b />
-                          <i
-                            className="right-bar"
-                            style={{
-                              width: `${rightCash > 0 ? Math.max(2, (rightCash / maxYearValue) * 96) : 0}%`,
-                            }}
-                          />
-                        </div>
-                        <span>{money(rightCash)}</span>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <p className="empty-ledger">
-                    Add players to compare the packages.
-                  </p>
-                )}
-            </section>
-          </div>
-
+  const renderPlayerEditor = () => (
           <aside className="editor" id="player-editor">
             {selected ? (
               <>
@@ -4087,6 +3432,651 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               </div>
             )}
           </aside>
+  );
+
+  return (
+    <div className="tool-workspace">
+      <div className="page" id="top">
+        <section className="intro">
+          <div>
+            <p className="kicker">Dugout Value tools</p>
+            <h1>
+              {activeTab === "trade"
+                ? "Trade builder"
+                : activeTab === "discover"
+                  ? "Trade finder"
+                  : activeTab === "projections"
+                    ? "Player projections"
+                    : "Value rankings"}
+            </h1>
+            <p className="lede">
+              {activeTab === "trade"
+                ? "Put two packages side by side. See each one’s surplus value by year, then change the assumptions you disagree with."
+                : activeTab === "discover"
+                  ? "Pick a team and compare projected upgrades at its weakest positions."
+                  : activeTab === "projections"
+                    ? `fWAR for ${PROJECTION_YEARS[0]} through ${PROJECTION_YEARS[2]} for ${database.meta.mlbCount.toLocaleString("en-US")} major leaguers. Source dates and model adjustments are shown.`
+                    : "The 100 players and prospects with the most modeled surplus value."}
+            </p>
+          </div>
+        </section>
+        <div className="workspace-bar">
+          <nav className="workspace-tabs" aria-label="Analysis tools">
+            {(["trade", "discover", "projections", "rankings"] as const).map((tab) => (
+              <a
+                key={tab}
+                href={TAB_PATHS[tab]}
+                aria-current={activeTab === tab ? "page" : undefined}
+                className={activeTab === tab ? "is-active" : ""}
+                onClick={(event) => {
+                  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault();
+                  goToTab(tab);
+                }}
+              >
+                <span className="tab-long">{tab === "trade" ? "Trade builder" : tab === "discover" ? "Trade finder" : tab === "projections" ? "Player projections" : "Value rankings"}</span>
+                <span className="tab-short" aria-hidden="true">{tab === "trade" ? "Trade" : tab === "discover" ? "Finder" : tab === "projections" ? "Projections" : "Rankings"}</span>
+              </a>
+            ))}
+          </nav>
+          {activeTab === "trade" && (
+            <div className="tool-toolbar" role="group" aria-label="Trade actions">
+              <button type="button" className="toolbar-button" onClick={openMethod}>
+                Calculation
+              </button>
+              <button type="button" className="toolbar-button" onClick={resetTrade}>
+                Load example
+              </button>
+              <button type="button" className="toolbar-button primary" onClick={newTrade}>
+                New trade
+              </button>
+            </div>
+          )}
+        </div>
+        <SnapshotNotice />
+        {snapshotWarning && <p className="snapshot-warning" role="alert">{snapshotWarning}</p>}
+        {activeTab === "trade" &&
+          finderNotice &&
+          settings.valuationView === DISCOVERY_VIEW && (
+            <p className="view-notice" role="status">{finderNotice}</p>
+          )}
+        {activeTab === "trade" ? (
+          <>
+        <details className="assumptions">
+          <summary>Model assumptions · {viewLabel(settings.valuationView)} · {discountLabel(settings.timingPreference).short} · edit values</summary>
+        <section className="model-strip">
+          <div>
+            <span>Value per projected win</span>
+            <strong>
+              ${settings.dollarsPerWar}M + {settings.starPremium}% above{" "}
+              {settings.starThreshold} net WAR
+            </strong>
+          </div>
+          <div>
+            <span>Valuation view</span>
+            <strong>{viewLabel(settings.valuationView)}</strong>
+          </div>
+          <div>
+            <span>Projections</span>
+            <strong>{settings.projectionSource === "dv" ? "Dugout Value" : "ZiPS"}</strong>
+          </div>
+          <div>
+            <span>Roster-spot allowance</span>
+            <strong>
+              {settings.regularRosterWar.toFixed(1)} /{" "}
+              {settings.relieverRosterWar.toFixed(1)} fWAR by role
+            </strong>
+          </div>
+          <div>
+            <span>Discount rate</span>
+            <strong>{discountLabel(settings.timingPreference).long}</strong>
+          </div>
+          <button
+            type="button"
+            className={`deadline-toggle ${settings.valuationView === "deadline" && settings.deadlineBoost > 0 ? "is-active" : ""}`}
+            aria-pressed={settings.valuationView === "deadline" && settings.deadlineBoost > 0}
+            disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
+            title={
+              settings.valuationView === "offseason"
+                ? DEADLINE_SCENARIO_REASON
+                : undefined
+            }
+            onClick={() =>
+              setSettings({
+                ...settings,
+                deadlineBoost: settings.deadlineBoost > 0 ? 0 : 15,
+              })
+            }
+          >
+            <span>July deadline scenario</span>
+            <strong>
+              {settings.valuationView === "offseason"
+                ? SEASON_COMPLETE ? "Off · 2026 season complete" : "Off · in-season view only"
+                : settings.deadlineBoost > 0
+                  ? "On · current wins + October"
+                  : "Off · baseline value"}
+            </strong>
+          </button>
+        </section>
+          <section className="assumption-panel">
+            <div className="timing-presets view-presets">
+              <span>Valuation view</span>
+              <div>
+                <button
+                  type="button"
+                  className={
+                    settings.valuationView === "offseason" ? "is-active" : ""
+                  }
+                  aria-pressed={settings.valuationView === "offseason"}
+                  onClick={() =>
+                    setSettings({ ...settings, valuationView: "offseason" })
+                  }
+                >
+                  {viewLabel("offseason")}
+                  <small>Drops the rest of {BASE_YEAR}; pending free agents leave the board</small>
+                </button>
+                <button
+                  type="button"
+                  className={
+                    settings.valuationView === "deadline" ? "is-active" : ""
+                  }
+                  aria-pressed={settings.valuationView === "deadline"}
+                  disabled={SEASON_COMPLETE}
+                  onClick={() =>
+                    setSettings({ ...settings, valuationView: "deadline" })
+                  }
+                >
+                  {viewLabel("deadline")}
+                  <small>{SEASON_COMPLETE ? "No remaining production or salary in 2026" : `Includes the rest of ${BASE_YEAR}`}</small>
+                </button>
+              </div>
+            </div>
+            <div className="timing-presets view-presets">
+              <span>Projection source</span>
+              <div>
+                <button
+                  type="button"
+                  className={settings.projectionSource === "dv" ? "is-active" : ""}
+                  aria-pressed={settings.projectionSource === "dv"}
+                  onClick={() => setSettings({ ...settings, projectionSource: "dv" })}
+                >
+                  Dugout Value
+                  <small>Our model, data through {BASE_YEAR}, full-season playing time; ZiPS for players without MLB history</small>
+                </button>
+                <button
+                  type="button"
+                  className={settings.projectionSource === "zips" ? "is-active" : ""}
+                  aria-pressed={settings.projectionSource === "zips"}
+                  onClick={() => setSettings({ ...settings, projectionSource: "zips" })}
+                >
+                  ZiPS
+                  <small>FanGraphs ZiPS plus the {BASE_YEAR} season update</small>
+                </button>
+              </div>
+            </div>
+            <div className="timing-presets discount-presets">
+              <span>Discount rate</span>
+              <div>
+                {DISCOUNT_PRESETS.map((preset) => (
+                  <button
+                    type="button"
+                    key={preset.value}
+                    className={
+                      settings.timingPreference === preset.value
+                        ? "is-active"
+                        : ""
+                    }
+                    aria-pressed={settings.timingPreference === preset.value}
+                    onClick={() =>
+                      setSettings({
+                        ...settings,
+                        timingPreference: preset.value,
+                      })
+                    }
+                  >
+                    {preset.label}
+                    <small>{preset.note}</small>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="timing-presets deadline-presets">
+              <span>July deadline scenario</span>
+              <div>
+                <button
+                  type="button"
+                  disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
+                  className={
+                    settings.valuationView === "deadline" &&
+                    settings.deadlineBoost === 0
+                      ? "is-active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setSettings({ ...settings, deadlineBoost: 0 })
+                  }
+                >
+                  Off
+                  <small>No deadline adjustment</small>
+                </button>
+                <button
+                  type="button"
+                  disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
+                  className={
+                    settings.valuationView === "deadline" &&
+                    settings.deadlineBoost > 0
+                      ? "is-active"
+                      : ""
+                  }
+                  onClick={() =>
+                    setSettings({ ...settings, deadlineBoost: 15 })
+                  }
+                >
+                  On
+                  <small>Current wins + October SP value</small>
+                </button>
+              </div>
+              {settings.valuationView === "offseason" && (
+                <small className="preset-reason">
+                  {DEADLINE_SCENARIO_REASON}
+                </small>
+              )}
+            </div>
+            <label>
+              <span>Base dollars per WAR</span>
+              <NumericField
+                label="Dollars per WAR"
+                value={settings.dollarsPerWar}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, dollarsPerWar: value })
+                }
+              />
+            </label>
+            <label>
+              <span>Star premium</span>
+              <NumericField
+                label="Star premium"
+                value={settings.starPremium}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, starPremium: value })
+                }
+              />
+              <em>%</em>
+            </label>
+            <label>
+              <span>Premium starts after</span>
+              <NumericField
+                label="Net WAR before the star premium begins"
+                value={settings.starThreshold}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, starThreshold: value })
+                }
+              />
+              <em>net WAR</em>
+            </label>
+            <label>
+              <span>Roster-spot allowance: hitters / SP</span>
+              <NumericField
+                label="Roster-spot allowance for position players and starters"
+                value={settings.regularRosterWar}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, regularRosterWar: value })
+                }
+              />
+              <em>WAR</em>
+            </label>
+            <label>
+              <span>Roster-spot allowance: relievers</span>
+              <NumericField
+                label="Roster-spot allowance for relievers"
+                value={settings.relieverRosterWar}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, relieverRosterWar: value })
+                }
+              />
+              <em>WAR</em>
+            </label>
+            <label>
+              <span>Custom discount rate</span>
+              <NumericField
+                label="Custom discount rate, percent per year"
+                value={settings.timingPreference}
+                min={0}
+                max={100}
+                onChange={(value) =>
+                  setSettings({ ...settings, timingPreference: value })
+                }
+              />
+              <em>%</em>
+            </label>
+            <label>
+              <span>Reliever premium</span>
+              <NumericField
+                label="Reliever market premium"
+                value={settings.relieverPremium}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, relieverPremium: value })
+                }
+              />
+              <em>%</em>
+            </label>
+            <label>
+              <span>Reliever premium applies above</span>
+              <NumericField
+                label="Reliever premium applies to seasons projected above this WAR"
+                value={settings.relieverPremiumMinWar}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, relieverPremiumMinWar: value })
+                }
+              />
+              <em>WAR</em>
+            </label>
+            <label>
+              <span>Custom deadline boost</span>
+              <NumericField
+                label="Custom deadline boost"
+                value={settings.deadlineBoost}
+                disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
+                min={0}
+                max={50}
+                onChange={(value) =>
+                  setSettings({ ...settings, deadlineBoost: value })
+                }
+              />
+              <em>%</em>
+            </label>
+            <label>
+              <span>October SP benchmark</span>
+              <NumericField
+                label="Net displaced starter baseline"
+                disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
+                value={settings.postseasonStarterBaselineWar}
+                min={0}
+                max={10}
+                onChange={(value) =>
+                  setSettings({
+                    ...settings,
+                    postseasonStarterBaselineWar: value,
+                  })
+                }
+              />
+              <em>WAR / 180</em>
+            </label>
+            <label>
+              <span>October workload equivalent</span>
+              <NumericField
+                label="Postseason equivalent share of a season"
+                disabled={SEASON_COMPLETE || settings.valuationView === "offseason"}
+                value={settings.postseasonEquivalentSeason}
+                min={0}
+                max={100}
+                onChange={(value) =>
+                  setSettings({
+                    ...settings,
+                    postseasonEquivalentSeason: value,
+                  })
+                }
+              />
+              <em>% season</em>
+            </label>
+            <label>
+              <span>WAR-price inflation</span>
+              <NumericField
+                label="WAR inflation"
+                value={settings.inflation}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, inflation: value })
+                }
+              />
+              <em>%</em>
+            </label>
+            <label>
+              <span>2026 minimum salary</span>
+              <NumericField
+                label="Minimum salary"
+                value={settings.minimumSalary}
+                min={0}
+                onChange={(value) =>
+                  setSettings({ ...settings, minimumSalary: value })
+                }
+              />
+              <em>M</em>
+            </label>
+            <p>
+              Net fWAR subtracts the role’s roster-spot allowance, then the
+              first two wins use the base rate and additional wins receive the
+              star premium. Relievers projected above the reliever
+              premium&apos;s WAR cutoff get the reliever premium on top, because
+              the free-agent market pays them more per WAR than the base price;
+              lesser relievers get none. The discount rate
+              divides each season’s surplus by (1 + rate) for every year after{" "}
+              {BASE_YEAR}; FanGraphs uses 10%, and its prospect values already
+              include it. The offseason view drops the rest of {BASE_YEAR},
+              whose regular season is over. The deadline scenario is disabled after
+              the regular season. During the season, it raises the market value of
+              rest-of-{BASE_YEAR} production and gives top starters an October
+              rotation term above a two-WAR net benchmark. It never changes
+              salary, option costs, future seasons, or prospect values.
+            </p>
+          </section>
+        </details>
+
+        <section className="trade-shell">
+          <div className="trade-board">
+            <div className="package-explainer">
+              <span>How to read this</span>
+              <strong>Each column is what that team gives up.</strong>
+            </div>
+            <div className="trade-sides">
+              {renderTeamSide({
+                side: "left",
+                team: leftTeam,
+                ids: leftIds,
+                total: leftTotal,
+              })}
+              {renderTeamSide({
+                side: "right",
+                team: rightTeam,
+                ids: rightIds,
+                total: rightTotal,
+              })}
+              <div
+                className="trade-verdict"
+                aria-label="Trade comparison scoreboard"
+              >
+                <div className="scoreboard-line">
+                  <div className="scoreboard-team">
+                    <span>{leftTeam} package</span>
+                    <strong>{money(leftTotal)}</strong>
+                    <small>
+                      Range {rangeText(leftLow, leftHigh)}
+                    </small>
+                  </div>
+                  <div className="scoreboard-center">
+                    <strong>{verdictHeadline}</strong>
+                    {(verdictState === "overlap" || verdictState === "clear") && (
+                      <small className="gap-share">{gapDetailText}</small>
+                    )}
+                    <span
+                      className={`verdict-stamp ${verdictState === "clear" ? "" : "balanced"}`}
+                    >
+                      {verdictStamp}
+                    </span>
+                    <p>{verdictSentence}</p>
+                  </div>
+                  <div className="scoreboard-team scoreboard-team-right">
+                    <span>{rightTeam} package</span>
+                    <strong>{money(rightTotal)}</strong>
+                    <small>
+                      Range {rangeText(rightLow, rightHigh)}
+                    </small>
+                  </div>
+                </div>
+                {(verdictState === "even" || verdictState === "overlap" || verdictState === "clear") && (
+                  <>
+                    <p className="scoreboard-range-note">
+                      Each range adds a set allowance for player risk, injury, and years of control. It isn’t a confidence interval, and it doesn’t say whether a club would agree. To test a setting, change it in the assumptions panel above.
+                    </p>
+                    <p className="scoreboard-links">
+                      <button type="button" className="text-button" onClick={openMethod}>
+                        Why this result? →
+                      </button>
+                      <Link href="/analysis/how-to-read-value-ranges">How to read ranges →</Link>
+                    </p>
+                  </>
+                )}
+                {(tradeProtectionSummary || availabilitySummary) && (
+                  <div className="scoreboard-context">
+                    {tradeProtectionSummary && (
+                      <p className="trade-caveat">
+                        {tradeProtectionSummary}. {protectedPackagePlayers.length === 1 ? "His value isn’t reduced for it." : "Their values aren’t reduced for it."}
+                      </p>
+                    )}
+                    {availabilitySummary && (
+                      <p className="trade-caveat availability-caveat">
+                        {availabilitySummary}. The range is wider. The projection already accounts for missed time, so the midpoint isn’t cut again.
+                      </p>
+                    )}
+                  </div>
+                )}
+                {consolidation && (
+                  <div className="package-shape-note">
+                    <span>Package shape</span>
+                    <strong>
+                      {teamName(
+                        consolidation.headlinerSide === "left"
+                          ? leftTeam
+                          : rightTeam,
+                      )} give up the best player in the deal
+                    </strong>
+                    <p>
+                      The totals are close, but the other side is paying in
+                      quantity. Teams usually want a premium for the best
+                      player in a deal, and this model doesn’t add one. A close
+                      total here probably understates what{" "}
+                      {teamName(
+                        consolidation.headlinerSide === "left"
+                          ? leftTeam
+                          : rightTeam,
+                      )} would ask for.
+                    </p>
+                  </div>
+                )}
+                <div className="scoreboard-actions">
+                  <div className="trade-actions">
+                    <button onClick={swapTeams}>Swap teams</button>
+                    <button className="share-trade" onClick={copyTradeLink}>
+                      Copy trade link
+                    </button>
+                  </div>
+                  <small className="share-status" aria-live="polite">
+                    {shareStatus === "loaded"
+                      ? "Shared trade loaded"
+                      : shareStatus === "copied"
+                        ? "Link copied"
+                        : shareStatus === "error"
+                          ? "Couldn’t copy link"
+                          : "Link saves players, cash, and any edits."}
+                  </small>
+                </div>
+              </div>
+            </div>
+            <TradeSensitivity
+              players={sourcedPlayers}
+              settings={settings}
+              leftIds={leftIds}
+              rightIds={rightIds}
+              leftCash={leftCash}
+              rightCash={rightCash}
+              leftTeam={leftTeam}
+              rightTeam={rightTeam}
+            />
+            <section className="year-ledger">
+              <div className="section-title">
+                <div>
+                  <span>Control years</span>
+                  <h2>Value by control year</h2>
+                </div>
+              </div>
+              {allYears.length || leftCash > 0 || rightCash > 0 ? (
+                  <div className="ledger-table">
+                    <div className="ledger-row ledger-head">
+                      <span>Year</span>
+                      <span>{leftTeam} package</span>
+                      <span>Annual comparison</span>
+                      <span>{rightTeam} package</span>
+                    </div>
+                    {ledgerYears.map((year) => {
+                      const lv = sideYearValue(leftIds, year),
+                        rv = sideYearValue(rightIds, year);
+                      if (yearIsExcluded(year))
+                        return (
+                          <div className="ledger-row ledger-excluded" key={year}>
+                            <strong>{year}</strong>
+                            <span>—</span>
+                            <small>Not counted: the {year} regular season is over</small>
+                            <span>—</span>
+                          </div>
+                        );
+                      return (
+                        <div className="ledger-row" key={year}>
+                          <strong>{year}</strong>
+                          <span>{money(lv)}</span>
+                          <div className="year-bars">
+                            <i
+                              className={`left-bar ${lv < 0 ? "negative" : ""}`}
+                              style={{ width: `${barWidth(lv)}%` }}
+                            />
+                            <b />
+                            <i
+                              className={`right-bar ${rv < 0 ? "negative" : ""}`}
+                              style={{ width: `${barWidth(rv)}%` }}
+                            />
+                          </div>
+                          <span>{money(rv)}</span>
+                        </div>
+                      );
+                    })}
+                    {(leftCash > 0 || rightCash > 0) && (
+                      <div className="ledger-row cash-ledger-row">
+                        <strong>Cash / relief</strong>
+                        <span>{money(leftCash)}</span>
+                        <div className="year-bars">
+                          <i
+                            className="left-bar"
+                            style={{
+                              width: `${leftCash > 0 ? Math.max(2, (leftCash / maxYearValue) * 96) : 0}%`,
+                            }}
+                          />
+                          <b />
+                          <i
+                            className="right-bar"
+                            style={{
+                              width: `${rightCash > 0 ? Math.max(2, (rightCash / maxYearValue) * 96) : 0}%`,
+                            }}
+                          />
+                        </div>
+                        <span>{money(rightCash)}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="empty-ledger">
+                    Add players to compare the packages.
+                  </p>
+                )}
+            </section>
+          </div>
+
+          {renderPlayerEditor()}
         </section>
         <section className="audit-panel" aria-labelledby="audit-title">
           <div className="audit-head">
@@ -4329,7 +4319,9 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       </div>
                       <button
                         type="button"
-                        onClick={() => openPlayerEditor(player.id, "projections")}
+                        aria-haspopup="dialog"
+                      aria-label={`Why this value for ${player.name}`}
+                      onClick={() => openPlayerEditor(player.id, "projections")}
                       >
                         Why this value
                       </button>
@@ -4441,20 +4433,20 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             </div>
             <div className="ranking-list" tabIndex={0} aria-label="Scrollable player value rankings">
               <div className="ranking-row ranking-head">
-                <span>Rank</span>
+                <span title="Overall rank across all eligible players, before filters">Rank</span>
                 <span>Player</span>
                 <span>Type</span>
                 <span>Range</span>
                 <span>Surplus value</span>
                 <span />
               </div>
-              {rankedPlayers.map((player, index) => {
+              {rankedPlayers.map((player) => {
                 const result = values[player.id];
                 const basisLabel = valuationBasisLabel(result);
                 const extrapolatedShare = result?.extrapolatedShare ?? 0;
                 return (
                   <article className="ranking-row" key={player.id}>
-                    <strong className="ranking-number">{index + 1}</strong>
+                    <strong className="ranking-number" title="Overall rank">{leagueRanks.get(player.id)}</strong>
                     <div className="ranking-player">
                       <strong>{player.name}</strong>
                       <small>
@@ -4482,10 +4474,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                             ? `ETA ${player.eta} · ${(result?.expectedWar ?? 0).toFixed(1)} expected fWAR`
                             : ""}
                       </small>
-                      {(result?.fgTradeValueRank ||
+                      {(isAdjusted(player) || result?.fgTradeValueRank ||
                         extrapolatedShare > 0.2 ||
                         basisLabel) && (
                         <span className="ranking-tags">
+                          {isAdjusted(player) && <b className="adjusted-chip">Edited</b>}
                           {result?.fgTradeValueRank ? (
                             <b
                               className="fg-chip"
@@ -4519,6 +4512,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                     </strong>
                     <button
                       type="button"
+                      aria-haspopup="dialog"
+                      aria-label={`Why this value for ${player.name}`}
                       onClick={() => openPlayerEditor(player.id, "rankings")}
                     >
                       Why this value
@@ -4531,6 +4526,12 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               )}
             </div>
           </section>
+        )}
+
+        {driversOrigin && selected && (
+          <PlayerValueDialog name={selected.name} onClose={backFromDrivers}>
+            {renderPlayerEditor()}
+          </PlayerValueDialog>
         )}
 
         {showMethod && (
