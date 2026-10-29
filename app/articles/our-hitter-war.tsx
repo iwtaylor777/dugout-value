@@ -9,8 +9,8 @@ export const article: Article = {
   summary:
     "Dugout Value WAR gives hitters full credit for their contact but half credit for what happens after it, and half credit for measured fielding. Over 2024–26 that moves a typical regular by about a win, and it tracks run scoring and pay better than fWAR does.",
   author: AUTHOR,
-  published: "2026-10-29",
-  dateLabel: "October 29, 2026",
+  published: "2026-11-02",
+  dateLabel: "November 2, 2026",
   readTime: "6 min read",
   relatedTool: { href: "/tools/dv-war", label: "Open the DV WAR leaderboard" },
   evidence: {
@@ -20,7 +20,7 @@ export const article: Article = {
   body: (
     <>
       <p className="article-lead">
-        Earlier today I published <Link href="/analysis/a-statcast-war">a test of a Statcast-built WAR</Link>. The new version measured hitters better than the standard methods and didn’t do the same for pitchers. So I’m putting the hitter half to use. The DV WAR leaderboard now shows every hitter with 300 or more plate appearances in 2024–26 next to his FanGraphs WAR, and the differences are large enough to change how you see some of the best players in baseball.
+        Last week I published <Link href="/analysis/a-statcast-war">a test of a Statcast-built WAR</Link>. The new version measured hitters better than the standard methods and didn’t do the same for pitchers. So I’m putting the hitter half to use. The DV WAR leaderboard now shows every hitter with 300 or more plate appearances in 2024–26 next to his FanGraphs WAR, and the differences are large enough to change how you see some of the best players in baseball.
       </p>
 
       <h2>What changes</h2>
