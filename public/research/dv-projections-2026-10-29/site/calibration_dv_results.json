@@ -1,6 +1,7 @@
 {
  "2026 class, FanGraphs projection + aging curve": {
   "n": 36,
+  "scored_at_best": 36,
   "best": {
    "D": 11,
    "P": 40,
@@ -14,132 +15,114 @@
  },
  "2026 class, Dugout Value paths": {
   "n": 36,
+  "scored_at_best": 36,
   "best": {
    "D": 14.25,
    "P": 40,
-   "mse": 0.2143
+   "mse": 0.212
   },
   "bestD_atP20": {
-   "D": 14.5,
-   "mse": 0.2157
+   "D": 14.25,
+   "mse": 0.2138
   },
-  "mse_at_11_20": 0.2891
+  "mse_at_11_20": 0.2851
  },
- "2026 class, Dugout Value 2027 level + standard aging curve": {
+ "2026 class, Dugout Value first-year level + standard aging curve": {
   "n": 36,
+  "scored_at_best": 36,
   "best": {
    "D": 13.75,
    "P": 40,
-   "mse": 0.1894
+   "mse": 0.1893
   },
   "bestD_atP20": {
    "D": 13.75,
-   "mse": 0.1898
+   "mse": 0.1897
   },
-  "mse_at_11_20": 0.2419
+  "mse_at_11_20": 0.2417
  },
- "2021-26, Dugout Value paths": {
-  "n": 304,
+ "2023–26, Dugout Value paths": {
+  "n": 192,
+  "scored_at_best": 192,
   "best": {
-   "D": 10.5,
-   "P": 30,
-   "mse": 0.3503
+   "D": 11.75,
+   "P": 20,
+   "mse": 0.3251
   },
   "bestD_atP20": {
-   "D": 10.5,
-   "mse": 0.3504
+   "D": 11.75,
+   "mse": 0.3251
   },
-  "mse_at_11_20": 0.3519
+  "mse_at_11_20": 0.329
  },
- "2021-26, Dugout Value first year + standard aging curve": {
-  "n": 304,
+ "2023–26, Dugout Value first year + standard aging curve": {
+  "n": 192,
+  "scored_at_best": 192,
   "best": {
-   "D": 10.5,
+   "D": 11.75,
    "P": 0,
-   "mse": 0.3439
+   "mse": 0.3226
   },
   "bestD_atP20": {
-   "D": 10.25,
-   "mse": 0.3447
+   "D": 11.5,
+   "mse": 0.3237
   },
-  "mse_at_11_20": 0.3483
- },
- "2021, Dugout Value paths": {
-  "n": 43,
-  "best": {
-   "D": 9.75,
-   "P": 0,
-   "mse": 0.319
-  },
-  "bestD_atP20": {
-   "D": 9.75,
-   "mse": 0.3195
-  },
-  "mse_at_11_20": 0.335
- },
- "2022, Dugout Value paths": {
-  "n": 66,
-  "best": {
-   "D": 8,
-   "P": 40,
-   "mse": 0.3411
-  },
-  "bestD_atP20": {
-   "D": 8.25,
-   "mse": 0.3439
-  },
-  "mse_at_11_20": 0.4312
+  "mse_at_11_20": 0.326
  },
  "2023, Dugout Value paths": {
-  "n": 61,
+  "n": 59,
+  "scored_at_best": 59,
   "best": {
    "D": 11.75,
    "P": 0,
-   "mse": 0.3305
+   "mse": 0.3315
   },
   "bestD_atP20": {
-   "D": 11.75,
-   "mse": 0.3313
+   "D": 11.5,
+   "mse": 0.3325
   },
-  "mse_at_11_20": 0.335
+  "mse_at_11_20": 0.3346
  },
  "2024, Dugout Value paths": {
   "n": 44,
+  "scored_at_best": 44,
   "best": {
-   "D": 10.75,
-   "P": 0,
-   "mse": 0.3074
+   "D": 10.5,
+   "P": 10,
+   "mse": 0.3048
   },
   "bestD_atP20": {
    "D": 10.5,
-   "mse": 0.3076
+   "mse": 0.3049
   },
-  "mse_at_11_20": 0.3088
+  "mse_at_11_20": 0.3063
  },
  "2025, Dugout Value paths": {
-  "n": 49,
+  "n": 48,
+  "scored_at_best": 48,
   "best": {
    "D": 12.25,
-   "P": 10,
-   "mse": 0.3081
+   "P": 20,
+   "mse": 0.314
   },
   "bestD_atP20": {
    "D": 12.25,
-   "mse": 0.3082
+   "mse": 0.314
   },
-  "mse_at_11_20": 0.3182
+  "mse_at_11_20": 0.3251
  },
  "2026, Dugout Value paths": {
   "n": 41,
+  "scored_at_best": 41,
   "best": {
    "D": 12.75,
    "P": 40,
-   "mse": 0.3288
+   "mse": 0.3261
   },
   "bestD_atP20": {
    "D": 12.75,
-   "mse": 0.3315
+   "mse": 0.329
   },
-  "mse_at_11_20": 0.3533
+  "mse_at_11_20": 0.3498
  }
 }

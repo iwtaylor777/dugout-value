@@ -1,0 +1,11 @@
+{
+  "code_sha256": "dad25c4fa33c72174acfce053dbc49be7c765dcbae239add9ea41a2d025240dc",
+  "python": "3.13.5",
+  "numpy": "2.5.4",
+  "sklearn": "1.9.1",
+  "lightgbm": "4.7.0",
+  "timing": "Every training outcome is dated no later than target minus horizon.",
+  "status": "Corrected reused retrospective evaluation; no retuning.",
+  "generator": "provenance/replay-first-run.py; composite hash is generator + site/dvp_site.py + site/runtime.py",
+  "later_change": "Current replay.py omits the private player diagnostic; aggregate benchmark and calibration logic is unchanged."
+}
