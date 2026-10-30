@@ -156,3 +156,14 @@ test("free-agent tracker renders the class with scored predictions", async () =>
   assert.match(html, /\$386M/);
   assert.match(html, /href="\/tools\/free-agents"[^>]*aria-current="page"|href="\/tools"[^>]*aria-current="page"/);
 });
+
+test("depth chart renders a team with its total, rank and free-agent fits", async () => {
+  const response = await render("/tools/depth-chart");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<h1>Depth charts<\/h1>/);
+  assert.match(html, /projected 2027 WAR/);
+  assert.match(html, /of 30 teams/);
+  assert.match(html, /Free agents who add the most/);
+  assert.match(html, /Replacement level|Best free-agent fit/);
+});

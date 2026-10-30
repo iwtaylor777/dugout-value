@@ -126,6 +126,7 @@ export function FreeAgentTracker() {
             </tr>
           </thead>
           <tbody>
+            {rows.length === 0 && <tr><td colSpan={8} className="fa-empty">No players match these filters.</td></tr>}
             {rows.map((p, i) => {
               const st = stateOf(p), s = st.signing, w5 = war5(p);
               const diff = s?.total_musd != null && p.total != null && OFF_MARKET.includes(s.outcome) ? s.total_musd - p.total : null;

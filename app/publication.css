@@ -322,5 +322,70 @@ figure.article-figure figcaption strong { color: #172d3d; }
 .fa-signed { background: #f6f3ea; }
 .fa-over { color: #8a3b12; }
 .fa-under { color: #24525c; }
+.fa-empty { padding: 18px 8px; color: #6c6a64; font-style: italic; }
 .fa-updated { font-size: 12px; color: #6c6a64; margin: 8px 0 0; }
 @media (max-width: 760px) { .fa-controls { grid-template-columns: 1fr 1fr; } .fa-controls label:last-child { grid-column: 1 / -1; } .fa-summary strong { font-size: 20px; } }
+
+.dc { margin: 10px 0 30px; }
+.dc-top { display: flex; flex-wrap: wrap; align-items: end; gap: 16px 28px; padding-bottom: 16px; border-bottom: 1px solid #ddd5c4; }
+.dc-team span, .dc-add span { display: block; font-size: 12px; font-weight: 600; color: #536067; margin-bottom: 5px; }
+.dc-team select, .dc-add input { min-height: 38px; padding: 7px 10px; border: 1px solid #cfc8b9; border-radius: 5px; background: #fffdf8; font-size: 14px; }
+.dc-team select { min-width: 230px; }
+.dc-score { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.dc-score p { margin: 0; display: flex; flex-direction: column; }
+.dc-score strong { font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.dc-score span { font-size: 12px; color: #536067; }
+.dc-change strong { color: #24525c; }
+.dc-reset { margin-left: auto; min-height: 36px; padding: 6px 14px; border: 1px solid #cfc8b9; border-radius: 5px; background: #fffdf8; font-size: 14px; cursor: pointer; }
+.dc-reset:disabled { opacity: .45; cursor: default; }
+.dc-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; margin-top: 18px; align-items: start; }
+.dc-add { position: relative; max-width: 420px; margin-bottom: 16px; }
+.dc-add input { width: 100%; }
+.dc-matches { position: absolute; z-index: 5; left: 0; right: 0; margin: 4px 0 0; padding: 4px; list-style: none; background: #fffdf8; border: 1px solid #cfc8b9; border-radius: 5px; box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.dc-matches button { display: block; width: 100%; text-align: left; padding: 6px 8px; border: 0; background: none; font-size: 14px; cursor: pointer; border-radius: 4px; }
+.dc-matches button:hover, .dc-matches button:focus-visible { background: #eee8d9; }
+.dc-matches span { color: #6c6a64; font-size: 12px; }
+.dc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+.dc-card { border: 1px solid #ddd5c4; border-radius: 6px; background: #fffdf8; padding: 12px 12px 10px; }
+.dc-card header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.dc-card h3 { margin: 0; font-size: 15px; }
+.dc-card header p { margin: 0; font-size: 12px; color: #536067; white-space: nowrap; }
+.dc-card header strong { color: #1f2d33; }
+.dc-pos { display: inline-block; min-width: 28px; padding: 1px 5px; margin-right: 4px; border-radius: 3px; background: #1f3a44; color: #fff; font-size: 11px; text-align: center; }
+.dc-card table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dc-card thead th { font-size: 11px; font-weight: 600; color: #6c6a64; text-align: left; padding: 2px 4px; border-bottom: 1px solid #e6dfcf; }
+.dc-card td, .dc-card tbody th { padding: 4px; border-bottom: 1px solid #f0ebde; font-weight: 400; text-align: left; vertical-align: middle; }
+.dc-card .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dc-card input[type=number] { width: 58px; padding: 3px 4px; border: 1px solid #ddd5c4; border-radius: 4px; background: #fff; font-size: 13px; text-align: right; }
+.dc-card input.dc-locked { border-color: #24525c; background: #eef4f5; }
+.dc-unlock { margin-left: 2px; border: 0; background: none; color: #24525c; font-size: 15px; cursor: pointer; padding: 0 2px; }
+.dc-card select { max-width: 74px; padding: 2px; font-size: 12px; border: 1px solid #ddd5c4; border-radius: 4px; background: #fffdf8; }
+.dc-repl th, .dc-repl td { color: #8a877f; font-style: italic; }
+.dc-tag { margin-left: 5px; padding: 0 4px; border-radius: 3px; background: #eee8d9; color: #5f5b52; font-size: 10px; font-weight: 600; }
+.dc-warn { margin: 6px 0 0; font-size: 12px; color: #8a3b12; }
+.dc-fa { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; margin: 8px 0 0; padding-top: 7px; border-top: 1px dashed #ddd5c4; font-size: 12px; color: #3d4a51; }
+.dc-fa > span { width: 100%; font-size: 11px; color: #6c6a64; }
+.dc-fa button, .dc-fa-list button { margin-left: auto; padding: 1px 8px; border: 1px solid #24525c; border-radius: 4px; background: #fff; color: #24525c; font-size: 12px; cursor: pointer; }
+.dc-side { position: sticky; top: 16px; display: grid; gap: 22px; }
+.dc-side h2 { font-size: 16px; margin: 0 0 4px; }
+.dc-note { font-size: 12px; color: #6c6a64; margin: 0 0 8px; line-height: 1.4; }
+.dc-fa-list, .dc-rank { list-style: none; margin: 0; padding: 0; }
+.dc-fa-list li { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #ece6d8; font-size: 13px; }
+.dc-fa-list li div { display: flex; flex-direction: column; min-width: 0; }
+.dc-fa-list li div span { font-size: 11px; color: #6c6a64; }
+.dc-fa-list b { margin-left: auto; font-variant-numeric: tabular-nums; color: #24525c; }
+.dc-fa-list button { margin-left: 0; }
+.dc-rank li { display: grid; grid-template-columns: 24px 1fr auto; gap: 6px; align-items: center; padding: 2px 4px; font-size: 13px; border-radius: 3px; }
+.dc-rank li span { color: #8a877f; font-size: 11px; text-align: right; }
+.dc-rank button { border: 0; background: none; padding: 0; text-align: left; font-size: 13px; color: inherit; cursor: pointer; }
+.dc-rank b { font-weight: 500; font-variant-numeric: tabular-nums; }
+.dc-rank .dc-current { background: #1f3a44; color: #fff; }
+.dc-rank .dc-current span { color: #c9d6da; }
+.dc-extra { margin-top: 18px; font-size: 13px; color: #3d4a51; }
+.dc-bench { list-style: none; padding: 0; margin: 4px 0 10px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.dc-bench span { color: #8a877f; font-size: 11px; }
+.dc-bench select { margin-left: 4px; font-size: 12px; }
+.dc-link { border: 0; background: none; padding: 0; color: #24525c; text-decoration: underline; cursor: pointer; font-size: 13px; }
+.dc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 960px) { .dc-layout { grid-template-columns: 1fr; } .dc-side { position: static; } }
+@media (max-width: 640px) { .dc-score strong { font-size: 21px; } .dc-reset { margin-left: 0; } .dc-team select { min-width: 0; width: 100%; } .dc-team { width: 100%; } }
