@@ -1,0 +1,435 @@
+{
+ "note": "Aggregates only. Player-level rows are not redistributed.",
+ "leverage_check": {
+  "relievers": 148,
+  "corr_with_fangraphs_pLI": 0.997
+ },
+ "inning_shares_2021_26": {
+  "share_of_high_lev": {
+   "5": 0.0549,
+   "6": 0.0993,
+   "7": 0.175,
+   "8": 0.2416,
+   "9": 0.2953,
+   "10": 0.1339
+  },
+  "share_of_top2_PAs": {
+   "5": 0.0448,
+   "6": 0.0802,
+   "7": 0.1778,
+   "8": 0.2735,
+   "9": 0.3812,
+   "10": 0.0424
+  },
+  "top2_share_within_inning_high_lev": {
+   "5": 0.0973,
+   "6": 0.1429,
+   "7": 0.2167,
+   "8": 0.3012,
+   "9": 0.5196,
+   "10": 0.263
+  }
+ },
+ "by_season": {
+  "2021": {
+   "corr": -0.5035,
+   "eff": 0.6266,
+   "reshuffle_wins": 1.9081,
+   "order_wins": 1.0151
+  },
+  "2022": {
+   "corr": -0.4948,
+   "eff": 0.626,
+   "reshuffle_wins": 1.9824,
+   "order_wins": 1.0336
+  },
+  "2023": {
+   "corr": -0.6236,
+   "eff": 0.6564,
+   "reshuffle_wins": 1.9265,
+   "order_wins": 1.0662
+  },
+  "2024": {
+   "corr": -0.5582,
+   "eff": 0.6368,
+   "reshuffle_wins": 1.9819,
+   "order_wins": 1.0056
+  },
+  "2025": {
+   "corr": -0.6329,
+   "eff": 0.6575,
+   "reshuffle_wins": 1.7176,
+   "order_wins": 0.8971
+  },
+  "2026": {
+   "corr": -0.5452,
+   "eff": 0.6362,
+   "reshuffle_wins": 1.827,
+   "order_wins": 1.1202
+  }
+ },
+ "team_2026": [
+  {
+   "team": "ATH",
+   "relief_pa": 2725,
+   "corr": -0.127,
+   "eff": 0.5076,
+   "reshuffle_wins": 2.0009
+  },
+  {
+   "team": "ATL",
+   "relief_pa": 2360,
+   "corr": -0.3321,
+   "eff": 0.6058,
+   "reshuffle_wins": 2.2228
+  },
+  {
+   "team": "AZ",
+   "relief_pa": 2318,
+   "corr": -0.5628,
+   "eff": 0.6062,
+   "reshuffle_wins": 1.5173
+  },
+  {
+   "team": "BAL",
+   "relief_pa": 2017,
+   "corr": -0.6877,
+   "eff": 0.6949,
+   "reshuffle_wins": 1.5021
+  },
+  {
+   "team": "BOS",
+   "relief_pa": 1736,
+   "corr": -0.8375,
+   "eff": 0.6613,
+   "reshuffle_wins": 1.4614
+  },
+  {
+   "team": "CHC",
+   "relief_pa": 2480,
+   "corr": -0.4518,
+   "eff": 0.5552,
+   "reshuffle_wins": 1.7317
+  },
+  {
+   "team": "CIN",
+   "relief_pa": 2413,
+   "corr": -0.3503,
+   "eff": 0.7018,
+   "reshuffle_wins": 1.4911
+  },
+  {
+   "team": "CLE",
+   "relief_pa": 2100,
+   "corr": -0.7281,
+   "eff": 0.6678,
+   "reshuffle_wins": 1.6869
+  },
+  {
+   "team": "COL",
+   "relief_pa": 2642,
+   "corr": -0.3937,
+   "eff": 0.6006,
+   "reshuffle_wins": 2.1999
+  },
+  {
+   "team": "CWS",
+   "relief_pa": 2733,
+   "corr": -0.6186,
+   "eff": 0.5786,
+   "reshuffle_wins": 2.8843
+  },
+  {
+   "team": "DET",
+   "relief_pa": 2278,
+   "corr": -0.4562,
+   "eff": 0.6615,
+   "reshuffle_wins": 1.4899
+  },
+  {
+   "team": "HOU",
+   "relief_pa": 2454,
+   "corr": -0.7758,
+   "eff": 0.6904,
+   "reshuffle_wins": 1.5137
+  },
+  {
+   "team": "KC",
+   "relief_pa": 2401,
+   "corr": -0.1956,
+   "eff": 0.5994,
+   "reshuffle_wins": 1.6381
+  },
+  {
+   "team": "LAA",
+   "relief_pa": 2147,
+   "corr": -0.762,
+   "eff": 0.6785,
+   "reshuffle_wins": 1.4106
+  },
+  {
+   "team": "LAD",
+   "relief_pa": 2274,
+   "corr": -0.6421,
+   "eff": 0.6776,
+   "reshuffle_wins": 1.9173
+  },
+  {
+   "team": "MIA",
+   "relief_pa": 2216,
+   "corr": -0.4011,
+   "eff": 0.6689,
+   "reshuffle_wins": 1.2106
+  },
+  {
+   "team": "MIL",
+   "relief_pa": 2443,
+   "corr": -0.616,
+   "eff": 0.6986,
+   "reshuffle_wins": 2.1259
+  },
+  {
+   "team": "MIN",
+   "relief_pa": 2054,
+   "corr": -0.3152,
+   "eff": 0.6296,
+   "reshuffle_wins": 1.4297
+  },
+  {
+   "team": "NYM",
+   "relief_pa": 2512,
+   "corr": -0.5382,
+   "eff": 0.6021,
+   "reshuffle_wins": 2.095
+  },
+  {
+   "team": "NYY",
+   "relief_pa": 2313,
+   "corr": -0.7407,
+   "eff": 0.6891,
+   "reshuffle_wins": 1.5367
+  },
+  {
+   "team": "PHI",
+   "relief_pa": 2294,
+   "corr": -0.7159,
+   "eff": 0.6643,
+   "reshuffle_wins": 2.4715
+  },
+  {
+   "team": "PIT",
+   "relief_pa": 2442,
+   "corr": -0.7219,
+   "eff": 0.6041,
+   "reshuffle_wins": 2.1686
+  },
+  {
+   "team": "SD",
+   "relief_pa": 2863,
+   "corr": -0.8083,
+   "eff": 0.678,
+   "reshuffle_wins": 3.1632
+  },
+  {
+   "team": "SEA",
+   "relief_pa": 1991,
+   "corr": -0.7075,
+   "eff": 0.7168,
+   "reshuffle_wins": 1.7874
+  },
+  {
+   "team": "SF",
+   "relief_pa": 2352,
+   "corr": -0.2193,
+   "eff": 0.5208,
+   "reshuffle_wins": 2.5921
+  },
+  {
+   "team": "STL",
+   "relief_pa": 2257,
+   "corr": -0.5306,
+   "eff": 0.7055,
+   "reshuffle_wins": 0.8254
+  },
+  {
+   "team": "TB",
+   "relief_pa": 2482,
+   "corr": -0.6073,
+   "eff": 0.5861,
+   "reshuffle_wins": 1.7678
+  },
+  {
+   "team": "TEX",
+   "relief_pa": 1929,
+   "corr": -0.1867,
+   "eff": 0.5447,
+   "reshuffle_wins": 1.4604
+  },
+  {
+   "team": "TOR",
+   "relief_pa": 2310,
+   "corr": -0.6797,
+   "eff": 0.6831,
+   "reshuffle_wins": 1.8212
+  },
+  {
+   "team": "WSH",
+   "relief_pa": 2668,
+   "corr": -0.6465,
+   "eff": 0.6062,
+   "reshuffle_wins": 1.6848
+  }
+ ],
+ "efficiency_yoy_corr": [
+  0.1,
+  0.2,
+  0.07,
+  0.02,
+  0.29
+ ],
+ "shares_2026": {
+  "high_lev_before_9": 0.579,
+  "top2_share_high_lev_before_9": 0.225,
+  "top2_share_high_lev_9th_only": 0.466,
+  "top2_share_high_lev_9_plus": 0.4,
+  "top2_PA_LI_below_1": 0.467,
+  "rank6plus_share_high_lev": 0.392
+ },
+ "swap_2026": {
+  "mean_batters_swapped": 142.7,
+  "mean_wins": 0.77,
+  "SF": 1.63,
+  "MIL": 1.06,
+  "TB": 0.69
+ },
+ "zips_check_2026": {
+  "high_lev_before_9": 0.578,
+  "top2_share_high_lev_before_9": 0.207,
+  "top2_share_high_lev_9_plus": 0.397,
+  "top2_PA_LI_below_1": 0.462,
+  "reshuffle_wins": 2.11
+ },
+ "luck_test": {
+  "pitcher_team_seasons": 903,
+  "pitchers": 487,
+  "entry_LI": {
+   "RA9_minus_FIP_1H": [
+    -0.036,
+    -0.051,
+    -0.021
+   ],
+   "FIP_minus_projection_1H": [
+    -0.097,
+    -0.121,
+    -0.074
+   ],
+   "projection_minus_league": [
+    -0.165,
+    -0.212,
+    -0.119
+   ],
+   "LI_1H": [
+    0.431,
+    0.365,
+    0.494
+   ]
+  },
+  "FIP_2H": {
+   "RA9_minus_FIP_1H": [
+    0.006,
+    -0.064,
+    0.069
+   ],
+   "FIP_minus_projection_1H": [
+    0.186,
+    0.11,
+    0.273
+   ],
+   "projection_minus_league": [
+    0.611,
+    0.441,
+    0.783
+   ]
+  },
+  "overweight_ratio": [
+   1.93,
+   1.18,
+   3.56
+  ]
+ },
+ "decision_time": {
+  "note": "Added after the first results; not in the original plan.",
+  "fireman_swap_6th_8th": {
+   "LI>=1.8": {
+    "wins_per_team_season": -0.066,
+    "swaps_per_team_season": 21.0,
+    "losing_share": 0.51,
+    "LIsum_now": 7.91,
+    "LIsum_later": 9.21
+   },
+   "LI>=2.5": {
+    "wins": -0.007,
+    "swaps": 6.9
+   },
+   "LI>=3.0": {
+    "wins": -0.003,
+    "swaps": 3.7
+   },
+   "LI>=4.0": {
+    "wins": -0.003,
+    "swaps": 1.2
+   }
+  },
+  "rest_cost": {
+   "top2_low_leverage_appearances_per_season": 44,
+   "conflicts_per_team_season": 4.8,
+   "wins_per_team_season": 0.053
+  },
+  "hindsight_pooled_2021_26": {
+   "full_reshuffle_wins": 1.89,
+   "worst_mismatch_swap_wins": 0.77,
+   "worst_mismatch_swap_batters_per_team": 132
+  }
+ },
+ "repeatability": {
+  "efficiency_split_half_corr": 0.65,
+  "efficiency_yoy_corr": 0.14,
+  "pre9_targeting_yoy_corr": 0.01,
+  "closer_is_best_regular_share": 0.49,
+  "efficiency_by_closer_rank": {
+   "1": 0.654,
+   "2": 0.651,
+   "3": 0.61,
+   "4+": 0.605
+  },
+  "most_top10_finishes": {
+   "team": "WSH",
+   "count": 5,
+   "of": 6,
+   "chance_some_team_5plus": 0.44
+  }
+ },
+ "ninth_and_extras": {
+  "save_lead_1_3": {
+   "top2_share": 0.58,
+   "entry_LI": 2.0,
+   "n": 6398
+  },
+  "tied_home_pitching": {
+   "top2_share": 0.56,
+   "entry_LI": 2.24,
+   "n": 1252
+  },
+  "tied_road_pitching": {
+   "top2_share": 0.44,
+   "entry_LI": 2.26,
+   "n": 1092
+  },
+  "extras_first_reliever": {
+   "top2_share": 0.28,
+   "entry_LI": 2.88,
+   "n": 2122
+  },
+  "extras_first_reliever_not_top2_both_top2_already_used_share": 0.258
+ }
+}
