@@ -1,0 +1,6 @@
+{
+  "code_sha256": "1575d33798b1b6217af15d133cbb43d5f98ea8a26df699ce201cdd84143ba953",
+  "innings": "Actual historical IP converted from baseball notation; projected IP are continuous decimal expectations and are not converted.",
+  "bootstrap": "Paired by player, preserving both years; 2,000 resamples.",
+  "status": "Descriptive reused seasons, not a fresh holdout."
+}

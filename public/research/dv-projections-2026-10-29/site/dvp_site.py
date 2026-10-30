@@ -1,7 +1,7 @@
 """Site outputs: WAR rate and playing time at horizons 1-2, so projections can feed the trade model.
 Horizon h means: data through season T-h, predicting season T."""
 import runtime
-runtime.configure()
+runtime.configure(normalize_ip=True)
 import numpy as np, warnings; warnings.filterwarnings('ignore')
 from dvp import blend_fit, LB, LP, anchor
 from data import seasons, league

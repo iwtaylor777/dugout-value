@@ -1,5 +1,5 @@
 """Usage: build_dv_site.py DB DVP_2027 MULTIYEAR QMAP ESTABLISHED WORKLOADS RETENTION OUT
-Build app/data/dv-projections.json: Dugout Value projections v1.1 on the site's full-season scale.
+Build app/data/dv-projections.json: Dugout Value projections v1.3 on the site's full-season scale.
 
 Rates. 2027-31 WAR rates (per 600 PA / 180 IP) come from horizon-specific models (h = 1..5, data through 2026),
 blended 0.7 / 0.3 with the 2027 rate plus a standard aging curve, then smoothed: the 2027 rate is kept and later
@@ -16,7 +16,11 @@ D = json.load(open(DB)); P = json.load(open(DVP)); MY = json.load(open(MY)); M =
 EST = {k: set(v) for k, v in json.load(open(EST)).items()}
 WL = json.load(open(WL)); CAP = {'bat': 700, 'pit': 200}
 YRS = [2027, 2028, 2029, 2030, 2031]
-def mp(k, x): return float(np.interp(x, M[k]['dv'], M[k]['zips']))
+def mp(k, x, role):
+    key=f'pit_{role}' if k=='pit' and f'pit_{role}' in M else k
+    value=float(np.interp(x,M[key]['dv'],M[key]['zips']))
+    if k=='pit' and role=='reliever': value=min(value,M[key]['zips'][80])
+    return value
 def healthy(k, fg):
     v = WL[k].get(fg) or []
     return min(CAP[k], float(np.mean(v[:2]))) if v else 0.0
@@ -28,7 +32,7 @@ def part(k, fg, role):
     v = P[f'{k}_2027'].get(fg); m = MY[k].get(fg)
     if not v or not m: return None
     unit = 600 if k == 'bat' else 180
-    pt0 = max(mp(k, v['pt']), healthy(k, fg))
+    pt0 = max(mp(k, v['pt'], role), healthy(k, fg))
     rates = smooth([m['rate'][str(y)] for y in YRS])
     rr = role if k == 'pit' else 'position'
     pts, f = [], 1.0
@@ -59,12 +63,13 @@ for p in D['players']:
         return w + (war[2031] - (s31 if s31 is not None else w)) * 0.85 ** (y - 2031)
     one = parts[0] if len(parts) == 1 else None
     if WITH_PATH: paths[p['id']] = {str(y): round(war[y], 2) for y in YRS}
-    out[p['id']] = dict(three={str(y): round(val(y, w), 2) for y, w in three.items() if y >= 2027},
+    out[p['id']] = dict(war={str(y):round(war[y],2) for y in YRS},
+                        three={str(y): round(val(y, w), 2) for y, w in three.items() if y >= 2027},
                         seasons={str(y): round(val(y, w), 2) for y, w in site.items() if y >= 2027},
                         rate={str(y): round(one['rate'][i], 2) for i, y in enumerate(YRS)} if one else None,
                         pt={str(y): round(one['pt'][i]) for i, y in enumerate(YRS)} if one else None,
                         unit=('600 PA' if kinds == ['bat'] else '180 IP') if one else None)
-meta = dict(model='Dugout Value projections v1.1', built='2026-10-29', dataThrough=2026,
+meta = dict(model='Dugout Value projections v1.3', built='2026-10-29', dataThrough=2026,
             note=('2027-31 WAR = Dugout Value WAR rate (player-specific multi-year model) x full-season playing time. '
                   'After 2031 the site aging shape continues. Only players with 100+ PA or 20+ IP in 2024-26 get DV numbers; everyone else keeps ZiPS.'),
             players=len(out))

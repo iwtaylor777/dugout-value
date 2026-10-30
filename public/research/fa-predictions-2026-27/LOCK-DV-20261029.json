@@ -1,0 +1,22 @@
+{
+  "locked_utc": "2026-10-30T00:18:09.555Z",
+  "model_version": "2026-10-25.1 with Dugout Value projections v1.3",
+  "inputs": {
+    "player-database.json": "f5c8705d2cb1fae7ff33129886a9a831088336815660610c8f6a718a56d0ee6d",
+    "dv-projections.json": "f4b7fc8c0c58a07bab87ae958559c80d41bd212bd34628110fb7b5db602ce01f",
+    "free-agent-pricing.mjs": "f074f4e5df2d73a36ad964745b6fd7f4bd7ca9caf1d3a48ee854c2f88cd2f057",
+    "value-model.mjs": "faff9392d2b36ba505a3146ce9a896e8f92822ed4120f026bf920263feb62170",
+    "aging-curve.mjs": "c7b8ab4fbe377a2bdec6101e1199c4c0e43ece8a0fff0e207c93d50c5d75b5cc",
+    "freeze-dv-free-agents.mjs": "0056bbaa797083ab44a74beb354b00f6ca77514d956017695ce113e5f65105c4",
+    "build-fa-class-coverage.py": "189ca2e5f6f8f7be49406c1fe6ce2e6b0119de2386197b0c8f1c9500f39e76f3",
+    "mlbtr_list.txt": "f272d8de92ae6bc3fa915edc6c0eb85bcfd2e846428f5ba7a42fe6f33070c931",
+    "sato_k017.json": "a1c7c41c23e591f8cad0c89edee5ea424218eaea9706ac6cf208ebd3da939e53",
+    "DV_FA_EXTRA_PLAYERS": "2e595f86b6ed18eacb07951b6434fd88f858355f0eba176fa1960607255d6684",
+    "DV_FA_EXTRA_PROJECTIONS": "78c125b1c783bd4148911fed5e5156a01252ab0d8d2bfe7752658ed695c6a7dc"
+  },
+  "files": {
+    "predictions_frozen.json": "b00555543e21ebdec3336b938d03cc1b51203a70838430f68b4239dbce145533",
+    "predictions_frozen.csv": "e89b1712f29e0970f073892a895a62bb4f353c2efe5fa9bc17f793a6d26a85cd"
+  },
+  "note": "Dated estimates for subsequent signings; original dated projections are retained separately. No contract outcomes from this class were used to fit prices or terms."
+}

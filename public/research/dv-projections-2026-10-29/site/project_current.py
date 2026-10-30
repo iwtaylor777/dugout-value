@@ -2,7 +2,7 @@
 import argparse, json
 from pathlib import Path
 import runtime
-runtime.configure()
+runtime.configure(normalize_ip=True)
 import dvp_site, dvp
 from data import seasons
 from threadpoolctl import threadpool_limits

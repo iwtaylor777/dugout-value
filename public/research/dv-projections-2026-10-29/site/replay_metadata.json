@@ -6,6 +6,6 @@
   "lightgbm": "4.7.0",
   "timing": "Every training outcome is dated no later than target minus horizon.",
   "status": "Corrected reused retrospective evaluation; no retuning.",
-  "generator": "provenance/replay-first-run.py; composite hash is generator + site/dvp_site.py + site/runtime.py",
-  "later_change": "Current replay.py omits the private player diagnostic; aggregate benchmark and calibration logic is unchanged."
+  "generator": "provenance/replay-first-run.py + provenance/dvp_site-first-run.py + provenance/runtime-first-run.py (concatenated, in that order)",
+  "later_change": "The current site loader converts historical innings notation to true innings. Original benchmark source and results remain preserved separately."
 }
