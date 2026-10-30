@@ -3,16 +3,23 @@ import { useEffect, useMemo, useState } from "react";
 import data from "../../data/depth-chart.json";
 import tracker from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
-import { allocate, bestAdditions, teamsFor, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
+import payrollData from "../../data/team-payroll.json";
+import { allocate, bestAdditions, teamsFor, payroll2027, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
 import type { DepthEdit as Edit } from "../../../lib/depth-chart.mjs";
 
-type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number };
+type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number; pay?: number; c?: "g" | "o" | "a" | "p"; ex?: number };
 
 const players = data.players as Entry[];
 const teams = data.teams as { abbr: string; name: string }[];
 const { team: teamOf, freeAgents } = teamsFor(players, tracker, signingsData.entries as { player: string; outcome: string; team?: string | null }[]);
 const faRows = new Map((tracker.players as { id: string; aav?: number | null; years?: number | null; total?: number | null; basis: string }[]).map((r) => [r.id, r]));
 const rosterOf = (abbr: string) => players.filter((p) => teamOf.get(p.i) === abbr);
+const signedAav = new Map((signingsData.entries as { player: string; outcome: string; years?: number | null; total_musd?: number | null }[])
+  .filter((s) => s.years && s.total_musd != null).map((s) => [s.player.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/gi, "").toLowerCase(), s.total_musd! / s.years!]));
+const faSalary = (p: Entry) => signedAav.get(p.n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/gi, "").toLowerCase()) ?? faRows.get(p.pid)?.aav ?? null;
+const cbt = payrollData.cbt2026;
+const money = (v: number) => `$${v.toFixed(1)}M`;
+const moneyDelta = (v: number) => `${v >= 0.05 ? "+" : v <= -0.05 ? "−" : ""}$${Math.abs(v).toFixed(1)}M`;
 const defaults = new Map(teams.map((t) => [t.abbr, allocate(rosterOf(t.abbr)).total]));
 const freeAgentPool = players.filter((p) => freeAgents.has(p.i));
 const label = (p: Entry) => p.i.endsWith("-bat") ? `${p.n} (hitting)` : p.i.endsWith("-pit") ? `${p.n} (pitching)` : p.n;
@@ -62,6 +69,9 @@ export function DepthChart() {
   const baseRank = [...defaults.values()].filter((v) => v > base).length + 1;
   const teamName = teams.find((t) => t.abbr === team)?.name ?? team;
   const changed = Object.keys(edits).length + removed.length + added.length > 0;
+  const payroll = useMemo(() => payroll2027(roster, faSalary), [roster]);
+  const basePayroll = useMemo(() => payroll2027(rosterOf(team), faSalary), [team]);
+  const cbt2026 = (cbt.teams as Record<string, number>)[team];
 
   const setPt = (p: Entry, pos: string, value: string) => {
     const v = Math.max(0, Math.round(Number(value)));
@@ -100,6 +110,12 @@ export function DepthChart() {
           {changed && <p className="dc-change"><strong>{signed(result.total - base)}</strong><span>vs default ({ordinal(baseRank)})</span></p>}
         </div>
         <button type="button" className="dc-reset" onClick={reset} disabled={!changed}>Reset</button>
+      </div>
+      <div className="dc-payroll" aria-live="polite">
+        <p><span>2026 CBT payroll</span><strong>{cbt2026 != null ? money(cbt2026) : "—"}</strong><small>{cbt2026 != null && cbt2026 > cbt.thresholdMusd ? `${money(cbt2026 - cbt.thresholdMusd)} over` : `${money(cbt.thresholdMusd - (cbt2026 ?? 0))} under`} the ${cbt.thresholdMusd}M threshold</small></p>
+        <p><span>2027 under contract</span><strong>{money(basePayroll.guaranteed + basePayroll.options)}</strong><small>{money(basePayroll.guaranteed)} guaranteed{basePayroll.options >= 0.05 ? ` + ${money(basePayroll.options)} in options` : ""}</small></p>
+        <p><span>2027 projected payroll</span><strong>{money(basePayroll.total)}</strong><small>adds {money(basePayroll.arbitration)} arbitration and {money(basePayroll.preArb)} pre-arb estimates</small></p>
+        <p className={changed ? "dc-change" : undefined}><span>Your changes</span><strong>{changed ? moneyDelta(payroll.total - basePayroll.total) : "—"}</strong><small>{changed ? `2027 payroll ${money(payroll.total)}` : "Add or remove players to see the effect"}</small></p>
       </div>
 
       <div className="dc-layout">

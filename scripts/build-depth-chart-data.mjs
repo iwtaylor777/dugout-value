@@ -6,6 +6,7 @@
 // published 2027 WAR as a rate and start at part-time playing time. Free agents outside the roster snapshot come from
 // the same optional files the free-agent tracker uses, so the tool can suggest them.
 import fs from 'node:fs';
+import { valuePlayer, initialSettings } from '../lib/value-model.mjs';
 const [extraPlayersFile, extraProjectionsFile] = process.argv.slice(2);
 const read = f => JSON.parse(fs.readFileSync(f, 'utf8'));
 const db = read('app/data/player-database.json'), dv = read('app/data/dv-projections.json');
@@ -29,10 +30,21 @@ function eligible(p) {
 const round = (v, d = 2) => +v.toFixed(d);
 const players = [];
 const faById = new Map(tracker.players.map(r => [r.id, r]));
+// 2027 salary in $M, from the site's value model: contract salaries, option salaries, and its arbitration and
+// pre-arbitration estimates. Contract kind: g guaranteed, o option, a arbitration, p pre-arbitration.
+function salary2027(p) {
+  const season = (p.seasons ?? []).find(s => s.year === 2027);
+  if (!season) return null;
+  const row = valuePlayer(p, initialSettings, db).rows.find(r => r.year === 2027);
+  const kind = season.contractType === 'fixed' ? 'g' : /Option$/.test(season.contractType) ? 'o' : season.salaryMode.startsWith('arb') ? 'a' : 'p';
+  return { pay: round(row.salary), c: kind };
+}
 function push(p, team, entry) {
-  const fa = faById.get(p.id);
+  const fa = faById.get(p.id), pay = entry.noPay ? null : p.seasons ? salary2027(p) : null;
   players.push({ i: entry.id ?? p.id, pid: p.id, n: p.name, t: team, e: entry.e, k: entry.k, r: round(entry.r), x: Math.round(entry.x), s: entry.s,
-    ...(fa ? { fa: 1 } : {}) });
+    ...(pay ? { pay: pay.pay, c: pay.c } : {}), ...(fa ? { fa: 1 } : {}),
+    // Contract over after 2026 and not in the free-agent class (retiring, released or otherwise off the market).
+    ...(!fa && !entry.noPay && p.seasons && !pay ? { ex: 1 } : {}) });
 }
 for (const p of db.players) {
   if (p.kind !== 'mlb') continue;
@@ -40,7 +52,7 @@ for (const p of db.players) {
     const parts = twoWay[p.id];
     if (!parts) throw new Error(`No two-way split for ${p.name}`);
     push(p, p.team, { id: `${p.id}-bat`, e: ['DH'], k: 'b', r: parts.bat.rate, x: parts.bat.pt, s: 'dv' });
-    push(p, p.team, { id: `${p.id}-pit`, e: ['SP'], k: 'p', r: parts.pit.rate, x: parts.pit.pt, s: 'dv' });
+    push(p, p.team, { id: `${p.id}-pit`, e: ['SP'], k: 'p', r: parts.pit.rate, x: parts.pit.pt, s: 'dv', noPay: true });
     continue;
   }
   const k = ['starter', 'reliever'].includes(p.role) ? 'p' : 'b';

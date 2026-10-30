@@ -338,6 +338,13 @@ figure.article-figure figcaption strong { color: #172d3d; }
 .dc-change strong { color: #24525c; }
 .dc-reset { margin-left: auto; min-height: 36px; padding: 6px 14px; border: 1px solid #cfc8b9; border-radius: 5px; background: #fffdf8; font-size: 14px; cursor: pointer; }
 .dc-reset:disabled { opacity: .45; cursor: default; }
+.dc-payroll { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 24px; padding: 12px 0 14px; border-bottom: 1px solid #ddd5c4; }
+.dc-payroll p { margin: 0; display: flex; flex-direction: column; }
+.dc-payroll span { font-size: 12px; font-weight: 600; color: #536067; }
+.dc-payroll strong { font-size: 19px; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.dc-payroll small { font-size: 11px; color: #6c6a64; line-height: 1.35; }
+.dc-payroll .dc-change strong { color: #24525c; }
+@media (max-width: 760px) { .dc-payroll { grid-template-columns: 1fr 1fr; } }
 .dc-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; margin-top: 18px; align-items: start; }
 .dc-add { position: relative; max-width: 420px; margin-bottom: 16px; }
 .dc-add input { width: 100%; }

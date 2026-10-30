@@ -1,4 +1,4 @@
-export type DepthEntry = { i: string; pid?: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s?: string; fa?: number };
+export type DepthEntry = { i: string; pid?: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s?: string; fa?: number; pay?: number; c?: "g" | "o" | "a" | "p"; ex?: number };
 export type DepthEdit = { pos?: string; pt?: number };
 export type DepthTargets = { hitter: number; SP: number; RP: number };
 export type DepthRow<T extends DepthEntry = DepthEntry> = { p: T; pt: number; war: number; how: "locked" | "set" | "auto" };
@@ -14,3 +14,6 @@ export function rateAt(p: DepthEntry, pos: string): number;
 export function allocate<T extends DepthEntry>(roster: T[], edits?: Record<string, DepthEdit>, targets?: DepthTargets): DepthResult<T>;
 export function teamsFor<T extends DepthEntry>(players: T[], tracker: { players: { id: string; market: string }[] }, signings: { player: string; outcome: string; team?: string | null }[]): { team: Map<string, string | null>; freeAgents: Set<string> };
 export function bestAdditions<T extends DepthEntry>(roster: T[], edits: Record<string, DepthEdit>, candidates: T[], targets?: DepthTargets): { p: T; gain: number; positions: string[] }[];
+export const MINIMUM_SALARY: number;
+export type Payroll = { guaranteed: number; options: number; arbitration: number; preArb: number; freeAgents: number; total: number };
+export function payroll2027<T extends DepthEntry>(roster: T[], faSalary?: (p: T) => number | null): Payroll;

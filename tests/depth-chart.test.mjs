@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
-import { allocate, teamsFor, bestAdditions, rateAt, POSITIONS, DEFAULT_TARGETS, targetOf } from '../lib/depth-chart.mjs';
+import { allocate, teamsFor, bestAdditions, rateAt, payroll2027, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, targetOf } from '../lib/depth-chart.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
 const data = read('../app/data/depth-chart.json'), tracker = read('../app/data/free-agent-tracker.json'), signings = read('../app/data/free-agent-signings.json');
 const h = (i, e, r, x) => ({ i, n: i, t: 'AAA', e, k: 'b', r, x });
@@ -65,4 +65,28 @@ test('a free agent adds less than his own WAR when he displaces someone', () => 
   // He takes 650 PA at 4 WAR/600; the incumbent keeps the other 33 and has nowhere else to play.
   assert.ok(Math.abs(best.gain - (4 * 650 + 2 * 33 - 2 * 650) / 600) < 1e-9, String(best.gain));
   assert.deepEqual(best.positions, ['CF']);
+});
+
+test('2027 payroll separates contracts, options and estimates, and prices free agents', () => {
+  const roster = [{ ...h('a', ['SS'], 1, 600), pay: 20, c: 'g' }, { ...h('b', ['C'], 1, 600), pay: 10, c: 'o' }, { ...h('c', ['1B'], 1, 600), pay: 4, c: 'a' },
+    { ...h('d', ['LF'], 1, 600), pay: 0.8, c: 'p' }, { ...h('fa', ['CF'], 1, 600), fa: 1 }, { ...h('fb', ['RF'], 1, 600), fa: 1 }];
+  const pay = payroll2027(roster, p => (p.i === 'fa' ? 15 : 0.2));
+  assert.deepEqual([pay.guaranteed, pay.options, pay.arbitration, pay.preArb], [20, 10, 4, 0.8]);
+  assert.equal(pay.freeAgents, 15 + MINIMUM_SALARY);
+  assert.ok(Math.abs(pay.total - (34.8 + 15 + MINIMUM_SALARY)) < 1e-9);
+});
+
+test('expired contracts outside the free-agent class leave the depth chart', () => {
+  const { team } = teamsFor(data.players, tracker, signings.entries);
+  const expired = data.players.filter(p => p.ex);
+  assert.ok(expired.length > 0);
+  for (const p of expired) assert.equal(team.get(p.i), null, p.n);
+  const ohtani = data.players.filter(p => p.n === 'Shohei Ohtani');
+  assert.equal(ohtani.length, 2);
+  for (const p of ohtani) assert.equal(team.get(p.i), 'LAD');
+});
+
+test('every team has a 2026 CBT payroll', () => {
+  const pay = read('../app/data/team-payroll.json').cbt2026;
+  for (const t of data.teams) assert.ok(pay.teams[t.abbr] > 50 && pay.teams[t.abbr] < 500, t.abbr);
 });

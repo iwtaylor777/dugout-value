@@ -12,11 +12,11 @@ async function render(pathname) {
   );
 }
 
-test("the main banner offers a collapsed dropdown with all five tools", async () => {
+test("the main banner offers a collapsed dropdown with all seven tools", async () => {
   const html = await (await render("/")).text();
   assert.match(html, /class="tools-navigation-trigger"[^>]*aria-expanded="false"[^>]*aria-controls=/);
   assert.match(html, /class="tools-navigation-panel"[^>]*hidden/);
-  for (const path of ["trade", "projections", "rankings", "finder", "dv-war"]) {
+  for (const path of ["trade", "projections", "rankings", "finder", "free-agents", "depth-chart", "dv-war"]) {
     assert.match(html, new RegExp(`href="/tools/${path}"`));
   }
   assert.match(html, /<a\b(?=[^>]*class="tools-navigation-all")(?=[^>]*href="\/tools")[^>]*>/);
@@ -166,4 +166,14 @@ test("depth chart renders a team with its total, rank and free-agent fits", asyn
   assert.match(html, /of 30 teams/);
   assert.match(html, /Free agents who add the most/);
   assert.match(html, /Replacement level|Best free-agent fit/);
+  assert.match(html, /2026 CBT payroll/);
+  assert.match(html, /2027 under contract/);
+});
+
+test("home page features the free-agent tracker in place of value rankings", async () => {
+  const response = await render("/");
+  const html = await response.text();
+  const tools = html.slice(html.indexOf('id="tools-heading"'));
+  assert.match(tools, /href="\/tools\/free-agents"/);
+  assert.doesNotMatch(tools.slice(0, tools.indexOf("</section>")), /href="\/tools\/rankings"/);
 });

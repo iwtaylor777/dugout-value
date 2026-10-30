@@ -1,0 +1,41 @@
+{
+ "cbt2026": {
+  "source": "Spotrac MLB Team Tax Tracker",
+  "url": "https://www.spotrac.com/mlb/payroll/",
+  "checked": "2026-10-30",
+  "note": "Current 2026 luxury-tax payroll estimate: AAV of the 40-man roster, retained salary, minor-league 40-man salaries, pre-arbitration estimates and player benefits. Final figures are released in December.",
+  "thresholdMusd": 244,
+  "teams": {
+   "LAD": 398.4,
+   "NYM": 373.3,
+   "NYY": 325.8,
+   "PHI": 315.9,
+   "TOR": 306.5,
+   "SDP": 263.0,
+   "BOS": 255.5,
+   "CHC": 243.5,
+   "DET": 241.4,
+   "ATL": 234.4,
+   "HOU": 228.8,
+   "SFG": 224.6,
+   "TEX": 206.0,
+   "BAL": 203.1,
+   "LAA": 191.7,
+   "ARI": 190.2,
+   "SEA": 183.4,
+   "KCR": 181.9,
+   "CIN": 151.4,
+   "ATH": 136.6,
+   "MIL": 131.3,
+   "STL": 126.9,
+   "PIT": 126.2,
+   "WSN": 112.7,
+   "COL": 108.4,
+   "TBR": 107.4,
+   "CHW": 107.4,
+   "MIN": 104.7,
+   "CLE": 100.5,
+   "MIA": 82.8
+  }
+ }
+}
