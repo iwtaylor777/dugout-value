@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import data from "../../data/depth-chart.json";
 import tracker from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
@@ -40,15 +40,23 @@ export function DepthChart() {
   const [removed, setRemoved] = useState<string[]>([]);
   const [added, setAdded] = useState<string[]>([]);
   const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchRoot = useRef<HTMLDivElement>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const teamChosen = useRef(false);
 
   useEffect(() => {
-    try {
-      const t = new URLSearchParams(window.location.search).get("team")?.toUpperCase();
-      if (t && teams.some((x) => x.abbr === t)) setTeam(t);
-    } catch { /* ignore */ }
+    const frame = requestAnimationFrame(() => {
+      try {
+        const t = new URLSearchParams(window.location.search).get("team")?.toUpperCase();
+        if (!teamChosen.current && t && teams.some((x) => x.abbr === t)) setTeam(t);
+      } catch { /* ignore */ }
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
   const chooseTeam = (abbr: string) => {
-    setTeam(abbr); setEdits({}); setRemoved([]); setAdded([]); setQuery("");
+    teamChosen.current = true;
+    setTeam(abbr); setEdits({}); setRemoved([]); setAdded([]); setQuery(""); setSearchOpen(false);
     try { const u = new URL(window.location.href); u.searchParams.set("team", abbr); window.history.replaceState(null, "", u); } catch { /* ignore */ }
   };
   const reset = () => { setEdits({}); setRemoved([]); setAdded([]); };
@@ -83,7 +91,7 @@ export function DepthChart() {
     if (to === "remove") { setRemoved((r) => [...r, p.i]); unlock(p); return; }
     setEdits((e) => ({ ...e, [p.i]: { ...(e[p.i] ?? {}), pos: to } }));
   };
-  const add = (p: Entry) => { setRemoved((r) => r.filter((x) => x !== p.i)); setAdded((a) => (a.includes(p.i) ? a : [...a, p.i])); setQuery(""); };
+  const add = (p: Entry) => { setRemoved((r) => r.filter((x) => x !== p.i)); setAdded((a) => (a.includes(p.i) ? a : [...a, p.i])); setQuery(""); setSearchOpen(false); };
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -96,37 +104,43 @@ export function DepthChart() {
   return (
     <section className="dc">
       <div className="dc-top">
+        <div className="dc-team-controls">
         <label className="dc-team">
           <span>Team</span>
           <select value={team} onChange={(e) => chooseTeam(e.target.value)}>
             {[...teams].sort((a, b) => a.name.localeCompare(b.name)).map((t) => <option key={t.abbr} value={t.abbr}>{t.name}</option>)}
           </select>
         </label>
+        <button type="button" className="dc-reset" onClick={reset} disabled={!changed}>Reset roster</button>
+        <p className="dc-team-note">Changes are a local scenario. Choosing another team starts fresh.</p>
+        </div>
         <div className="dc-score" aria-live="polite">
           <p><strong>{fmt(result.total)}</strong><span>projected 2027 WAR</span></p>
           <p><strong>{ordinal(rank)}</strong><span>of 30 teams</span></p>
           <p><strong>{fmt(result.hit)}</strong><span>hitters</span></p>
           <p><strong>{fmt(result.pit)}</strong><span>pitchers</span></p>
-          {changed && <p className="dc-change"><strong>{signed(result.total - base)}</strong><span>vs default ({ordinal(baseRank)})</span></p>}
+          {changed && <p className="dc-change" data-direction={result.total < base ? "negative" : "positive"}><strong>{signed(result.total - base)}</strong><span>WAR vs original roster ({ordinal(baseRank)})</span></p>}
         </div>
-        <button type="button" className="dc-reset" onClick={reset} disabled={!changed}>Reset</button>
       </div>
       <div className="dc-payroll" aria-live="polite">
-        <p><span>2026 CBT payroll</span><strong>{cbt2026 != null ? money(cbt2026) : "—"}</strong><small>{cbt2026 != null && cbt2026 > cbt.thresholdMusd ? `${money(cbt2026 - cbt.thresholdMusd)} over` : `${money(cbt.thresholdMusd - (cbt2026 ?? 0))} under`} the ${cbt.thresholdMusd}M threshold</small></p>
         <p><span>2027 under contract</span><strong>{money(basePayroll.guaranteed + basePayroll.options)}</strong><small>{money(basePayroll.guaranteed)} guaranteed{basePayroll.options >= 0.05 ? ` + ${money(basePayroll.options)} in options` : ""}</small></p>
         <p><span>2027 projected payroll</span><strong>{money(basePayroll.total)}</strong><small>adds {money(basePayroll.arbitration)} arbitration and {money(basePayroll.preArb)} pre-arb estimates</small></p>
         <p className={changed ? "dc-change" : undefined}><span>Your changes</span><strong>{changed ? moneyDelta(payroll.total - basePayroll.total) : "—"}</strong><small>{changed ? `2027 payroll ${money(payroll.total)}` : "Add or remove players to see the effect"}</small></p>
+        <details className="dc-payroll-history"><summary>2026 luxury-tax context <span>{cbt2026 != null ? money(cbt2026) : "Not available"}</span></summary><p>2026 CBT payroll{cbt2026 != null ? ` was ${money(cbt2026)}, ${money(Math.abs(cbt2026 - cbt.thresholdMusd))} ${cbt2026 > cbt.thresholdMusd ? "over" : "under"} the $${cbt.thresholdMusd}M threshold.` : " is not available for this team."} This is a historical tax-payroll estimate, not a comparison with the 2027 salary totals above.</p></details>
       </div>
 
       <div className="dc-layout">
         <div className="dc-main">
-          <div className="dc-add">
+          <div className="dc-add" ref={searchRoot}
+            onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setSearchOpen(false); }}
+            onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); searchInput.current?.focus(); setSearchOpen(false); } }}>
             <label>
               <span>Add a player</span>
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Any MLB player or free agent…" />
+              <input ref={searchInput} value={query} onFocus={() => setSearchOpen(true)} onChange={(e) => { setQuery(e.target.value); setSearchOpen(true); }} placeholder="Any MLB player or free agent…" aria-describedby="dc-search-help" onKeyDown={(event) => { if (event.key === "ArrowDown") { event.preventDefault(); setSearchOpen(true); requestAnimationFrame(() => searchRoot.current?.querySelector<HTMLButtonElement>(".dc-matches button")?.focus()); } }} />
             </label>
-            {matches.length > 0 && (
-              <ul className="dc-matches">
+            <p id="dc-search-help" className="dc-search-help">Search by name to try a signing or trade. This does not change the real roster.</p>
+            {searchOpen && query.trim().length >= 2 && (
+              <ul className="dc-matches" aria-label="Player search results">
                 {matches.map((p) => (
                   <li key={p.i}>
                     <button type="button" onClick={() => add(p)}>
@@ -134,6 +148,7 @@ export function DepthChart() {
                     </button>
                   </li>
                 ))}
+                {matches.length === 0 && <li className="dc-no-matches" role="status">No matching players outside this roster. Try another name.</li>}
               </ul>
             )}
           </div>
@@ -143,7 +158,7 @@ export function DepthChart() {
               const slot = result.positions[pos];
               const best = suggestions.find((s) => s.positions.includes(pos));
               return (
-                <article key={pos} className="dc-card" aria-labelledby={`dc-${pos}`}>
+                <article key={pos} className={`dc-card ${PITCHING.includes(pos) ? "dc-pitching" : "dc-hitting"}`} aria-labelledby={`dc-${pos}`}>
                   <header>
                     <h3 id={`dc-${pos}`}><span className="dc-pos">{pos}</span> {POS_NAMES[pos]}</h3>
                     <p><strong>{fmt(slot.war)} WAR</strong> · {Math.round(slot.filled)} / {slot.target} {unitName(pos)}</p>
@@ -162,7 +177,7 @@ export function DepthChart() {
                             </td>
                             <td className="num">{fmt(row.war)}</td>
                             <td>
-                              <select aria-label={`Move ${label(row.p)}`} value="" onChange={(e) => move(row.p, e.target.value)}>
+                              <select aria-label={`Move ${label(row.p)} from ${pos}`} value="" onChange={(e) => move(row.p, e.target.value)}>
                                 <option value="" disabled>Move…</option>
                                 {POSITIONS.filter((x) => x !== pos && (PITCHING.includes(x) === (row.p.k === "p"))).map((x) => <option key={x} value={x}>{x}</option>)}
                                 <option value="remove">Remove</option>
@@ -179,7 +194,7 @@ export function DepthChart() {
                     <p className="dc-fa">
                       <span>Best free-agent fit</span>
                       <strong>{label(best.p)}</strong> {signed(best.gain)} WAR{aavText(best.p) ? ` · ${aavText(best.p)}` : ""}
-                      <button type="button" onClick={() => add(best.p)}>Add</button>
+                      <button type="button" onClick={() => add(best.p)} aria-label={`Add ${label(best.p)} for ${pos}`}>Add</button>
                     </p>
                   )}
                 </article>
@@ -190,7 +205,8 @@ export function DepthChart() {
           {(result.unused.length > 0 || removedEntries.length > 0) && (
             <div className="dc-extra">
               {result.unused.length > 0 && (
-                <div>
+                <details className="dc-bench-details">
+                  <summary>Players without projected playing time <span>{result.unused.length}</span></summary>
                   <p><strong>No projected playing time.</strong> Their positions are full with better projections. Place one to give him time.</p>
                   <ul className="dc-bench">
                     {result.unused.map((p) => (
@@ -203,7 +219,7 @@ export function DepthChart() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </details>
               )}
               {removedEntries.length > 0 && (
                 <p><strong>Removed:</strong> {removedEntries.map((p, i) => <span key={p.i}>{i > 0 && ", "}{label(p)} <button type="button" className="dc-link" onClick={() => setRemoved((r) => r.filter((x) => x !== p.i))}>restore</button></span>)}</p>
@@ -215,9 +231,9 @@ export function DepthChart() {
         <aside className="dc-side">
           <section aria-labelledby="dc-fa-heading">
             <h2 id="dc-fa-heading">Free agents who add the most</h2>
-            <p className="dc-note">Wins added to the {teamName}’ 2027 total at his expected playing time, after he takes time from the players he’d replace.</p>
+            <p className="dc-note">Projected WAR added to {teamName} after replacing existing playing time. These are roster scenarios, not reports of availability.</p>
             <ol className="dc-fa-list">
-              {suggestions.slice(0, 10).map((s) => (
+              {suggestions.slice(0, 5).map((s) => (
                 <li key={s.p.i}>
                   <div><strong>{label(s.p)}</strong><span>{s.positions.join(", ")}{aavText(s.p) ? ` · ${aavText(s.p)}` : ""}</span></div>
                   <b>{signed(s.gain)}</b>
@@ -225,9 +241,10 @@ export function DepthChart() {
                 </li>
               ))}
             </ol>
+            {suggestions.length > 5 && <details className="dc-more-fits"><summary>More free-agent fits</summary><ol className="dc-fa-list" start={6}>{suggestions.slice(5, 10).map((s) => <li key={s.p.i}><div><strong>{label(s.p)}</strong><span>{s.positions.join(", ")}{aavText(s.p) ? ` · ${aavText(s.p)}` : ""}</span></div><b>{signed(s.gain)}</b><button type="button" onClick={() => add(s.p)} aria-label={`Add ${label(s.p)}`}>Add</button></li>)}</ol></details>}
           </section>
-          <section aria-labelledby="dc-rank-heading">
-            <h2 id="dc-rank-heading">Projected 2027 WAR</h2>
+          <details className="dc-league">
+            <summary>All 30 teams <span>Projected 2027 WAR</span></summary>
             <ol className="dc-rank">
               {table.map((t, i) => (
                 <li key={t.abbr} className={t.abbr === team ? "dc-current" : undefined}>
@@ -238,7 +255,7 @@ export function DepthChart() {
               ))}
             </ol>
             <p className="dc-note">Other teams are shown at their defaults.</p>
-          </section>
+          </details>
         </aside>
       </div>
     </section>

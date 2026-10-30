@@ -146,13 +146,20 @@ test("frozen article figures are dated to the model that made them and methods s
   assert.match(methods, /current tools use model 2026-10-25\.1/);
 });
 
-test("free-agent tracker renders the class with scored predictions", async () => {
+test("free-agent tracker defaults to the whole class with sortable headers", async () => {
   const response = await render("/tools/free-agents");
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /<h1>Free-agent tracker<\/h1>/);
   assert.match(html, /Tarik Skubal/);
-  assert.match(html, /Scored #<!-- -->1/);
+  assert.doesNotMatch(html, /Scored #|Scored prediction #/);
+  assert.match(html, /<option value="all" selected="">Whole class/);
+  assert.match(html, /aria-sort="descending"/);
+  for (const label of ["Player", "Age", "fWAR 2026", "DV WAR 2027", "DV WAR 2027–31", "Our estimate", "AAV", "Status"]) {
+    assert.ok(html.includes(`aria-label="Sort by ${label}"`), label);
+  }
+  assert.match(html, /Decision pending/);
+  assert.match(html, /Published forecast, frozen October 29/);
   assert.match(html, /\$386M/);
   assert.match(html, /href="\/tools\/free-agents"[^>]*aria-current="page"|href="\/tools"[^>]*aria-current="page"/);
 });

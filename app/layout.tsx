@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./publication.css";
 import "./tool-ux.css";
+import "./roster-tools.css";
+import "./depth-chart-ux.css";
 import { Analytics } from "./analytics";
 import { JsonLd } from "./json-ld";
 import { siteJsonLd } from "./seo";
