@@ -13,7 +13,7 @@ export const article: Article = {
   author: AUTHOR,
   published: "2026-10-29",
   dateLabel: "October 29, 2026",
-  readTime: "8 min read",
+  readTime: "9 min read",
   relatedTool: { href: "/tools/projections", label: "Explore the player projections" },
   evidence: { href: `${FILES}.tar.gz`, label: "Methods, results and code (download)" },
   body: (
@@ -32,9 +32,18 @@ export const article: Article = {
 
       <h2>Rates first, playing time separately</h2>
       <p>Hitter wOBA, strikeout rate, walk rate and isolated power are predicted separately. For pitchers, I average a direct FIP forecast with one assembled from projected strikeouts, walks plus hit batters, and home runs per inning. That lets the forecast use both an overall estimate and the components that produce it.</p>
-      <p>WAR rate has its own model, trained on FanGraphs WAR per 600 PA or 180 IP. For hitters, it includes historical fielding, baserunning and positional runs alongside the offensive inputs. It is separate from my <Link href="/analysis/a-statcast-war">Statcast-based WAR research</Link>.</p>
+      <p>WAR rate has its own model, trained on FanGraphs WAR per 600 PA or 180 IP. For hitters, it includes historical fielding, baserunning and positional runs alongside the offensive inputs, as described in the next section. It is separate from my <Link href="/analysis/a-statcast-war">Statcast-based WAR research</Link>.</p>
       <p>Playing time is another prediction. The trade and contract estimates use a full-season workload: the larger of the model’s expected playing time, mapped onto the scale of preseason ZiPS workloads within the player’s role, and his recent healthy workload. Healthy workload is the average of the two largest totals in the preceding three seasons, capped at 700 PA or 200 IP. Relievers have their own mapping; a larger workload must be supported by their recent history.</p>
       <p>The arithmetic is straightforward: 6.1 WAR per 600 PA over 698 PA gives 6.1 × 698 ÷ 600 = 7.1 WAR. The assumption behind the workload matters more. A full-season valuation is useful for pricing a player, but it is not a promise that he will stay healthy or keep his job.</p>
+
+      <h2>Defense and baserunning</h2>
+      <p>DV doesn’t forecast fielding and baserunning as separate numbers. The hitter WAR-rate model sees each player’s FanGraphs fielding, baserunning and positional runs per 600 PA for each of his last five seasons, plus the same lightly, moderately and heavily regressed versions used for his hitting stats, along with his speed and position. It learns how much of each carries into next season’s WAR. The first version left these inputs out and projected the best fielders about half a win per 600 PA too low. Adding them fixed that before the projections went on the site.</p>
+      <p>Because DV forecasts total WAR, the useful comparison is whether each system’s WAR forecast gives a player the right credit for his defensive and baserunning history. I took 982 hitter-seasons from 2024–26 with 200 or more PA and forecasts from all three systems. For each system, I regressed its miss (actual WAR per 600 PA minus the forecast) on the player’s past fielding, baserunning and batting runs. A system that credits a skill correctly should leave no slope.</p>
+      <ul>
+        <li><strong>Fielding:</strong> none of the three systems showed a meaningful slope. The estimates were −0.009 WAR per run of past fielding for DV, −0.005 for ZiPS and +0.005 for Steamer, each with a standard error of about .007.</li>
+        <li><strong>Baserunning:</strong> ZiPS and Steamer both gave too little credit, about 0.05 WAR per run of past baserunning (standard errors near .018). DV’s slope was −0.021, not distinguishable from zero. In practice, ZiPS’s forecasts for the best fifth of baserunners were too low by about half a win per 600 PA more than its forecasts for the worst fifth.</li>
+      </ul>
+      <p>DV leaned slightly the other way: it gave the best fielders and baserunners a little too much credit relative to the worst, by about 0.2 WAR per 600 PA between the top and bottom fifths, though neither slope is distinguishable from zero. ZiPS and Steamer do publish separate defense and baserunning forecasts. ZiPS’s defense forecasts were spread too wide: players finished 0.83 runs from average for every run ZiPS projected. Both systems’ baserunning forecasts were too compressed: 1.43 runs for every projected run. These checks reuse seasons I examined while building the model, including the fielding fix, so they are exploratory.</p>
 
       <h2>How it compares with ZiPS and Steamer</h2>
       <p>I developed the original model recipe on 2023–24 and evaluated forecasts for 2025–26. Each forecast uses only earlier outcomes: a 2025 forecast trains through 2024; a 2026 forecast can use 2025. The comparison forecasts are archived preseason ZiPS and Steamer projections from FanGraphs, not versions updated after the season began.</p>

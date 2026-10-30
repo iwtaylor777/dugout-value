@@ -389,7 +389,7 @@
       "player": "Seiya Suzuki",
       "team_2026": "CHC",
       "position": "RF",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "position",
       "id": "mlb-673548",
       "war_2026": 4.5,
@@ -463,7 +463,7 @@
       "player": "Dustin May",
       "team_2026": "MIL",
       "position": "SP",
-      "age_2027": 30,
+      "age_2027": 29,
       "role": "starter",
       "id": "mlb-669160",
       "war_2026": 2.8,
@@ -499,7 +499,7 @@
       "player": "Foster Griffin",
       "team_2026": "CLE",
       "position": "SP",
-      "age_2027": 32,
+      "age_2027": 31,
       "role": "starter",
       "id": "mlb-656492",
       "war_2026": 2.6,
@@ -535,7 +535,7 @@
       "player": "Shota Imanaga",
       "team_2026": "CHC",
       "position": "SP",
-      "age_2027": 34,
+      "age_2027": 33,
       "role": "starter",
       "id": "mlb-684007",
       "war_2026": 1.8,
@@ -571,7 +571,7 @@
       "player": "David Peterson",
       "team_2026": "CHC",
       "position": "SP",
-      "age_2027": 32,
+      "age_2027": 31,
       "role": "starter",
       "id": "mlb-656849",
       "war_2026": 1.7,
@@ -607,7 +607,7 @@
       "player": "Jack Flaherty",
       "team_2026": "DET",
       "position": "SP",
-      "age_2027": 32,
+      "age_2027": 31,
       "role": "starter",
       "id": "mlb-656427",
       "war_2026": 1.3,
@@ -643,7 +643,7 @@
       "player": "Ian Happ",
       "team_2026": "CHC",
       "position": "LF",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "position",
       "id": "mlb-664023",
       "war_2026": 2.6,
@@ -714,7 +714,7 @@
       "player": "David Bednar",
       "team_2026": "NYY",
       "position": "RP",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "reliever",
       "id": "mlb-670280",
       "war_2026": 1.9,
@@ -750,7 +750,7 @@
       "player": "Trent Grisham",
       "team_2026": "NYY",
       "position": "CF",
-      "age_2027": 31,
+      "age_2027": 30,
       "role": "position",
       "id": "mlb-663757",
       "war_2026": 0.7,
@@ -821,7 +821,7 @@
       "player": "Michael Soroka",
       "team_2026": "ARI",
       "position": "SP",
-      "age_2027": 30,
+      "age_2027": 29,
       "role": "starter",
       "id": "mlb-647336",
       "war_2026": 2.7,
@@ -857,7 +857,7 @@
       "player": "Patrick Sandoval",
       "team_2026": "BOS",
       "position": "SP",
-      "age_2027": 31,
+      "age_2027": 30,
       "role": "starter",
       "id": "mlb-663776",
       "war_2026": 1.3,
@@ -893,7 +893,7 @@
       "player": "Daulton Varsho",
       "team_2026": "HOU",
       "position": "CF",
-      "age_2027": 31,
+      "age_2027": 30,
       "role": "position",
       "id": "mlb-662139",
       "war_2026": 0.8,
@@ -929,7 +929,7 @@
       "player": "Brandon Lowe",
       "team_2026": "PIT",
       "position": "2B",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "position",
       "id": "mlb-664040",
       "war_2026": 4.9,
@@ -965,7 +965,7 @@
       "player": "Kris Bubic",
       "team_2026": "LAD",
       "position": "SP",
-      "age_2027": 30,
+      "age_2027": 29,
       "role": "starter",
       "id": "mlb-663460",
       "war_2026": 1,
@@ -1037,7 +1037,7 @@
       "player": "Mauricio Dubon",
       "team_2026": "ATL",
       "position": "2B",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "position",
       "id": "mlb-643289",
       "war_2026": 2.4,
@@ -1073,7 +1073,7 @@
       "player": "Jonathan Loaisiga",
       "team_2026": "ARI",
       "position": "RP",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "reliever",
       "id": "mlb-642528",
       "war_2026": 1.1,
@@ -1283,7 +1283,7 @@
       "player": "Myles Straw",
       "team_2026": "TOR",
       "position": "CF",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "position",
       "id": "mlb-664702",
       "war_2026": 0.7,
@@ -1354,7 +1354,7 @@
       "player": "Sandy Alcantara",
       "team_2026": "MIA",
       "position": "SP",
-      "age_2027": 32,
+      "age_2027": 31,
       "role": "starter",
       "id": "mlb-645261",
       "war_2026": 3.2,
@@ -1424,7 +1424,7 @@
       "player": "Corbin Burnes",
       "team_2026": "ARI",
       "position": "SP",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "starter",
       "id": "mlb-669203",
       "war_2026": -0.4,
@@ -1592,21 +1592,22 @@
       "player": "Drew Rasmussen",
       "team_2026": "TBR",
       "position": "SP",
-      "age_2027": 32,
+      "age_2027": 31,
       "role": "starter",
       "id": "mlb-656876",
       "war_2026": 5,
       "projection_source": "Dugout Value projections v1.3",
-      "years": 5,
-      "total_musd": 114.7,
-      "aav_musd": 22.9,
+      "years": 6,
+      "total_musd": 125.6,
+      "aav_musd": 20.9,
       "war_2027": 3.21,
       "war_path": {
         "2027": 3.21,
         "2028": 2.76,
         "2029": 2.29,
         "2030": 1.86,
-        "2031": 1.46
+        "2031": 1.46,
+        "2032": 1.07
       },
       "market_values": {
         "2027": 32.31316,
@@ -1697,7 +1698,7 @@
       "player": "Ryan Helsley",
       "team_2026": "BAL",
       "position": "RP",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "reliever",
       "id": "mlb-664854",
       "war_2026": -0.1,
@@ -1800,7 +1801,7 @@
       "player": "Jacob Webb",
       "team_2026": "CHC",
       "position": "RP",
-      "age_2027": 34,
+      "age_2027": 33,
       "role": "reliever",
       "id": "mlb-657097",
       "war_2026": 0.3,
@@ -1867,7 +1868,7 @@
       "player": "Yuki Matsui",
       "team_2026": "SDP",
       "position": "RP",
-      "age_2027": 32,
+      "age_2027": 31,
       "role": "reliever",
       "id": "mlb-673513",
       "war_2026": 0.4,
@@ -1900,7 +1901,7 @@
       "player": "Wandy Peralta",
       "team_2026": "SDP",
       "position": "RP",
-      "age_2027": 36,
+      "age_2027": 35,
       "role": "reliever",
       "id": "mlb-593974",
       "war_2026": 0.4,
@@ -1941,7 +1942,7 @@
       "player": "Brady Singer",
       "team_2026": "CIN",
       "position": "SP",
-      "age_2027": 31,
+      "age_2027": 30,
       "role": "starter",
       "id": "mlb-663903",
       "war_2026": 0.1,
@@ -1974,7 +1975,7 @@
       "player": "Tyler Mahle",
       "team_2026": "ATL",
       "position": "SP",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "starter",
       "id": "mlb-641816",
       "war_2026": 2.1,
@@ -2007,7 +2008,7 @@
       "player": "Walker Buehler",
       "team_2026": "SDP",
       "position": "SP",
-      "age_2027": 33,
+      "age_2027": 32,
       "role": "starter",
       "id": "mlb-621111",
       "war_2026": 1.5,
@@ -2038,10 +2039,217 @@
     }
   ],
   "revision": {
-    "id": "R1",
-    "recorded_utc": "2026-10-30T00:38:24.986Z",
-    "base_snapshot_lock_sha256": "3f873ccd7fa74cd725cc2d021bdd0674323f8f81505a2a75d2be1d64f8c64294",
-    "summary": "Skubal's term set by hand to 10 years, priced from the recorded market values; Jake Bauers added as a note (expected to accept a qualifying offer). Every other row is unchanged."
+    "id": "R2",
+    "recorded_utc": "2026-10-30T00:47:15.696Z",
+    "base_snapshot_lock_sha256": "333e0bd6bde1f094824f966b11a08bf129f6f16cb75783057efbc11f1e9892ec",
+    "summary": "Ages corrected to 2027 season age (age on June 30). No listed price or term changed. R1 changes (Skubal's 10-year term, Bauers note) are kept.",
+    "previous": [
+      {
+        "id": "R1",
+        "recorded_utc": "2026-10-30T00:38:24.986Z",
+        "base_snapshot_lock_sha256": "3f873ccd7fa74cd725cc2d021bdd0674323f8f81505a2a75d2be1d64f8c64294",
+        "summary": "Skubal's term set by hand to 10 years, priced from the recorded market values; Jake Bauers added as a note (expected to accept a qualifying offer). Every other row is unchanged."
+      }
+    ],
+    "age_changes": [
+      {
+        "player": "Seiya Suzuki",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Dustin May",
+        "age_2027": [
+          30,
+          29
+        ]
+      },
+      {
+        "player": "Foster Griffin",
+        "age_2027": [
+          32,
+          31
+        ]
+      },
+      {
+        "player": "Shota Imanaga",
+        "age_2027": [
+          34,
+          33
+        ]
+      },
+      {
+        "player": "David Peterson",
+        "age_2027": [
+          32,
+          31
+        ]
+      },
+      {
+        "player": "Jack Flaherty",
+        "age_2027": [
+          32,
+          31
+        ]
+      },
+      {
+        "player": "Ian Happ",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "David Bednar",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Trent Grisham",
+        "age_2027": [
+          31,
+          30
+        ]
+      },
+      {
+        "player": "Michael Soroka",
+        "age_2027": [
+          30,
+          29
+        ]
+      },
+      {
+        "player": "Patrick Sandoval",
+        "age_2027": [
+          31,
+          30
+        ]
+      },
+      {
+        "player": "Daulton Varsho",
+        "age_2027": [
+          31,
+          30
+        ]
+      },
+      {
+        "player": "Brandon Lowe",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Kris Bubic",
+        "age_2027": [
+          30,
+          29
+        ]
+      },
+      {
+        "player": "Mauricio Dubon",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Jonathan Loaisiga",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Myles Straw",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Sandy Alcantara",
+        "age_2027": [
+          32,
+          31
+        ]
+      },
+      {
+        "player": "Corbin Burnes",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Drew Rasmussen",
+        "age_2027": [
+          32,
+          31
+        ],
+        "years": [
+          5,
+          6
+        ],
+        "total_musd": [
+          114.7,
+          125.6
+        ]
+      },
+      {
+        "player": "Ryan Helsley",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Jacob Webb",
+        "age_2027": [
+          34,
+          33
+        ]
+      },
+      {
+        "player": "Yuki Matsui",
+        "age_2027": [
+          32,
+          31
+        ]
+      },
+      {
+        "player": "Wandy Peralta",
+        "age_2027": [
+          36,
+          35
+        ]
+      },
+      {
+        "player": "Brady Singer",
+        "age_2027": [
+          31,
+          30
+        ]
+      },
+      {
+        "player": "Tyler Mahle",
+        "age_2027": [
+          33,
+          32
+        ]
+      },
+      {
+        "player": "Walker Buehler",
+        "age_2027": [
+          33,
+          32
+        ]
+      }
+    ]
   },
   "notes": [
     {

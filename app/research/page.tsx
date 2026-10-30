@@ -58,7 +58,7 @@ export default function ResearchFiles() {
       <p><Link href="/analysis/what-this-winters-free-agents-should-cost">Read the predictions</Link>.</p>
       <ul>
         <li><a href="/research/fa-predictions-2026-27.tar.gz" download>Download the predictions, protocol, amendments, locks and calibration scripts</a></li>
-        <li><a href="/research/fa-predictions-2026-27/PROTOCOL-FA-2027.md">Scoring protocol</a>, <a href="/research/fa-predictions-2026-27/DV-20261029.md">forecast conventions</a> and <a href="/research/fa-predictions-2026-27/LOCK-DV-20261029.json">input checksums and recording time</a>, plus <a href="/research/fa-predictions-2026-27/DV-20261029-R1.md">revision R1</a> and <a href="/research/fa-predictions-2026-27/LOCK-DV-20261029-R1.json">its lock</a></li>
+        <li><a href="/research/fa-predictions-2026-27/PROTOCOL-FA-2027.md">Scoring protocol</a>, <a href="/research/fa-predictions-2026-27/DV-20261029.md">forecast conventions</a> and <a href="/research/fa-predictions-2026-27/LOCK-DV-20261029.json">input checksums and recording time</a>, plus revisions <a href="/research/fa-predictions-2026-27/DV-20261029-R1.md">R1</a> and <a href="/research/fa-predictions-2026-27/DV-20261029-R2.md">R2</a> (ages) and <a href="/research/fa-predictions-2026-27/LOCK-DV-20261029-R2.json">the current lock</a></li>
         <li><a href="/research/fa-predictions-2026-27/predictions_frozen.csv">Predictions (CSV)</a> and <a href="/research/fa-predictions-2026-27/predictions_frozen.json">with flags and exclusions (JSON)</a></li>
       </ul>
       <p>The MLB Trade Rumors free-agent list and FanGraphs data are not redistributed; their checksums are in the locks.</p>

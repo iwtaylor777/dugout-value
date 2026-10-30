@@ -15,7 +15,7 @@ export const article: Article = {
   author: AUTHOR,
   published: "2026-10-25",
   dateLabel: "October 25, 2026",
-  status: "Estimates as of October 29, 2026, using Dugout Value projections through the completed 2026 season. Revised the same evening: Skubal’s term is set to 10 years by hand, and Jake Bauers is noted as a likely qualifying-offer acceptance.",
+  status: "Estimates as of October 29, 2026, using Dugout Value projections through the completed 2026 season. Revised the same evening: Skubal’s term is set to 10 years by hand, Jake Bauers is noted as a likely qualifying-offer acceptance, and 2027 ages are corrected (16 listed players had been a year too old; no listed price changed).",
   readTime: "7 min read",
   relatedTool: { href: "/tools/projections", label: "Explore the player forecasts behind the prices" },
   evidence: { href: `${FILES}.tar.gz`, label: "Dated predictions, scoring rules and input checksums (download)" },

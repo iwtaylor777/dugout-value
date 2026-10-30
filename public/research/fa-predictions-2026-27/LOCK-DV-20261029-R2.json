@@ -1,0 +1,17 @@
+{
+  "locked_utc": "2026-10-30T00:47:15.696Z",
+  "revision": "R2",
+  "base_lock": {
+    "LOCK-DV-20261029-R1.json": "333e0bd6bde1f094824f966b11a08bf129f6f16cb75783057efbc11f1e9892ec",
+    "verifies": "archive/2026-10-29-dv-r1/"
+  },
+  "inputs": {
+    "revise-dv-free-agents-r2.mjs": "9f114dccd775d66081df7ba96ec0cc0d8a74527a28595a3cba2d2bcfd8f66bec",
+    "player-database.json": "4903a2fd311b63b5f781bdaee15c62c3d7f8c19c786c023453878dbc9a8e0028"
+  },
+  "files": {
+    "predictions_frozen.json": "6775351b334b778bf12ea0c626173a854af8fd79b72dbec693d58584c936f0c4",
+    "predictions_frozen.csv": "16f85efe4590c5755ab94723aba246a4e20cdbd93eec50b60763ab09440e2c75"
+  },
+  "note": "Data correction recorded before any contract in this class was observed: 2027 ages only. Listed prices and terms are unchanged."
+}

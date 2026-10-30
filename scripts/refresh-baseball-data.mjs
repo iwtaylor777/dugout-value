@@ -978,8 +978,17 @@ for (const id of projectionIds) {
           future2027Projection ??
           primary ??
           backup;
-  const agingBaseAge = age
-    ? Math.floor(age) + (agingAnchorYear - BASE_YEAR)
+  // Season age is the age on June 30. RosterResource gives the current age, so adding a year to it makes
+  // players with summer or fall birthdays a year too old. Prefer FanGraphs' season age from the latest
+  // leaderboard row and advance it; fall back to the current age only without a playing record.
+  const historyAge = Number(latestHistory?.Age);
+  const nextSeasonAge = Number.isFinite(historyAge) && historyAge > 0
+    ? Math.round(historyAge) + (BASE_YEAR + 1 - Number(latestHistory.Season))
+    : age
+      ? Math.floor(age) + 1
+      : null;
+  const agingBaseAge = nextSeasonAge
+    ? nextSeasonAge + (agingAnchorYear - BASE_YEAR - 1)
     : isPitcher
       ? 28
       : 27;

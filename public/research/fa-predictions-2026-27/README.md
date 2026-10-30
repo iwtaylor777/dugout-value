@@ -4,8 +4,9 @@ Current estimates are recorded October 29, 2026, using DV Projections v1.3 throu
 
 ## Current snapshot
 
-- `predictions_frozen.json` / `.csv`: revision R1 of the 31 estimates, the top 30 modeled MLB totals expected to reach the market plus Teruaki Sato. They include the 2027 forecast used to price the contract, later WAR paths, fixed settings, flags, exclusions and unmodeled coverage.
-- `LOCK-DV-20261029-R1.json` and `DV-20261029-R1.md`: the revision's timestamp, hashes and the two editorial changes. Do not change this snapshot after observing contracts.
+- `predictions_frozen.json` / `.csv`: revision R2 of the 31 estimates, the top 30 modeled MLB totals expected to reach the market plus Teruaki Sato. They include the 2027 forecast used to price the contract, later WAR paths, fixed settings, flags, exclusions and unmodeled coverage.
+- `LOCK-DV-20261029-R2.json` and `DV-20261029-R2.md`: revision R2, which corrects 2027 ages (no listed price or term changed). Do not change this snapshot after observing contracts.
+- `LOCK-DV-20261029-R1.json` and `DV-20261029-R1.md`: revision R1's timestamp, hashes and two editorial changes. Its table is kept in `archive/2026-10-29-dv-r1/`.
 - `LOCK-DV-20261029.json`: timestamp and hashes of the original October 29 inputs, pricing code and prediction files, which are kept in `archive/2026-10-29-dv-original/`.
 - `DV-20261029.md`: precise source, coverage, workload and extension conventions.
 - `PROTOCOL-FA-2027.md`: scoring definitions for guarantees, term, AAV, flags, eligible contracts and dated benchmarks. The actual current freeze time is in the current lock; historical claims about when free agency would open are not used to date this release.
