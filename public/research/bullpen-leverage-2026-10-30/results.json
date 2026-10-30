@@ -356,5 +356,80 @@
    1.18,
    3.56
   ]
+ },
+ "decision_time": {
+  "note": "Added after the first results; not in the original plan.",
+  "fireman_swap_6th_8th": {
+   "LI>=1.8": {
+    "wins_per_team_season": -0.066,
+    "swaps_per_team_season": 21.0,
+    "losing_share": 0.51,
+    "LIsum_now": 7.91,
+    "LIsum_later": 9.21
+   },
+   "LI>=2.5": {
+    "wins": -0.007,
+    "swaps": 6.9
+   },
+   "LI>=3.0": {
+    "wins": -0.003,
+    "swaps": 3.7
+   },
+   "LI>=4.0": {
+    "wins": -0.003,
+    "swaps": 1.2
+   }
+  },
+  "rest_cost": {
+   "top2_low_leverage_appearances_per_season": 44,
+   "conflicts_per_team_season": 4.8,
+   "wins_per_team_season": 0.053
+  },
+  "hindsight_pooled_2021_26": {
+   "full_reshuffle_wins": 1.89,
+   "worst_mismatch_swap_wins": 0.77,
+   "worst_mismatch_swap_batters_per_team": 132
+  }
+ },
+ "repeatability": {
+  "efficiency_split_half_corr": 0.65,
+  "efficiency_yoy_corr": 0.14,
+  "pre9_targeting_yoy_corr": 0.01,
+  "closer_is_best_regular_share": 0.49,
+  "efficiency_by_closer_rank": {
+   "1": 0.654,
+   "2": 0.651,
+   "3": 0.61,
+   "4+": 0.605
+  },
+  "most_top10_finishes": {
+   "team": "WSH",
+   "count": 5,
+   "of": 6,
+   "chance_some_team_5plus": 0.44
+  }
+ },
+ "ninth_and_extras": {
+  "save_lead_1_3": {
+   "top2_share": 0.58,
+   "entry_LI": 2.0,
+   "n": 6398
+  },
+  "tied_home_pitching": {
+   "top2_share": 0.56,
+   "entry_LI": 2.24,
+   "n": 1252
+  },
+  "tied_road_pitching": {
+   "top2_share": 0.44,
+   "entry_LI": 2.26,
+   "n": 1092
+  },
+  "extras_first_reliever": {
+   "top2_share": 0.28,
+   "entry_LI": 2.88,
+   "n": 2122
+  },
+  "extras_first_reliever_not_top2_both_top2_already_used_share": 0.258
  }
 }

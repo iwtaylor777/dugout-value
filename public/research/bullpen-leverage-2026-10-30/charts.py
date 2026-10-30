@@ -1,7 +1,7 @@
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt, pandas as pd, numpy as np
 SURF="#f7f3e9"; INK="#172d3d"; INK2="#52514e"; MUTE="#8a8780"; GRID="#ddd6c6"; A="#2a78d6"; B="#eb6834"
 plt.rcParams.update({"font.family":"DejaVu Sans","font.size":12,"axes.edgecolor":MUTE,"axes.labelcolor":INK2,"xtick.color":INK2,"ytick.color":INK,"figure.facecolor":SURF,"axes.facecolor":SURF,"savefig.facecolor":SURF})
-out="/home/claude/dugout-value/public/analysis/teams-save-their-best-relievers-for-the-wrong-inning/"
+out="/home/claude/dugout-value/public/analysis/bullpen-management-is-harder-than-you-think/"
 d=pd.read_csv("inning_chart.csv",index_col=0)
 labels=["5th or\nearlier","6th","7th","8th","9th","Extras"]
 x=np.arange(len(d)); w=0.38
@@ -27,3 +27,15 @@ for s in ["top","right","left"]: ax.spines[s].set_visible(False)
 ax.tick_params(axis="y",length=0)
 fig.tight_layout(); fig.savefig(out+"team-efficiency-2026.png"); plt.close(fig)
 print("ok")
+# hindsight vs decision-time value (2021-26 pooled, wins per team per season)
+labs=["Reshuffle the whole season\n(knowing which spots got big)","Swap the worst mismatches\n(knowing which spots got big)","Rest top arms from low-leverage\nwork for the next day's big spot","Fireman swap at LI 1.8+\n(sixth through eighth)","Fireman swap at LI 2.5+"]
+vals=[1.89,0.77,0.05,-0.07,-0.01]; cols=[MUTE,MUTE,A,A,A]
+fig,ax=plt.subplots(figsize=(10,4.6),dpi=160); y=np.arange(len(vals))[::-1]
+ax.barh(y,vals,color=cols,height=0.6); ax.axvline(0,color=INK2,lw=1)
+for yi,v in zip(y,vals): ax.text(v+(0.04 if v>=0 else -0.04),yi,f"{v:+.2f}" if abs(v)<0.1 else f"{v:.1f}",va="center",ha="left" if v>=0 else "right",fontsize=11,color=INK)
+ax.set_yticks(y); ax.set_yticklabels(labs,fontsize=10.5); ax.set_xlim(-0.4,2.2)
+ax.set_xlabel("Wins gained per team per season, 2021–26")
+ax.grid(axis="x",color=GRID,lw=0.8); ax.set_axisbelow(True)
+for s in ["top","right","left"]: ax.spines[s].set_visible(False)
+ax.tick_params(axis="y",length=0); fig.tight_layout(); fig.savefig(out+"hindsight-vs-real-time.png"); plt.close(fig)
+print("ok2")

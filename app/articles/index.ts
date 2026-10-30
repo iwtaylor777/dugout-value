@@ -1,5 +1,5 @@
 import type { Article } from "./types";
-import { article as bullpenLeverage } from "./teams-save-their-best-relievers-for-the-wrong-inning";
+import { article as bullpenLeverage } from "./bullpen-management-is-harder-than-you-think";
 import { article as dvProjections } from "./our-projections-replace-zips";
 import { article as statcastWar } from "./a-statcast-war";
 import { article as defensePricing } from "./teams-pay-less-for-defense";
