@@ -1,0 +1,25 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { pageMetadata, webPageJsonLd } from "../../seo";
+import { JsonLd } from "../../json-ld";
+import { Publication } from "../../site-shell";
+import { FreeAgentTracker } from "./tracker";
+
+const title = "Free-agent tracker";
+const description = "Every player in the 2026–27 free-agent class with Dugout Value WAR projections, a contract estimate, 2026 fWAR, and the contract he actually signs.";
+export const metadata: Metadata = pageMetadata({ title, description, path: "/tools/free-agents" });
+
+export default function FreeAgentsPage() {
+  return <Publication active="tools">
+    <JsonLd data={webPageJsonLd({ type: "CollectionPage", title, description, path: "/tools/free-agents" })} />
+    <header className="section-intro"><p className="eyebrow">Dugout Value tools</p><h1>Free-agent tracker</h1><p>Every player in this winter’s class, with our projections, what we think he should get and, as deals are reported, what he actually got. The 31 players marked <em>Scored</em> are the predictions I <Link href="/analysis/what-this-winters-free-agents-should-cost">published on October 29</Link> and will grade at the end of the winter. Everyone else is priced the same way with the current model.</p></header>
+    <FreeAgentTracker />
+    <div className="dv-war-notes">
+      <h2>How to read it</h2>
+      <p><strong>DV WAR</strong> is the Dugout Value projection on a full-season scale: the model’s expected playing time or the player’s healthy workload, whichever is larger. The 2027–31 column adds the five seasons. <strong>fWAR 2026</strong> is FanGraphs WAR for the season just finished. A dash means he didn’t play in the majors. Teruaki Sato’s projection is a separate translation of his NPB record, and four relievers with too few recent innings for our model use ZiPS.</p>
+      <p><strong>Our estimate</strong> prices each projected season at $11M per win above a replacement-level allowance, with 20% more for wins above two, 3% annual inflation and a 10% discount rate. The term is capped by projected value and age, and ends when the forecast drops below one win (half a win for relievers). <em>Minimum</em> means the estimate is under $1M a year. These are what the projection says a contract is worth, not a forecast of who signs where.</p>
+      <p><strong>Options and opt-outs pending</strong> are players the model expects to stay put: a club option worth less than his projected 2027 value, or an opt-out leaving more guaranteed money than the market would pay. They move to available or signed when the decision is reported. Jake Bauers is listed as expected to accept a qualifying offer.</p>
+      <p>Scored predictions keep their frozen October 29 numbers (revision R2) even when the model changes. Everyone else is recalculated with the current Dugout Value projections as the model updates. The scored predictions, pricing code and settings are in <Link href="/research#fa-predictions-2027">the research files</Link>.</p>
+    </div>
+  </Publication>;
+}

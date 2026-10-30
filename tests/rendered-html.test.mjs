@@ -145,3 +145,14 @@ test("frozen article figures are dated to the model that made them and methods s
   assert.match(methods, /A reliever projected for more than 0.8 wins in a season is priced 50% higher/);
   assert.match(methods, /current tools use model 2026-10-25\.1/);
 });
+
+test("free-agent tracker renders the class with scored predictions", async () => {
+  const response = await render("/tools/free-agents");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<h1>Free-agent tracker<\/h1>/);
+  assert.match(html, /Tarik Skubal/);
+  assert.match(html, /Scored #<!-- -->1/);
+  assert.match(html, /\$386M/);
+  assert.match(html, /href="\/tools\/free-agents"[^>]*aria-current="page"|href="\/tools"[^>]*aria-current="page"/);
+});

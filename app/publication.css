@@ -307,3 +307,20 @@ figure.article-figure figcaption strong { color: #172d3d; }
 .dv-war-board thead th { position: sticky; top: 0; background: #eee8d9; }
 .dv-war-notes { max-width: 760px; font-size: 15px; line-height: 1.65; color: #3d4a51; padding-bottom: 50px; }
 @media (max-width: 640px) { .dv-war-controls { grid-template-columns: 1fr 1fr; } .dv-war-controls label:last-child { grid-column: 1 / -1; } }
+
+.fa-summary { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 0 0 18px; padding: 14px 0; border-top: 1px solid #ddd5c4; border-bottom: 1px solid #ddd5c4; }
+.fa-summary p { margin: 0; display: flex; flex-direction: column; }
+.fa-summary strong { font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.fa-summary span { font-size: 12px; color: #536067; }
+.fa-controls { grid-template-columns: 220px 150px 190px minmax(0, 300px); }
+.fa-badge { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 3px; background: #e6eef0; color: #24525c; font-size: 10px; font-weight: 700; letter-spacing: .02em; vertical-align: 2px; }
+.fa-flag { display: block; max-width: 340px; font-weight: 400; font-style: italic; color: #6c6a64; font-size: 11px; line-height: 1.35; margin-top: 2px; white-space: normal; }
+.fa-table tbody th[scope=row] { min-width: 200px; }
+.fa-table td.fa-status { font-size: 13px; min-width: 150px; }
+.fa-muted { color: #6c6a64; }
+.fa-pending th, .fa-pending td { color: #5f6b70; }
+.fa-signed { background: #f6f3ea; }
+.fa-over { color: #8a3b12; }
+.fa-under { color: #24525c; }
+.fa-updated { font-size: 12px; color: #6c6a64; margin: 8px 0 0; }
+@media (max-width: 760px) { .fa-controls { grid-template-columns: 1fr 1fr; } .fa-controls label:last-child { grid-column: 1 / -1; } .fa-summary strong { font-size: 20px; } }
