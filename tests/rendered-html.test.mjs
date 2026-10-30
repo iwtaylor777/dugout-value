@@ -18,7 +18,7 @@ test("trade route presents the reviewed snapshot, the offseason default and the 
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /<h1>Trade builder<\/h1>/);
-  assert.match(html, /Tool data checked <!-- -->October 18, 2026/);
+  assert.match(html, /Data checked <!-- -->October 18, 2026/);
   assert.match(html, /Off · 2026 season complete/);
   assert.match(html, /Pittsburgh Pirates give up \$47\.4M more at the midpoint/);
   assert.match(html, /58\.1% of the larger side/);
@@ -34,7 +34,7 @@ test("trade route presents the reviewed snapshot, the offseason default and the 
   assert.doesNotMatch(html, /receives .*’s package/);
   assert.match(html, /<details class="assumptions"/);
   assert.match(html, /<details class="editor-advanced"/);
-  assert.match(html, /href="\/tools\/trade" aria-current="page"/);
+  assert.match(html, /href="\/tools\/trade"[^>]*aria-current="page"/);
   assert.doesNotMatch(html, /Deadline trade lab/);
   assert.doesNotMatch(html, /On · current wins \+ October/);
   assert.doesNotMatch(html, /Pirates’s|\bis is\b|Baseline market/);
@@ -42,17 +42,18 @@ test("trade route presents the reviewed snapshot, the offseason default and the 
 
 test("each tool route renders its own view and stable navigation", async () => {
   const routes = [
-    ["/tools/finder", /Turn a roster hole into a short list/],
+    ["/tools/finder", /Choose a need/],
     ["/tools/projections", /<h1>Player projections<\/h1>/],
-    ["/tools/rankings", /Top 100 by surplus value/],
+    ["/tools/rankings", /Top 100 shown by default\. Search all players\./],
   ];
   for (const [path, heading] of routes) {
     const response = await render(path);
     assert.equal(response.status, 200, path);
     const html = await response.text();
     assert.match(html, heading, path);
-    assert.match(html, /Tool data checked <!-- -->October 18, 2026/, path);
-    assert.match(html, new RegExp(`href="${path}" aria-current="page"`), path);
+    assert.match(html, /Data checked <!-- -->October 18, 2026/, path);
+    assert.match(html, new RegExp(`href="${path}"[^>]*aria-current="page"`), path);
+    assert.match(html, /aria-label="Trade builder"/, path);
     assert.match(html, /href="\/tools\/trade"/, path);
   }
 });
@@ -63,6 +64,31 @@ test("finder distinguishes club control from player-option years", async () => {
   const html = await response.text();
   assert.match(html, /Club control through 2029 · player option through 2034/);
   assert.doesNotMatch(html, /Long-term control<!-- --> through <!-- -->2037/);
+});
+
+test("rankings have semantic headers, a compact default, and an evergreen guide", async () => {
+  const html = await (await render("/tools/rankings")).text();
+  assert.match(html, /<table class="rankings-table compact">/);
+  assert.match(html, /<caption>Top 100 players/);
+  assert.match(html, /<th scope="col"[^>]*>Player<\/th>/);
+  assert.match(html, /<th scope="row" class="ranking-player ranking-name-column">/);
+  assert.match(html, /League rank/);
+  assert.match(html, /Control years/);
+  assert.match(html, /aria-pressed="true"[^>]*>Compact/);
+  assert.match(html, /href="\/methods\/surplus-value"/);
+  assert.doesNotMatch(html, /Top 100 by surplus value/);
+  assert.match(html, /Ranges are not confidence intervals/);
+});
+
+test("homepage arrows use SVG and historical context precedes the article figures", async () => {
+  const home = await (await render("/")).text();
+  assert.match(home, /<svg class="nav-arrow"/);
+  assert.doesNotMatch(home, /↗/);
+  const article = await (await render("/analysis/what-trade-value-measures")).text();
+  assert.ok(article.indexOf('class="historical-note"') < article.indexOf('class="article-deck"'));
+  const guide = await (await render("/methods/surplus-value")).text();
+  assert.match(guide, /Illustrative example, not a current player or the full model/);
+  assert.match(guide, /scenario allowances, not confidence intervals/);
 });
 
 test("published research separates scoring eligibility from evidence of improvement", async () => {

@@ -11,8 +11,8 @@ import {
   prospectValues as modelProspectValues,
   valuePlayer,
 } from "../lib/value-model.mjs";
-import { SnapshotNotice } from "./site-shell";
 import { PlayerValueDialog } from "./player-value-dialog";
+import { ToolConnectionStatus } from "./tool-connection-status";
 import { buildTradeShareUrl, decodeTradeState, isLegacySettingsLink, resolveSharedPlayerId, restoreSharedSettings, sharedModelWarning, sharedSnapshotWarning, TRADE_SHARE_MODEL_VERSION } from "../lib/trade-share.mjs";
 import {
   MAX_CASH_AMOUNT,
@@ -118,6 +118,7 @@ type ThreeYearProjectionSeason = {
 type MLBSeason = {
   year: number;
   war: number;
+  warOverride?: boolean;
   projectionBaselineWar?: number;
   inSeasonAdjustment?: number;
   signalPersistence?: number;
@@ -363,6 +364,7 @@ const withProjectionSource = <P extends Player>(player: P, source: ProjectionSou
   // A WAR the user typed in wins over either projection source.
   const original = initialPlayers[player.id];
   const untouched = (season: MLBSeason) =>
+    !season.warOverride &&
     original?.kind === "mlb" &&
     original.seasons.some((item) => item.year === season.year && item.war === season.war);
   return {
@@ -1084,6 +1086,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
   );
   const [rankingTeam, setRankingTeam] = useState("ALL");
   const [rankingSearch, setRankingSearch] = useState("");
+  const [rankingDisplay, setRankingDisplay] = useState<"compact" | "detailed">("compact");
   const [projectionTeam, setProjectionTeam] = useState("ALL");
   const [projectionRole, setProjectionRole] =
     useState<ProjectionRoleFilter>("all");
@@ -1115,6 +1118,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
 
   useEffect(() => {
     const onPopState = () => {
+      setDriversOrigin(null);
       const route = Object.entries(TAB_PATHS).find(([, path]) => path === window.location.pathname);
       if (route) setActiveTab(route[0] as ActiveTab);
     };
@@ -1125,6 +1129,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
   useEffect(() => {
     document.title = `${TAB_TITLES[activeTab]} | Dugout Value`;
   }, [activeTab]);
+
+  useEffect(() => {
+    if (openPicker) document.querySelector(".picker-menu .is-active")?.scrollIntoView({ block: "nearest" });
+  }, [openPicker, pickerIndex]);
 
   useEffect(() => {
     if (window.location.hash !== "#methodology") return;
@@ -1531,6 +1539,12 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
       .sort((a, b) => (values[b.id]?.total ?? 0) - (values[a.id]?.total ?? 0)),
     [players, values]);
   const leagueRanks = useMemo(() => new Map(leagueRankings.map((player, index) => [player.id, index + 1])), [leagueRankings]);
+  const rankingsFiltered = Boolean(rankingSearch.trim() || rankingTeam !== "ALL" || rankingType !== "all");
+  const clearRankingFilters = () => {
+    setRankingSearch("");
+    setRankingTeam("ALL");
+    setRankingType("all");
+  };
   const rankedPlayers = useMemo(() => {
     const query = rankingSearch.trim().toLowerCase();
     return leagueRankings
@@ -1538,7 +1552,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
       .filter((player) => rankingTeam === "ALL" || player.team === rankingTeam)
       .filter((player) =>
         query
-          ? `${player.name} ${player.team} ${displayPosition(player)} ${
+          ? `${player.name} ${player.team} ${teamName(player.team)} ${displayPosition(player)} ${
               player.kind === "prospect" ? player.fv : "mlb"
             } ${
               player.kind === "mlb"
@@ -1549,8 +1563,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               .includes(query)
           : true,
       )
-      .slice(0, 100);
-  }, [leagueRankings, rankingSearch, rankingTeam, rankingType]);
+      .slice(0, rankingsFiltered ? undefined : 100);
+  }, [leagueRankings, rankingSearch, rankingTeam, rankingType, rankingsFiltered]);
   const projectedPlayers = useMemo(() => {
     const query = projectionSearch.trim().toLowerCase();
     return Object.values(players)
@@ -1583,6 +1597,19 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             (list ?? []).map((season) => [season.year, season]),
           ) as Record<number, ThreeYearProjectionSeason>;
         const seasons = bySeason(player.threeYearProjection);
+        const editedYears: number[] = [];
+        // Display custom WAR in the forecast board as well as the valuation.
+        // Keep the saved source forecast separate for the comparison column.
+        const saved = initialPlayers[original.id];
+        if (saved?.kind === "mlb") {
+          for (const season of original.seasons) {
+            const baseline = saved.seasons.find((item) => item.year === season.year);
+            if (baseline && (season.warOverride || baseline.war !== season.war) && seasons[season.year]) {
+              seasons[season.year] = { ...seasons[season.year], war: season.war };
+              editedYears.push(season.year);
+            }
+          }
+        }
         const zipsSeasons = bySeason(original.threeYearProjection);
         const dv = player.dvProjection ? dvProjections.players[player.id] : undefined;
         const total = VISIBLE_PROJECTION_YEARS.reduce(
@@ -1600,7 +1627,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 sum + Number(seasons[year]?.inSeasonAdjustment ?? 0),
               0,
             );
-        return { player, seasons, total, change, dv };
+        return { player, seasons, total, change, dv, editedYears };
       })
       .sort((left, right) => {
         if (projectionSort === "name")
@@ -1954,6 +1981,25 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
     goToTab("trade");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const buildAroundPlayer = () => {
+    if (!driversOrigin || !selected) return;
+    clearSharedTradeUrl();
+    setLeftTeam(selected.team);
+    setLeftIds([selected.id]);
+    setRightTeam(rightTeam !== selected.team ? rightTeam : leftTeam !== selected.team ? leftTeam : database.teams.find((team) => team.abbr !== selected.team)!.abbr);
+    setRightIds([]);
+    setLeftCash(0);
+    setRightCash(0);
+    setLeftSearch("");
+    setRightSearch("");
+    setOpenPicker(null);
+    setAdvancedOpen(true);
+    setDriversOrigin(null);
+    setShareStatus("idle");
+    setSnapshotWarning(null);
+    setFinderNotice(`Started a new trade around ${selected.name}. Your player edits, ${settings.projectionSource === "dv" ? "Dugout Value" : "ZiPS"} projections, and ${viewLabel(settings.valuationView)} carried over.`);
+    goToTab("trade");
+  };
   const openMethod = () => {
     setShowMethod(true);
     window.setTimeout(() => {
@@ -2160,6 +2206,92 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
           </div>
           <strong>{money(total)}</strong>
         </div>
+          <div className="player-picker">
+            <input
+              role="combobox"
+              aria-autocomplete="list"
+              aria-label={`Search ${teamName(team)} players`}
+              aria-expanded={openPicker === side}
+              aria-controls={`${side}-player-results`}
+              placeholder={`Search ${teamName(team)} players…`}
+              value={search}
+              aria-activedescendant={
+                openPicker === side && matches[pickerIndex]
+                  ? `${side}-player-${matches[pickerIndex].id}`
+                  : undefined
+              }
+              onFocus={() => {
+                setOpenPicker(side);
+                setPickerIndex(0);
+              }}
+              onBlur={(event) => {
+                if (!event.currentTarget.parentElement?.contains(event.relatedTarget)) setOpenPicker(null);
+              }}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setOpenPicker(side);
+                setPickerIndex(0);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowDown" && matches.length) {
+                  event.preventDefault();
+                  setOpenPicker(side);
+                  setPickerIndex((index) => openPicker === side ? Math.min(index + 1, matches.length - 1) : 0);
+                }
+                if (event.key === "ArrowUp" && matches.length) {
+                  event.preventDefault();
+                  setOpenPicker(side);
+                  setPickerIndex((index) => Math.max(index - 1, 0));
+                }
+                if (event.key === "Enter" && openPicker === side && matches[pickerIndex]) {
+                  event.preventDefault();
+                  choosePlayer(matches[pickerIndex]);
+                }
+                if (event.key === "Escape") { event.preventDefault(); setOpenPicker(null); }
+              }}
+            />
+            {openPicker === side && (
+              <div
+                className="picker-menu"
+                id={`${side}-player-results`}
+                role="listbox"
+              >
+                <span className="picker-heading">
+                  {query ? "Search results" : "Top suggestions · type to search all"}
+                </span>
+                {matches.length ? (
+                  matches.map((player, index) => (
+                    <button
+                      type="button"
+                      role="option"
+                      tabIndex={-1}
+                      aria-selected={pickerIndex === index}
+                      key={player.id}
+                      id={`${side}-player-${player.id}`}
+                      className={pickerIndex === index ? "is-active" : ""}
+                      onMouseEnter={() => setPickerIndex(index)}
+                      onPointerDown={(event) => event.preventDefault()}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => choosePlayer(player)}
+                    >
+                      <span>
+                        <strong>{player.name}</strong>
+                        <small>
+                          {displayPosition(player)} · {player.kind === "prospect" ? `${player.fv} FV prospect` : "MLB"}
+                          {values[player.id]?.pendingFreeAgent
+                            ? " · Pending free agent"
+                            : ""}
+                        </small>
+                      </span>
+                      <b>{money(values[player.id]?.total ?? 0)}</b>
+                    </button>
+                  ))
+                ) : (
+                  <p>No matching players in this organization.</p>
+                )}
+              </div>
+            )}
+          </div>
         <div className="player-stack">
           {ids.length ? (
             ids.map((id) => renderCard(id, side))
@@ -2195,88 +2327,6 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
           )}
         </label>
         <div className="add-row">
-          <div className="player-picker">
-            <input
-              role="combobox"
-              aria-autocomplete="list"
-              aria-label={`Search ${teamName(team)} players`}
-              aria-expanded={openPicker === side}
-              aria-controls={`${side}-player-results`}
-              placeholder={`Search ${teamName(team)} players…`}
-              value={search}
-              aria-activedescendant={
-                openPicker === side && matches[pickerIndex]
-                  ? `${side}-player-${matches[pickerIndex].id}`
-                  : undefined
-              }
-              onFocus={() => {
-                setOpenPicker(side);
-                setPickerIndex(0);
-              }}
-              onBlur={() => window.setTimeout(() => setOpenPicker(null), 120)}
-              onChange={(event) => {
-                setSearch(event.target.value);
-                setOpenPicker(side);
-                setPickerIndex(0);
-              }}
-              onKeyDown={(event) => {
-                if (event.key === "ArrowDown" && matches.length) {
-                  event.preventDefault();
-                  setPickerIndex((index) =>
-                    Math.min(index + 1, matches.length - 1),
-                  );
-                }
-                if (event.key === "ArrowUp" && matches.length) {
-                  event.preventDefault();
-                  setPickerIndex((index) => Math.max(index - 1, 0));
-                }
-                if (event.key === "Enter" && matches[pickerIndex]) {
-                  event.preventDefault();
-                  choosePlayer(matches[pickerIndex]);
-                }
-                if (event.key === "Escape") setOpenPicker(null);
-              }}
-            />
-            {openPicker === side && (
-              <div
-                className="picker-menu"
-                id={`${side}-player-results`}
-                role="listbox"
-              >
-                <span className="picker-heading">
-                  {query ? "Search results" : "Top suggestions · type to search all"}
-                </span>
-                {matches.length ? (
-                  matches.map((player, index) => (
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={pickerIndex === index}
-                      key={player.id}
-                      id={`${side}-player-${player.id}`}
-                      className={pickerIndex === index ? "is-active" : ""}
-                      onMouseEnter={() => setPickerIndex(index)}
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => choosePlayer(player)}
-                    >
-                      <span>
-                        <strong>{player.name}</strong>
-                        <small>
-                          {displayPosition(player)} · {player.kind === "prospect" ? `${player.fv} FV prospect` : "MLB"}
-                          {values[player.id]?.pendingFreeAgent
-                            ? " · Pending free agent"
-                            : ""}
-                        </small>
-                      </span>
-                      <b>{money(values[player.id]?.total ?? 0)}</b>
-                    </button>
-                  ))
-                ) : (
-                  <p>No matching players in this organization.</p>
-                )}
-              </div>
-            )}
-          </div>
           <button onClick={() => addCustom(side, "mlb")}>Custom MLB</button>
           <button onClick={() => addCustom(side, "prospect")}>
             Custom prospect
@@ -2304,32 +2354,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
     </label>
   );
 
+  const toolContext = () => <p className="tool-data-note">Data checked {prettyDate(database.meta.refreshed)} · {viewLabel(activeTab === "discover" ? DISCOVERY_VIEW : settings.valuationView)} · <Link href="/methods#data">Sources & dates</Link></p>;
+
   const renderDiscovery = () => (
     <section className="discovery-panel" aria-label="Trade discovery tool">
-      <header className="discovery-heading">
-        <div>
-          <span>Trade finder</span>
-          <h2>Turn a roster hole into a short list</h2>
-          <p>
-            Pick a club, choose one of its weakest position groups, and compare
-            projected upgrades across the league. Then open a
-            value-matched offer in the trade builder.
-          </p>
-        </div>
-        <b>{BASE_YEAR + 1} roster planning</b>
-      </header>
-      <p className="finder-banner" role="note">
-        <strong>
-          Roster and contract data checked {prettyDate(database.meta.refreshed)}.
-          These are model comparisons, not reports of player availability.
-        </strong>
-        <span>
-          The finder uses the {viewLabel(DISCOVERY_VIEW)}. Offers opened in
-          the builder use the same view. Completed-season playoff odds do not
-          restrict the offseason player pool.
-        </span>
-      </p>
-
       <div className="discovery-controls">
         {projectionSourceControl()}
         <label>
@@ -2361,6 +2389,12 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             <option value="50">50% odds or lower</option>
           </select>
         </label>
+      </div>
+      {toolContext()}
+      <p className="tool-caveat">Model comparisons, not reports of player availability.</p>
+      <details className="tool-help">
+        <summary>How this works</summary>
+        <p>Choose a need, select a target, then open an offer in the builder. Your projection source, player edits, and {viewLabel(DISCOVERY_VIEW)} carry over.</p>
         <div className="discovery-source">
           <span>Archived playoff context</span>
           <strong>{playoffOddsData.mode}</strong>
@@ -2368,8 +2402,6 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             FanGraphs odds · {prettyDate(playoffOddsData.refreshed)} ↗
           </a>
         </div>
-      </div>
-
       <div className="discovery-explainer">
         <span>How needs are ranked</span>
         <p>
@@ -2383,6 +2415,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
           health, and trade protection. These inputs do not establish availability.
         </p>
       </div>
+      </details>
 
       <div className="discovery-columns">
         <section className="need-board">
@@ -2529,8 +2562,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 <p>
                   {offer.salaryRelief
                     ? "The target has non-positive surplus value; retained salary or cash would determine the final shape."
-                    : offer.gap === 0
-                      ? "The midpoints match exactly."
+                    : Math.abs(offer.gap) < 0.05
+                      ? "The midpoints match to the displayed $0.1M precision."
                       : `${money(Math.abs(offer.gap))} ${offer.gap > 0 ? "above" : "below"} the target’s midpoint.`}
                 </p>
                 <button
@@ -3145,7 +3178,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                                 updateMlbSeasonAt(
                                   selected.id,
                                   index,
-                                  (item) => ({ ...item, war: value }),
+                                  (item) => ({ ...item, war: value, warOverride: true }),
                                 )
                               }
                             />
@@ -3457,7 +3490,6 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
       <div className="page" id="top">
         <section className="intro">
           <div>
-            <p className="kicker">Dugout Value tools</p>
             <h1>
               {activeTab === "trade"
                 ? "Trade builder"
@@ -3474,7 +3506,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   ? "Pick a team and compare projected upgrades at its weakest positions."
                   : activeTab === "projections"
                     ? `fWAR forecasts for ${PROJECTION_YEAR_RANGE}, with source notes and model adjustments.`
-                    : "The 100 players and prospects with the most modeled surplus value."}
+                    : "Compare player value after salary, then explore the assumptions behind it."}
             </p>
           </div>
         </section>
@@ -3484,6 +3516,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               <a
                 key={tab}
                 href={TAB_PATHS[tab]}
+                aria-label={TAB_TITLES[tab]}
                 aria-current={activeTab === tab ? "page" : undefined}
                 className={activeTab === tab ? "is-active" : ""}
                 onClick={(event) => {
@@ -3499,8 +3532,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
           </nav>
           {activeTab === "trade" && (
             <div className="tool-toolbar" role="group" aria-label="Trade actions">
-              <button type="button" className="toolbar-button" onClick={openMethod}>
-                Calculation
+              <button type="button" className="toolbar-button" onClick={() => {
+                const panel = document.getElementById("model-assumptions") as HTMLDetailsElement | null;
+                if (panel) { panel.open = true; panel.scrollIntoView({ block: "start", behavior: "smooth" }); panel.focus({ preventScroll: true }); }
+              }}>
+                Model settings
               </button>
               <button type="button" className="toolbar-button" onClick={resetTrade}>
                 Load example
@@ -3511,7 +3547,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             </div>
           )}
         </div>
-        <SnapshotNotice />
+        <ToolConnectionStatus />
         {snapshotWarning && <p className="snapshot-warning" role="alert">{snapshotWarning}</p>}
         {activeTab === "trade" &&
           finderNotice &&
@@ -3520,7 +3556,223 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
           )}
         {activeTab === "trade" ? (
           <>
-        <details className="assumptions">
+        <div className="builder-primary-controls">{projectionSourceControl()}<p>Choose two teams and search their players below.</p></div>
+        {toolContext()}
+        <div className="trade-live-summary" aria-label="Live package totals">
+          <span>{leftTeam} <strong>{money(leftTotal)}</strong></span>
+          <span>{rightTeam} <strong>{money(rightTotal)}</strong></span>
+          <span>{hasPlayers ? `Gap ${money(Math.abs(difference))}` : "Add players to compare"}</span>
+          <a href="#trade-comparison">Full comparison</a>
+        </div>
+
+        <section className="trade-shell">
+          <div className="trade-board">
+            <div className="trade-sides">
+              {renderTeamSide({
+                side: "left",
+                team: leftTeam,
+                ids: leftIds,
+                total: leftTotal,
+              })}
+              {renderTeamSide({
+                side: "right",
+                team: rightTeam,
+                ids: rightIds,
+                total: rightTotal,
+              })}
+              <div
+                className="trade-verdict"
+                id="trade-comparison"
+                aria-label="Trade comparison scoreboard"
+              >
+                <div className="scoreboard-line">
+                  <div className="scoreboard-team">
+                    <span>{leftTeam} package</span>
+                    <strong>{money(leftTotal)}</strong>
+                    <small>
+                      Range {rangeText(leftLow, leftHigh)}
+                    </small>
+                  </div>
+                  <div className="scoreboard-center">
+                    <strong>{verdictHeadline}</strong>
+                    {(verdictState === "overlap" || verdictState === "clear") && (
+                      <small className="gap-share">{gapDetailText}</small>
+                    )}
+                    <span
+                      className={`verdict-stamp ${verdictState === "clear" ? "" : "balanced"}`}
+                    >
+                      {verdictStamp}
+                    </span>
+                    <p>{verdictSentence}</p>
+                  </div>
+                  <div className="scoreboard-team scoreboard-team-right">
+                    <span>{rightTeam} package</span>
+                    <strong>{money(rightTotal)}</strong>
+                    <small>
+                      Range {rangeText(rightLow, rightHigh)}
+                    </small>
+                  </div>
+                </div>
+                {(verdictState === "even" || verdictState === "overlap" || verdictState === "clear") && (
+                  <>
+                    <p className="scoreboard-range-note">
+                      Each range adds a set allowance for player risk, injury, and years of control. It isn’t a confidence interval, and it doesn’t say whether a club would agree. Open Model settings to test a different assumption.
+                    </p>
+                    <p className="scoreboard-links">
+                      <button type="button" className="text-button" onClick={openMethod}>
+                        Why this result? →
+                      </button>
+                      <Link href="/analysis/how-to-read-value-ranges">How to read ranges →</Link>
+                    </p>
+                  </>
+                )}
+                {(tradeProtectionSummary || availabilitySummary) && (
+                  <div className="scoreboard-context">
+                    {tradeProtectionSummary && (
+                      <p className="trade-caveat">
+                        {tradeProtectionSummary}. {protectedPackagePlayers.length === 1 ? "His value isn’t reduced for it." : "Their values aren’t reduced for it."}
+                      </p>
+                    )}
+                    {availabilitySummary && (
+                      <p className="trade-caveat availability-caveat">
+                        {availabilitySummary}. The range is wider. The projection already accounts for missed time, so the midpoint isn’t cut again.
+                      </p>
+                    )}
+                  </div>
+                )}
+                {consolidation && (
+                  <div className="package-shape-note">
+                    <span>Package shape</span>
+                    <strong>
+                      {teamName(
+                        consolidation.headlinerSide === "left"
+                          ? leftTeam
+                          : rightTeam,
+                      )} give up the best player in the deal
+                    </strong>
+                    <p>
+                      The totals are close, but the other side is paying in
+                      quantity. Teams usually want a premium for the best
+                      player in a deal, and this model doesn’t add one. A close
+                      total here probably understates what{" "}
+                      {teamName(
+                        consolidation.headlinerSide === "left"
+                          ? leftTeam
+                          : rightTeam,
+                      )} would ask for.
+                    </p>
+                  </div>
+                )}
+                <div className="scoreboard-actions">
+                  <div className="trade-actions">
+                    <button onClick={swapTeams}>Swap teams</button>
+                    <button className="share-trade" onClick={copyTradeLink}>
+                      Copy trade link
+                    </button>
+                  </div>
+                  <small className="share-status" aria-live="polite">
+                    {shareStatus === "loaded"
+                      ? "Shared trade loaded"
+                      : shareStatus === "copied"
+                        ? "Link copied"
+                        : shareStatus === "error"
+                          ? "Couldn’t copy link"
+                          : "Link saves players, cash, and any edits."}
+                  </small>
+                </div>
+              </div>
+            </div>
+            <TradeSensitivity
+              players={sourcedPlayers}
+              settings={settings}
+              leftIds={leftIds}
+              rightIds={rightIds}
+              leftCash={leftCash}
+              rightCash={rightCash}
+              leftTeam={leftTeam}
+              rightTeam={rightTeam}
+            />
+            <section className="year-ledger">
+              <div className="section-title">
+                <div>
+                  <span>Control years</span>
+                  <h2>Value by control year</h2>
+                </div>
+              </div>
+              {allYears.length || leftCash > 0 || rightCash > 0 ? (
+                  <div className="ledger-table">
+                    <div className="ledger-row ledger-head">
+                      <span>Year</span>
+                      <span>{leftTeam} package</span>
+                      <span>Annual comparison</span>
+                      <span>{rightTeam} package</span>
+                    </div>
+                    {ledgerYears.map((year) => {
+                      const lv = sideYearValue(leftIds, year),
+                        rv = sideYearValue(rightIds, year);
+                      if (yearIsExcluded(year))
+                        return (
+                          <div className="ledger-row ledger-excluded" key={year}>
+                            <strong>{year}</strong>
+                            <span>—</span>
+                            <small>Not counted: the {year} regular season is over</small>
+                            <span>—</span>
+                          </div>
+                        );
+                      return (
+                        <div className="ledger-row" key={year}>
+                          <strong>{year}</strong>
+                          <span>{money(lv)}</span>
+                          <div className="year-bars">
+                            <i
+                              className={`left-bar ${lv < 0 ? "negative" : ""}`}
+                              style={{ width: `${barWidth(lv)}%` }}
+                            />
+                            <b />
+                            <i
+                              className={`right-bar ${rv < 0 ? "negative" : ""}`}
+                              style={{ width: `${barWidth(rv)}%` }}
+                            />
+                          </div>
+                          <span>{money(rv)}</span>
+                        </div>
+                      );
+                    })}
+                    {(leftCash > 0 || rightCash > 0) && (
+                      <div className="ledger-row cash-ledger-row">
+                        <strong>Cash / relief</strong>
+                        <span>{money(leftCash)}</span>
+                        <div className="year-bars">
+                          <i
+                            className="left-bar"
+                            style={{
+                              width: `${leftCash > 0 ? Math.max(2, (leftCash / maxYearValue) * 96) : 0}%`,
+                            }}
+                          />
+                          <b />
+                          <i
+                            className="right-bar"
+                            style={{
+                              width: `${rightCash > 0 ? Math.max(2, (rightCash / maxYearValue) * 96) : 0}%`,
+                            }}
+                          />
+                        </div>
+                        <span>{money(rightCash)}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="empty-ledger">
+                    Add players to compare the packages.
+                  </p>
+                )}
+            </section>
+          </div>
+
+          {renderPlayerEditor()}
+        </section>
+        <details className="tool-help"><summary>How this works</summary><p>Surplus value prices projected production, subtracts salary, and adds up club-control years. Edit a player or the model assumptions to test your view. Surplus value is not an asking price; ranges are scenario allowances, not confidence intervals. <Link href="/methods/surplus-value">How surplus value works</Link>.</p></details>
+        <details className="assumptions" id="model-assumptions" tabIndex={-1}>
           <summary>Model assumptions · {viewLabel(settings.valuationView)} · {discountLabel(settings.timingPreference).short} · edit values</summary>
         <section className="model-strip">
           <div>
@@ -3886,216 +4138,6 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             </p>
           </section>
         </details>
-
-        <section className="trade-shell">
-          <div className="trade-board">
-            <div className="package-explainer">
-              <span>How to read this</span>
-              <strong>Each column is what that team gives up.</strong>
-            </div>
-            <div className="trade-sides">
-              {renderTeamSide({
-                side: "left",
-                team: leftTeam,
-                ids: leftIds,
-                total: leftTotal,
-              })}
-              {renderTeamSide({
-                side: "right",
-                team: rightTeam,
-                ids: rightIds,
-                total: rightTotal,
-              })}
-              <div
-                className="trade-verdict"
-                aria-label="Trade comparison scoreboard"
-              >
-                <div className="scoreboard-line">
-                  <div className="scoreboard-team">
-                    <span>{leftTeam} package</span>
-                    <strong>{money(leftTotal)}</strong>
-                    <small>
-                      Range {rangeText(leftLow, leftHigh)}
-                    </small>
-                  </div>
-                  <div className="scoreboard-center">
-                    <strong>{verdictHeadline}</strong>
-                    {(verdictState === "overlap" || verdictState === "clear") && (
-                      <small className="gap-share">{gapDetailText}</small>
-                    )}
-                    <span
-                      className={`verdict-stamp ${verdictState === "clear" ? "" : "balanced"}`}
-                    >
-                      {verdictStamp}
-                    </span>
-                    <p>{verdictSentence}</p>
-                  </div>
-                  <div className="scoreboard-team scoreboard-team-right">
-                    <span>{rightTeam} package</span>
-                    <strong>{money(rightTotal)}</strong>
-                    <small>
-                      Range {rangeText(rightLow, rightHigh)}
-                    </small>
-                  </div>
-                </div>
-                {(verdictState === "even" || verdictState === "overlap" || verdictState === "clear") && (
-                  <>
-                    <p className="scoreboard-range-note">
-                      Each range adds a set allowance for player risk, injury, and years of control. It isn’t a confidence interval, and it doesn’t say whether a club would agree. To test a setting, change it in the assumptions panel above.
-                    </p>
-                    <p className="scoreboard-links">
-                      <button type="button" className="text-button" onClick={openMethod}>
-                        Why this result? →
-                      </button>
-                      <Link href="/analysis/how-to-read-value-ranges">How to read ranges →</Link>
-                    </p>
-                  </>
-                )}
-                {(tradeProtectionSummary || availabilitySummary) && (
-                  <div className="scoreboard-context">
-                    {tradeProtectionSummary && (
-                      <p className="trade-caveat">
-                        {tradeProtectionSummary}. {protectedPackagePlayers.length === 1 ? "His value isn’t reduced for it." : "Their values aren’t reduced for it."}
-                      </p>
-                    )}
-                    {availabilitySummary && (
-                      <p className="trade-caveat availability-caveat">
-                        {availabilitySummary}. The range is wider. The projection already accounts for missed time, so the midpoint isn’t cut again.
-                      </p>
-                    )}
-                  </div>
-                )}
-                {consolidation && (
-                  <div className="package-shape-note">
-                    <span>Package shape</span>
-                    <strong>
-                      {teamName(
-                        consolidation.headlinerSide === "left"
-                          ? leftTeam
-                          : rightTeam,
-                      )} give up the best player in the deal
-                    </strong>
-                    <p>
-                      The totals are close, but the other side is paying in
-                      quantity. Teams usually want a premium for the best
-                      player in a deal, and this model doesn’t add one. A close
-                      total here probably understates what{" "}
-                      {teamName(
-                        consolidation.headlinerSide === "left"
-                          ? leftTeam
-                          : rightTeam,
-                      )} would ask for.
-                    </p>
-                  </div>
-                )}
-                <div className="scoreboard-actions">
-                  <div className="trade-actions">
-                    <button onClick={swapTeams}>Swap teams</button>
-                    <button className="share-trade" onClick={copyTradeLink}>
-                      Copy trade link
-                    </button>
-                  </div>
-                  <small className="share-status" aria-live="polite">
-                    {shareStatus === "loaded"
-                      ? "Shared trade loaded"
-                      : shareStatus === "copied"
-                        ? "Link copied"
-                        : shareStatus === "error"
-                          ? "Couldn’t copy link"
-                          : "Link saves players, cash, and any edits."}
-                  </small>
-                </div>
-              </div>
-            </div>
-            <TradeSensitivity
-              players={sourcedPlayers}
-              settings={settings}
-              leftIds={leftIds}
-              rightIds={rightIds}
-              leftCash={leftCash}
-              rightCash={rightCash}
-              leftTeam={leftTeam}
-              rightTeam={rightTeam}
-            />
-            <section className="year-ledger">
-              <div className="section-title">
-                <div>
-                  <span>Control years</span>
-                  <h2>Value by control year</h2>
-                </div>
-              </div>
-              {allYears.length || leftCash > 0 || rightCash > 0 ? (
-                  <div className="ledger-table">
-                    <div className="ledger-row ledger-head">
-                      <span>Year</span>
-                      <span>{leftTeam} package</span>
-                      <span>Annual comparison</span>
-                      <span>{rightTeam} package</span>
-                    </div>
-                    {ledgerYears.map((year) => {
-                      const lv = sideYearValue(leftIds, year),
-                        rv = sideYearValue(rightIds, year);
-                      if (yearIsExcluded(year))
-                        return (
-                          <div className="ledger-row ledger-excluded" key={year}>
-                            <strong>{year}</strong>
-                            <span>—</span>
-                            <small>Not counted: the {year} regular season is over</small>
-                            <span>—</span>
-                          </div>
-                        );
-                      return (
-                        <div className="ledger-row" key={year}>
-                          <strong>{year}</strong>
-                          <span>{money(lv)}</span>
-                          <div className="year-bars">
-                            <i
-                              className={`left-bar ${lv < 0 ? "negative" : ""}`}
-                              style={{ width: `${barWidth(lv)}%` }}
-                            />
-                            <b />
-                            <i
-                              className={`right-bar ${rv < 0 ? "negative" : ""}`}
-                              style={{ width: `${barWidth(rv)}%` }}
-                            />
-                          </div>
-                          <span>{money(rv)}</span>
-                        </div>
-                      );
-                    })}
-                    {(leftCash > 0 || rightCash > 0) && (
-                      <div className="ledger-row cash-ledger-row">
-                        <strong>Cash / relief</strong>
-                        <span>{money(leftCash)}</span>
-                        <div className="year-bars">
-                          <i
-                            className="left-bar"
-                            style={{
-                              width: `${leftCash > 0 ? Math.max(2, (leftCash / maxYearValue) * 96) : 0}%`,
-                            }}
-                          />
-                          <b />
-                          <i
-                            className="right-bar"
-                            style={{
-                              width: `${rightCash > 0 ? Math.max(2, (rightCash / maxYearValue) * 96) : 0}%`,
-                            }}
-                          />
-                        </div>
-                        <span>{money(rightCash)}</span>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <p className="empty-ledger">
-                    Add players to compare the packages.
-                  </p>
-                )}
-            </section>
-          </div>
-
-          {renderPlayerEditor()}
-        </section>
         <section className="audit-panel" aria-labelledby="audit-title">
           <div className="audit-head">
             <div>
@@ -4136,68 +4178,6 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             className="projections-panel"
             aria-label="Player projection snapshot"
           >
-            <div className="rankings-heading projections-heading">
-              <div>
-                <span>{PROJECTION_YEAR_RANGE} forecast board</span>
-                <h2>Player projection snapshot</h2>
-                {settings.projectionSource === "dv" ? (
-                  <p>
-                    The 2027 and 2028 columns are
-                    Dugout Value projections: our model’s WAR rate, using data
-                    through 2026, times a full season of playing time. Each
-                    player follows his own projected aging path through 2031.
-                    Players without 100 PA or 20 IP in 2024–26 show ZiPS. Switch
-                    to ZiPS with the Projections menu below.
-                  </p>
-                ) : (
-                  <p>
-                    The 2027
-                    and 2028 columns use the latest ZiPS forecasts we have,
-                    including our season-end adjustments where available.
-                    Players covered by FanGraphs’ 2026 Trade Value Series use
-                    that series’ published forecasts unchanged. See the source
-                    note below the table.
-                  </p>
-                )}
-                {settings.projectionSource === "dv" ? (
-                  <Link
-                    className="tool-article-link"
-                    href="/analysis/our-projections-replace-zips"
-                  >
-                    How our projections were built and tested →
-                  </Link>
-                ) : (
-                  <Link
-                    className="tool-article-link"
-                    href="/analysis/when-a-better-fit-isnt-a-better-forecast"
-                  >
-                    How the projections adjust ZiPS, and the test that failed →
-                  </Link>
-                )}
-              </div>
-              <strong>
-                {projectedPlayers.length}{" "}
-                {projectedPlayers.length === 1 ? "player" : "players"}
-              </strong>
-            </div>
-            <div className="projection-board-note">
-              <div>
-                <span>What the small line means</span>
-                <strong>
-                  {settings.projectionSource === "dv"
-                    ? "WAR rate × full-season playing time"
-                    : "Saved forecast + model adjustment"}
-                </strong>
-              </div>
-              <p>
-                This is a projection table, not a value ranking. Salary,
-                service time, roster-spot allowance, and contract control are
-                not part of these fWAR totals.
-                {settings.projectionSource === "dv"
-                  ? " Dugout Value playing time is a full season: the larger of our expected playing time and the player’s healthy 2024–26 workload. Players without enough MLB history show ZiPS."
-                  : ""}
-              </p>
-            </div>
             <div className="projection-filters">
               <label>
                 <span>Find a player</span>
@@ -4264,6 +4244,72 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 </select>
               </label>
             </div>
+            <div className="projection-context">{toolContext()}<p className="tool-caveat">Forecasts only; salary and contract control are not part of these fWAR totals.</p></div>
+            <details className="tool-help projections-help">
+              <summary>How this works</summary>
+            <div className="rankings-heading projections-heading">
+              <div>
+                <span>{PROJECTION_YEAR_RANGE} forecast board</span>
+                <h2>Player projection snapshot</h2>
+                {settings.projectionSource === "dv" ? (
+                  <p>
+                    The 2027 and 2028 columns are
+                    Dugout Value projections: our model’s WAR rate, using data
+                    through 2026, times a full season of playing time. Each
+                    player follows his own projected aging path through 2031.
+                    Players without 100 PA or 20 IP in 2024–26 show ZiPS. Switch
+                    to ZiPS with the Projections menu below.
+                  </p>
+                ) : (
+                  <p>
+                    The 2027
+                    and 2028 columns use the latest ZiPS forecasts we have,
+                    including our season-end adjustments where available.
+                    Players covered by FanGraphs’ 2026 Trade Value Series use
+                    that series’ published forecasts unchanged. See the source
+                    note below the table.
+                  </p>
+                )}
+                {settings.projectionSource === "dv" ? (
+                  <Link
+                    className="tool-article-link"
+                    href="/analysis/our-projections-replace-zips"
+                  >
+                    How our projections were built and tested →
+                  </Link>
+                ) : (
+                  <Link
+                    className="tool-article-link"
+                    href="/analysis/when-a-better-fit-isnt-a-better-forecast"
+                  >
+                    How the projections adjust ZiPS, and the test that failed →
+                  </Link>
+                )}
+              </div>
+              <strong>
+                {projectedPlayers.length}{" "}
+                {projectedPlayers.length === 1 ? "player" : "players"}
+              </strong>
+            </div>
+            <div className="projection-board-note">
+              <div>
+                <span>What the small line means</span>
+                <strong>
+                  {settings.projectionSource === "dv"
+                    ? "WAR rate × full-season playing time"
+                    : "Saved forecast + model adjustment"}
+                </strong>
+              </div>
+              <p>
+                This is a projection table, not a value ranking. Salary,
+                service time, roster-spot allowance, and contract control are
+                not part of these fWAR totals.
+                {settings.projectionSource === "dv"
+                  ? " Dugout Value playing time is a full season: the larger of our expected playing time and the player’s healthy 2024–26 workload. Players without enough MLB history show ZiPS."
+                  : ""}
+              </p>
+            </div>
+            </details>
             <div className="three-year-table-wrap" tabIndex={0} aria-label={`Scrollable ${PROJECTION_YEAR_RANGE} projection table`}>
               <div className={`three-year-table${SEASON_COMPLETE ? " future-only" : ""}`}>
                 <div className="three-year-row three-year-head">
@@ -4276,10 +4322,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   <span />
                 </div>
                 {projectedPlayers.slice(0, projectionVisible).map(
-                  ({ player, seasons, total, change, dv }) => (
+                  ({ player, seasons, total, change, dv, editedYears }) => (
                     <article className="three-year-row" key={player.id}>
                       <div className="projection-player">
                         <strong>{player.name}</strong>
+                        {editedYears.length > 0 && <b className="adjusted-chip">Edited</b>}
                         <small>
                           {teamName(player.team)} · {displayPosition(player)} ·
                           Age {player.age}
@@ -4291,7 +4338,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                         return (
                           <div className="projection-war-cell" key={year}>
                             <strong>{season?.war.toFixed(1) ?? "—"}</strong>
-                            {year === BASE_YEAR ? (
+                            {editedYears.includes(year) ? <small>Your WAR edit</small> : year === BASE_YEAR ? (
                               <small>Depth Charts RoS</small>
                             ) : dv ? (
                               <small>{playingTimeLine(dv, year)}</small>
@@ -4329,7 +4376,9 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                         </strong>
                         <small>
                           {dv
-                            ? "Dugout Value minus ZiPS*, 2027–28"
+                            ? `${editedYears.length ? "Your forecast" : "Dugout Value"} minus ZiPS*, 2027–28`
+                            : editedYears.length
+                            ? "Saved model update; excludes your edits"
                             : player.futureProjectionUpdate
                             ? `FanGraphs Trade Value #${player.futureProjectionUpdate.rank}`
                             : player.seasonUpdate
@@ -4389,33 +4438,6 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             className="rankings-panel"
             aria-label="Value rankings"
           >
-            <div className="rankings-heading">
-              <div>
-                <span>Leaguewide board</span>
-                <h2>Top 100 by surplus value</h2>
-                <p>
-                  Model value, not a consensus list. Stars on market-rate deals
-                  rank low here by design: their salary absorbs most of their
-                  projected value.{" "}
-                  {settings.valuationView === "offseason"
-                    ? `Values count ${BASE_YEAR + 1} on and `
-                    : `Values include the rest of ${BASE_YEAR} and `}
-                  {settings.timingPreference === 0
-                    ? "do not discount future seasons"
-                    : `discount future seasons ${settings.timingPreference}% a year`}
-                  {settings.valuationView === "offseason"
-                    ? "; pending free agents are left out."
-                    : "."}
-                </p>
-                <Link
-                  className="tool-article-link"
-                  href="/analysis/what-trade-value-measures"
-                >
-                  What the board measures →
-                </Link>
-              </div>
-              <strong>Top 100</strong>
-            </div>
             <div className="ranking-filters">
               <label>
                 <span>Find a player</span>
@@ -4448,6 +4470,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       type="button"
                       key={type}
                       className={rankingType === type ? "is-active" : ""}
+                      aria-pressed={rankingType === type}
                       onClick={() => setRankingType(type)}
                     >
                       {type === "all"
@@ -4460,24 +4483,62 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 </div>
               </div>
             </div>
-            <div className="ranking-list" tabIndex={0} aria-label="Scrollable player value rankings">
-              <div className="ranking-row ranking-head">
-                <span title="Overall rank across all eligible players, before filters">Rank</span>
-                <span>Player</span>
-                <span>Type</span>
-                <span>Range</span>
-                <span>Surplus value</span>
-                <span />
+            <div className="ranking-context">{toolContext()}<p className="tool-caveat">Surplus value is not an asking price. Ranges are not confidence intervals.</p></div>
+            <details className="tool-help rankings-help">
+              <summary>How this works</summary>
+                <p>
+                  Model value, not a consensus list. Stars on market-rate deals
+                  rank low here by design: their salary absorbs most of their
+                  projected value.{" "}
+                  {settings.valuationView === "offseason"
+                    ? `Values count ${BASE_YEAR + 1} on and `
+                    : `Values include the rest of ${BASE_YEAR} and `}
+                  {settings.timingPreference === 0
+                    ? "do not discount future seasons"
+                    : `discount future seasons ${settings.timingPreference}% a year`}
+                  {settings.valuationView === "offseason"
+                    ? "; pending free agents are left out."
+                    : "."}
+                </p>
+                <Link
+                  className="tool-article-link"
+                  href="/methods/surplus-value"
+                >
+                  How surplus value works →
+                </Link>
+            </details>
+            <div className="ranking-results-bar">
+              <p role="status">{rankingsFiltered ? `${rankedPlayers.length.toLocaleString("en-US")} matching ${rankedPlayers.length === 1 ? "player" : "players"}` : "Top 100 shown by default. Search all players."} <span>Ranks are league-wide.</span></p>
+              {rankingsFiltered && <button type="button" onClick={clearRankingFilters}>Clear filters</button>}
+              <div className="ranking-display" role="group" aria-label="Ranking display">
+                {(["compact", "detailed"] as const).map((display) => <button key={display} type="button" aria-pressed={rankingDisplay === display} onClick={() => setRankingDisplay(display)}>{display === "compact" ? "Compact" : "Detailed"}</button>)}
               </div>
+            </div>
+            <p className="table-scroll-hint" id="ranking-scroll-hint">Scroll sideways for all columns. Player names stay visible.</p>
+            <div className="ranking-list" tabIndex={0} aria-label="Scrollable player value rankings" aria-describedby="ranking-scroll-hint">
+              <table className={`rankings-table ${rankingDisplay}`}>
+                <caption>{rankingsFiltered ? `${rankedPlayers.length} matching ${rankedPlayers.length === 1 ? "player" : "players"}` : "Top 100 players"} by surplus value, highest first. League-wide ranks before filters.</caption>
+                <thead><tr>
+                  <th scope="col" className="ranking-name-column">Player</th>
+                  <th scope="col">League rank</th>
+                  <th scope="col">Team</th>
+                  <th scope="col">Control years</th>
+                  {rankingDisplay === "detailed" && <th scope="col">Type</th>}
+                  <th scope="col" className="num">Surplus value</th>
+                  <th scope="col" className="num">Valuation range</th>
+                  <th scope="col">Details</th>
+                </tr></thead>
+                <tbody>
               {rankedPlayers.map((player) => {
                 const result = values[player.id];
                 const basisLabel = valuationBasisLabel(result);
                 const extrapolatedShare = result?.extrapolatedShare ?? 0;
                 return (
-                  <article className="ranking-row" key={player.id}>
-                    <strong className="ranking-number" title="Overall rank">{leagueRanks.get(player.id)}</strong>
-                    <div className="ranking-player">
+                  <tr key={player.id}>
+                    <th scope="row" className="ranking-player ranking-name-column">
                       <strong>{player.name}</strong>
+                      {rankingDisplay === "compact" && isAdjusted(player) && <b className="adjusted-chip">Edited</b>}
+                      {rankingDisplay === "detailed" && <>
                       <small>
                         {teamName(player.team)} · {displayPosition(player)} · Age{" "}
                         {player.age}
@@ -4529,36 +4590,40 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                           ) : null}
                         </span>
                       )}
-                    </div>
-                    <span className={`type-pill ${player.kind}`}>
+                      </>}
+                    </th>
+                    <td className="num" title="League-wide rank">{leagueRanks.get(player.id)}</td>
+                    <td><abbr title={teamName(player.team)}>{player.team}</abbr></td>
+                    <td>{player.kind === "mlb" ? result.rows.filter((row) => !row.excluded && !row.optedOut && (result.clubControlThrough == null || row.year <= result.clubControlThrough)).length : `Prospect · ETA ${player.eta}`}</td>
+                    {rankingDisplay === "detailed" && <td><span className={`type-pill ${player.kind}`}>
                       {player.kind === "prospect" ? `${player.fv} FV` : "MLB"}
-                    </span>
-                    <span className="ranking-range">
-                      {rangeText(result?.low ?? 0, result?.high ?? 0)}
-                    </span>
-                    <strong className="ranking-value">
+                    </span></td>}
+                    <td className="num ranking-value">
                       {money(result?.total ?? 0)}
-                    </strong>
-                    <button
+                    </td>
+                    <td className="num ranking-range">
+                      {rangeText(result?.low ?? 0, result?.high ?? 0)}
+                    </td>
+                    <td><button
                       type="button"
                       aria-haspopup="dialog"
                       aria-label={`Why this value for ${player.name}`}
                       onClick={() => openPlayerEditor(player.id, "rankings")}
                     >
                       Why this value
-                    </button>
-                  </article>
+                    </button></td>
+                  </tr>
                 );
               })}
-              {!rankedPlayers.length && (
-                <p className="ranking-empty">No players match those filters.</p>
-              )}
+                </tbody>
+              </table>
             </div>
+            {!rankedPlayers.length && <div className="ranking-empty"><p>No players match those filters.</p><button type="button" onClick={clearRankingFilters}>Clear filters</button></div>}
           </section>
         )}
 
         {driversOrigin && selected && (
-          <PlayerValueDialog name={selected.name} onClose={backFromDrivers}>
+          <PlayerValueDialog name={selected.name} onClose={backFromDrivers} onBuildTrade={buildAroundPlayer}>
             {renderPlayerEditor()}
           </PlayerValueDialog>
         )}

@@ -35,6 +35,13 @@ test("links with absent or older model versions warn even when the snapshot is u
   assert.match(sharedModelWarning("2026-10-16"), /recalculated under the current model/);
 });
 
+test("shared trades preserve explicit WAR overrides even when equal to a saved source value", () => {
+  const state = { v: 1, settings: { ...initialSettings, projectionSource: "dv" }, overrides: [{ id: "mlb-676979", seasons: [{ year: 2027, war: 4.4, warOverride: true }] }] };
+  const decoded = decodeTradeState(encodeTradeState(state));
+  assert.equal(decoded.settings.projectionSource, "dv");
+  assert.deepEqual(decoded.overrides, state.overrides);
+});
+
 test("rejects malformed and unsupported trade payloads", () => {
   assert.equal(decodeTradeState("not-valid-base64"), null);
   assert.equal(decodeTradeState(encodeTradeState({ v: 2 })), null);

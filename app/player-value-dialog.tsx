@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
-export function PlayerValueDialog({ name, onClose, children }: {
+export function PlayerValueDialog({ name, onClose, onBuildTrade, children }: {
   name: string;
   onClose: () => void;
+  onBuildTrade: () => void;
   children: ReactNode;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -38,6 +39,6 @@ export function PlayerValueDialog({ name, onClose, children }: {
       <button type="button" onClick={onClose} autoFocus aria-label="Close player value details">Close <span aria-hidden="true">×</span></button>
     </div>
     <div className="value-dialog-content">{children}</div>
-    <p className="value-dialog-note">Your edits stay on this board until you reset them or reload the page.</p>
+    <div className="value-dialog-handoff"><button type="button" onClick={onBuildTrade}>Build a trade around this player</button><p>Starts a new trade, replacing the current packages. Your player edits, projection source, and time horizon carry over. Edits stay across tool tabs until reset or reload; copy a trade link to save them.</p></div>
   </dialog>;
 }

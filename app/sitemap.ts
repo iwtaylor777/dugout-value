@@ -15,5 +15,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const tools = toolCards.map(t => ({ url: `${SITE_URL}${t.href}`, lastModified: ledger.capturedAt, priority: 0.7 }));
   const records = ledger.records.map(record => ({ url: `${SITE_URL}/ledger/${record.slug}`, lastModified: ledger.capturedAt, priority: 0.4 }));
   const players = profiles.map(profile => ({ url: `${SITE_URL}/players/${profile.id}`, lastModified: ledger.capturedAt, priority: 0.4 }));
-  return [...pages, ...posts, ...tools, ...records, ...players];
+  return [...pages, index("/methods/surplus-value", 0.6), ...posts, ...tools, ...records, ...players];
 }

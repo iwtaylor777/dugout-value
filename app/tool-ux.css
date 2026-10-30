@@ -1,0 +1,105 @@
+/* Tool-specific layout and accessibility. Editorial/research styles stay unchanged. */
+.tool-workspace { --muted: #55605f; --green: #355e4c; --red: #8b4233; --red-dark: #8b4233; }
+.tool-workspace .page { padding-top: 12px; display: flex; flex-direction: column; }
+.tool-workspace .workspace-bar { order: -1; margin-bottom: 14px; }
+.tool-workspace .intro { margin: 0 0 14px; }
+.tool-workspace .intro h1 { font-size: clamp(28px, 3vw, 36px); margin-bottom: 5px; }
+.tool-workspace .lede { margin: 0; max-width: none; font-size: 15px; line-height: 1.5; }
+.tool-data-note, .tool-caveat { margin: 0; padding: 8px 18px; color: #55605f; font-size: 14px; line-height: 1.5; }
+.tool-data-note a, .tool-help a { color: #8b4233; }
+.tool-caveat { padding-top: 0; }
+.tool-help { margin: 0; padding: 0 18px; background: #fff9ed; border-bottom: 1px solid var(--line); }
+.tool-help > summary { min-height: 44px; padding: 11px 0; cursor: pointer; color: var(--navy); font-size: 14px; font-weight: 650; }
+.tool-help p { color: #55605f; font-size: 14px; line-height: 1.65; max-width: 85ch; }
+.tool-help[open] { padding-bottom: 14px; }
+.tool-help .rankings-heading, .tool-help .projection-board-note { border: 0; padding: 10px 0; background: transparent; }
+.tool-help .rankings-heading h2, .tool-help .rankings-heading > strong, .tool-help .rankings-heading > div > span { display: none; }
+.tool-help .projection-board-note { display: block; }
+.tool-help .discovery-explainer { display: block; padding: 10px 0; border: 0; background: transparent; }
+.tool-help .discovery-source { border: 0; padding: 0; overflow-wrap: anywhere; }
+.discovery-controls { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 14px 18px; }
+.tool-workspace :is(.discovery-controls, .ranking-filters, .projection-filters, .builder-primary-controls) label > span { display: block; margin-bottom: 5px; font-size: 14px; color: #55605f; }
+.tool-workspace :is(.discovery-controls, .ranking-filters, .projection-filters, .builder-primary-controls) :is(input, select) { min-height: 44px; width: 100%; min-width: 0; font-size: 16px; }
+.discovery-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+.need-board, .target-board, .offer-board { padding: 16px; }
+.need-list > button { grid-template-columns: minmax(0, .85fr) repeat(2, minmax(0, 1fr)); gap: 8px 12px; padding: 12px; }
+.need-status { position: static; grid-column: 1 / -1; justify-self: start; max-width: 100%; white-space: normal; overflow-wrap: anywhere; color: #355e4c; background: #e5eddf; font-size: 14px; }
+.need-status.urgent { color: #8b4233; background: #f1e2dc; }
+.need-list > button:is(:hover, .is-active), .target-list > button:is(:hover, .is-active) { background: #e8ece6; }
+.tool-workspace :is(.need-identity small, .need-metric small, .target-player small, .target-upgrade small, .target-value small, .target-market small, .discovery-section-title p) { color: #55605f; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.need-identity strong, .need-metric b, .target-player strong, .target-upgrade strong, .target-value b { font-size: 16px; }
+.target-list > button { grid-template-columns: minmax(0, 1fr) minmax(95px, .55fr); gap: 10px; padding: 12px; }
+.target-player { grid-column: 1 / -1; }
+.target-player strong { white-space: normal; overflow: visible; }
+.target-value { text-align: right; }
+.target-market { grid-column: 1 / -1; }
+.offer-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.offer-grid article p, .offer-grid li small, .offer-grid button, .offer-heading span { font-size: 14px; }
+.offer-grid button { min-height: 44px; }
+.rankings-panel, .projections-panel { display: flex; flex-direction: column; min-width: 0; }
+.ranking-filters, .projection-filters { order: -4; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 14px 18px; gap: 12px; }
+.projection-filters { grid-template-columns: minmax(180px, 1.3fr) repeat(4, minmax(0, 1fr)); }
+.ranking-context, .projection-context { order: -3; }
+.rankings-help, .projections-help { order: -2; }
+.ranking-results-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 18px; }
+.ranking-results-bar p { flex: 1 1 260px; margin: 0; font-size: 14px; line-height: 1.5; }
+.ranking-results-bar p span { color: #55605f; }
+.ranking-display { display: flex; gap: 4px; }
+.ranking-type > span { font-size: 14px; color: #55605f; }
+.ranking-type > div { flex-wrap: wrap; }
+.tool-workspace :is(.ranking-type, .ranking-display) button { font-size: 14px; min-height: 44px; color: #55605f; background: #fffdf6; border: 1px solid #b7b6ab; padding: 8px 10px; }
+.tool-workspace :is(.ranking-type, .ranking-display) button[aria-pressed="true"] { background: #17384b; color: #fffdf6; }
+.tool-workspace :is(.ranking-type, .ranking-display) button:hover:not([aria-pressed="true"]) { background: #e5eddf; color: #172d3d; }
+.ranking-results-bar > button, .ranking-empty button { min-height: 44px; font-size: 14px; border: 1px solid var(--line); padding: 8px 12px; background: #fffdf6; color: #172d3d; border-radius: 5px; }
+.table-scroll-hint { margin: 0; padding: 8px 18px; color: #55605f; font-size: 14px; }
+.ranking-list { max-height: 65vh; overflow: auto; padding: 0; isolation: isolate; scroll-padding-top: 55px; }
+.ranking-list::before { display: none; }
+.rankings-table { width: 100%; min-width: 900px; border-collapse: separate; border-spacing: 0; font-size: 15px; }
+.rankings-table caption { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.rankings-table th, .rankings-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); background: #fffdf6; vertical-align: middle; }
+.rankings-table thead th { position: sticky; top: 0; z-index: 3; background: #eee5d1; font-size: 14px; color: #172d3d; }
+.rankings-table .ranking-name-column { position: sticky; left: 0; z-index: 2; min-width: 180px; width: 210px; max-width: 250px; box-shadow: 1px 0 0 var(--line); }
+.rankings-table thead .ranking-name-column { z-index: 4; }
+.rankings-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rankings-table .ranking-value { display: table-cell; color: #172d3d; font-weight: 750; font-size: 16px; }
+.rankings-table .ranking-player strong { font-size: 16px; }
+.rankings-table .ranking-player small { font-size: 14px; font-weight: 400; line-height: 1.5; color: #55605f; }
+.rankings-table button { min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fffdf6; font-size: 14px; color: #172d3d; }
+.rankings-table tr:hover > *, .rankings-table tr:focus-within > * { background: #f3eddf; }
+.rankings-table .ranking-range { font-size: 14px; color: #55605f; }
+.rankings-table.detailed .ranking-name-column { min-width: 245px; width: 300px; max-width: 350px; }
+.rankings-table .adjusted-chip { display: inline-block; font-size: 12px; margin: 4px 0; color: #355e4c; }
+.tool-workspace .builder-primary-controls { display: flex; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
+.builder-primary-controls label { width: 330px; max-width: 100%; display: flex; align-items: center; gap: 12px; }
+.builder-primary-controls select { border: 1px solid var(--line); border-radius: 5px; padding: 8px 10px; background: #fffdf6; color: #172d3d; }
+.builder-primary-controls p { color: #55605f; font-size: 14px; }
+.trade-live-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; padding: 12px 16px; background: #17384b; color: #fffdf6; border-radius: 5px; z-index: 8; font-size: 14px; }
+.trade-live-summary strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+.trade-live-summary a { color: #fffdf6; margin-left: auto; }
+.tool-workspace .assumptions { margin-top: 10px; }
+.tool-workspace #model-assumptions, .tool-workspace #trade-comparison { scroll-margin-top: 90px; }
+.tool-workspace .assumptions > summary { font-size: 14px; line-height: 1.5; }
+.tool-workspace .scoreboard-team :is(span, small), .tool-workspace .scoreboard-range-note, .tool-workspace .scoreboard-center > p, .tool-workspace .player-card small { color: #55605f; font-size: 14px; line-height: 1.45; }
+.tool-workspace .verdict-stamp { color: #8b4233; background: #f1e2dc; font-size: 14px; }
+.tool-workspace .verdict-stamp.balanced { color: #355e4c; background: #e5eddf; }
+.tool-workspace .player-card:is(:hover, .is-selected) { background: #e8ece6; }
+.tool-workspace :is(.add-row button, .trade-actions button, .side-heading span, .projection-war-cell small, .projection-signal small, .projection-baseline-note, .toolbar-button) { font-size: 14px; }
+.tool-workspace .picker-menu button { min-height: 48px; }
+.tool-workspace .add-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tool-workspace .player-picker { grid-column: 1 / -1; width: 100%; }
+.tool-workspace .trade-side > .player-picker { margin: 0 0 12px; }
+.tool-workspace .trade-side > .player-picker > input { width: 100%; min-height: 44px; padding: 10px; border: 1px solid var(--line); background: #fffdf6; border-radius: 5px; font-size: 16px; }
+.tool-workspace .add-row button { min-height: 44px; }
+.tool-workspace .side-heading select { font-size: 16px; }
+.tool-workspace .picker-menu small { font-size: 14px; color: #55605f; }
+.tool-workspace .picker-menu .is-active { background: #e5eddf; }
+.value-dialog-handoff { padding: 18px 24px; border-top: 1px solid var(--line); }
+.value-dialog-handoff button { min-height: 44px; padding: 10px 14px; color: #fffdf6; background: #17384b; border: 0; border-radius: 5px; font-size: 16px; }
+.value-dialog-handoff p { font-size: 14px; line-height: 1.5; color: #55605f; }
+.nav-arrow { width: 1em; height: 1em; display: inline-block; vertical-align: -.12em; flex-shrink: 0; }
+.historical-note { padding: 16px 18px; border-left: 3px solid #a9723b; background: #eee8d9; font-size: 15px; line-height: 1.6; }
+.tool-loading { padding: 36px 0; min-height: 250px; }
+.tool-connection-note { padding: 10px 14px; border: 1px solid #a9723b; background: #fff9ed; color: #172d3d; font-size: 14px; }
+@media (min-width: 1000px) and (min-height: 650px) { .trade-live-summary { position: sticky; top: 8px; } }
+@media (max-width: 1100px) { .discovery-columns { grid-template-columns: minmax(0, 1fr); } .need-board { border-right: 0; border-bottom: 1px solid var(--line); } .need-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .projection-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ranking-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 650px) { .discovery-controls, .projection-filters, .ranking-filters { grid-template-columns: minmax(0, 1fr); } .need-list { grid-template-columns: minmax(0, 1fr); } .tool-workspace .workspace-bar { gap: 8px; } .tool-workspace .intro h1 { font-size: 28px; } .trade-live-summary { position: static; gap: 8px 16px; } .ranking-list { max-height: 70vh; } .rankings-table .ranking-name-column { min-width: 150px; width: 150px; max-width: 150px; } .rankings-table.detailed .ranking-name-column { min-width: 170px; width: 170px; max-width: 170px; } .rankings-table th, .rankings-table td { padding: 10px; } .rankings-table .ranking-player strong { font-size: 14px; } .value-dialog-handoff { padding: 16px; } }

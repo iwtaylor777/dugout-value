@@ -293,6 +293,21 @@ test("builds value-matched offer concepts from the buyer's assets", () => {
 
 const withSeasons = (player, seasons) => ({ ...player, seasons });
 
+test("finder keeps exact surplus through target and offer handoffs, avoiding double rounding", () => {
+  const exact = 118.649;
+  const buyer = mlb({ id: "buyer-c", team: "BUY", position: "C", ros: 0.2 });
+  const target = mlb({ id: "seller-c", team: "SELL", position: "C", ros: 2 });
+  const targets = findTradeTargets({ players: [buyer, target], values: { "seller-c": { total: exact } }, buyerTeam: "BUY", position: "C", playoffOdds: { SELL: 10 }, sellerThreshold: 35, baseYear: 2026 });
+  assert.equal(targets[0].tradeValue, exact);
+  assert.equal(targets[0].tradeValue.toFixed(1), "118.6");
+  assert.equal(Number(exact.toFixed(2)).toFixed(1), "118.7", "old double-rounding path reproduces the reported mismatch");
+  const asset = prospect("asset", "BUY");
+  const offers = generateOfferPackages({ players: [asset], values: { asset: { total: exact } }, buyerTeam: "BUY", holePosition: "C", targetValue: exact, baseYear: 2026 });
+  assert.ok(offers.length);
+  assert.equal(offers[0].total, exact);
+  assert.equal(offers[0].gap, 0);
+});
+
 test("offseason view drops pending free agents and compares next-season WAR", () => {
   const players = [
     withSeasons(mlb({ id: "buyer-c", team: "BUY", position: "C" }), [
