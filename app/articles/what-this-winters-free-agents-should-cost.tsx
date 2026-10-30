@@ -1,123 +1,67 @@
 import Link from "next/link";
 import type { Article } from "./types";
 import { AUTHOR } from "./types";
+import forecast from "../../public/research/fa-predictions-2026-27/predictions_frozen.json";
 
 const FILES = "/research/fa-predictions-2026-27";
-
-/**
- * Frozen predictions (model 2026-10-25.1): name, position, 2027 age,
- * 2026 fWAR (null if under the update threshold), years, total and AAV ($M), flag.
- * Copied from predictions_frozen.json.
- */
-const predictions: [string, string, number, number | null, number, number, number, string?][] = [
-  ["Tarik Skubal", "SP", 30, 5.2, 10, 506.1, 50.6, "AAV above any pitcher's record"],
-  ["Jazz Chisholm Jr.", "2B", 29, 3.5, 4, 97.7, 24.4],
-  ["Kris Bubic", "SP", 30, 1.0, 4, 81.7, 20.4],
-  ["Teruaki Sato", "3B", 28, null, 4, 80.0, 20.0, "Posting fee, translated projection"],
-  ["Trevor Rogers", "SP", 29, 4.0, 4, 75.9, 19.0],
-  ["Randy Arozarena", "LF", 32, 5.5, 4, 74.2, 18.6],
-  ["Seiya Suzuki", "RF", 33, 4.5, 4, 68.6, 17.1],
-  ["Adrian Morejon", "RP", 28, 2.8, 3, 59.5, 19.8],
-  ["Freddy Peralta", "SP", 31, 1.9, 4, 57.6, 14.4],
-  ["Sandy Alcantara", "SP", 32, 3.2, 4, 53.3, 13.3, "Assumes his option is declined"],
-  ["Trent Grisham", "CF", 31, 0.7, 4, 52.0, 13.0],
-  ["Luis Arraez", "2B", 30, 4.1, 4, 51.9, 13.0],
-  ["Jack Flaherty", "SP", 32, 1.3, 4, 48.6, 12.1],
-  ["José Suarez", "RP", 29, 0.6, 3, 47.2, 15.7],
-  ["Ian Happ", "LF", 33, 2.6, 3, 37.0, 12.3],
-  ["Hunter Harvey", "RP", 32, null, 3, 33.7, 11.2, "Projection not updated for 2026"],
-  ["Casey Mize", "SP", 30, 2.3, 2, 28.8, 14.4],
-  ["Daulton Varsho", "CF", 31, 0.8, 2, 28.8, 14.4],
-  ["Brandon Woodruff", "SP", 34, 1.2, 2, 28.8, 14.4],
-  ["Gleyber Torres", "2B", 30, 1.0, 2, 27.7, 13.9],
-  ["David Peterson", "SP", 32, 1.7, 2, 27.7, 13.8],
-  ["Ryan Jeffers", "C", 30, 2.5, 2, 25.4, 12.7],
-  ["David Bednar", "RP", 33, 1.9, 3, 24.0, 8.0],
-  ["Brandon Lowe", "2B", 33, 4.9, 2, 23.1, 11.6],
-  ["Dustin May", "SP", 30, 2.8, 2, 23.0, 11.5],
-  ["Foster Griffin", "SP", 32, 2.6, 2, 21.9, 10.9],
-  ["Michael Soroka", "SP", 30, 2.7, 2, 21.9, 10.9],
-  ["Clay Holmes", "SP", 34, 1.8, 2, 20.8, 10.4, "Assumes he opts out"],
-  ["Patrick Sandoval", "SP", 31, 1.3, 2, 19.6, 9.8],
-  ["Brady Singer", "SP", 31, 0.1, 2, 19.6, 9.8],
-  ["Tyler Stephenson", "C", 31, 1.3, 2, 19.6, 9.8],
-];
-const money = (m: number) => (m >= 100 ? `$${m.toFixed(0)}M` : `$${m.toFixed(1)}M`);
+const predictions = forecast.predictions;
+const money = (m: number) => m >= 100 ? `$${m.toFixed(0)}M` : `$${m.toFixed(1)}M`;
 
 export const article: Article = {
   slug: "what-this-winters-free-agents-should-cost",
   category: "Research",
-  title: "Tarik Skubal is worth $506 million on the open market",
-  summary:
-    "The trade model prices Tarik Skubal at 10 years and $506 million, and its frozen predictions for the rest of the top free agents will be scored as they sign.",
+  title: "Tarik Skubal is worth $367 million on the open market",
+  summary: "My current projections price Tarik Skubal at nine years and $367 million. Here are the contract estimates for the top 30 modeled MLB free agents, plus Teruaki Sato, recorded for comparison with the deals they sign.",
   author: AUTHOR,
   published: "2026-10-25",
   dateLabel: "October 25, 2026",
-  readTime: "8 min read",
-  relatedTool: { href: "/tools/rankings", label: "Value rankings: every player priced with the same model and projections" },
-  evidence: {
-    href: `${FILES}.tar.gz`,
-    label: "Frozen predictions, protocol, input hashes and calibration (download)",
-  },
+  status: "Estimates as of October 29, 2026, using Dugout Value projections through the completed 2026 season.",
+  readTime: "7 min read",
+  relatedTool: { href: "/tools/projections", label: "Explore the player forecasts behind the prices" },
+  evidence: { href: `${FILES}.tar.gz`, label: "Dated predictions, scoring rules and input checksums (download)" },
   body: (
     <>
-      <p className="article-lead">
-        Tarik Skubal is the best pitcher to reach free agency in years, and the trade model thinks he’s worth $506 million over 10 years, or $50.6 million a season. That would be the largest annual salary a pitcher has ever signed for by about $7 million, which is one of several places where I expect the market to push back. Below are the model’s prices for the 30 most valuable free agents plus Teruaki Sato, frozen before free agency opens so that every one of them can be checked against the contract he actually signs.
-      </p>
+      <p className="article-lead">I estimate Tarik Skubal’s open-market value at nine years and $367 million, or $40.8 million a season. That price starts from 5.34 projected WAR in 2027 and follows his expected production through the contract. Below are my estimates for the top 30 modeled major-league free agents, plus Teruaki Sato. I have recorded the numbers so I can compare them with the contracts these players subsequently sign.</p>
 
-      <h2>How the prices work</h2>
-      <p>
-        The trade model estimates what a player is worth on an open market: his projected wins each season, times a price per win, with extra for star-level seasons, adjusted for inflation and discounted over time. For a free agent, the predicted contract is the one the model would call a fair deal, a flat salary whose discounted value equals the discounted value of his projected seasons. The term comes from a fixed rule: a contract runs as long as the player projects to stay a regular, up to limits that depend on his age, his role and how good he is. Those rules are written down in the protocol and weren’t adjusted player by player.
-      </p>
-      <p>
-        The projections start from ZiPS, updated for the 2026 season. Spring ZiPS couldn’t know that Randy Arozarena would put up 5.5 WAR or that Daulton Varsho would manage 0.8, so each player’s 2027 projection blends a regressed, age-adjusted three-season WAR rate with the part of ZiPS’s view that goes beyond it. I fit that blend on how well each source predicted 2026, and it gives ZiPS’s extra information about 60% of its weight. Pitchers’ roles also follow their 2026 usage, which is why Dustin May and Foster Griffin, who made 31 starts each, are priced as starters.
-      </p>
-      <p>
-        Before freezing anything, I checked the model’s prices against about 760 free-agent contracts of at least $2 million a year signed from 2020 to 2026. It valued last winter’s hitters and starters about 10% above what they signed for, measured against the projections available at signing, so the price per win drops from $12 million to $11 million and the star premium from 30% to 20%. Relievers were the opposite problem: depending on the sample, the market paid them somewhere between 30% and 100% more per win than the model did, so relievers projected above 0.8 WAR now get a 50% premium. Those changes ship as model 2026-10-25.1 across the site’s tools.
-      </p>
-      <p>
-        Hitters whose value comes from their gloves do sign for less than their WAR suggests, but that discount matches how much less reliably fielding carries forward, and projections already account for it, as I explain in <Link href="/analysis/teams-pay-less-for-defense">a separate piece on how teams price defense</Link>. So these predictions price projected fielding at full credit, like everything else.
-      </p>
+      <h2>What the price means</h2>
+      <p>I price the production a player is projected to deliver, then solve for the flat annual salary with the same discounted value. The model starts at $11 million per win, after a roster-spot allowance, and pays 20% more for net wins above two in a season. Prices rise 3% a year, and future seasons are discounted at 10%. Relievers projected above 0.8 WAR receive a 50% premium, reflecting how the market has priced their wins.</p>
+      <p>The contract length comes from a fixed rule. A hitter or starter remains eligible while he projects for at least one WAR a season; a reliever needs half a win. Caps depend on age, role and next-year WAR, with up to 10 years for players projected at 4.5 WAR or better. I apply the same age, role and projected-WAR rules to every player.</p>
+      <p>These are estimates of a fair price under the model, not a claim that clubs will agree. A team can pay for a different view of the player, a roster need, a shorter competitive window or a contract structure the model does not represent.</p>
+
+      <h2>The forecasts use the completed 2026 season</h2>
+      <p>The estimates use <Link href="/analysis/our-projections-replace-zips">DV Projections</Link>, my projection system built from public data through 2026. The ZiPS forecasts stored in the database were published earlier and do not contain the same completed-season information. I use the current DV forecasts where the model has enough MLB history; Sato gets a separate translation from his Japanese record.</p>
+      <p>The models combine a player’s results with contact quality, plate discipline, pitching traits, age and history. WAR rate and workload are estimated separately. For years two through five, separate horizon models are blended with a historical aging curve, then smoothed. Later seasons follow fixed age and workload curves from that five-year forecast. A full-season valuation workload is used for pricing; it does not assume I can predict precisely which seasons a player will miss through injury.</p>
+      <p>The long-range path matters particularly for Skubal. He projects for 5.34 WAR in 2027, 3.23 in 2031 and 1.37 in 2035. An extra year is valuable only if there is enough projected production left to pay for it. The same rule gives Jazz Chisholm Jr. four years and $89.4 million, Freddy Peralta four years and $74.4 million, and Ryan Jeffers four years and $62.4 million.</p>
 
       <h2>The predictions</h2>
-      <div className="article-table-wrap" tabIndex={0} role="region" aria-label="Free-agent contract predictions"><table><caption>Contract predictions, frozen before free agency opened. Age is for the 2027 season; 2026 fWAR is from FanGraphs.</caption><thead><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th><th scope="col">Age</th><th scope="col">2026 fWAR</th><th scope="col">Years</th><th scope="col">Total</th><th scope="col">AAV</th><th scope="col">Flag</th></tr></thead><tbody>
-        {predictions.map(([name, pos, age, war26, years, total, aav, flag], i) => (
-          <tr key={name}><td className="num">{i + 1}</td><th scope="row">{name}</th><td>{pos}</td><td className="num">{age}</td><td className="num">{war26 === null ? "—" : war26.toFixed(1)}</td><td className="num">{years}</td><td className="num">{money(total)}</td><td className="num">{money(aav)}</td><td>{flag ?? ""}</td></tr>
-        ))}
+      <div className="article-table-wrap" tabIndex={0} role="region" aria-label="Free-agent contract estimates"><table><caption>Estimates recorded October 29, 2026. Dollars are millions; age is for 2027. The 2026 WAR column is FanGraphs WAR, not the forecast used to price the contract.</caption><thead><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th><th scope="col">Age</th><th scope="col">2026 WAR</th><th scope="col">2027 forecast</th><th scope="col">Years</th><th scope="col">Total</th><th scope="col">AAV</th></tr></thead><tbody>
+        {predictions.map(p => <tr key={p.player}><td className="num">{p.rank}</td><th scope="row">{p.player}</th><td>{p.position}</td><td className="num">{p.age_2027}</td><td className="num">{p.war_2026 === null ? "—" : p.war_2026.toFixed(1)}</td><td className="num">{p.war_2027.toFixed(2)}</td><td className="num">{p.years}</td><td className="num">{money(p.total_musd)}</td><td className="num">{money(p.aav_musd)}</td></tr>)}
       </tbody></table></div>
 
-      <h2>Where I expect the market to disagree</h2>
-      <p>
-        The rule for this exercise is that the model’s number is the prediction, and I only flag a player when there’s a specific reason the market should pay something different. Skubal is the clearest case, because no pitcher has signed for more than $43.3 million a year, the record Max Scherzer and Justin Verlander share, and even Gerrit Cole’s nine-year deal at 29 came in at $36 million a year. Hitters have gone well past that, most recently Kyle Tucker at $60 million a season, so the money exists. I’d still expect Skubal’s annual salary to land below $50.6 million, and the total to get close to $506 million only if a team goes beyond 10 years or defers money.
-      </p>
-      <p>
-        Sato is the most uncertain prediction on the list. He has no major-league projection, so I translated his Nippon Professional Baseball record using the six Japanese hitters who have come over since 2020. Their first two seasons in the majors kept about 17% of their NPB edge over league average: Seiya Suzuki went from a weighted 180 wRC+ to 123, Munetaka Murakami from 183 to 129, and Shogo Akiyama from 148 to 63. Sato’s 181 translates to about a 114 wRC+ and 2.5 WAR next season, which the model calls four years and $80 million. The team that signs him also owes Hanshin a release fee, 20% of the first $25 million, 17.5% of the next $25 million and 15% above that, which should push his own contract below his value.
-      </p>
-      <p>
-        A few other flags are structural. Sandy Alcantara’s price assumes Miami declines his $21 million option, and Clay Holmes’s assumes he opts out of the $12 million left on his deal, which the model expects by a narrow margin. Hunter Harvey barely pitched in 2026, so his projection is still spring ZiPS and doesn’t reflect the lost season. Any player who receives a qualifying offer, which teams must extend within five days of the World Series, should land below the model, because signing him costs a draft pick. I’ll score that flag only for the players who actually receive one.
-      </p>
+      <h2>Where the uncertainty is largest</h2>
+      <p>Adrian Morejon’s four years and $91.1 million is the clearest place I expect the market to come in below the model. His forecast is 1.77 WAR next season, and the reliever premium makes those wins expensive. A club may value that production less if it sees him as a setup man rather than a closer. That is a flag on the numeric prediction, not a manual discount to it.</p>
+      <p>Sato is the least certain projection. I translated his NPB performance using the observed transition of six Japanese hitters to MLB, a small comparison group. The result is about 2.5 WAR next season and four years at $20 million a year. The signing team also owes Hanshin a posting fee, so I expect Sato’s own contract to fall below the model’s valuation of his production.</p>
+      <p>A qualifying offer can also depress a player’s offers because of the draft compensation attached to signing him. I apply that directional flag only to players who actually receive an offer and are subject to compensation. It does not change the table’s numbers.</p>
 
-      <h2>Who isn’t here</h2>
-      <p>
-        Some of the best players with expiring contracts aren’t expected to reach the market, and the protocol decides that from the model rather than from news reports. Atlanta owes Ronald Acuña Jr. a $10 million buyout if it declines his $17 million club option, so keeping him for 2027 costs only $7 million more, far below his value. The same logic keeps Drew Rasmussen, Garrett Whitlock and Nick Pivetta off the list. Bo Bichette can opt out of the two years and $84 million left on his deal, but after a 1.9-WAR season his market value for those two years is about $45 million, so the model expects him to stay. Corbin Burnes, Michael King, Tatsuya Imai and Luis Severino are expected to stay put for the same reason. I left out Emmanuel Clase because his pending federal case makes his market impossible to model.
-      </p>
+      <h2>Who reaches the market?</h2>
+      <p>The list starts from the dated free-agent class and uses contract decisions to determine who is expected to become available. A club exercises an option when the player’s projected value exceeds the option’s cost net of the buyout. A player is expected to opt out when the modeled value over the years he would give up exceeds the money remaining.</p>
+      <p>That keeps Ronald Acuña Jr., Drew Rasmussen, Nick Pivetta and Garrett Whitlock off the list, along with Sandy Alcantara on his $21 million option. It also has Bo Bichette and Clay Holmes staying with their contracts. Actual decisions take priority over those assumptions: <a href="https://www.mlb.com/amp/news/michael-king-free-agent-2027.html">MLB reported Michael King’s opt-out</a>, so he is included at four years and $69.4 million.</p>
+      <p>The table ranks the 30 highest modeled totals among players expected to reach the market, with Sato added separately. Players without a usable projection are listed as unmodeled in the research files; they are not silently assigned a zero-dollar forecast.</p>
 
-      <h2>How this gets scored</h2>
-      <p>
-        Each player is scored once he signs a guaranteed major-league contract, through Opening Day 2027. The main measure is the typical percentage miss on total guaranteed value, with misses on years and AAV reported alongside it. The comparison points are the FanGraphs crowdsourced predictions and MLB Trade Rumors’ annual top-50 forecast, each captured with a date and counted only for players who hadn’t signed yet. Players who don’t reach free agency, or who sign minor-league deals, come off the board, and I’ll say which.
-      </p>
-      <p>
-        The predictions, the protocol and the hashes of every input are in <a href={`${FILES}.tar.gz`}>the research bundle</a>, so anyone can check that nothing moved after the freeze. The model itself is the same one behind the site’s <Link href="/tools/rankings">value rankings</Link> and <Link href="/tools/trade">trade builder</Link>, which now use the same 2026-updated projections.
-      </p>
+      <h2>How I checked the prices</h2>
+      <p>I set the price scale and role premiums using 2020–26 free-agent contracts, before producing these estimates. That is calibration to past market pay, not proof that the same price is right for every player or that a club will buy the same aging path. I have kept those pricing settings fixed for this class rather than adjusting them to make individual contracts look more plausible.</p>
+      <p>The projection tests answer a different question. DV’s hitter wOBA forecasts were competitive with preseason ZiPS and Steamer, and its pitcher FIP forecasts improved on ZiPS. In an additional test of total season WAR, including players who never appeared, DV with its expected workloads had lower error than ZiPS and was close to Steamer. The fuller workloads used here are for valuation and were more optimistic than realized season totals. Those distinctions matter when turning a baseball forecast into a price.</p>
+
+      <h2>How I will score the predictions</h2>
+      <p>I will score each player’s guaranteed MLB contract through Opening Day 2027. The main measure is mean absolute log error on total guaranteed value, with errors in years and annual salary alongside it. I will also compare with dated FanGraphs crowdsourced forecasts and MLB Trade Rumors’ predictions on players covered by every forecast, counting only predictions captured before the relevant signing.</p>
+      <p>Players who stay under contract, retire, sign minor-league deals or otherwise do not enter the scored market will be reported separately. Directional flags are scored separately from the numeric estimates. The <a href={`${FILES}.tar.gz`}>research download</a> contains the dated table, scoring rules, code and input checksums, with earlier dated estimates retained for reference.</p>
 
       <h2>Methods in brief</h2>
       <ul>
-        <li><strong>Free-agent class:</strong> MLB Trade Rumors’ 2026–27 list as of October 19, 2026, plus Sato.</li>
-        <li><strong>Projections:</strong> ZiPS for 2027–28 from the site’s database, updated for 2026 by a blend fit on 2015–26 FanGraphs data, then extended with the site’s aging model. Players with under 100 PA or 20 innings in 2026, and the 50 players in FanGraphs’ Trade Value Series, keep their ZiPS.</li>
-        <li><strong>Model:</strong> 2026-10-25.1. That is $11 million per WAR, a 20% premium above 2 WAR, 3% inflation and a 10% discount rate, with a 50% reliever premium above 0.8 projected WAR.</li>
-        <li><strong>Term:</strong> consecutive seasons projected at 1.0 WAR or more (0.5 for relievers), capped by role, projected WAR and age. Players projected at 4.5 WAR or more can go to 10 years.</li>
-        <li><strong>Options and opt-outs:</strong> a club option is exercised if the player’s 2027 value exceeds its net cost; a player opts out if his market value over the years left beats the money left.</li>
-        <li><strong>Calibration:</strong> 2020–26 free-agent contracts from FanGraphs’ free-agent tracker. Projections at signing exist only for the 2026 class, so earlier years used a weighted three-year WAR average.</li>
+        <li><strong>Class:</strong> MLB Trade Rumors’ October 19, 2026 free-agent list, with King’s reported opt-out included; the top 30 modeled totals plus Sato.</li>
+        <li><strong>Forecasts:</strong> DV data through 2026, five-year rate and workload paths, then age-based extensions. Sato uses the separately estimated NPB translation.</li>
+        <li><strong>Pricing:</strong> $11 million per net WAR, 20% premium above two net wins, 3% annual inflation and 10% discounting; a 50% reliever premium above 0.8 projected WAR. Roster allowances are 0.5 WAR for hitters and starters and 0.2 for relievers.</li>
+        <li><strong>Contract:</strong> flat annual salary with the same present value as projected production; the published term, age and role rules apply to every player. Posting fees and qualifying-offer compensation are not deducted from the quoted prices.</li>
       </ul>
     </>
   ),

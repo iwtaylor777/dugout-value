@@ -22,8 +22,8 @@ for ax,kind,label in zip(axes,('bat','pit'),('Hitters · WAR per 600 PA','Pitche
     ax.set_xlabel('Years ahead'); ax.set_xticks(range(2,6)); ax.set_ylabel('Weighted RMSE · lower is better')
     ax.grid(axis='y',alpha=.2); ax.set_ylim(1.55,2.2)
     ax.legend(loc='upper left',frameon=False,fontsize=10)
-fig.suptitle('Long-range rate tests, corrected for information timing',x=.06,ha='left',fontweight='bold',fontsize=20)
-fig.text(.06,.055,'All training outcomes stop at the forecast date. Reused 2024–26 target seasons; no retuning.\nEach point averages available season tests; later horizons have fewer tests. Final smoothing and workloads are not scored here.',fontsize=11,color='#475569')
+fig.suptitle('How multi-year rates compare with an aging curve',x=.06,ha='left',fontweight='bold',fontsize=20)
+fig.text(.06,.055,'Historical 2024–26 target seasons. Every training outcome stops at the forecast date.\nEach point averages available season tests; later horizons have fewer tests. Final smoothing and workloads are not scored here.',fontsize=11,color='#475569')
 fig.subplots_adjust(left=.06,right=.98,top=.80,bottom=.19,wspace=.24)
 path=args.output
 fig.savefig(path,facecolor=fig.get_facecolor())

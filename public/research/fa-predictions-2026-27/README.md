@@ -1,44 +1,37 @@
-# Free-agent contract predictions, 2026–27
+# Free-agent contract estimates, 2026–27
 
-These are frozen contract predictions for the 30 most valuable MLB free agents expected to reach the market, plus Teruaki Sato. They come from Dugout Value trade model 2026-10-25.1: $11 million per WAR, a 20% star premium, and a 50% reliever premium above 0.8 WAR. The projections are updated for the 2026 season.
+Current estimates are recorded October 29, 2026, using DV Projections v1.3 through the completed 2026 season. The article is “Tarik Skubal is worth $367 million on the open market.”
 
-Article: https://dugoutvalue.com/analysis/what-this-winters-free-agents-should-cost
+## Current snapshot
 
-## The scored predictions
+- `predictions_frozen.json` / `.csv`: 31 estimates, the top 30 modeled MLB totals expected to reach the market plus Teruaki Sato. They include the 2027 forecast used to price the contract, later WAR paths, fixed settings, flags, exclusions and unmodeled coverage.
+- `LOCK-DV-20261029.json`: timestamp and hashes of the current inputs, pricing code and prediction files. Do not change this snapshot after observing contracts.
+- `DV-20261029.md`: precise source, coverage, workload and extension conventions.
+- `PROTOCOL-FA-2027.md`: scoring definitions for guarantees, term, AAV, flags, eligible contracts and dated benchmarks. The actual current freeze time is in the current lock; historical claims about when free agency would open are not used to date this release.
+- `code/`: the current pricing, term, class-matching and freeze code, with the matching value/aging libraries.
 
-- `predictions_frozen.json` / `.csv`: the 31 predictions (Amendment 4) that will be scored, with their flags and the players excluded and why.
-- `PROTOCOL-FA-2027.md`: the original protocol, covering what is predicted, the price and term rules, who reaches the market, and the scoring.
-- `AMENDMENT-3.md`: the changes made on October 26, before free agency opened.
-  - Projections updated for the 2026 season.
-  - Pitcher roles taken from 2026 usage.
-  - A corrected opt-out rule.
-  - An NPB translation fit on past signings.
-  - Half credit for fielding runs, removed by Amendment 4.
-- `AMENDMENT-4.md`: removes Amendment 3's fielding credit, which double-counted a discount projections already make (see https://dugoutvalue.com/analysis/teams-pay-less-for-defense).
-- `LOCK-AMENDMENT-4.json`: SHA-256 hashes of the scored files, the inputs and every earlier lock, with the UTC time of the freeze (2026-10-26T19:35:41Z). Check any file with `sha256sum`.
-- `amendment-4/freeze_a4.py`: writes the Amendment 4 predictions files.
-- `amendment-3/`: Amendment 3's predictions and lock inputs (its lock, `LOCK-AMENDMENT-3.json`, is at the top of this folder), with the scripts behind it and `outputs.txt`, the printed calibration results. The calibrations cover:
-  - the projection update (`marcel.py`, `update2.py`, `krate.py`, `krookie.py`, `season_update.py`);
-  - fielding (`defense.mjs`, `defense2.mjs`, `fa_fielding.py`);
-  - the NPB translation (`npb_fit.mjs`);
-  - the predictions themselves (`predict_v3.mjs`, `select_v3.py`, `freeze_a3.py`, `sato_k017.json`).
+The numeric forecasts use $11M per net WAR, 20% extra for net wins above two, a 50% reliever premium above .8 WAR, 3% annual inflation and 10% discounting. The roster allowances are .5 WAR for hitters/starters and .2 for relievers. The term rule is unchanged. All five DV years are used directly; subsequent years extend rate and workload separately with the fixed age policy. No individual contract term or price is manually forced.
 
-## Earlier versions
+Michael King's reported opt-out is included as a known market-reach decision, with the MLB report URL stored in the JSON. Other option decisions follow the fixed model rule until observed. Kyle Wright is marked unmodeled because recent-history coverage and a current public baseline are absent; he is not assigned zero value. The extra class identities matched outside the roster snapshot fall below the displayed cutoff. Sato's separate six-player NPB translation remains 2.5 first-year WAR and four years/$80M. Posting-fee and QO flags do not change numeric prices.
 
-All earlier versions were frozen before free agency opened, and each keeps its own lock:
+## Reproduction
 
-- `first-freeze/`: the first freeze, from October 25 at 22:08 UTC, with its lock, predictions and scripts. The protocol at the top of this folder is the one it locked.
-- `amendment-1-withdrawn/`: the October 25 re-freeze at $10.5 million per WAR and a 10% star premium. It was withdrawn by Amendment 2.
-- `AMENDMENTS.md` and `LOCK-AMENDMENTS.json`: Amendments 1 and 2.
-- `calibration/`: the checks against 2020–26 contracts that set the model's prices. `amendment-2/` holds the check by signing year that led to Amendment 2.
+Use the repository revision containing this release, its `app/data/player-database.json` and `app/data/dv-projections.json`, the original local MLB Trade Rumors list and full FanGraphs season leaderboards. Those raw third-party inputs are not redistributed; their hashes are recorded. Sato's translation input is `amendment-3/sato_k017.json`.
 
-## Not redistributed
+First generate complete class identities outside the roster snapshot using `code/scripts/build-fa-class-coverage.py --database REPOSITORY/app/data/player-database.json --class-list LOCAL_MLBTR_LIST --raw LOCAL_RAW --output PRIVATE_CLASS`. The raw directory contains complete `fg_bat_YEAR.json` and `fg_pit_YEAR.json` responses, 2010–26. The helper uses listed hitting/pitching position before matching a historical identity, so occasional position-player pitching is not treated as his role.
 
-These inputs are not included here. Their hashes are in the locks.
+Use the projection package's `site/build_dv_site.py` with `PRIVATE_CLASS/extended_database.json` and the same current local fitted forecasts, map, history and retention inputs to produce `PRIVATE_CLASS/extended_projections.json`. This is the same builder used for the main current projection artifact; it does not retrain or tune the extra players.
 
-- The MLB Trade Rumors free-agent list.
-- The FanGraphs free-agent tracker.
-- FanGraphs leaderboards for 2015–26, including NPB stats.
-- FanGraphs' 2026 preseason ZiPS.
+Export `DV_FA_EXTRA_PLAYERS=PRIVATE_CLASS/extra_players.json` and `DV_FA_EXTRA_PROJECTIONS=PRIVATE_CLASS/extended_projections.json`, then run:
 
-The site's player database, including the 2026 season update, is in the public repository at `app/data/player-database.json`.
+```sh
+node code/scripts/freeze-dv-free-agents.mjs REPOSITORY LOCAL_MLBTR_LIST amendment-3/sato_k017.json LOCAL_RAW PRIVATE_REPLAY
+```
+
+Compare every numeric prediction with the recorded JSON. A new replay timestamp changes file hashes; it is not a replacement for the existing dated predictions. The complete 31-row replay was verified exactly before this release. The current article imports the recorded JSON directly, avoiding a separately copied table.
+
+## Earlier records
+
+`archive/2026-10-26-zips-release.tar.gz` is the previous complete published release, with its predictions and original locks intact. The older root locks and amendments refer to historical snapshots; verify their predictions within the corresponding archive, not against the current root table. Calibration scripts and earlier translations remain available for provenance. No old lock is rewritten to endorse the new numbers.
+
+The settings were calibrated against historical contracts; the current class is a prospective contract-estimate exercise. The projection package separately reports rate and full-season WAR validation, including zero-workload players. Historical comparisons have been reused and do not establish precise future contract prices.

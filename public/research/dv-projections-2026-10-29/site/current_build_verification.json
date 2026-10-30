@@ -1,9 +1,30 @@
 {
-  "players": 1245,
-  "changed_player_records": 0,
-  "metadata_equal": true,
-  "byte_equal": true,
-  "published_sha256": "bd7d1f70191739f68b1481d43b8274bacc58c8e32b23cd6c662209ff67c2f6a0",
-  "rebuilt_sha256": "bd7d1f70191739f68b1481d43b8274bacc58c8e32b23cd6c662209ff67c2f6a0",
-  "method": "Rebuild from the existing current forecast inputs; does not refit or retune rates."
+  "model": "Dugout Value projections v1.3",
+  "players": 1246,
+  "source": "Historical innings normalized at the loader; workload map rebuilt within role; mapped relief innings capped at the reliever 80th percentile unless recent healthy history supports more.",
+  "previous_sha256": "bd7d1f70191739f68b1481d43b8274bacc58c8e32b23cd6c662209ff67c2f6a0",
+  "current_sha256": "f4b7fc8c0c58a07bab87ae958559c80d41bd212bd34628110fb7b5db602ce01f",
+  "role_changes": {
+    "position": {
+      "players": 558,
+      "mean_2027_war_change": 0.0014336917562723988,
+      "maximum_absolute_2027_war_change": 0.040000000000000036
+    },
+    "starter": {
+      "players": 283,
+      "mean_2027_war_change": 0.0253356890459364,
+      "maximum_absolute_2027_war_change": 0.41999999999999993
+    },
+    "reliever": {
+      "players": 403,
+      "mean_2027_war_change": -0.09526054590570719,
+      "maximum_absolute_2027_war_change": 1.23
+    },
+    "two-way": {
+      "players": 1,
+      "mean_2027_war_change": -0.10999999999999943,
+      "maximum_absolute_2027_war_change": 0.10999999999999943
+    }
+  },
+  "rafaela_unchanged": true
 }

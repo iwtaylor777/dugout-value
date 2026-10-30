@@ -1,61 +1,46 @@
-# Dugout Value projections: original benchmark and corrected retrospective tests
+# DV Projections: methods and validation
 
-Published October 29, 2026. Goes with “Introducing DV Projections: how they compare with ZiPS and Steamer.”
+Current site model: v1.3, data through 2026. The article is “Introducing DV Projections.” This package includes the original benchmark, independent replay, current model comparisons and supplementary validation. These are retrospective studies using previously examined seasons; the prospective test is 2027.
 
-## What changed
+## Results and measurement
 
-Read `AMENDMENT-TIMING.md` first. The original multi-year training loop used outcomes unavailable at the forecast origin. Historical contract paths also used a 2026 workload map for earlier signings. Corrected tests cap **all training outcomes at target minus horizon** and use season-specific archived workload maps. They are reused retrospective evaluations, not a new holdout. No feature recipes, hyperparameters or blend weights were retuned.
+- `validation/current_primary_results.json`: current 2025–26 primary rate comparisons. Hitter wOBA RMSE .028675 versus ZiPS .028758 and Steamer .028818; pitcher FIP .728200 versus .762862 and .731173. Paired intervals resample players, keeping their years together. The FIP improvement over ZiPS is 4.5%; the other primary differences are inconclusive.
+- `validation/independent_primary_replay.json`: a fresh fit of the original hash-locked recipe and independent score calculations from raw outcome and preseason arrays. Every original sample count matches; primary RMSE discrepancies are below 4e-14. The original scoring functions are not called.
+- `FULL-SEASON-VALIDATION.md` and `validation/full_season_war_results.json`: additional complete-season WAR tests including zero-workload established players, with no target-year workload filter. Expected-workload and full-season valuation forecasts are scored separately. The data and modeling choices were fixed before this endpoint was calculated; these remain reused historical seasons.
+- `site/horizon_backtest_summary.json`: current normalized multi-year rate tests. Direct horizon models have lower error in 16/17 comparisons and the unchanged 70/30 blend in 17/17. These are overlapping forecast comparisons on a small number of seasons, not 17 independent evaluation years. Final smoothing and workload assumptions are not scored by this chart.
+- `site/current_build_verification.json`: current artifact checksums, role-level changes and the unchanged Rafaela path.
+- `MODEL-20261029.md`: complete current input/workload conventions and their effects.
 
-The original hash-locked `model-v1/`, protocols, locks, `eval_holdout-v1.json` and `HOLDOUT-RUNS.json` remain unchanged. Files under `superseded/` preserve the earlier horizon results, price results and affected site scripts; they must not be cited as current evidence. The original one-year benchmark does not have this horizon timing error. Later hitter WAR features are a reused comparison, not part of that original lock.
+The additional season-WAR test gives DV expected-workload RMSE 1.1355 for hitters and .8027 for pitchers, versus ZiPS 1.3999/.8767 and Steamer 1.1574/.8041. DV differences from Steamer are inconclusive. The full-season valuation policy gives 1.2325/.8696 and overpredicts realized totals. It should not be described as an injury-adjusted expected season.
 
-## Current evidence
+## Reproduce
 
-- `eval_holdout-v1.json`: original one-year benchmark and paired intervals, with counts of player-seasons.
-- `validation/`: original team, run-value and salary checks. These apply rates to known workloads or measure market agreement; they are not validations of trade value.
-- `site/horizon_backtest_summary.json`: corrected 17 rate comparisons, including horizon-only forecasts, the unchanged 70/30 blend, and paired bootstrap difference intervals. The horizon model wins 16 comparisons by point estimate; the blend wins 17, with intervals excluding zero in 12. Final smoothing, survival and workload assumptions are not scored by this test.
-- `site/calibration_dv_results.json`: corrected descriptive 2023–26 contract-price refit. Only non-relievers with at least one projected first-year WAR enter the pooled price fit. Matching archived preseason workloads are unavailable for 2021–22, so those seasons are excluded. Do not compare the new pooled estimate with the old pooled estimate as if only one variable changed. Forecast snapshots may postdate signings.
-- `site/current_build_verification.json`: rebuilding the current projection JSON from the existing forecast inputs reproduced all 1,245 player records and metadata. Current forecast numbers and the $11M/20% pricing settings are unchanged.
-- `input-manifest.json`: input checksums for the corrected replay. Inputs were acquired retrospectively and may include provider revisions.
-- `site/replay_metadata.json`: modeling software versions and the scoring-script composite hash. `provenance/replay-first-run.py` is the exact aggregate-run source. The current replay omits the private player diagnostic; aggregate scoring is unchanged.
-- `DEVLOG.md`: original development history, including the fielding/baserunning/position WAR-rate fix.
+Install `requirements.txt` in Python 3.13. LightGBM on macOS needs a compatible OpenMP runtime. The recorded runs use two model/BLAS threads. Supply local inputs, which are not redistributed:
 
-## Reproduce the corrected tests
+- `DV_RAW_DIR`: complete FanGraphs leaderboard responses `fg_bat_YEAR.json` / `fg_pit_YEAR.json`, 2010–26, with rows in `data`. Include all advanced and WAR-component columns. The season-leaderboard endpoint is `/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=YEAR&season1=YEAR&ind=1&pageitems=10000&pagenum=1` (or `stats=pit`). Historical actual IP are baseball notation. `site/runtime.py` converts them to decimal innings for the current model. Projected IP are continuous expectations and are left unchanged.
+- `DV_MILB_DIR`: MLB Stats API season hitting splits named `YEAR-SPORT-hitting.json`, years 2013–26, sports 11/12/13/14. Request `/api/v1/stats?stats=season&group=hitting&season=YEAR&sportIds=SPORT&limit=10000&playerPool=ALL`; save `stats[0].splits`, or an empty array. Reject truncated responses.
+- `DV_ARCHIVE_DIR`: dated preseason projection arrays `YEAR-zips-bat.json`, `YEAR-zips-pit.json` and Steamer equivalents. Use the archive timestamps recorded in the original study, not current endpoints. Steamer pitchers for 2023 are unavailable.
+- The local FanGraphs free-agent tracker is needed only for historical price checks. Current free-agent estimates are a separate package.
 
-Use Python 3.13 and `pip install -r requirements.txt` in a fresh environment. On macOS LightGBM also needs an OpenMP runtime; use a compatible local libomp installation. The recorded run uses two model/BLAS threads. On other platforms small floating-point differences are possible.
-
-Supply these local input directories (not distributed):
-
-1. `DV_RAW_DIR`: full FanGraphs season-leaderboard JSON responses named `fg_bat_YEAR.json` and `fg_pit_YEAR.json` for 2010–26, with the data in a `data` array. Requests use `/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=0&type=8&season=YEAR&season1=YEAR&ind=1&pageitems=10000&pagenum=1` (replace bat with pit for pitchers). All columns, including advanced and WAR components, are needed.
-2. `DV_MILB_DIR`: MLB Stats API season hitting splits, as arrays, named `YEAR-SPORT-hitting.json`, 2013–26 and sports 11, 12, 13, 14. Request `/api/v1/stats?stats=season&group=hitting&season=YEAR&sportIds=SPORT&limit=10000&playerPool=ALL` and save `stats[0].splits`, or `[]` if there are no statistics. Check `totalSplits` to reject truncation.
-3. `DV_ARCHIVE_DIR`: the original archived preseason projection arrays named `YEAR-zips-bat.json`, `YEAR-zips-pit.json`, etc. The original local archive manifest records snapshot timestamps and URLs. The corrected contract refit uses ZiPS 2023–26; the original v1 comparison also needs Steamer. Do not substitute current projections for archived ones.
-4. The FanGraphs free-agent tracker JSON (`tracker_season`, contract, player, position and projection fields) used by the original study. Its required shape is visible in `site/replay.py`. `site/retention.json` supplies the site's fixed workload policy.
-
-Export the three input-directory variables, then run from the unpacked package:
+Run from the unpacked package:
 
 ```sh
 python site/test_timing.py
-python site/replay.py --output /path/to/private-replay --contracts /path/to/fg_fa_tracker_2020_2027.json --retention site/retention.json --only all
-node site/calibrate_dv.mjs /path/to/dugout-value-repository /path/to/private-replay/cal_deals_corrected.json
-```
-
-The price script writes `calibration_dv_results.json` to the working directory. The Python replay writes player-level fits only to the requested private directory. Its cache checks source hashes; use a fresh output directory when input files or dependencies change. The original frozen v1 code keeps its original machine paths; `site/runtime.py` supplies portable locations without altering its locked bytes. No recorded result requires changing the locked model files.
-
-## Rebuild the current site output
-
-The published builder has been restored to the multi-year implementation that generated the current site JSON; the previous download incorrectly included an older builder.
-
-```sh
+python validation/full_season_war.py --output /path/to/private-validation
+python site/replay.py --output /path/to/private-horizon --only benchmark
 python site/project_current.py --output /path/to/private-current
 python site/site_multiyear.py --input /path/to/private-current/dvp_2027_2031_v3.json --output /path/to/private-current/dvp_multiyear.json
-python site/build_dv_site.py /path/to/dugout-value-repository/app/data/player-database.json /path/to/private-current/dvp_2027_2031_v3.json /path/to/private-current/dvp_multiyear.json site/pt_quantile_map_2026.json /path/to/private-current/established_2024_26.json /path/to/private-current/workloads_2024_26.json site/retention.json /path/to/private-current/dv-projections.json
+python site/build_dv_site.py /path/to/repository/app/data/player-database.json /path/to/private-current/dvp_2027_2031_v3.json /path/to/private-current/dvp_multiyear.json site/pt_quantile_map_2026_roles.json /path/to/private-current/established_2024_26.json /path/to/private-current/workloads_2024_26.json site/retention.json /path/to/private-current/dv-projections.json
 ```
 
-The 2026 percentile map is an intentional current-site normalization policy. It is included as aggregate quantiles. Corrected historical price tests rebuild their own mappings by season instead of using this current map. Full-season workload is the greater of the mapped prediction and the recent healthy workload. Rates blend horizon and age-curve estimates 70/30, then are smoothed to a line anchored at the first year; workload retention is applied separately. Beyond 2031 the site's existing aging shape continues from the new 2031 level. Missing-history players retain ZiPS.
+Each output directory above contains private player-level fits and must not be copied wholesale into a public release. Use a fresh directory after input or dependency changes. The full-season validation script first reproduces the original, unnormalized recipe, then applies the current innings loader. The role maps shipped here are aggregate quantiles built from 2026 model workloads and archived preseason ZiPS. Rebuild date-specific maps for historical evaluations as the validation script does; do not apply 2026 maps to earlier forecasts.
 
-The reproduction check used the existing current forecast inputs, not newly refitted rates. New data revisions or software differences can change a fresh fit; do not replace a production forecast merely because a new replay finished.
+Chart scripts are `site/chart_primary.py` and `site/chart_corrected.py` (the latter's filename is retained for compatibility). They accept JSON inputs and an output PNG path. Actual season outcomes and model-fitting uncertainty require interpretation beyond a plotted point estimate.
 
-## Files and integrity
+## Original evidence and integrity
 
-`release-manifest.json` lists SHA-256 checksums for the package files (excluding itself). `package_release.py` checks the original v1 lock and rebuilds the download and checksum. The earlier original locks are in `LOCK-PROTOCOL.json`, `LOCK-MODEL-v1.json`, `LOCK-VALIDATION.json` and `LOCK-VALIDATION-AMENDMENT-1.json`. The correction is documented separately, preserving their meaning.
+`model-v1/`, `LOCK-MODEL-v1.json`, `eval_holdout-v1.json`, the original protocols and `HOLDOUT-RUNS.json` retain their original bytes. `validation/validation_v1*.json` holds earlier team/run-value/pay checks. The descriptive price fit in `site/calibration_dv_results.json` belongs to the earlier model paths and is not relabeled as a current-model refit.
 
-FanGraphs data, archived projections and player-level results derived from them are not redistributed in this package. Source files and predictions in `app/data/` belong to the separately versioned site snapshot.
+`provenance/pr3-release-20261029.tar.gz` preserves the previous complete release. `provenance/replay-first-run.py`, `provenance/dvp_site-first-run.py` and `provenance/runtime-first-run.py` reproduce the generator composite hash in `site/replay_metadata.json`; these are historical source copies. `superseded/` and the dated amendments retain the audit history. These files explain provenance, not current site behavior.
+
+`input-manifest.json` records raw input hashes. Current additional-validation source hashes are in `validation/measurement_metadata.json`. `release-manifest.json` hashes the package files; `package_release.py` verifies the original model lock and rebuilds the download and checksum. Historical inputs were downloaded retrospectively and may contain provider revisions. No current result is a claim of an untouched historical season.

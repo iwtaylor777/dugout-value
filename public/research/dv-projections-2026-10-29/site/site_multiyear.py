@@ -2,7 +2,7 @@
 Writes dvp_multiyear.json with per-player rate and expected PT by year."""
 import argparse, json, numpy as np
 import runtime
-runtime.configure()
+runtime.configure(normalize_ip=True)
 from data import seasons
 from feat_pit import fnum
 parser=argparse.ArgumentParser()

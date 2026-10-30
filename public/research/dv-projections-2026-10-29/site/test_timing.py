@@ -1,8 +1,15 @@
 """Forecast-origin regression checks; these do not require proprietary inputs."""
 import unittest
-from runtime import training_years
+from runtime import training_years, innings_to_decimal
 
 class TimingTests(unittest.TestCase):
+    def test_baseball_innings_count_outs_instead_of_decimal_tenths(self):
+        self.assertAlmostEqual(innings_to_decimal(174.2),174+2/3)
+        self.assertAlmostEqual(innings_to_decimal(6.1),6+1/3)
+        self.assertEqual(innings_to_decimal(0),0)
+
+    def test_invalid_outs_notation_is_rejected(self):
+        with self.assertRaises(ValueError): innings_to_decimal(6.3)
     def test_five_year_forecast_excludes_every_unavailable_outcome(self):
         years=list(training_years(2016,2026,5))
         self.assertEqual(years,[2020,2021])
@@ -46,7 +53,7 @@ class TimingTests(unittest.TestCase):
             mod.fnum=lambda v:float(v) if v is not None else float('nan')
             features[name]=mod
         fake_runtime=types.ModuleType('runtime')
-        fake_runtime.configure=lambda:None
+        fake_runtime.configure=lambda **kwargs:None
         fake_runtime.training_years=training_years
         modules=dict(features,data=fake_data,dvp=fake_dvp,runtime=fake_runtime)
         with patch.dict('sys.modules',modules):
