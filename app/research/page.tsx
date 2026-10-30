@@ -24,6 +24,15 @@ const datasets = [
 
 export default function ResearchFiles() {
   return <Publication active="analysis"><JsonLd data={[webPageJsonLd({ type: "CollectionPage", title: "Research files and forecast results", description: "Data and code for historical projection tests, frozen forecasts, and the dated trade-model archive.", path: "/research" }), breadcrumbJsonLd([["Research files", "/research"]]), ...datasets]}/><header className="section-intro"><h1>Research files</h1><p>Forecasts, outcomes, and code for checking the published results. The trade-model archive preserves the inputs and rules behind the October release.</p></header><div className="research-files">
+    <section id="bullpen-leverage"><h2>Bullpen leverage, 2021–26</h2>
+      <p>Published October 30, 2026. Exploratory; the plan was written before any result was computed. In 2026, 58% of high-leverage relief batters came before the ninth inning, and teams’ two best relievers (by preseason Dugout Value projection) faced 23% of those. Swapping about 140 of their lowest-leverage batters for the highest-leverage batters faced by relievers ranked sixth or lower was worth about 0.8 wins per team. Managers mostly ignored first-half luck but gave first-half FIP about twice its predictive weight relative to the preseason projection.</p>
+      <p><Link href="/analysis/teams-save-their-best-relievers-for-the-wrong-inning">Read the article</Link>.</p>
+      <ul>
+        <li><a href="/research/bullpen-leverage-2026-10-30.tar.gz" download>Download the plan, code and team-level results</a></li>
+        <li><a href="/research/bullpen-leverage-2026-10-30/PROTOCOL.md">Plan</a> and <a href="/research/bullpen-leverage-2026-10-30/results.json">all aggregate results (JSON)</a></li>
+      </ul>
+      <p>Statcast and FanGraphs data and player-level rows are not redistributed.</p>
+    </section>
     <section id="dv-projections"><h2>Dugout Value projections against ZiPS and Steamer</h2>
       <p>Published October 29, 2026. Historical 2025–26 rate forecasts are competitive with ZiPS and Steamer on hitter wOBA (.0287 versus .0288 and .0288); pitcher FIP error is .728 versus .763 and .731. The package contains the original benchmark, an independent raw-input replay, player-clustered intervals, additional whole-season WAR tests including zero-workload players, and multi-year comparisons. DV with expected workloads had season-WAR RMSE of 1.14 for hitters and .80 for pitchers, compared with ZiPS’s 1.40 and .88 and Steamer’s 1.16 and .80. Historical seasons have been reused; the prospective test is 2027.</p>
       <p><Link href="/analysis/our-projections-replace-zips">Read the analysis</Link>.</p>
