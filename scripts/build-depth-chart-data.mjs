@@ -6,8 +6,10 @@
 // published 2027 WAR as a rate and start at part-time playing time. Free agents outside the roster snapshot come from
 // the same optional files the free-agent tracker uses, so the tool can suggest them.
 import fs from 'node:fs';
-import { valuePlayer, initialSettings } from '../lib/value-model.mjs';
-const [extraPlayersFile, extraProjectionsFile] = process.argv.slice(2);
+const [extraPlayersFile, extraProjectionsFile, fgPayrollFile] = process.argv.slice(2);
+// 2027 luxury-tax (CBT) hits by player, parsed from FanGraphs RosterResource payroll pages (kept outside the repo):
+// guaranteed AAV, option values and arbitration projections. Only the one number per player is published.
+const fgPayroll = fgPayrollFile ? JSON.parse(fs.readFileSync(fgPayrollFile, 'utf8')).players : {};
 const read = f => JSON.parse(fs.readFileSync(f, 'utf8'));
 const db = read('app/data/player-database.json'), dv = read('app/data/dv-projections.json');
 const twoWay = read('app/data/dv-two-way-parts.json');
@@ -30,21 +32,20 @@ function eligible(p) {
 const round = (v, d = 2) => +v.toFixed(d);
 const players = [];
 const faById = new Map(tracker.players.map(r => [r.id, r]));
-// 2027 salary in $M, from the site's value model: contract salaries, option salaries, and its arbitration and
-// pre-arbitration estimates. Contract kind: g guaranteed, o option, a arbitration, p pre-arbitration.
-function salary2027(p) {
-  const season = (p.seasons ?? []).find(s => s.year === 2027);
-  if (!season) return null;
-  const row = valuePlayer(p, initialSettings, db).rows.find(r => r.year === 2027);
-  const kind = season.contractType === 'fixed' ? 'g' : /Option$/.test(season.contractType) ? 'o' : season.salaryMode.startsWith('arb') ? 'a' : 'p';
-  return { pay: round(row.salary), c: kind };
+// 2027 CBT hit in $M. cb: the hit; co: 1 when it is a pending option, which team payroll estimates leave out.
+function cbt2027(p) {
+  const rows = fgPayroll[String(p.mlbamId ?? '')] ?? [];
+  const row = rows.find(r => r.team === p.team) ?? rows[0];
+  if (!row || row.hit == null) return null;
+  return { cb: row.hit, co: /OPTION/.test(row.type) ? 1 : 0 };
 }
 function push(p, team, entry) {
-  const fa = faById.get(p.id), pay = entry.noPay ? null : p.seasons ? salary2027(p) : null;
+  const fa = faById.get(p.id), cbt = entry.noPay ? null : cbt2027(p);
+  const has2027 = (p.seasons ?? []).some(s => s.year === 2027);
   players.push({ i: entry.id ?? p.id, pid: p.id, n: p.name, t: team, e: entry.e, k: entry.k, r: round(entry.r), x: Math.round(entry.x), s: entry.s,
-    ...(pay ? { pay: pay.pay, c: pay.c } : {}), ...(fa ? { fa: 1 } : {}),
+    ...(cbt ? { cb: cbt.cb, ...(cbt.co ? { co: 1 } : {}) } : {}), ...(fa ? { fa: 1 } : {}),
     // Contract over after 2026 and not in the free-agent class (retiring, released or otherwise off the market).
-    ...(!fa && !entry.noPay && p.seasons && !pay ? { ex: 1 } : {}) });
+    ...(!fa && !entry.noPay && p.seasons && !has2027 ? { ex: 1 } : {}) });
 }
 for (const p of db.players) {
   if (p.kind !== 'mlb') continue;

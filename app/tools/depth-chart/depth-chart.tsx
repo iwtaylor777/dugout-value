@@ -4,7 +4,7 @@ import data from "../../data/depth-chart.json";
 import tracker from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
 import payrollData from "../../data/team-payroll.json";
-import { allocate, bestAdditions, teamsFor, payroll2027, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
+import { allocate, bestAdditions, teamsFor, payrollAdjustment, payrollChange, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
 import type { DepthEdit as Edit } from "../../../lib/depth-chart.mjs";
 
 type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number; pay?: number; c?: "g" | "o" | "a" | "p"; ex?: number };
@@ -17,7 +17,11 @@ const rosterOf = (abbr: string) => players.filter((p) => teamOf.get(p.i) === abb
 const signedAav = new Map((signingsData.entries as { player: string; outcome: string; years?: number | null; total_musd?: number | null }[])
   .filter((s) => s.years && s.total_musd != null).map((s) => [s.player.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/gi, "").toLowerCase(), s.total_musd! / s.years!]));
 const faSalary = (p: Entry) => signedAav.get(p.n.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/gi, "").toLowerCase()) ?? faRows.get(p.pid)?.aav ?? null;
-const cbt = payrollData.cbt2026;
+const cbt = payrollData.cbt;
+const cbtTeams = cbt.teams as Record<string, { cbt2026: number; cbt2027: number; guaranteedAav2027: number; arb2027: number }>;
+const nameKey = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/gi, "").toLowerCase();
+const outcomes = new Map((signingsData.entries as { player: string; outcome: string }[]).map((s) => [nameKey(s.player), s.outcome]));
+const signedIds = new Set(players.filter((p) => p.fa && ["signed", "re-signed", "extension", "qo-accepted", "option-exercised", "opted-in"].includes(outcomes.get(nameKey(p.n)) ?? "")).map((p) => p.i));
 const money = (v: number) => `$${v.toFixed(1)}M`;
 const moneyDelta = (v: number) => `${v >= 0.05 ? "+" : v <= -0.05 ? "−" : ""}$${Math.abs(v).toFixed(1)}M`;
 const defaults = new Map(teams.map((t) => [t.abbr, allocate(rosterOf(t.abbr)).total]));
@@ -69,9 +73,10 @@ export function DepthChart() {
   const baseRank = [...defaults.values()].filter((v) => v > base).length + 1;
   const teamName = teams.find((t) => t.abbr === team)?.name ?? team;
   const changed = Object.keys(edits).length + removed.length + added.length > 0;
-  const payroll = useMemo(() => payroll2027(roster, faSalary), [roster]);
-  const basePayroll = useMemo(() => payroll2027(rosterOf(team), faSalary), [team]);
-  const cbt2026 = (cbt.teams as Record<string, number>)[team];
+  const pay = cbtTeams[team];
+  const adjustment = useMemo(() => payrollAdjustment(players, team, teamOf, signedIds, faSalary), [team]);
+  const base2027 = pay ? pay.cbt2027 + adjustment : null;
+  const payChange = useMemo(() => payrollChange(rosterOf(team), roster, freeAgents, faSalary), [team, roster]);
 
   const setPt = (p: Entry, pos: string, value: string) => {
     const v = Math.max(0, Math.round(Number(value)));
@@ -112,10 +117,9 @@ export function DepthChart() {
         <button type="button" className="dc-reset" onClick={reset} disabled={!changed}>Reset</button>
       </div>
       <div className="dc-payroll" aria-live="polite">
-        <p><span>2026 CBT payroll</span><strong>{cbt2026 != null ? money(cbt2026) : "—"}</strong><small>{cbt2026 != null && cbt2026 > cbt.thresholdMusd ? `${money(cbt2026 - cbt.thresholdMusd)} over` : `${money(cbt.thresholdMusd - (cbt2026 ?? 0))} under`} the ${cbt.thresholdMusd}M threshold</small></p>
-        <p><span>2027 under contract</span><strong>{money(basePayroll.guaranteed + basePayroll.options)}</strong><small>{money(basePayroll.guaranteed)} guaranteed{basePayroll.options >= 0.05 ? ` + ${money(basePayroll.options)} in options` : ""}</small></p>
-        <p><span>2027 projected payroll</span><strong>{money(basePayroll.total)}</strong><small>adds {money(basePayroll.arbitration)} arbitration and {money(basePayroll.preArb)} pre-arb estimates</small></p>
-        <p className={changed ? "dc-change" : undefined}><span>Your changes</span><strong>{changed ? moneyDelta(payroll.total - basePayroll.total) : "—"}</strong><small>{changed ? `2027 payroll ${money(payroll.total)}` : "Add or remove players to see the effect"}</small></p>
+        <p><span>2026 CBT payroll</span><strong>{pay ? money(pay.cbt2026) : "—"}</strong><small>{pay ? `${money(Math.abs(pay.cbt2026 - cbt.thresholdMusd2026))} ${pay.cbt2026 > cbt.thresholdMusd2026 ? "over" : "under"} the $${cbt.thresholdMusd2026}M threshold` : ""}</small></p>
+        <p><span>2027 CBT payroll so far</span><strong>{base2027 != null ? money(base2027) : "—"}</strong><small>{pay ? `${money(pay.guaranteedAav2027)} in guaranteed contracts and ${money(pay.arb2027)} projected for arbitration${Math.abs(adjustment) >= 0.05 ? `, ${moneyDelta(adjustment)} for signings and departures` : ""}` : ""}</small></p>
+        <p className={changed ? "dc-change" : undefined}><span>Your changes</span><strong>{changed ? moneyDelta(payChange) : "—"}</strong><small>{changed && base2027 != null ? `2027 CBT payroll ${money(base2027 + payChange)}` : "Add or remove players to see the effect on 2027"}</small></p>
       </div>
 
       <div className="dc-layout">

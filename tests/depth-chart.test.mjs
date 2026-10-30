@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
-import { allocate, teamsFor, bestAdditions, rateAt, payroll2027, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, targetOf } from '../lib/depth-chart.mjs';
+import { allocate, teamsFor, bestAdditions, rateAt, cbtHit, payrollAdjustment, payrollChange, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, targetOf } from '../lib/depth-chart.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
 const data = read('../app/data/depth-chart.json'), tracker = read('../app/data/free-agent-tracker.json'), signings = read('../app/data/free-agent-signings.json');
 const h = (i, e, r, x) => ({ i, n: i, t: 'AAA', e, k: 'b', r, x });
@@ -67,13 +67,18 @@ test('a free agent adds less than his own WAR when he displaces someone', () => 
   assert.deepEqual(best.positions, ['CF']);
 });
 
-test('2027 payroll separates contracts, options and estimates, and prices free agents', () => {
-  const roster = [{ ...h('a', ['SS'], 1, 600), pay: 20, c: 'g' }, { ...h('b', ['C'], 1, 600), pay: 10, c: 'o' }, { ...h('c', ['1B'], 1, 600), pay: 4, c: 'a' },
-    { ...h('d', ['LF'], 1, 600), pay: 0.8, c: 'p' }, { ...h('fa', ['CF'], 1, 600), fa: 1 }, { ...h('fb', ['RF'], 1, 600), fa: 1 }];
-  const pay = payroll2027(roster, p => (p.i === 'fa' ? 15 : 0.2));
-  assert.deepEqual([pay.guaranteed, pay.options, pay.arbitration, pay.preArb], [20, 10, 4, 0.8]);
-  assert.equal(pay.freeAgents, 15 + MINIMUM_SALARY);
-  assert.ok(Math.abs(pay.total - (34.8 + 15 + MINIMUM_SALARY)) < 1e-9);
+test('payroll changes add CBT hits for arrivals and subtract counted hits for departures', () => {
+  const g = { ...h('g', ['SS'], 1, 600), t: 'AAA', cb: 20 }, o = { ...h('o', ['C'], 1, 600), t: 'AAA', cb: 8, co: 1 }, pre = h('pre', ['LF'], 1, 600);
+  const fa = { ...h('fa', ['CF'], 1, 600), t: 'BBB', fa: 1 }, other = { ...h('x', ['RF'], 1, 600), t: 'BBB', cb: 12 };
+  const fas = new Set(['fa']), aav = p => (p.i === 'fa' ? 15 : null);
+  assert.equal(cbtHit(fa, fas, aav), 15);
+  assert.equal(cbtHit(pre, fas, aav), MINIMUM_SALARY);
+  const before = [g, o, pre];
+  assert.equal(payrollChange(before, [g, o, pre, fa, other], fas, aav), 27);
+  assert.equal(payrollChange(before, [pre], fas, aav), -20, 'a pending option was never counted');
+  // A free agent who signs joins at his AAV; a counted player who leaves comes off.
+  const teamOf = new Map([['g', null], ['o', 'AAA'], ['pre', 'AAA'], ['fa', 'AAA'], ['x', 'BBB']]);
+  assert.equal(payrollAdjustment([g, o, pre, fa, other], 'AAA', teamOf, new Set(['fa']), aav), 15 - 20);
 });
 
 test('expired contracts outside the free-agent class leave the depth chart', () => {
@@ -86,7 +91,13 @@ test('expired contracts outside the free-agent class leave the depth chart', () 
   for (const p of ohtani) assert.equal(team.get(p.i), 'LAD');
 });
 
-test('every team has a 2026 CBT payroll', () => {
-  const pay = read('../app/data/team-payroll.json').cbt2026;
-  for (const t of data.teams) assert.ok(pay.teams[t.abbr] > 50 && pay.teams[t.abbr] < 500, t.abbr);
+test('every team has 2026 and 2027 CBT payroll estimates', () => {
+  const pay = read('../app/data/team-payroll.json').cbt;
+  for (const t of data.teams) {
+    const x = pay.teams[t.abbr];
+    assert.ok(x.cbt2026 > 50 && x.cbt2026 < 500 && x.cbt2027 > 50 && x.cbt2027 < 500, t.abbr);
+    assert.ok(x.guaranteedAav2027 + x.arb2027 < x.cbt2027, t.abbr);
+  }
+  // Checked against the Red Sox's own payroll sheet ($268.4M) and MLB Trade Rumors' year-end figure ($268.2M).
+  assert.ok(Math.abs(pay.teams.BOS.cbt2026 - 268.4) < 5);
 });

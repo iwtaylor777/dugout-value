@@ -19,6 +19,8 @@ const key = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[
 const outcomes = new Map(signings.map((s) => [key(s.player), s]));
 const OFF_MARKET: Outcome[] = ["signed", "re-signed", "extension", "qo-accepted", "option-exercised", "opted-in", "retired"];
 const ON_MARKET: Outcome[] = ["option-declined", "opted-out"];
+// Only contracts negotiated on the open market are compared with our estimates.
+const MARKET_DEALS: Outcome[] = ["signed", "re-signed", "extension"];
 const outcomeLabel: Record<Outcome, string> = {
   signed: "Signed", "re-signed": "Re-signed", extension: "Extended", "qo-accepted": "Accepted QO", "option-exercised": "Option exercised",
   "option-declined": "Option declined", "opted-out": "Opted out", "opted-in": "Stayed (opted in)", retired: "Retired",
@@ -66,7 +68,7 @@ export function FreeAgentTracker() {
     };
     return [...list].sort((a, b) => by[sort](a, b) || a.name.localeCompare(b.name));
   }, [status, group, sort, query]);
-  const signedRows = players.map((p) => ({ p, s: stateOf(p).signing })).filter((x) => x.s && x.s.total_musd != null && x.p.total != null && OFF_MARKET.includes(x.s.outcome));
+  const signedRows = players.map((p) => ({ p, s: stateOf(p).signing })).filter((x) => x.s && x.s.total_musd != null && x.p.total != null && MARKET_DEALS.includes(x.s.outcome));
 
   return (
     <section className="dv-war-board fa-board">
@@ -129,7 +131,7 @@ export function FreeAgentTracker() {
             {rows.length === 0 && <tr><td colSpan={8} className="fa-empty">No players match these filters.</td></tr>}
             {rows.map((p, i) => {
               const st = stateOf(p), s = st.signing, w5 = war5(p);
-              const diff = s?.total_musd != null && p.total != null && OFF_MARKET.includes(s.outcome) ? s.total_musd - p.total : null;
+              const diff = s?.total_musd != null && p.total != null && MARKET_DEALS.includes(s.outcome) ? s.total_musd - p.total : null;
               return (
                 <tr key={p.id} className={st.status === "signed" ? "fa-signed" : st.status === "pending" ? "fa-pending" : undefined}>
                   <td className="num">{i + 1}</td>

@@ -1,41 +1,191 @@
 {
- "cbt2026": {
-  "source": "Spotrac MLB Team Tax Tracker",
-  "url": "https://www.spotrac.com/mlb/payroll/",
+ "cbt": {
+  "source": "FanGraphs RosterResource payroll pages",
+  "url": "https://www.fangraphs.com/roster-resource/payroll",
   "checked": "2026-10-30",
-  "note": "Current 2026 luxury-tax payroll estimate: AAV of the 40-man roster, retained salary, minor-league 40-man salaries, pre-arbitration estimates and player benefits. Final figures are released in December.",
-  "thresholdMusd": 244,
+  "thresholdMusd2026": 244,
+  "note": "Estimated luxury-tax payroll: AAV of guaranteed contracts, arbitration salaries (projected for 2027), other payments, pre-arbitration and 40-man minor-league salaries, player benefits and the pre-arbitration bonus pool. 2027 excludes pending options. Final 2026 figures are released in December.",
   "teams": {
-   "LAD": 398.4,
-   "NYM": 373.3,
-   "NYY": 325.8,
-   "PHI": 315.9,
-   "TOR": 306.5,
-   "SDP": 263.0,
-   "BOS": 255.5,
-   "CHC": 243.5,
-   "DET": 241.4,
-   "ATL": 234.4,
-   "HOU": 228.8,
-   "SFG": 224.6,
-   "TEX": 206.0,
-   "BAL": 203.1,
-   "LAA": 191.7,
-   "ARI": 190.2,
-   "SEA": 183.4,
-   "KCR": 181.9,
-   "CIN": 151.4,
-   "ATH": 136.6,
-   "MIL": 131.3,
-   "STL": 126.9,
-   "PIT": 126.2,
-   "WSN": 112.7,
-   "COL": 108.4,
-   "TBR": 107.4,
-   "CHW": 107.4,
-   "MIN": 104.7,
-   "CLE": 100.5,
-   "MIA": 82.8
+   "LAA": {
+    "cbt2026": 198.12,
+    "cbt2027": 130.11,
+    "guaranteedAav2027": 56.54,
+    "arb2027": 34.9
+   },
+   "HOU": {
+    "cbt2026": 235.84,
+    "cbt2027": 225.68,
+    "guaranteedAav2027": 145.14,
+    "arb2027": 57.2
+   },
+   "ATH": {
+    "cbt2026": 146.65,
+    "cbt2027": 98.01,
+    "guaranteedAav2027": 43.64,
+    "arb2027": 15.3
+   },
+   "TOR": {
+    "cbt2026": 312.69,
+    "cbt2027": 236.33,
+    "guaranteedAav2027": 164.07,
+    "arb2027": 27.3
+   },
+   "ATL": {
+    "cbt2026": 254.01,
+    "cbt2027": 224.83,
+    "guaranteedAav2027": 177.37,
+    "arb2027": 11.2
+   },
+   "MIL": {
+    "cbt2026": 153.47,
+    "cbt2027": 138.78,
+    "guaranteedAav2027": 49.01,
+    "arb2027": 59.1
+   },
+   "STL": {
+    "cbt2026": 111.65,
+    "cbt2027": 116.04,
+    "guaranteedAav2027": 14.06,
+    "arb2027": 40.8
+   },
+   "CHC": {
+    "cbt2026": 263.37,
+    "cbt2027": 166.97,
+    "guaranteedAav2027": 106.7,
+    "arb2027": 29.6
+   },
+   "ARI": {
+    "cbt2026": 226.74,
+    "cbt2027": 196.12,
+    "guaranteedAav2027": 146.41,
+    "arb2027": 18.3
+   },
+   "LAD": {
+    "cbt2026": 419.64,
+    "cbt2027": 386.16,
+    "guaranteedAav2027": 335.64,
+    "arb2027": 12.9
+   },
+   "SFG": {
+    "cbt2026": 224.14,
+    "cbt2027": 189.29,
+    "guaranteedAav2027": 138.91,
+    "arb2027": 16.1
+   },
+   "CLE": {
+    "cbt2026": 102.05,
+    "cbt2027": 117.69,
+    "guaranteedAav2027": 30.4,
+    "arb2027": 48.7
+   },
+   "SEA": {
+    "cbt2026": 199.34,
+    "cbt2027": 169.57,
+    "guaranteedAav2027": 83.32,
+    "arb2027": 58.3
+   },
+   "MIA": {
+    "cbt2026": 86.2,
+    "cbt2027": 93.17,
+    "guaranteedAav2027": 21.0,
+    "arb2027": 28.1
+   },
+   "NYM": {
+    "cbt2026": 358.13,
+    "cbt2027": 289.28,
+    "guaranteedAav2027": 226.66,
+    "arb2027": 18.2
+   },
+   "WSN": {
+    "cbt2026": 123.94,
+    "cbt2027": 82.47,
+    "guaranteedAav2027": 18.0,
+    "arb2027": 22.6
+   },
+   "BAL": {
+    "cbt2026": 215.04,
+    "cbt2027": 167.59,
+    "guaranteedAav2027": 105.22,
+    "arb2027": 26.1
+   },
+   "SDP": {
+    "cbt2026": 260.66,
+    "cbt2027": 216.23,
+    "guaranteedAav2027": 141.46,
+    "arb2027": 24.6
+   },
+   "PHI": {
+    "cbt2026": 320.78,
+    "cbt2027": 291.12,
+    "guaranteedAav2027": 220.66,
+    "arb2027": 35.0
+   },
+   "PIT": {
+    "cbt2026": 145.32,
+    "cbt2027": 128.7,
+    "guaranteedAav2027": 69.65,
+    "arb2027": 28.7
+   },
+   "TEX": {
+    "cbt2026": 210.26,
+    "cbt2027": 196.52,
+    "guaranteedAav2027": 122.0,
+    "arb2027": 38.3
+   },
+   "TBR": {
+    "cbt2026": 110.47,
+    "cbt2027": 103.57,
+    "guaranteedAav2027": 20.5,
+    "arb2027": 50.8
+   },
+   "BOS": {
+    "cbt2026": 270.88,
+    "cbt2027": 245.65,
+    "guaranteedAav2027": 169.08,
+    "arb2027": 48.7
+   },
+   "CIN": {
+    "cbt2026": 153.43,
+    "cbt2027": 114.93,
+    "guaranteedAav2027": 37.66,
+    "arb2027": 42.6
+   },
+   "COL": {
+    "cbt2026": 138.47,
+    "cbt2027": 110.46,
+    "guaranteedAav2027": 49.6,
+    "arb2027": 19.8
+   },
+   "KCR": {
+    "cbt2026": 183.01,
+    "cbt2027": 157.21,
+    "guaranteedAav2027": 101.54,
+    "arb2027": 19.2
+   },
+   "DET": {
+    "cbt2026": 219.8,
+    "cbt2027": 170.35,
+    "guaranteedAav2027": 92.88,
+    "arb2027": 42.0
+   },
+   "MIN": {
+    "cbt2026": 133.73,
+    "cbt2027": 141.8,
+    "guaranteedAav2027": 52.33,
+    "arb2027": 45.0
+   },
+   "CHW": {
+    "cbt2026": 111.04,
+    "cbt2027": 124.32,
+    "guaranteedAav2027": 73.25,
+    "arb2027": 15.4
+   },
+   "NYY": {
+    "cbt2026": 335.82,
+    "cbt2027": 286.17,
+    "guaranteedAav2027": 215.41,
+    "arb2027": 36.7
+   }
   }
  }
 }
