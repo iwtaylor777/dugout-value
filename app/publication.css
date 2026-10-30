@@ -283,3 +283,15 @@ figure.article-figure figcaption strong { color: #172d3d; }
 .consent-actions { display: flex; gap: 8px; }
 .consent-actions button { font: inherit; font-size: 13px; padding: 7px 14px; border-radius: 4px; border: 1px solid #263e49; background: #fff; color: #17384b; cursor: pointer; }
 .consent-actions .consent-accept { background: #17384b; color: #fff; }
+
+/* DV WAR leaderboard */
+.tools-directory .tool-card:last-child:nth-child(odd) { grid-column: 1 / -1; border-left: 0; }
+.dv-war-board { margin: 10px 0 30px; }
+.dv-war-controls { display: grid; grid-template-columns: 140px 220px minmax(0, 320px); gap: 14px; align-items: end; }
+.dv-war-controls label > span { display: block; font-size: 12px; font-weight: 600; color: #536067; margin-bottom: 5px; }
+.dv-war-controls select, .dv-war-controls input { width: 100%; min-height: 38px; padding: 7px 10px; border: 1px solid #cfc8b9; border-radius: 5px; background: #fffdf8; font-size: 14px; }
+.dv-war-sub { display: block; font-weight: 400; color: #6c6a64; font-size: 11px; }
+.dv-war-board .article-table-wrap { max-height: 70vh; overflow-y: auto; }
+.dv-war-board thead th { position: sticky; top: 0; background: #eee8d9; }
+.dv-war-notes { max-width: 760px; font-size: 15px; line-height: 1.65; color: #3d4a51; padding-bottom: 50px; }
+@media (max-width: 640px) { .dv-war-controls { grid-template-columns: 1fr 1fr; } .dv-war-controls label:last-child { grid-column: 1 / -1; } }

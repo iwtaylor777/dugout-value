@@ -1,125 +1,43 @@
 import Link from "next/link";
 import type { Article } from "./types";
 import { AUTHOR } from "./types";
-
-const FIG = "/analysis/a-statcast-war";
-const FILES = "/research/value-war-2026-10-29";
-
+const FILES = "/research/value-war-contact-2026-10-29";
 export const article: Article = {
-  slug: "a-statcast-war",
-  category: "Research",
-  title: "A Statcast-built WAR measures hitters better, but pitchers are harder",
-  summary:
-    "Credit measured in half a season predicted team run differential in the other half better than either fWAR’s or bWAR’s method, in a test locked before it was run. On the test of whether credit moves with players who change teams, it fell short of fWAR’s method, because it gives pitchers too much credit for the contact they allow.",
-  author: AUTHOR,
-  published: "2026-10-29",
-  dateLabel: "October 29, 2026",
-  readTime: "9 min read",
-  evidence: {
-    href: `${FILES}.tar.gz`,
-    label: "Protocol, locks, code and results (download)",
-  },
-  body: (
-    <>
-      <p className="article-lead">
-        WAR is supposed to tell you how many wins a player was worth, but nobody ever sees a single player’s wins. What we see are team results. So I tested WAR the only way I think it can be tested: if a metric credits the right players, that credit should explain team results it wasn’t built from. I rebuilt the two standard approaches from the same Statcast data, built a third that splits credit differently, and locked the test before running it on the last five seasons. The new version passed the main test and failed the second one, and the reason it failed points at pitchers.
-      </p>
-
-      <h2>The problem with checking WAR against wins</h2>
-      <p>
-        The obvious test is to add up each team’s WAR and see how well it matches the standings. Every version of WAR does fine on that test, and the ones built from runs allowed do best, because they are partly made of the outcome. Baseball-Reference charges a pitcher for the runs that scored while he pitched, so its WAR will always line up with runs allowed in the season it measures, which shows good bookkeeping without showing that the credit went to the right people.
-      </p>
-      <p>
-        Two things can go wrong with credit. It can be noise: a pitcher whose fielders made every play looks great, and next week he won’t. Or it can be real but belong to someone else: a run saved by the defense’s positioning, or by the catcher, ends up on the pitcher’s line. A good WAR has to get both right, so I used two tests.
-      </p>
-
-      <h2>Two tests</h2>
-      <p>
-        <strong>The half-season test</strong> splits every season’s games at random into two halves. Each player’s credit is measured in one half, multiplied by how much he actually played in the other half, and added up by team. The question is how well that predicts each team’s run differential in the half it wasn’t measured in. Noise doesn’t carry over to games it didn’t happen in, so the more of a metric’s credit is real, the better it does. I ran ten different random splits and both directions.
-      </p>
-      <p>
-        That test has a blind spot I didn’t see until I ran it on the development seasons. Within a season, nearly every player stays on his team. Credit that really belongs to his fielders or his team’s positioning still shows up in the other half, because the fielders are still there. So I added a second test before touching the holdout seasons.
-      </p>
-      <p>
-        <strong>The roster-change test</strong> asks whether credit moves with players when they change teams. For each team and each pair of seasons, I took every player’s credit from the first season and multiplied it by his change in playing time with that team: arrivals, departures and bigger or smaller roles. That predicts how much the team should improve or decline, and I compared it with the change in its run differential. Anything that belongs to the team rather than the players stays behind and cancels out.
-      </p>
-
-      <h2>How the new WAR splits credit</h2>
-      <p>
-        I rebuilt both standard methods from Statcast pitch data so all three systems work from the same events. The FIP-based method is fWAR’s approach: a pitcher gets credit for strikeouts, walks and home runs and none for anything else hit into play. The runs-allowed method is bWAR’s approach: a pitcher is charged for everything, minus an adjustment for his team’s defense. Hitters, fielders and catcher framing are the same in both.
-      </p>
-      <p>
-        Dugout Value WAR splits each plate appearance’s runs among the batter, the pitcher, the fielders, the catcher and chance. The shares are the same for every player, and they were tuned on 2016–21 only:
-      </p>
-      <ul>
-        <li><strong>Batters</strong> get full credit for strikeouts, walks and hit-by-pitches, full credit for the quality of their contact (the expected value of the exit velocity, launch angle, direction and their own sprint speed), and half the difference between what happened and what was expected.</li>
-        <li><strong>Pitchers</strong> get full credit for strikeouts and walks and for the quality of contact they allow, but none of what happens after contact on balls that stay in the park. On home runs they get half the contact credit and the rest of the result. They also get half the credit for sequencing, the runs that depend on when hits happened.</li>
-        <li><strong>Fielders</strong> get half the runs they saved against expectation, which is close to the share of fielding that carries into future seasons in <Link href="/analysis/teams-pay-less-for-defense">my defense study</Link>.</li>
-        <li><strong>Catchers</strong> get full credit for framing.</li>
-        <li>Everything left over is treated as luck and goes to nobody.</li>
-      </ul>
-      <p>
-        No player is regressed toward average because of a small sample. His WAR is still the sum of what happened in his own plate appearances. What changes is how much of each event is treated as his doing.
-      </p>
-
-      <h2>It passed the main test</h2>
-      <p>
-        On the 2022–26 holdout, Dugout Value WAR’s half-season credit predicted run differential in the other half with a correlation of .697. That compares with .678 for the FIP-based method and .677 for the runs-allowed method. The protocol required the bootstrap 95% interval of each difference to exclude zero, and both did: .001 to .037 against FIP and .009 to .030 against runs allowed. It was better on offense (.492 against .480) and on run prevention (.610 against .577 and .600).
-      </p>
-
-      <figure className="article-figure">
-        <img
-          src={`${FIG}/primary-tests.png`}
-          width={1600}
-          height={832}
-          loading="lazy"
-          alt="Dot chart of the two primary tests on the 2022–26 holdout. Half-season test: FIP-based .678, runs-allowed .677, Dugout Value WAR .697. Roster-change test: FIP-based .590, runs-allowed .534, Dugout Value WAR .576."
-        />
-        <figcaption>
-          Correlation between each system’s predicted and actual team run differential on the 2022–26 holdout. All three systems are rebuilt from the same Statcast pitch data. The half-season test averages 10 random splits in both directions over 150 team-seasons; the roster-change test covers 150 team-pairs of consecutive seasons.
-        </figcaption>
-      </figure>
-
-      <h2>It failed the second one, because of pitchers</h2>
-      <p>
-        On the roster-change test, Dugout Value WAR scored .576, behind the FIP-based method’s .590 and ahead of the runs-allowed method’s .534. That misses the win rule, and the difference with FIP is well within noise either way.
-      </p>
-      <p>
-        Dugout Value WAR beat the FIP-based method on both halves of the game separately: .441 against .424 on offense and .487 against .471 on run prevention. It lost on the total because the pitchers’ share is too big. Giving pitchers full credit for the contact they allow spreads their numbers further apart than their real differences justify, so when offense and pitching are added together, pitching gets too much weight. Some of what looks like a pitcher limiting hard contact belongs to his park, his catcher or his defense’s positioning, and it doesn’t follow him to a new team.
-      </p>
-      <p>
-        The same pattern shows up in stability. Year to year, Dugout Value WAR per inning for pitchers correlated .39 with itself, against .45 for fWAR. For hitters it was the reverse: .53 against .47.
-      </p>
-
-      <h2>Where it clearly helps: hitters</h2>
-      <p>
-        For hitters, every test of whether credit is real went the new WAR’s way: half-season offense, roster-change offense, next-season offense and year-to-year stability. The cost is bookkeeping. Because hitters keep only half of what happens after contact, their credit adds up to a team’s runs in the same games less tightly (.853 against .879 in the half-season split). I also checked whether each version of WAR lines up with what free agents were paid. Teams see public WAR when they set prices, so this partly measures agreement with the established numbers, which makes it a hard test for a new one. For 303 hitters signed from 2020 to 2026, Dugout Value WAR over the three seasons before signing correlated .750 with the log of their annual salary, against .721 for fWAR. The interval for that gap, .012 to .048, excludes zero. For 443 pitchers it was .661 against .668, a tie.
-      </p>
-      <p>
-        Published fWAR, with its full fielding and baserunning components, was still the best of everything I tested at predicting next season’s wins from this season’s credit (.729, against .711 for a version of Dugout Value WAR built on top of it). Same-season wins were matched best by FanGraphs’ runs-allowed WAR, as expected.
-      </p>
-
-      <h2>What’s next</h2>
-      <p>
-        The obvious fix is to keep the new treatment of hitters and go back to something closer to FIP for pitchers. When I tried that after seeing the results, it scored .691 on the half-season test and .611 on the roster-change test, better than both standard methods on both tests. I can’t claim that, because I chose it after looking at the holdout. Version 2 is being built on the development seasons now and will be locked before the 2027 season, which will be its clean test.
-      </p>
-      <p>
-        The site’s trade and contract numbers still use projected fWAR. Nothing here changes them yet.
-      </p>
-
-      <h2>A note on the projections</h2>
-      <p>
-        The same idea, checking a number against something it wasn’t built to predict, applies to the projection system I’ve been building as an alternative to ZiPS on the site. Its preseason projections, applied to the players who actually played, explained each player’s actual run value as well as or better than ZiPS and Steamer did for 2024–26. For hitters, the correlation with run expectancy per plate appearance was .553 against .524 for ZiPS and .538 for Steamer, an edge over ZiPS that excludes zero. Its projected pitcher WAR also lined up with free-agent pay better than ZiPS’s (.728 against .687 for 187 signings).
-      </p>
-
-      <h2>Methods in brief</h2>
-      <ul>
-        <li><strong>Data:</strong> every regular-season pitch from Baseball Savant for 2015–26 (about 8.5 million), Savant sprint speed, FanGraphs season leaderboards and its free-agent tracker, and MLB standings. Baseball-Reference’s WAR can’t be downloaded here, so its method is rebuilt rather than compared directly.</li>
-        <li><strong>Event models:</strong> expected run value on balls in play and called-strike probability, fit by gradient boosting on exactly the games being measured, with cross-fitting. Fielding responsibility comes from Statcast’s hit location, centered within each position. In a 2016 check it correlated about .55 with Savant’s fielding run value, below Outs Above Average, which uses fielder positioning that isn’t public. All three systems use the same fielding.</li>
-        <li><strong>Seasons:</strong> development 2016–21, holdout 2022–26, with 2020 excluded as a target. The protocol was locked before anything was built. The roster-change test was added in a dated amendment after a development look and before any holdout computation. The weights were locked by hash before the holdout ran.</li>
-        <li><strong>Corrections after the lock:</strong> season-level WAR was re-centered so league totals match fWAR’s scale, and win targets were switched from Statcast-rebuilt standings to official ones. Neither affects the two primary tests. Both are logged in the research files.</li>
-        <li><strong>Files:</strong> the protocol, amendment, locks, development log, code and every holdout result are in <a href={`${FILES}.tar.gz`}>the research files</a>. FanGraphs and Statcast data aren’t redistributed.</li>
-      </ul>
-    </>
-  ),
+  slug: "a-statcast-war", category: "Research",
+  title: "A contact adjustment helps WAR carry value into the next season",
+  summary: "I combine a hitter’s contact quality with his results while retaining full fielding credit. In retrospective tests, the adjustment reduced next-season team run-differential error by 2.9% versus fWAR, with actual playing time held fixed. Individual value is harder to validate.",
+  author: AUTHOR, published: "2026-10-29", dateLabel: "October 29, 2026", readTime: "7 min read",
+  relatedTool: { href: "/tools/dv-war", label: "Explore the DV WAR leaderboard" },
+  evidence: { href: `${FILES}.tar.gz`, label: "Methods, code and every comparison (download)" },
+  body: <>
+    <p className="article-lead">I built a version of hitter WAR that combines the quality of a player’s contact with what happened after it. It starts with FanGraphs WAR, changes batting credit and keeps full credit for fielding, catcher framing, baserunning, position and replacement value. The result is <Link href="/tools/dv-war">DV WAR</Link>. Its strongest evidence is that batting information measured this way travels into the next season more reliably. That is useful, although it does not settle exactly how many past wins belong to each player.</p>
+    <h2>What contact adds to the result</h2>
+    <p>A hard line drive caught by a well-positioned outfielder and a soft single count differently in a box score. The outcome is real, but the hitter is one of several reasons it happened. Contact quality gives another view of his part in the play.</p>
+    <p>For each batted ball, a model estimates its run value from exit velocity, launch angle, spray direction, sprint speed, handedness and park. It is fit within the season using four folds, with each ball evaluated by a model that did not train on that ball. The hitter receives expected contact value plus half the gap between expectation and outcome. Walks, hit-by-pitches and strikeouts keep their outcome credit.</p>
+    <p>For example, suppose a hitter’s contact was expected to produce 20 runs above average but produced 12. Splitting that gap gives him 16 runs: 20 + 0.5 × (12 − 20). This credits more of the contact quality while retaining some of the outcome.</p>
+    <p>Expressed as a change to fWAR, it is half of expected minus actual contact runs, converted to wins. I center that adjustment per PA within each season before filtering the leaderboard, so the full league stays on fWAR’s scale. The formula changes how credit is distributed among hitters.</p>
+    <h2>Fielding keeps full credit</h2>
+    <p>DV WAR retains FanGraphs’ full fielding and catcher-framing components. A forecast of next year’s defense and an estimate of runs saved this year answer different questions. Fielding can be difficult to measure and can change from season to season; its limited persistence does not establish that half the runs credited this season should be removed.</p>
+    <p>Baserunning, positional and replacement runs also retain their full published credit. This is a batting adjustment built on fWAR. Pitcher WAR is unchanged, and this leaderboard covers hitters.</p>
+    <h2>Testing whether credit carries forward</h2>
+    <p>A player’s individual contribution is not directly observed. Team runs and wins are, so I test whether player credit helps explain team results outside the games used to measure it. These are transfer tests, with actual later playing time held fixed. They are not preseason forecasts of injuries, playing time or standings.</p>
+    <p>For the season-transfer comparison, I take each player’s prior-season WAR rate, apply it to his actual playing time with his next-season team and sum the results by team. The comparison covers the 2022–26 target seasons, or 150 team-seasons. Both versions use the same published pitcher WAR; only hitter batting credit changes.</p>
+    <p>Correlation measures how well the values rank teams by run differential. Prediction error is root mean squared error in runs per game, after a linear calibration fitted on the other target seasons. That calibration excludes the season being scored; it is not a strictly forward-only forecasting exercise.</p>
+    <div className="article-table-wrap" tabIndex={0} role="region" aria-label="WAR transfer comparison"><table><caption>Next-season team run differential, 2022–26. Actual playing time held fixed.</caption><thead><tr><th scope="col">Measure</th><th scope="col">fWAR</th><th scope="col">DV batting adjustment, full fielding</th></tr></thead><tbody><tr><td>Correlation, higher is better</td><td>.7265</td><td>.7442</td></tr><tr><td>Error in runs per game, lower is better</td><td>.5436</td><td>.5277</td></tr></tbody></table></div>
+    <p>The adjustment lowers error by 2.9%. The correlation improvement is .0176, with a 95% interval of .0045 to .0299 when franchises are resampled across years. Resampling whole seasons also favors the adjustment, with an interval of .0001 to .0340. These intervals describe the fitted models and available seasons, not every source of uncertainty about future baseball.</p>
+    <figure className="article-figure"><img src="/analysis/a-statcast-war/contact-comparison.png" width={1920} height={768} loading="lazy" alt="The contact adjustment has a positive next-season transfer result. Fielding discounts and roster-turnover differences have intervals spanning zero."/><figcaption>Dots show the change in correlation relative to fWAR; lines are 95% intervals resampling franchises. These are retrospective comparisons on previously examined seasons.</figcaption></figure>
+    <h2>The harder test is less decisive</h2>
+    <p>The roster-turnover comparison asks whether prior player rates explain how a team improves or declines as players arrive, leave or change roles. For each player, I multiply his rate by the change in his playing time with that team, then compare the predicted team change with the actual change in run differential.</p>
+    <p>The contact adjustment scores .6128 against fWAR’s .6099. The difference is inconclusive: its 95% franchise interval runs from −.0180 to +.0257. Controlling for the prior team’s actual run differential also leaves the two versions very close. I cannot claim that this test establishes better attribution to the right individuals.</p>
+    <p>Splitting games within a season provides another check, but much of a team’s environment stays with its players across both halves. Replacing individuals’ rates with team-and-usage averages can retain much of that test’s accuracy. Good team-level transfer is evidence of signal, not a complete answer to who earned every run.</p>
+    <h2>Useful information for forecasting too</h2>
+    <p>I separately tested whether contact helps predict next-season batting runs per PA beyond ordinary regression toward average. A baseline calibrates prior batting results; a second model adds contact value. Both calibrations use only the development pairs ending in 2017, 2018, 2019 and 2021. Evaluation covers 2022–26 and requires 200 PA in each paired season.</p>
+    <p>Adding contact reduced batting-rate error by 3.8% across 1,334 player-seasons, with a player-clustered 95% interval of 2.6% to 4.8% better. It improved every test year. Among 314 observations of players changing their primary team, the gain was 2.0%, with an interval extending slightly below zero.</p>
+    <p>This calibrated forecasting model is distinct from the leaderboard’s fixed 50/50 value formula. The fixed formula itself forecasts less accurately than the calibrated results baseline. Contact provides useful information; that does not make a season-value statistic a complete projection system or establish a gain over the site’s existing projections.</p>
+    <h2>What the evidence supports</h2>
+    <p>I use DV WAR as an alternative view of hitter value supported by a competitive transfer result. I keep fWAR beside it, and the leaderboard shows the entire batting adjustment. The tests do not establish that every changed player ranking is correct or that DV WAR is the best measure of past individual contribution.</p>
+    <p>The contact-and-full-fielding comparison was examined after earlier historical results were available. It is exploratory evidence. The <a href="/research/value-war-2026-10-29.tar.gz">original locked study</a> and its full results remain available separately; its broader specification and its salary and stability results should not be treated as tests of this exact leaderboard formula. The existing prospective 2027 experiment remains unchanged, and the additional contact candidate’s 2026 player snapshot is frozen for a future comparison.</p>
+    <h2>Methods and data</h2>
+    <p>Inputs are regular-season Baseball Savant pitch data, Savant sprint speed and FanGraphs season leaderboards. Expected-contact models are fit on the seasons being measured; historical inputs were retrieved retrospectively and may include provider revisions. Official team season runs supply the season-level targets. The <a href={`${FILES}.tar.gz`}>research download</a> contains code, input checksums, all fixed candidates, uncertainty estimates and replay instructions. Raw provider data are not redistributed. The <Link href="/tools/dv-war">leaderboard</Link> covers hitters with at least 300 PA in 2024–26.</p>
+  </>,
 };

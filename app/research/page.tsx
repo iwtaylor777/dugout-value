@@ -34,15 +34,15 @@ export default function ResearchFiles() {
       </ul>
       <p><a href="/research/dv-projections-2026-10-29/validation/full_season_war_results.json">Season-WAR validation</a>, <a href="/research/dv-projections-2026-10-29/validation/independent_primary_replay.json">independent score replay</a> and <a href="/research/dv-projections-2026-10-29/README.md">reproduction instructions</a>. Archived versions retain their original files and locks. Raw FanGraphs data and bulk player-level projection outputs are not redistributed.</p>
     </section>
-    <section id="value-war"><h2>Dugout Value WAR: does credit explain team results?</h2>
-      <p>Published October 29, 2026. Pre-registered (protocol locked October 29, 14:19 UTC; Amendment 1 at 14:32; weights and code at 18:40). Development 2016–21, holdout 2022–26. On the half-season test, Dugout Value WAR beat the rebuilt FIP-based and runs-allowed methods (.697 against .678 and .677; both intervals exclude zero). On the roster-change test it did not (.576 against .590 and .534).</p>
-      <p><Link href="/analysis/a-statcast-war">Read the analysis</Link>.</p>
+    <section id="value-war"><h2>DV WAR with a contact adjustment and full fielding credit</h2>
+      <p>The current hitter leaderboard starts with fWAR, changes batting credit for expected versus actual contact value, and retains full fielding, framing, baserunning, positional and replacement credit. With actual later playing time held fixed, the contact adjustment reduced 2022–26 next-season team run-differential error by 2.9% (.5277 versus .5436 runs per game). The roster-turnover comparison was inconclusive. These are exploratory comparisons on previously examined seasons, not proof of superior individual retrospective WAR.</p>
+      <p><Link href="/analysis/a-statcast-war">Read the methods</Link> · <Link href="/tools/dv-war">Explore the leaderboard</Link>.</p>
       <ul>
-        <li><a href="/research/value-war-2026-10-29.tar.gz" download>Download the protocol, amendment, locks, development log, code and results</a></li>
-        <li><a href="/research/value-war-2026-10-29/PROTOCOL-VALUE-WAR.md">Protocol</a>, <a href="/research/value-war-2026-10-29/AMENDMENT-1-VALUE-WAR.md">Amendment 1</a> and <a href="/research/value-war-2026-10-29/LOCK-DVWAR-v1.json">the model lock</a></li>
-        <li><a href="/research/value-war-2026-10-29/holdout_results_v1.json">Every holdout result (JSON)</a> and <a href="/research/value-war-2026-10-29/DEVLOG-WAR.md">development log</a></li>
+        <li><a href="/research/value-war-contact-2026-10-29.tar.gz" download>Download the current comparisons, code, checksums and leaderboard recipe</a></li>
+        <li><a href="/research/value-war-contact-2026-10-29/results.json">All fixed comparisons</a>, <a href="/research/value-war-contact-2026-10-29/calibration_results.json">the separate batting forecast diagnostic</a> and <a href="/research/value-war-contact-2026-10-29/README.md">reproduction instructions</a></li>
+        <li><a href="/research/value-war-2026-10-29.tar.gz">Original locked study and every original result</a>: the broader original model passed its half-season test and did not win its roster-change test. Its salary and stability results are not validations of the current leaderboard formula. The original locks and prospective experiment are unchanged.</li>
       </ul>
-      <p>Statcast pitch data, FanGraphs leaderboards and the FanGraphs free-agent tracker are not redistributed.</p>
+      <p>Raw pitch data and FanGraphs source leaderboards are not redistributed.</p>
     </section>
     <section id="defense-pricing"><h2>How free agency prices defense</h2>
       <p>Published October 26, 2026. Exploratory, not pre-registered. Free-agent contracts from 2020 to 2026 credit a run of fielding at about 65% of a run of offense, close to the 72% that fielding’s three-year track record justifies; team fielding runs convert to runs prevented at about 95% of the rate batting runs convert to runs scored.</p>
