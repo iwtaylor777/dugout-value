@@ -12,6 +12,16 @@ async function render(pathname) {
   );
 }
 
+test("the main banner offers a collapsed dropdown with all five tools", async () => {
+  const html = await (await render("/")).text();
+  assert.match(html, /class="tools-navigation-trigger"[^>]*aria-expanded="false"[^>]*aria-controls=/);
+  assert.match(html, /class="tools-navigation-panel"[^>]*hidden/);
+  for (const path of ["trade", "projections", "rankings", "finder", "dv-war"]) {
+    assert.match(html, new RegExp(`href="/tools/${path}"`));
+  }
+  assert.match(html, /<a\b(?=[^>]*class="tools-navigation-all")(?=[^>]*href="\/tools")[^>]*>/);
+});
+
 test("trade route presents the reviewed snapshot, the offseason default and the verdict", async () => {
   const response = await render("/tools/trade");
   assert.equal(response.status, 200);

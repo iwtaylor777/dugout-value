@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import database from "./data/player-database.json";
+import { ToolsNavigation } from "./tools-navigation";
 
 export function SiteHeader({ active }: { active?: "home" | "analysis" | "tools" | "methods" | "about" }) {
   return <header className="publication-header">
@@ -8,7 +9,7 @@ export function SiteHeader({ active }: { active?: "home" | "analysis" | "tools" 
     <nav aria-label="Main navigation">
       <Link href="/" aria-current={active === "home" ? "page" : undefined}>Home</Link>
       <Link href="/analysis" aria-current={active === "analysis" ? "page" : undefined}>Analysis</Link>
-      <Link href="/tools" aria-current={active === "tools" ? "page" : undefined}>Tools</Link>
+      <ToolsNavigation active={active === "tools"}/>
       <Link href="/methods" aria-current={active === "methods" ? "page" : undefined}>Methods<span className="nav-extra"> & data</span></Link>
       <Link href="/about" aria-current={active === "about" ? "page" : undefined}>About</Link>
     </nav>

@@ -8,6 +8,14 @@
 .publication-header nav { display: flex; flex-wrap: wrap; gap: 27px; }
 .publication-header nav a { color: #42515a; font-size: 13px; font-weight: 600; text-decoration: none; padding: 12px 0; border-bottom: 2px solid transparent; }
 .publication-header nav a[aria-current="page"], .publication-header nav a:hover { color: #9d3f2f; border-bottom-color: #9d3f2f; }
+.tools-navigation { position: relative; display: flex; }
+.tools-navigation-trigger { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; padding: 12px 0; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #42515a; font: 600 13px var(--font-geist-sans); cursor: pointer; }
+.tools-navigation-trigger:is(:hover, [data-active], [aria-expanded="true"]) { color: #9d3f2f; border-bottom-color: #9d3f2f; }
+.tools-navigation-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
+.tools-navigation-panel { position: absolute; top: 100%; right: -12px; z-index: 100; width: 245px; max-height: 70dvh; overflow-y: auto; padding: 8px; border: 1px solid #cfc8b9; border-radius: 6px; background: #fffdf6; box-shadow: 0 8px 24px #172d3d20; }
+.publication-header nav .tools-navigation-panel a { display: block; padding: 12px; min-height: 44px; border: 0; border-radius: 3px; font-size: 14px; line-height: 1.5; }
+.publication-header nav .tools-navigation-panel a:is(:hover, :focus-visible, [aria-current="page"]) { background: #eee8d9; color: #172d3d; }
+.publication-header nav .tools-navigation-panel .tools-navigation-all { border-top: 1px solid #cfc8b9; margin-top: 4px; color: #8b4233; }
 .publication-main { max-width: 1320px; padding: 0 48px; margin: 0 auto; }
 .eyebrow { font: 600 12px/1.5 var(--font-geist-sans); letter-spacing: normal; text-transform: none; color: #8b4233; margin: 0 0 18px; }
 .home-intro { padding: 30px 0 24px; display: flex; gap: 16px 24px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
@@ -154,6 +162,10 @@
   .publication-header nav { justify-content: space-between; gap: 12px; margin-top: 14px; }
   .publication-header nav a { font-size: 12px; padding: 14px 0; }
   .publication-header nav .nav-extra { display: none; }
+  .publication-header nav { position: relative; }
+  .tools-navigation { position: static; }
+  .tools-navigation-trigger { font-size: 12px; padding: 14px 0; }
+  .tools-navigation-panel { left: 50%; right: auto; transform: translateX(-50%); width: min(320px, calc(100vw - 42px)); }
   .publication-main { padding: 0 21px; }
   .home-intro { padding: 24px 0 20px; gap: 10px; }
   .home-intro h1 { font-size: 28px; letter-spacing: -.5px; }
