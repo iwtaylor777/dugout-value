@@ -174,7 +174,8 @@ test("depth chart renders a team with its total, rank and free-agent fits", asyn
   assert.match(html, /Free agents who add the most/);
   assert.match(html, /Replacement level|Best free-agent fit/);
   assert.match(html, /2026 CBT payroll/);
-  assert.match(html, /2027 under contract/);
+  assert.match(html, /2027 CBT payroll so far/);
+  assert.match(html, /FanGraphs RosterResource/);
 });
 
 test("home page features the free-agent tracker in place of value rankings", async () => {

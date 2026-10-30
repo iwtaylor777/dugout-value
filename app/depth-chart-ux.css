@@ -18,7 +18,7 @@
 .dc-score .dc-change { flex-basis: 100%; border-top: 1px solid #ffffff30; padding-top: 10px; flex-direction: row; align-items: baseline; gap: 10px; }
 .dc-score .dc-change strong { color: #d3e8cb; }
 .dc-score .dc-change[data-direction="negative"] strong { color: #ffd1bd; }
-.dc-payroll { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 0; margin: 16px 0 0; border: 1px solid #d8cdb6; border-radius: 8px; overflow: hidden; background: #efe8d8; }
+.dc-payroll { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; padding: 0; margin: 16px 0 0; border: 1px solid #d8cdb6; border-radius: 8px; overflow: hidden; background: #efe8d8; }
 .dc-payroll > p { padding: 14px 16px; gap: 4px; }
 .dc-payroll > p + p { border-left: 1px solid #d8cdb6; }
 .dc-payroll > p.dc-change { background: #f4ead5; }
