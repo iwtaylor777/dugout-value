@@ -1,0 +1,80 @@
+[
+  {
+    "file": "src/attrib.py",
+    "sha256": "6b8cad7829f9f91912f1eecfd66a0b2de319380989641363b6cb63e1ff807ac6",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/check_fld.py",
+    "sha256": "6ba17de9f7360eed9874585f3c33b125de8ae2b08c7dc3f93f3edf5f2f28e71b",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/driver.py",
+    "sha256": "9429ed4fe3613c135c6950f11bc681d496aadd375bb9e7b8bb1701fec1ef5b59",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/dvwar.py",
+    "sha256": "4e6387d45a76dec210878460508208273d4d2139252ee83d13163e48c02fc34b",
+    "matches_original": false,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/eval_season.py",
+    "sha256": "bee5d7eea892bf112fe62b105595c0c9411c03ec530ebdcc3aaa8675449407f5",
+    "matches_original": false,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/evalsplit.py",
+    "sha256": "8c647d498df322ec4df750e8ee2dd9ca839d3379a82bf9a375cd92ede28e9042",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/events.py",
+    "sha256": "38fa907b45ffd6e40b798f18a28d70048ad8ccd0a1adcc91129c05178ad2b50d",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/fetch_statcast.py",
+    "sha256": "c1d4737f1e539f4fa28ba4671218c215470e0317caa18443b260379f2c894249",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/fg.py",
+    "sha256": "444e2e92dc2d9d271be87a49d7d286ce4cb9820ee669f1a171823484fc2aab11",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/season.py",
+    "sha256": "eba578f6f183777f076811e44d6b67cea8978a3fdfc4cc0fec022ffcec07b273",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/split.py",
+    "sha256": "e1a2a901cd26fb3518e03004ac6f49a75a88b4cda46f029e891ff2a5653f9625",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "src/tune.py",
+    "sha256": "8a181cb44df83a94ad1cc9130bce96818aba39b1efc9c1a938645164b8cfe5f7",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  },
+  {
+    "file": "tune_dev.json",
+    "sha256": "a98ae3d923e9a6b5529c004271c0de8f10d0abaf03697034e6117d0ab59cc0ae",
+    "matches_original": true,
+    "matches_recorded_post_lock": true
+  }
+]

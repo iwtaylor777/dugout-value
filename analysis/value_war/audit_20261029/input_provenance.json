@@ -1,0 +1,121 @@
+{
+  "historical_archive_sha256": "1dc14059e0d16c92b772133f3d83264da5133cbd1e3655f478e5ef6b9d935f3c",
+  "prepared_inputs": {
+    "2016": {
+      "rows": 715821,
+      "games": 2428,
+      "duplicate_rows_removed": 0,
+      "start": "2016-04-03 00:00:00",
+      "end": "2016-10-02 00:00:00",
+      "pitches_sha256": "e78eb84589b998641abf78783a057451b82e4fd34d3a6b197f90b1dd1f0c44a8"
+    },
+    "2017": {
+      "rows": 721244,
+      "games": 2430,
+      "duplicate_rows_removed": 0,
+      "start": "2017-04-02 00:00:00",
+      "end": "2017-10-01 00:00:00",
+      "pitches_sha256": "c300b5d26d4ca65c65bdc4fcc7dbce70f414ed9707c50ad60720588f8164024b"
+    },
+    "2018": {
+      "rows": 721190,
+      "games": 2431,
+      "duplicate_rows_removed": 0,
+      "start": "2018-03-29 00:00:00",
+      "end": "2018-10-01 00:00:00",
+      "pitches_sha256": "f75f42c9a360bb20e1e38c35487f4a01a26b8e1a5bb41e626c9883e348c4f61e"
+    },
+    "2019": {
+      "rows": 732473,
+      "games": 2429,
+      "duplicate_rows_removed": 0,
+      "start": "2019-03-20 00:00:00",
+      "end": "2019-09-29 00:00:00",
+      "pitches_sha256": "ef501c6a79ac422cebe57144e52b36dca02577029d4c96c305cf6d5f75c6b3fb"
+    },
+    "2021": {
+      "rows": 709852,
+      "games": 2429,
+      "duplicate_rows_removed": 0,
+      "start": "2021-04-01 00:00:00",
+      "end": "2021-10-03 00:00:00",
+      "pitches_sha256": "263c35e627100aa0667dfb5a29390be9f668ee338b5f3f542264396c1356b129"
+    },
+    "2022": {
+      "rows": 708540,
+      "games": 2430,
+      "duplicate_rows_removed": 0,
+      "start": "2022-04-07 00:00:00",
+      "end": "2022-10-05 00:00:00",
+      "pitches_sha256": "73750de10e46cfcc62e836724eba917c436550a3238ad47c21fb5d7cf31924e6"
+    },
+    "2023": {
+      "rows": 720684,
+      "games": 2430,
+      "duplicate_rows_removed": 717945,
+      "start": "2023-03-30 00:00:00",
+      "end": "2023-10-01 00:00:00",
+      "pitches_sha256": "7db10c4e0c446910c8052e1fbef93d15560b1fabafc13bf98f97db68436ce804"
+    },
+    "2024": {
+      "rows": 711893,
+      "games": 2429,
+      "duplicate_rows_removed": 708825,
+      "start": "2024-03-20 00:00:00",
+      "end": "2024-09-30 00:00:00",
+      "pitches_sha256": "355a0b43bed3a6308647640c2fdecd32d3a755adcaf63c45f752ea9e9cdafd68"
+    },
+    "2025": {
+      "rows": 712522,
+      "games": 2430,
+      "duplicate_rows_removed": 1382097,
+      "start": "2025-03-18 00:00:00",
+      "end": "2025-09-28 00:00:00",
+      "pitches_sha256": "b4448e217d2e318720531cdc104e952cba0b08838e3fd3484354df3c7315a60e"
+    },
+    "2026": {
+      "rows": 716792,
+      "games": 2429,
+      "duplicate_rows_removed": 0,
+      "start": "2026-03-25 00:00:00",
+      "end": "2026-09-27 00:00:00",
+      "pitches_sha256": "fef2cb6f1fcb836e64e0c42baeafc6b4068d171b03a84ac991ea411b4f60cae8"
+    }
+  },
+  "fangraphs_sources": {
+    "fg_bat_2021.json": "89e7523d6dc9b258fdc302a471d0cedc11025fa21350c4547ee4020b76978bd4",
+    "fg_bat_2017.json": "f4818faa132c2ea22e9dcaaa6dcf9d5d52981857054bf1cd3f3372370a6e5384",
+    "fg_pit_2024.json": "ce533a4863c95e881eb0d31bf9d24f9a4de5357dc401abd0107c04b4278c3f2e",
+    "fg_pit_2025.json": "73a9edd6faafc7323cff63698c4090605a6ad4129d1430f70ada8f83b31ecd77",
+    "fg_bat_2016.json": "bd6e4164e8b3e4b94bd3b5529a808682013b0e9cf585a2621fcdb958fcb7155d",
+    "fg_pit_2018.json": "92e902f10e56b4e529898ee54107d5fe816ad2ae753fe861eeb48df2217df64e",
+    "fg_pit_2022.json": "f6f9179d7dd8d6bbbfbe3391bf014f878cfeccd00207e83dde5c6db7830830b4",
+    "fg_bat_2026.json": "5eb006b4d1a113a505b3820397724bbb6390271d39c0344f9a43b125ee369926",
+    "fg_pit_2023.json": "9a2ee2a1b2d336a88b859e1794a1a04f20870e19596303940901b9f8a972abb5",
+    "fg_pit_2019.json": "ef3ff4e35642a3b0308440aca0e2b6ddce5d27b932a20b78925fb3ef59ad15f6",
+    "fg_bat_2025.json": "43cf8603f2e2dbb669525798af4ae55e243a0838988b57ec1612f37c40588720",
+    "fg_pit_2016.json": "8ef0b1619a6c04fb13b8c66fbe3887e3e6a871911bb9e79b002c3ee3c667501d",
+    "fg_pit_2017.json": "9d46e1240aea2567a9487d73b7b4970034fca5b28e56269a4ddb66f5f2315053",
+    "fg_bat_2024.json": "044a3af6dce8ac75f5660322a0a2cfdbafa412c886b61fbb9a344912163ae47e",
+    "fg_pit_2021.json": "fbafff5d951cff48c13bd4041ce471705a98477172df72a21824fb6e26fa47e5",
+    "fg_bat_2023.json": "50c177628fdebb3a4543c68ea4f7f1192ecafb89664aadd4fc951ece41585a61",
+    "fg_bat_2019.json": "0715007f8a39beccf7b27b972bef16aa8361bb2f83118e5fd0385ec38c7beea7",
+    "fg_pit_2026.json": "13ec650f31c9dc75644ed12481c79f29dbc42488904d4f04f43c1b9ac9a36c1c",
+    "fg_bat_2018.json": "7aa403c97608e3383f68203564cf3d1a3cc184179372b1b443f1830a6a430bf5",
+    "fg_bat_2022.json": "5d053e0ef38e5ccfbd6a1a0ad05ca7002886172917f2aa0a4637f007484b4a9a"
+  },
+  "sprint_sources": {
+    "ss_2025.csv": "1e82b7d8b009ee79170a665f7c103ccdfdfe5a8c4dbfccb4e4c65fd9a9f39720",
+    "ss_2019.csv": "967b4df513d8e5afc37a4e9d888c4085ef04f0178e4a99507aa71f406d1bd798",
+    "ss_2018.csv": "3b495e84b0206497d373f863df3f96c4184f3b233c7112c6bfe2ba69742edeb2",
+    "ss_2024.csv": "b75ec760311605af41cad71c3d18fa9f26782299c0abeb04696eeb70ed81ebed",
+    "ss_2026.csv": "b20b72ccc14b875043bcfced6b67b4f9f6955b752804c6dc71a8520ab570e73c",
+    "ss_2023.csv": "f5a8d20b881760f3ac9678a42fb09b3f5710cadc7d27d7489b1a8467935a9c89",
+    "ss_2022.csv": "8a5ac03435a6d65f58e7fe2d3aaf50cdb02174aadf620f9cc4a427c964311343",
+    "ss_2020.csv": "8fc321ae762b0dfc9c3327b87b86c9e4380819ee17eb47fa23df8e940d83b97d",
+    "ss_2021.csv": "35812fc91ce9855f3866009992cc77ae62e1d31c102fdee183259f97e77fc424",
+    "ss_2016.csv": "cc9ddc17520f1e4e8839609c911ff07df4633b0568ed05fbb054d21c7564cf03",
+    "ss_2017.csv": "d92d62156b88ec12e21031ac889aaad24a08ea6090c8dbbe4dc9548d3f55371f"
+  },
+  "private_metadata": "cache/input_YEAR.json records individual source file hashes and paths"
+}
