@@ -1,0 +1,42 @@
+[
+  {
+    "id": 678882,
+    "name": "Ceddanne Rafaela",
+    "pa": 576.0,
+    "fwar": 4.135051188067737,
+    "batting_adjustment": -0.6456553831896578,
+    "fielding_haircut": -0.58558456474898,
+    "contact_only": 3.4893958048780793,
+    "both": 2.9038112401290994
+  },
+  {
+    "id": 665742,
+    "name": "Juan Soto",
+    "pa": 482.0,
+    "fwar": 3.1112474184818515,
+    "batting_adjustment": 0.3598902069275031,
+    "fielding_haircut": 0.20629097092617196,
+    "contact_only": 3.4711376254093547,
+    "both": 3.6774285963355267
+  },
+  {
+    "id": 677951,
+    "name": "Bobby Witt Jr.",
+    "pa": 632.0,
+    "fwar": 6.953866675449232,
+    "batting_adjustment": 0.3972473626957667,
+    "fielding_haircut": -0.8627546250242379,
+    "contact_only": 7.351114038144999,
+    "both": 6.488359413120762
+  },
+  {
+    "id": 691718,
+    "name": "Pete Crow-Armstrong",
+    "pa": 726.0,
+    "fwar": 10.62321998608135,
+    "batting_adjustment": -0.2414733302019724,
+    "fielding_haircut": -1.0756836712668583,
+    "contact_only": 10.381746655879379,
+    "both": 9.30606298461252
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "recorded_utc": "2026-10-30T00:50:06.510776+00:00",
+  "status": "Exploratory; previous results already read; new candidate scores not yet computed",
+  "files": {
+    "runtime.py": "e0461e4c423bde120c0090b88d0648c92bcb0a2496f90b8c3c08df96c75b41f1",
+    "test_audit.py": "81f7b5c8c1f086ecdd449056b2a25a336b14c7b177fb5794969474651af6a3c2",
+    "prior_speed.py": "9a723b5c7ff1f4315042c084fa11a4ade3ce5ef40303e6cb772feee94b49e3a4",
+    "evaluate.py": "a6f176c46122cd915780ef5f48e365ba6da898ad373c0f9d5d28ba4b3293822b",
+    "components.py": "5cfa02834778c27c5c3c0cca8d5b6947849460b8dd3f571679e561eb914535e4",
+    "prepare.py": "fc104552e87266cb62083d6280e1b7d4a12002360e5711b1934111ddfbc1d961",
+    "PROTOCOL.md": "49416f49d7c83c151c9726d94e94fe757c81ffadfb1d7642a9870fd3e7915bec"
+  },
+  "prior_speed_check": "For batting only, replace current-season sprint speed with previous-season sprint speed; paired half-season games and remaining inputs stay fixed."
+}

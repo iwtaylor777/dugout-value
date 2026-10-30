@@ -1,0 +1,28 @@
+{
+  "builder_sha256": "b5a812a01e37ff3b35a9771ef40ea958b6d3a67b2dbefd95e267b937a4eebb10",
+  "attribution_source_sha256": "6b8cad7829f9f91912f1eecfd66a0b2de319380989641363b6cb63e1ff807ac6",
+  "output_sha256": "465d7e8286d650c327124b7da01bd272f003c4c2f75a9b1383c2093b40513a09",
+  "checks": {
+    "2024": {
+      "rows": 286,
+      "runs_per_win": 9.682629585266112,
+      "full_league_adjustment_runs": 2.842170943040401e-14,
+      "component_sha256": "6bb20622d1285480d17f053efea9d31a9b77f4e3c08e6f8934fbbca24e798550",
+      "fangraphs_sha256": "044a3af6dce8ac75f5660322a0a2cfdbafa412c886b61fbb9a344912163ae47e"
+    },
+    "2025": {
+      "rows": 277,
+      "runs_per_win": 9.773975372314451,
+      "full_league_adjustment_runs": 0.0,
+      "component_sha256": "e72a05c37fe4ac18304419c21ec65952af9585fef609ad73257c3555337a5c00",
+      "fangraphs_sha256": "43cf8603f2e2dbb669525798af4ae55e243a0838988b57ec1612f37c40588720"
+    },
+    "2026": {
+      "rows": 267,
+      "runs_per_win": 9.82181453704834,
+      "full_league_adjustment_runs": 0.0,
+      "component_sha256": "3a42a03cfcdfbe5f7eb354734fd11db2c2c671b4249e91e4383c29161f6e4b02",
+      "fangraphs_sha256": "5eb006b4d1a113a505b3820397724bbb6390271d39c0344f9a43b125ee369926"
+    }
+  }
+}

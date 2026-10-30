@@ -1,0 +1,18 @@
+{
+  "candidate": "fWAR with only the fixed 50% contact batting adjustment; full published fielding and pitching",
+  "locked_utc": "2026-10-30T01:07:58.314610+00:00",
+  "status": "Additional research candidate frozen after historical audit; original v2 registration unchanged",
+  "original_v1_attrib_sha256": "6b8cad7829f9f91912f1eecfd66a0b2de319380989641363b6cb63e1ff807ac6",
+  "private_files": {
+    "bat": {
+      "rows": 1472,
+      "file": "candidate_2026_bat.csv",
+      "sha256": "18be5911d1807af4f35a89b1ea323ed8cb6499251a61493962bff4854338b98b"
+    },
+    "pit": {
+      "rows": 868,
+      "file": "candidate_2026_pit.csv",
+      "sha256": "ca688d0a6ebcf8869945b3e58f5c24d6ab8320418340842e4d7d06ee42f2f385"
+    }
+  }
+}
