@@ -1,16 +1,18 @@
 {
-  "release": "DV estimates recorded October 29, 2026",
+  "release": "DV estimates recorded October 29, 2026, revision R1",
   "files": {
     "AMENDMENT-3.md": "e06d975494b902d195faf60a9e87150ed7da964ca103d5d273e4317086a721eb",
     "AMENDMENT-4.md": "1e2c1b64451e0306595408b8cc10496d76d8783c9db9fce4c0376f4aac72be46",
     "AMENDMENTS.md": "e4c32707c8da8eb5db8d67d917330fb280bfd0a2077c64c9b6d53fc40664b6ad",
+    "DV-20261029-R1.md": "d89d1e147ba3a0e39055c528bbb08bf464ad3d2f07f01fb840c5d4cca294d92b",
     "DV-20261029.md": "fff3ff5780ea221ca98f13561b2aa86b4126b0666a38645758ce70a254650c79",
     "LOCK-AMENDMENT-3.json": "258311d29caaa3feac6b9989fbf45a6bb3f4e33dd507bac695ee1a18b537ab35",
     "LOCK-AMENDMENT-4.json": "21d04d50fb72c932df6977e235f4883dd56a11a3dfd3cb539970fa82f8e4fa79",
     "LOCK-AMENDMENTS.json": "51818eb6b3df9639477e644179b185cfbb6286d7f0fbf119eb6c78932817593e",
+    "LOCK-DV-20261029-R1.json": "333e0bd6bde1f094824f966b11a08bf129f6f16cb75783057efbc11f1e9892ec",
     "LOCK-DV-20261029.json": "3f873ccd7fa74cd725cc2d021bdd0674323f8f81505a2a75d2be1d64f8c64294",
     "PROTOCOL-FA-2027.md": "db2a1c1b8cd142adc103df4d9ae036a45aa557a55378bd5029356faaba52a4be",
-    "README.md": "856c620f61bad48b6f2527cef0b0667821e1480d9d697fc053578f336a85a77c",
+    "README.md": "20974ff61eb7cdecf9e5879a9a3fcb3b184e114f3bcd3851a75f3a0777e08d33",
     "amendment-1-withdrawn/LOCK-FA-2027.json": "3e926934f07f72cf186cb08d4fe3eb7f925e9953cb56dd90d3388aa465dd7b96",
     "amendment-1-withdrawn/PROTOCOL-FA-2027.md": "4e86f76275ea76594085a522bdfd7ca2aa6ab9d02005cb3d30065948edbf9cbc",
     "amendment-1-withdrawn/freeze_v2.py": "87a9cd9457e8dace5b3b5552c419018096805041bcd48c3c19d746e1278b2c5d",
@@ -35,6 +37,8 @@
     "amendment-3/update2_params.json": "e8405fd19c260cbe9439de546e62d14bd90d2168ecdc68d8c860088e494a51fb",
     "amendment-4/freeze_a4.py": "dec0584992c28b163e12becf1f071750a9239f5f3c751ecda7292b10242bbd4a",
     "archive/2026-10-26-zips-release.tar.gz": "9007fd3a4dfaa4386b57da93522a2e6d84069785f015882457566d039e2e8c52",
+    "archive/2026-10-29-dv-original/predictions_frozen.csv": "e89b1712f29e0970f073892a895a62bb4f353c2efe5fa9bc17f793a6d26a85cd",
+    "archive/2026-10-29-dv-original/predictions_frozen.json": "b00555543e21ebdec3336b938d03cc1b51203a70838430f68b4239dbce145533",
     "calibration/amendment-2/pressure.mjs": "c57d34db478acf54dd6910552d25c7f524f21ae11f8b71b898cb7ea140dd6bb7",
     "calibration/amendment-2/pressure_output.txt": "91571a10edfcaf4e1acbd9a0efced743c78545cd2c69b9bb81c44f9324027976",
     "calibration/amendment-2/recent.mjs": "9a703d90c14cb4eae60af0b144ff0dabcc760091bdeaa6d62ffa6eea166430f3",
@@ -52,6 +56,7 @@
     "code/lib/value-model.mjs": "faff9392d2b36ba505a3146ce9a896e8f92822ed4120f026bf920263feb62170",
     "code/scripts/build-fa-class-coverage.py": "189ca2e5f6f8f7be49406c1fe6ce2e6b0119de2386197b0c8f1c9500f39e76f3",
     "code/scripts/freeze-dv-free-agents.mjs": "0056bbaa797083ab44a74beb354b00f6ca77514d956017695ce113e5f65105c4",
+    "code/scripts/revise-dv-free-agents.mjs": "8dd42d5bd97d1066dcbf72fc3a200d9fcbd48ee3943cbad5c4496f80d9a69631",
     "first-freeze/LOCK-FA-2027.json": "94da80ab3fe0690ad3e1e8fa23cb8d7917ba4fb5d17dae4a6e4623ec79f178e2",
     "first-freeze/predict.mjs": "80246f485e40e4d5a05c846b306063891c7ead0b6ece3f3272308ac066ad8359",
     "first-freeze/predict_lib.mjs": "ba376b888bc37fdc23e284599938170e7dfec01efa980354e54854a1d28a8296",
@@ -59,8 +64,8 @@
     "first-freeze/predictions_frozen.json": "08d8bb7f9aa39a8ca09b5e78e273c6668d6990694eb5ad7e4195e51b93d08213",
     "first-freeze/sato.json": "e924752c4ba728c2ba5a3ace280c4420fc0e49bf741e73b49a83fff647d64a26",
     "first-freeze/select.py": "18ee4ee097952e1388e6bf2f8abf8cfa60973bb158b02adf90a4ff6f1eed1258",
-    "package_release.py": "cd04d476d7983b32e316a254dbe5cfaace62881cbec9c86c0325f886a5311b84",
-    "predictions_frozen.csv": "e89b1712f29e0970f073892a895a62bb4f353c2efe5fa9bc17f793a6d26a85cd",
-    "predictions_frozen.json": "b00555543e21ebdec3336b938d03cc1b51203a70838430f68b4239dbce145533"
+    "package_release.py": "286841428d510c4f9154d93a917b1b1e2edae39ec9e9d350b87bc60bd66de79a",
+    "predictions_frozen.csv": "3d699e01f90f501c2237a021cd8042efe95ddd737e353d6e191bf4751b4ff48c",
+    "predictions_frozen.json": "95e5ee61cffc3bc0bc27501e5a63a9b0c037e64bb03a7dbe27ae4e9d7a096da4"
   }
 }

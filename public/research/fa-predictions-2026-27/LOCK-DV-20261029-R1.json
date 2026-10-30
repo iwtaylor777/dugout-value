@@ -1,0 +1,16 @@
+{
+  "locked_utc": "2026-10-30T00:38:24.986Z",
+  "revision": "R1",
+  "base_lock": {
+    "LOCK-DV-20261029.json": "3f873ccd7fa74cd725cc2d021bdd0674323f8f81505a2a75d2be1d64f8c64294",
+    "verifies": "archive/2026-10-29-dv-original/"
+  },
+  "inputs": {
+    "revise-dv-free-agents.mjs": "8dd42d5bd97d1066dcbf72fc3a200d9fcbd48ee3943cbad5c4496f80d9a69631"
+  },
+  "files": {
+    "predictions_frozen.json": "95e5ee61cffc3bc0bc27501e5a63a9b0c037e64bb03a7dbe27ae4e9d7a096da4",
+    "predictions_frozen.csv": "3d699e01f90f501c2237a021cd8042efe95ddd737e353d6e191bf4751b4ff48c"
+  },
+  "note": "Editorial revision recorded before any contract in this class was observed. The model's own Skubal estimate (9 years, $367.0M) is kept in manual_override and in the archived original snapshot."
+}

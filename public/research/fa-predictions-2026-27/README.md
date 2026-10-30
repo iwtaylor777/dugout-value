@@ -1,16 +1,17 @@
 # Free-agent contract estimates, 2026–27
 
-Current estimates are recorded October 29, 2026, using DV Projections v1.3 through the completed 2026 season. The article is “Tarik Skubal is worth $367 million on the open market.”
+Current estimates are recorded October 29, 2026, using DV Projections v1.3 through the completed 2026 season. Revision R1, recorded the same evening, sets Skubal's term to 10 years by hand and adds a note on Jake Bauers. The article is “Tarik Skubal is worth $386 million on the open market.”
 
 ## Current snapshot
 
-- `predictions_frozen.json` / `.csv`: 31 estimates, the top 30 modeled MLB totals expected to reach the market plus Teruaki Sato. They include the 2027 forecast used to price the contract, later WAR paths, fixed settings, flags, exclusions and unmodeled coverage.
-- `LOCK-DV-20261029.json`: timestamp and hashes of the current inputs, pricing code and prediction files. Do not change this snapshot after observing contracts.
+- `predictions_frozen.json` / `.csv`: revision R1 of the 31 estimates, the top 30 modeled MLB totals expected to reach the market plus Teruaki Sato. They include the 2027 forecast used to price the contract, later WAR paths, fixed settings, flags, exclusions and unmodeled coverage.
+- `LOCK-DV-20261029-R1.json` and `DV-20261029-R1.md`: the revision's timestamp, hashes and the two editorial changes. Do not change this snapshot after observing contracts.
+- `LOCK-DV-20261029.json`: timestamp and hashes of the original October 29 inputs, pricing code and prediction files, which are kept in `archive/2026-10-29-dv-original/`.
 - `DV-20261029.md`: precise source, coverage, workload and extension conventions.
 - `PROTOCOL-FA-2027.md`: scoring definitions for guarantees, term, AAV, flags, eligible contracts and dated benchmarks. The actual current freeze time is in the current lock; historical claims about when free agency would open are not used to date this release.
 - `code/`: the current pricing, term, class-matching and freeze code, with the matching value/aging libraries.
 
-The numeric forecasts use $11M per net WAR, 20% extra for net wins above two, a 50% reliever premium above .8 WAR, 3% annual inflation and 10% discounting. The roster allowances are .5 WAR for hitters/starters and .2 for relievers. The term rule is unchanged. All five DV years are used directly; subsequent years extend rate and workload separately with the fixed age policy. No individual contract term or price is manually forced.
+The numeric forecasts use $11M per net WAR, 20% extra for net wins above two, a 50% reliever premium above .8 WAR, 3% annual inflation and 10% discounting. The roster allowances are .5 WAR for hitters/starters and .2 for relievers. The term rule is unchanged. All five DV years are used directly; subsequent years extend rate and workload separately with the fixed age policy. In the original snapshot no term or price was forced by hand. Revision R1 sets one term, Skubal's, to 10 years; his price for those years still comes from the model.
 
 Michael King's reported opt-out is included as a known market-reach decision, with the MLB report URL stored in the JSON. Other option decisions follow the fixed model rule until observed. Kyle Wright is marked unmodeled because recent-history coverage and a current public baseline are absent; he is not assigned zero value. The extra class identities matched outside the roster snapshot fall below the displayed cutoff. Sato's separate six-player NPB translation remains 2.5 first-year WAR and four years/$80M. Posting-fee and QO flags do not change numeric prices.
 

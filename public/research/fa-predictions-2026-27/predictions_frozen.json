@@ -37,9 +37,9 @@
       "id": "mlb-669373",
       "war_2026": 5.2,
       "projection_source": "Dugout Value projections v1.3",
-      "years": 9,
-      "total_musd": 367,
-      "aav_musd": 40.8,
+      "years": 10,
+      "total_musd": 385.8,
+      "aav_musd": 38.6,
       "war_2027": 5.34,
       "war_path": {
         "2027": 5.34,
@@ -50,7 +50,8 @@
         "2032": 2.8,
         "2033": 2.25,
         "2034": 1.78,
-        "2035": 1.37
+        "2035": 1.37,
+        "2036": 0.89
       },
       "market_values": {
         "2027": 61.27264,
@@ -68,7 +69,16 @@
       },
       "contract_note": "",
       "flag_direction": "",
-      "flag": ""
+      "flag": "Term set to 10 years by hand; the model's rule gives 9 years and $367.0M.",
+      "manual_override": {
+        "field": "years",
+        "model_years": 9,
+        "model_total_musd": 367,
+        "model_aav_musd": 40.8,
+        "set_years": 10,
+        "reason": "Set by hand to 10 years. The model's term rule stops at nine because his 2036 forecast (0.89 WAR) falls below one win, but the top of the market has given aces longer deals than that rule allows. The tenth season is priced from the same recorded market values, so the total and AAV still come from the model.",
+        "decided": "2026-10-29"
+      }
     },
     {
       "rank": 2,
@@ -2025,6 +2035,21 @@
         "2038": 0
       },
       "contract_note": ""
+    }
+  ],
+  "revision": {
+    "id": "R1",
+    "recorded_utc": "2026-10-30T00:38:24.986Z",
+    "base_snapshot_lock_sha256": "3f873ccd7fa74cd725cc2d021bdd0674323f8f81505a2a75d2be1d64f8c64294",
+    "summary": "Skubal's term set by hand to 10 years, priced from the recorded market values; Jake Bauers added as a note (expected to accept a qualifying offer). Every other row is unchanged."
+  },
+  "notes": [
+    {
+      "player": "Jake Bauers",
+      "team_2026": "MIL",
+      "position": "1B",
+      "note": "Not priced as a market contract: I expect Milwaukee to make him a qualifying offer and him to accept it.",
+      "decided": "2026-10-29"
     }
   ]
 }

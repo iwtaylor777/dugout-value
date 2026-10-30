@@ -54,11 +54,11 @@ export default function ResearchFiles() {
       <p>FanGraphs leaderboards and free-agent tracker data are not redistributed.</p>
     </section>
     <section id="fa-predictions-2027"><h2>Free-agent contract predictions, 2026–27</h2>
-      <p>Estimates recorded October 29, 2026, using DV forecasts through the completed 2026 season. The top 30 modeled MLB free agents plus Teruaki Sato are priced with fixed $11M-per-win and contract-term rules. Tarik Skubal is estimated at nine years and $367M. The download contains the dated predictions, scoring protocol, input hashes, reproducible pricing code and the earlier ZiPS-based release.</p>
+      <p>Estimates recorded October 29, 2026, using DV forecasts through the completed 2026 season. The top 30 modeled MLB free agents plus Teruaki Sato are priced with fixed $11M-per-win and contract-term rules. Tarik Skubal is estimated at 10 years and $386M, with his term set by hand (the model’s rule gives nine years and $367M), in a revision recorded the same evening. The download contains the dated predictions, scoring protocol, input hashes, reproducible pricing code and the earlier ZiPS-based release.</p>
       <p><Link href="/analysis/what-this-winters-free-agents-should-cost">Read the predictions</Link>.</p>
       <ul>
         <li><a href="/research/fa-predictions-2026-27.tar.gz" download>Download the predictions, protocol, amendments, locks and calibration scripts</a></li>
-        <li><a href="/research/fa-predictions-2026-27/PROTOCOL-FA-2027.md">Scoring protocol</a>, <a href="/research/fa-predictions-2026-27/DV-20261029.md">forecast conventions</a> and <a href="/research/fa-predictions-2026-27/LOCK-DV-20261029.json">input checksums and recording time</a></li>
+        <li><a href="/research/fa-predictions-2026-27/PROTOCOL-FA-2027.md">Scoring protocol</a>, <a href="/research/fa-predictions-2026-27/DV-20261029.md">forecast conventions</a> and <a href="/research/fa-predictions-2026-27/LOCK-DV-20261029.json">input checksums and recording time</a>, plus <a href="/research/fa-predictions-2026-27/DV-20261029-R1.md">revision R1</a> and <a href="/research/fa-predictions-2026-27/LOCK-DV-20261029-R1.json">its lock</a></li>
         <li><a href="/research/fa-predictions-2026-27/predictions_frozen.csv">Predictions (CSV)</a> and <a href="/research/fa-predictions-2026-27/predictions_frozen.json">with flags and exclusions (JSON)</a></li>
       </ul>
       <p>The MLB Trade Rumors free-agent list and FanGraphs data are not redistributed; their checksums are in the locks.</p>
