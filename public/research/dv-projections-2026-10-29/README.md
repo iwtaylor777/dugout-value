@@ -1,6 +1,6 @@
 # DV Projections: methods and validation
 
-Current site model: v1.3, data through 2026. The article is “Introducing DV Projections.” This package includes the original benchmark, independent replay, current model comparisons and supplementary validation. These are retrospective studies using previously examined seasons; the prospective test is 2027.
+Current site model: v1.4 (October 30), data through 2026. v1.4 changes only the aging rule inside the multi-year blend; see `MODEL-20261030-v14.md`. The article is “Introducing DV Projections.” This package includes the original benchmark, independent replay, current model comparisons and supplementary validation. These are retrospective studies using previously examined seasons; the prospective test is 2027.
 
 ## Results and measurement
 
@@ -9,7 +9,8 @@ Current site model: v1.3, data through 2026. The article is “Introducing DV Pr
 - `FULL-SEASON-VALIDATION.md` and `validation/full_season_war_results.json`: additional complete-season WAR tests including zero-workload established players, with no target-year workload filter. Expected-workload and full-season valuation forecasts are scored separately. The data and modeling choices were fixed before this endpoint was calculated; these remain reused historical seasons.
 - `site/horizon_backtest_summary.json`: current normalized multi-year rate tests. Direct horizon models have lower error in 16/17 comparisons and the unchanged 70/30 blend in 17/17. These are overlapping forecast comparisons on a small number of seasons, not 17 independent evaluation years. Final smoothing and workload assumptions are not scored by this chart.
 - `site/current_build_verification.json`: current artifact checksums, role-level changes and the unchanged Rafaela path.
-- `MODEL-20261029.md`: complete current input/workload conventions and their effects.
+- `MODEL-20261030-v14.md`: the v1.4 aging-rule change, its timing-corrected test and its effect.
+- `MODEL-20261029.md`: input/workload conventions (v1.3), unchanged in v1.4.
 
 The additional season-WAR test gives DV expected-workload RMSE 1.1355 for hitters and .8027 for pitchers, versus ZiPS 1.3999/.8767 and Steamer 1.1574/.8041. DV differences from Steamer are inconclusive. The full-season valuation policy gives 1.2325/.8696 and overpredicts realized totals. It should not be described as an injury-adjusted expected season.
 
@@ -29,7 +30,7 @@ python site/test_timing.py
 python validation/full_season_war.py --output /path/to/private-validation
 python site/replay.py --output /path/to/private-horizon --only benchmark
 python site/project_current.py --output /path/to/private-current
-python site/site_multiyear.py --input /path/to/private-current/dvp_2027_2031_v3.json --output /path/to/private-current/dvp_multiyear.json
+python site/site_multiyear_v14.py --input /path/to/private-current/dvp_2027_2031_v3.json --policy site/fixed_age_policy.json --output /path/to/private-current/dvp_multiyear.json
 python site/build_dv_site.py /path/to/repository/app/data/player-database.json /path/to/private-current/dvp_2027_2031_v3.json /path/to/private-current/dvp_multiyear.json site/pt_quantile_map_2026_roles.json /path/to/private-current/established_2024_26.json /path/to/private-current/workloads_2024_26.json site/retention.json /path/to/private-current/dv-projections.json
 ```
 

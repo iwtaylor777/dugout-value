@@ -1,0 +1,15 @@
+{
+ "version": "v1.4",
+ "built": "2026-10-30",
+ "published_json_sha256": "feff1012b10ffe3895c8f5164af573bfb4600a6f388ec875078b8e38f747d69e",
+ "v13_rebuild_matched_published_v13": true,
+ "changes": "site_multiyear_v14.py with fixed_age_policy.json; build_dv_site.py unchanged; meta label set to v1.4",
+ "mean_war_change": {
+  "2027": 0.0,
+  "2028": 0.029,
+  "2029": 0.053,
+  "2030": 0.072,
+  "2031": 0.085
+ },
+ "dv_total_surplus_change_pct": 13.9
+}
