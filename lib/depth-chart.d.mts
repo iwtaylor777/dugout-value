@@ -1,4 +1,4 @@
-export type DepthEntry = { i: string; pid?: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s?: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string };
+export type DepthEntry = { i: string; pid?: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s?: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string; fs?: Record<string, number>; rd?: number };
 export type DepthEdit = { pos?: string; pt?: number };
 export type DepthTargets = { hitter: number; SP: number; RP: number };
 export type DepthRow<T extends DepthEntry = DepthEntry> = { p: T; pt: number; war: number; how: "locked" | "set" | "auto" };

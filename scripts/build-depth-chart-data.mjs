@@ -6,12 +6,15 @@
 // published 2027 WAR as a rate and start at part-time playing time. Free agents outside the roster snapshot come from
 // the same optional files the free-agent tracker uses, so the tool can suggest them.
 import fs from 'node:fs';
-const [extraPlayersFile, extraProjectionsFile, fgPayrollFile, impliedDefenseFile, fgPositionsFile] = process.argv.slice(2);
+const [extraPlayersFile, extraProjectionsFile, fgPayrollFile, impliedDefenseFile, fgPositionsFile, componentsFile] = process.argv.slice(2);
 // Defense built into each hitter's 2027 DV rate (fielding + positional runs per 600 PA: rate x runs per win, less
 // replacement, batting runs from a wOBA projection with the same model inputs, and recent baserunning), and the
 // position the projection saw (FanGraphs' listed position for his latest season). Both are made outside the repo.
 const impliedDefense = impliedDefenseFile ? JSON.parse(fs.readFileSync(impliedDefenseFile, 'utf8')).implied : {};
 const fgPositions = fgPositionsFile ? JSON.parse(fs.readFileSync(fgPositionsFile, 'utf8')) : {};
+// Component projections (comp2027.py, outside the repo): fielding runs per full season at each position (fs) and the
+// projected fielding plus positional runs per 600 PA in the player's 2026 role (rd). Keyed by FanGraphs id.
+const components = componentsFile ? JSON.parse(fs.readFileSync(componentsFile, 'utf8')).players : {};
 // 2027 luxury-tax (CBT) hits by player, parsed from FanGraphs RosterResource payroll pages (kept outside the repo):
 // guaranteed AAV, option values and arbitration projections. Only the one number per player is published.
 const fgPayroll = fgPayrollFile ? JSON.parse(fs.readFileSync(fgPayrollFile, 'utf8')).players : {};
@@ -51,6 +54,10 @@ function push(p, team, entry) {
     ...(cbt ? { cb: cbt.cb, ...(cbt.co ? { co: 1 } : {}) } : {}), ...(fa ? { fa: 1 } : {}),
     ...(entry.k === 'b' && entry.s === 'dv' && !entry.noPay && impliedDefense[p.id] != null && fgPositions[String(p.fangraphsId ?? '')]
       ? { d: impliedDefense[p.id], mp: fgPositions[String(p.fangraphsId)] } : {}),
+    ...(() => {
+      const c = entry.k === 'b' && entry.s === 'dv' && !entry.noPay ? components[String(p.fangraphsId ?? '')] : null;
+      return c && c.role != null && Object.keys(c.fr).length ? { fs: c.fr, rd: c.role } : {};
+    })(),
     // Contract over after 2026 and not in the free-agent class (retiring, released or otherwise off the market).
     ...(!fa && !entry.noPay && p.seasons && !has2027 ? { ex: 1 } : {}) });
 }

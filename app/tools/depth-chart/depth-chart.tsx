@@ -7,7 +7,7 @@ import payrollData from "../../data/team-payroll.json";
 import { allocate, bestAdditions, teamsFor, payrollAdjustment, payrollChange, rateAt, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
 import type { DepthEdit as Edit } from "../../../lib/depth-chart.mjs";
 
-type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string };
+type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string; fs?: Record<string, number>; rd?: number };
 
 const players = data.players as Entry[];
 const teams = data.teams as { abbr: string; name: string }[];
@@ -176,7 +176,12 @@ export function DepthChart() {
                           <tr key={row.p.i}>
                             <th scope="row">{label(row.p)}{added.includes(row.p.i) && <span className="dc-tag">added</span>}{row.p.s !== "dv" && <span className="dc-tag" title={row.p.s === "npb" ? "NPB translation" : "No DV projection; ZiPS rate at part-time playing time"}>{row.p.s === "npb" ? "NPB" : "ZiPS"}</span>}{(() => {
                               const adj = (rateAt(row.p, pos) - row.p.r) * row.pt / 600;
-                              return Math.abs(adj) >= 0.05 ? <span className="dc-tag dc-pos-adj" title={adj > 0 ? `Projected as a ${row.p.mp ?? row.p.e[0]}; credited at ${pos} as a slightly below-average fielder` : `Projected as a ${row.p.mp ?? row.p.e[0]}; loses positional value at ${pos}`}>{signed(adj)} at {pos}</span> : null;
+                              if (Math.abs(adj) < 0.1) return null;
+                              const f = row.p.fs?.[pos];
+                              const why = row.p.fs && row.p.rd != null
+                                ? (pos === "DH" ? `At DH he has no fielding value and a DH's positional adjustment, compared with ${row.p.rd.toFixed(1)} runs of defense per 600 PA in his 2026 role.` : `Projected fielding at ${pos}: ${f != null ? `${f > 0 ? "+" : ""}${f.toFixed(1)}` : "average"} runs a season, plus the position's adjustment, compared with ${row.p.rd.toFixed(1)} runs of defense per 600 PA in his 2026 role.`)
+                                : adj > 0 ? `Projected as a ${row.p.mp ?? row.p.e[0]}; credited at ${pos} as a slightly below-average fielder` : `Projected as a ${row.p.mp ?? row.p.e[0]}; loses positional value at ${pos}`;
+                              return <span className="dc-tag dc-pos-adj" title={why}>{signed(adj)} at {pos}</span>;
                             })()}</th>
                             <td className="num">
                               <input type="number" min={0} step={PITCHING.includes(pos) ? 5 : 10} aria-label={`${label(row.p)} ${unitName(pos)} at ${pos}`} value={Math.round(row.pt)} onChange={(e) => setPt(row.p, pos, e.target.value)} className={locked ? "dc-locked" : undefined} />

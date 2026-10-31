@@ -117,3 +117,12 @@ test('a hitter listed at a position his projection does not assume is credited a
   const c = { ...h('c', ['C'], 1, 400), d: -10, mp: 'DH' };
   assert.equal(rateAt(c, 'C'), 1, 'no catcher credit is assumed');
 });
+
+test('with component projections, a slot swaps role defense for projected fielding plus positional value there', () => {
+  const runsPerWin = 9.82, a600 = runs => runs * 600 / 683;
+  const mead = { ...h('m', ['2B'], 1.71, 513), d: -11.7, mp: '1B', fs: { '1B': -3.6, '2B': -4.2, '3B': -4.8, SS: -5.7, LF: -2.6, CF: -4.6, RF: -2.6 }, rd: -6.7 };
+  assert.ok(Math.abs(rateAt(mead, '2B') - (1.71 + (-4.2 + a600(2.5) + 6.7) / runsPerWin)) < 1e-9);
+  assert.ok(Math.abs(rateAt(mead, 'DH') - (1.71 + (a600(-17.5) + 6.7) / runsPerWin)) < 1e-9);
+  assert.equal(rateAt(mead, 'C'), 1.71, 'no recent catching: keep the projected rate');
+  assert.ok(rateAt(mead, 'SS') > rateAt(mead, '2B'), 'shortstop adds positional value even with worse fielding');
+});
