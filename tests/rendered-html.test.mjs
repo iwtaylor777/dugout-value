@@ -185,3 +185,10 @@ test("home page features the free-agent tracker in place of value rankings", asy
   assert.match(tools, /href="\/tools\/free-agents"/);
   assert.doesNotMatch(tools.slice(0, tools.indexOf("</section>")), /href="\/tools\/rankings"/);
 });
+
+test("projection details start collapsed with a toggle on each row", async () => {
+  const html = await (await render("/tools/projections")).text();
+  assert.match(html, /class="projection-detail-toggle"[^>]*aria-expanded="false"/);
+  assert.doesNotMatch(html, /class="projection-detail"/);
+  assert.match(html, />2029–31</);
+});
