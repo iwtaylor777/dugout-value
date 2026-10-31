@@ -1,0 +1,97 @@
+/* Match the quieter offseason tools without changing valuation logic. */
+.tool-workspace:is(.workspace-trade, .workspace-projections) .page { padding-top: 26px; }
+.tool-workspace:is(.workspace-trade, .workspace-projections) .intro { margin-bottom: 14px; }
+.tool-workspace:is(.workspace-trade, .workspace-projections) .intro h1 { font: 400 clamp(30px, 3.5vw, 40px)/1.15 Georgia, serif; letter-spacing: -.7px; }
+.tool-workspace:is(.workspace-trade, .workspace-projections) .lede { font-size: 16px; max-width: 80ch; }
+.tool-workspace:is(.workspace-trade, .workspace-projections) .workspace-bar { order: 0; margin-bottom: 18px; align-items: center; }
+.tool-workspace:is(.workspace-trade, .workspace-projections) .workspace-tabs a { min-height: 44px; font-size: 14px; }
+.tool-workspace .toolbar-button { min-height: 44px; }
+.workspace-trade .builder-primary-controls { padding: 14px 16px; background: #eee8d9; border: 1px solid #d6cdbb; border-radius: 6px; gap: 8px 24px; }
+.workspace-trade .builder-primary-controls p { margin: 0; }
+.workspace-trade .builder-primary-controls a { color: #8b4233; font-size: 14px; min-height: 44px; display: flex; align-items: center; margin-left: auto; }
+.workspace-trade .tool-data-note { padding: 10px 0; }
+.workspace-trade .trade-shell { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.workspace-trade .trade-board { border: 0; box-shadow: none; background: transparent; overflow: visible; }
+.workspace-trade .trade-sides { gap: 18px; }
+.workspace-trade .trade-side { min-width: 0; padding: 18px; background: #fffdf6; border: 1px solid #c9d2c5; border-top: 4px solid #6d8977; border-radius: 6px; }
+.workspace-trade .right-side { border-color: #c6d2d8; border-top-color: #688393; }
+.workspace-trade .side-heading { gap: 12px; flex-wrap: wrap; }
+.workspace-trade .side-heading > div { flex: 1 1 200px; min-width: 0; }
+.workspace-trade .side-heading .team-select { max-width: 100%; width: 100%; min-height: 44px; font-size: 16px; }
+.workspace-trade .side-heading > strong { color: #355e4c; }
+.workspace-trade .right-side .side-heading > strong { color: #34536a; }
+.workspace-trade .side-heading small { font-size: 13px; color: #55605f; }
+.workspace-trade .player-stack { gap: 10px; }
+.workspace-trade .player-card { border-radius: 5px; box-shadow: none; }
+.workspace-trade .player-main { padding: 14px 10px; gap: 10px; }
+.workspace-trade .player-copy { min-width: 0; }
+.workspace-trade .player-name-row { flex-wrap: wrap; }
+.workspace-trade .player-copy strong { white-space: normal; }
+.workspace-trade .remove-button { min-width: 44px; min-height: 44px; }
+.workspace-trade .trade-verdict { padding: 20px; border: 1px solid #cfc8b9; border-radius: 6px; background: #f3eedf; }
+.workspace-trade .scoreboard-line { grid-template-columns: minmax(110px, 1fr) minmax(0, 2fr) minmax(110px, 1fr); }
+.workspace-trade .scoreboard-center > strong { font: 650 17px/1.4 var(--font-geist-sans); }
+.workspace-trade .trade-caveat { border-radius: 4px; font-size: 13px; }
+.workspace-trade .trade-sensitivity { margin: 18px 0; font-size: 14px; line-height: 1.65; }
+.workspace-trade .year-ledger { border: 1px solid #cfc8b9; border-radius: 6px; }
+.workspace-trade .editor { position: static; box-shadow: none; }
+.workspace-trade .cash-row { flex-wrap: wrap; gap: 8px; }
+.workspace-projections .projections-panel { border: 0; box-shadow: none; background: transparent; overflow: visible; }
+.workspace-projections .projection-filters { grid-template-columns: minmax(180px, 1.4fr) repeat(4, minmax(0, 1fr)); padding: 16px; background: #eee8d9; border: 1px solid #d6cdbb; border-radius: 6px; gap: 14px; }
+.workspace-projections .projection-filters label { min-width: 0; }
+.workspace-projections .projection-context .tool-data-note { padding: 10px 0 4px; }
+.workspace-projections .tool-caveat { padding: 0 0 10px; }
+.workspace-projections .projections-help { border: 1px solid #cfc8b9; border-radius: 6px; margin-bottom: 4px; }
+.projection-results-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 16px; padding: 12px 0; font-size: 14px; color: #55605f; }
+.projection-results-bar p { margin: 0; color: #17384b; }
+.projection-results-bar > span { margin-left: auto; }
+.projection-results-bar button { min-height: 44px; padding: 8px 12px; border: 1px solid #b5b6ab; border-radius: 4px; background: #fffdf6; color: #17384b; cursor: pointer; }
+.workspace-projections .three-year-table-wrap { max-height: 72vh; overflow: auto; border: 1px solid #cfc8b9; border-radius: 6px; isolation: isolate; scroll-padding-top: 58px; }
+.workspace-projections .three-year-table-wrap::before { display: none; }
+.workspace-projections .three-year-table { padding: 0; }
+.workspace-projections .three-year-table.future-only { min-width: 1050px; }
+.workspace-projections .future-only .three-year-row { grid-template-columns: minmax(190px, 1.3fr) repeat(2, minmax(120px, .75fr)) minmax(80px, .5fr) minmax(115px, .7fr) minmax(185px, 1fr) 112px; }
+.workspace-projections .three-year-row { gap: 0; min-height: 90px; align-items: stretch; background: #fffdf6; }
+.workspace-projections .three-year-row > :not(.projection-detail) { padding: 12px; align-content: center; }
+.workspace-projections .three-year-row > .projection-player, .workspace-projections .three-year-head > :first-child { position: sticky; left: 0; z-index: 2; background: #fffdf6; box-shadow: 1px 0 0 #d6d3c5; }
+.workspace-projections .three-year-head { position: sticky; top: 0; z-index: 4; min-height: 58px; background: #e8e3d2; font-size: 14px; color: #17384b; }
+.workspace-projections .three-year-head > :first-child { background: #e8e3d2; }
+.workspace-projections .three-year-row:hover, .workspace-projections .three-year-row:hover > .projection-player { background: #f2eedf; }
+.workspace-projections .projection-player strong { font-size: 15px; }
+.workspace-projections :is(.projection-player small, .projection-war-cell small, .projection-signal small) { font-size: 13px; color: #55605f; line-height: 1.45; }
+.workspace-projections :is(.projection-war-cell strong, .projection-total) { font: 650 16px/1.4 var(--font-geist-sans); }
+.workspace-projections .projection-total { color: #355e4c; background: #e5eddf66; }
+.workspace-projections .projection-signal strong { font-size: 14px; }
+.workspace-projections .three-year-row > button { align-self: center; min-height: 44px; margin: 8px; padding: 8px; font-size: 13px; border-radius: 4px; background: #fffdf6; }
+.workspace-projections .projection-detail-toggle { min-height: 44px; font-size: 13px; text-align: left; }
+.workspace-projections .projection-detail { position: sticky; left: 0; max-width: calc(100vw - 80px); margin: 0 12px 12px; border-radius: 4px; }
+.workspace-projections .projection-detail :is(dt, p) { font-size: 13px; }
+.workspace-projections .projection-detail dd small { font-size: 12px; }
+.workspace-projections .projection-baseline-note { margin: 14px 0; padding: 0; line-height: 1.6; }
+.workspace-projections .show-more-row { padding: 12px 0; }
+@media (max-width: 1000px) {
+  .workspace-projections .projection-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .workspace-projections .projection-filters label:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 700px) {
+  .workspace-trade .tool-toolbar { display: flex; flex-wrap: nowrap; width: 100%; }
+  .workspace-trade .toolbar-button { flex: 1; padding: 8px 6px; font-size: 13px; white-space: normal; }
+  .workspace-trade .trade-sides { grid-template-columns: minmax(0, 1fr); }
+  .workspace-trade .trade-side { padding: 14px; }
+  .workspace-trade .player-avatar { display: none; }
+  .workspace-trade .player-main { grid-template-columns: minmax(0, 1fr) auto; }
+  .workspace-trade .player-value { font-size: 16px; }
+  .workspace-trade .trade-verdict { padding: 16px; }
+  .workspace-trade .scoreboard-line { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .workspace-trade .scoreboard-center { grid-column: 1 / -1; grid-row: 2; text-align: left; }
+  .workspace-trade .scoreboard-actions { grid-column: 1 / -1; justify-self: stretch; text-align: left; }
+  .workspace-trade .trade-actions { justify-content: flex-start; }
+  .workspace-trade .builder-primary-controls label { width: 100%; }
+  .workspace-trade .builder-primary-controls { padding: 10px 12px; gap: 0; }
+  .workspace-trade .builder-primary-controls a { margin-left: 0; }
+  .projection-results-bar > span { margin-left: 0; flex-basis: 100%; }
+  .workspace-projections .three-year-table.future-only { min-width: 1000px; }
+  .workspace-projections .future-only .three-year-row { grid-template-columns: 150px 120px 120px 90px 120px 190px 110px; }
+  .workspace-projections .projection-detail { max-width: calc(100vw - 64px); }
+  .workspace-projections .projection-filters { padding: 12px; gap: 12px; }
+}

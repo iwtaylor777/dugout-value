@@ -997,7 +997,7 @@ function TradeSensitivity({
       return { gap: left - right, negative: left < -0.05 || right < -0.05 };
     };
     const baseGap = gapFor(settings).gap;
-    return scenarios.map(({ label, changes }) => {
+    return scenarios.filter(({ changes }) => !SEASON_COMPLETE || !changes.valuationView).map(({ label, changes }) => {
       const { gap, negative } = gapFor({ ...settings, ...changes });
       return {
         label,
@@ -1692,7 +1692,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
   let lastLedgerIndex = allYears.length - 1;
   while (lastLedgerIndex > 0 && isZeroYear(allYears[lastLedgerIndex]))
     lastLedgerIndex -= 1;
-  const ledgerYears = allYears.slice(0, lastLedgerIndex + 1);
+  const ledgerYears = allYears.slice(0, lastLedgerIndex + 1).filter((year) => !SEASON_COMPLETE || year > BASE_YEAR);
   const barWidth = (value: number) =>
     Math.abs(value) < 0.05 ? 0 : Math.max(2, (Math.abs(value) / maxYearValue) * 96);
   const maxYearValue = Math.max(
@@ -3494,7 +3494,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
   );
 
   return (
-    <div className="tool-workspace">
+    <div className={`tool-workspace workspace-${activeTab}`}>
       <div className="page" id="top">
         <section className="intro">
           <div>
@@ -3509,11 +3509,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
             </h1>
             <p className="lede">
               {activeTab === "trade"
-                ? "Put two packages side by side. See each one’s surplus value by year, then change the assumptions you disagree with."
+                ? "Build a trade, compare surplus value, and test your own assumptions."
                 : activeTab === "discover"
                   ? "Pick a team and compare projected upgrades at its weakest positions."
                   : activeTab === "projections"
-                    ? `fWAR forecasts for ${PROJECTION_YEAR_RANGE}, with source notes and model adjustments.`
+                    ? "Compare player forecasts, playing time, and the assumptions behind them."
                     : "Compare player value after salary, then explore the assumptions behind it."}
             </p>
           </div>
@@ -3564,14 +3564,8 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
           )}
         {activeTab === "trade" ? (
           <>
-        <div className="builder-primary-controls">{projectionSourceControl()}<p>Choose two teams and search their players below.</p></div>
+        <div className="builder-primary-controls">{projectionSourceControl()}<a href="#trade-comparison">Jump to comparison</a></div>
         {toolContext()}
-        <div className="trade-live-summary" aria-label="Live package totals">
-          <span>{leftTeam} <strong>{money(leftTotal)}</strong></span>
-          <span>{rightTeam} <strong>{money(rightTotal)}</strong></span>
-          <span>{hasPlayers ? `Gap ${money(Math.abs(difference))}` : "Add players to compare"}</span>
-          <a href="#trade-comparison">Full comparison</a>
-        </div>
 
         <section className="trade-shell">
           <div className="trade-board">
@@ -4227,10 +4221,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   }}
                 >
                   <option value="all">All roles</option>
-                  <option value="position">Position players</option>
-                  <option value="starter">Starting pitchers</option>
-                  <option value="reliever">Relief pitchers</option>
-                  <option value="two-way">Two-way players</option>
+                  <option value="position">Hitters</option>
+                  <option value="starter">Starters</option>
+                  <option value="reliever">Relievers</option>
+                  <option value="two-way">Two-way</option>
                 </select>
               </label>
               {projectionSourceControl()}
@@ -4243,11 +4237,11 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                     setProjectionVisible(PROJECTION_PAGE);
                   }}
                 >
-                  <option value="total">{SEASON_COMPLETE ? "2027–28 total fWAR" : "2026–28 total fWAR"}</option>
+                  <option value="total">{SEASON_COMPLETE ? "2027–28 total" : "2026–28 total"}</option>
                   {!SEASON_COMPLETE && <option value="2026">2026 RoS fWAR</option>}
                   <option value="2027">2027 fWAR</option>
                   <option value="2028">2028 fWAR</option>
-                  <option value="change">{settings.projectionSource === "dv" ? "Largest lead over ZiPS*" : "Largest model adjustment"}</option>
+                  <option value="change">{settings.projectionSource === "dv" ? "Lead over ZiPS*" : "Model adjustment"}</option>
                   <option value="name">Player name</option>
                 </select>
               </label>
@@ -4266,7 +4260,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                     through 2026, times a full season of playing time. Each
                     player follows his own projected aging path through 2031.
                     Players without 100 PA or 20 IP in 2024–26 show ZiPS. Switch
-                    to ZiPS with the Projections menu below.
+                    to ZiPS with the Projections menu above.
                   </p>
                 ) : (
                   <p>
@@ -4318,6 +4312,15 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
               </p>
             </div>
             </details>
+            <div className="projection-results-bar">
+              <p role="status"><strong>{projectedPlayers.length.toLocaleString("en-US")} {projectedPlayers.length === 1 ? "player" : "players"}</strong> · {settings.projectionSource === "dv" ? "Dugout Value" : "ZiPS"} forecasts</p>
+              {(projectionSearch || projectionTeam !== "ALL" || projectionRole !== "all") && (
+                <button type="button" onClick={() => {
+                  setProjectionSearch(""); setProjectionTeam("ALL"); setProjectionRole("all"); setProjectionVisible(PROJECTION_PAGE);
+                }}>Clear filters</button>
+              )}
+              <span>Scroll sideways for later years and source comparisons.</span>
+            </div>
             <div className="three-year-table-wrap" tabIndex={0} aria-label={`Scrollable ${PROJECTION_YEAR_RANGE} projection table`}>
               <div className={`three-year-table${SEASON_COMPLETE ? " future-only" : ""}`}>
                 <div className="three-year-row three-year-head">
@@ -4424,10 +4427,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       <button
                         type="button"
                         aria-haspopup="dialog"
-                        aria-label={`Why this value for ${player.name}`}
+                        aria-label={`Explore projection for ${player.name}`}
                         onClick={() => openPlayerEditor(player.id, "projections")}
                       >
-                        Why this value
+                        Explore projection
                       </button>
                       {projectionOpen === player.id && (() => {
                         const detail = dvDetail[player.id];

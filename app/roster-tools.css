@@ -11,13 +11,9 @@
 .roster-method[open] { padding-bottom: 16px; }
 .roster-method > summary:focus-visible, .fa-player-note summary:focus-visible { outline: 3px solid #a64d37; outline-offset: 3px; }
 .fa-board { margin-top: 0; }
-.fa-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; border: 0; padding: 0; margin-bottom: 16px; }
-.fa-summary p { border: 1px solid #d6d3c5; border-radius: 6px; padding: 13px 16px; gap: 5px; background: #e9edf0; }
-.fa-summary .fa-count-all { background: #17384b; border-color: #17384b; color: #fffdf6; }
-.fa-summary .fa-count-all span { color: #fffdf6; }
-.fa-summary .fa-count-available { background: #e5eddf; }
-.fa-summary .fa-count-pending { background: #f4ead5; }
-.fa-summary strong { font-size: 25px; }
+.fa-summary { display: flex; flex-wrap: wrap; gap: 8px 24px; border: 0; padding: 0; margin-bottom: 16px; }
+.fa-summary p { display: flex; flex-direction: row; align-items: baseline; border: 0; padding: 0; margin: 0; gap: 5px; background: transparent; }
+.fa-summary strong { font-size: 16px; color: #17384b; }
 .fa-summary span { font-size: 14px; color: #465653; line-height: 1.4; }
 .fa-board .fa-controls { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, .8fr); padding: 16px; background: #eee8d9; border: 1px solid #d6cdbb; border-radius: 6px; gap: 14px; }
 .fa-controls label { min-width: 0; }
@@ -55,8 +51,7 @@
 .fa-board .fa-empty button { display: block; margin-top: 12px; }
 .fa-updated { font-size: 13px; line-height: 1.6; color: #55605f; }
 @media (max-width: 700px) {
-  .fa-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .fa-summary p { padding: 12px; }
+  .fa-summary { gap: 6px 18px; }
   .fa-board .fa-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .fa-board .fa-controls label:first-child { grid-column: 1 / -1; }
   .fa-board .fa-controls label:last-child { grid-column: auto; }

@@ -12,6 +12,24 @@ async function render(pathname) {
   );
 }
 
+test("cleaned-up tools retain projection controls and omit redundant completed-season comparisons", async () => {
+  const trade = await (await render("/tools/trade")).text();
+  assert.match(trade, /tool-workspace workspace-trade/);
+  assert.match(trade, /Jump to comparison/);
+  assert.doesNotMatch(trade, /class="trade-live-summary"/);
+  const sensitivity = trade.match(/<p class="trade-sensitivity"[\s\S]*?<\/p>/)?.[0] ?? "";
+  assert.ok(sensitivity.length > 0);
+  assert.doesNotMatch(sensitivity, /Include 2026/);
+  assert.doesNotMatch(trade, /class="ledger-row ledger-excluded"/);
+  const projections = await (await render("/tools/projections")).text();
+  assert.match(projections, /tool-workspace workspace-projections/);
+  assert.match(projections, /class="projection-results-bar"/);
+  assert.match(projections, /Explore projection for Shohei Ohtani/);
+  assert.match(projections, /2027 details/);
+  assert.match(projections, /2029–31/);
+  assert.match(projections, /prioritizing/);
+});
+
 test("the main banner offers a collapsed dropdown with all seven tools", async () => {
   const html = await (await render("/")).text();
   assert.match(html, /class="tools-navigation-trigger"[^>]*aria-expanded="false"[^>]*aria-controls=/);
