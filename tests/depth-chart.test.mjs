@@ -101,3 +101,19 @@ test('every team has 2026 and 2027 CBT payroll estimates', () => {
   // Checked against the Red Sox's own payroll sheet ($268.4M) and MLB Trade Rumors' year-end figure ($268.2M).
   assert.ok(Math.abs(pay.teams.BOS.cbt2026 - 268.4) < 5);
 });
+
+test('a hitter listed at a position his projection does not assume is credited as a slightly below-average fielder there', () => {
+  const mead = { ...h('m', ['2B'], 1.71, 513), d: -11.7, mp: '1B' };
+  const adj2B = 2.5 * 600 / 683, runsPerWin = 9.82;
+  assert.ok(Math.abs(rateAt(mead, '2B') - (1.71 + (adj2B - 3.5 + 11.7) / runsPerWin)) < 1e-9);
+  assert.equal(rateAt(mead, '1B'), 1.71, 'his projected position is unchanged');
+  assert.equal(rateAt(mead, 'SS'), 1.71, 'unlisted positions keep the projected rate');
+  const good = { ...h('g', ['2B'], 3, 600), d: 5, mp: '3B' };
+  assert.equal(rateAt(good, '2B'), 3, 'never lowered at a listed position');
+  const ss = { ...h('s', ['SS'], 3, 600), d: 6, mp: 'SS' };
+  assert.ok(Math.abs(rateAt(ss, 'DH') - (3 + (-17.5 * 600 / 683 - 6) / runsPerWin)) < 1e-9);
+  const of = { ...h('o', ['CF'], 2, 600), d: -3, mp: 'OF' };
+  assert.equal(rateAt(of, 'CF'), 2, 'outfield listings cover all three spots');
+  const c = { ...h('c', ['C'], 1, 400), d: -10, mp: 'DH' };
+  assert.equal(rateAt(c, 'C'), 1, 'no catcher credit is assumed');
+});

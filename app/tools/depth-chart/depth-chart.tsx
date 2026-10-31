@@ -4,10 +4,10 @@ import data from "../../data/depth-chart.json";
 import tracker from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
 import payrollData from "../../data/team-payroll.json";
-import { allocate, bestAdditions, teamsFor, payrollAdjustment, payrollChange, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
+import { allocate, bestAdditions, teamsFor, payrollAdjustment, payrollChange, rateAt, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
 import type { DepthEdit as Edit } from "../../../lib/depth-chart.mjs";
 
-type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number; pay?: number; c?: "g" | "o" | "a" | "p"; ex?: number };
+type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string };
 
 const players = data.players as Entry[];
 const teams = data.teams as { abbr: string; name: string }[];
@@ -174,7 +174,10 @@ export function DepthChart() {
                         const locked = edits[row.p.i]?.pt != null;
                         return (
                           <tr key={row.p.i}>
-                            <th scope="row">{label(row.p)}{added.includes(row.p.i) && <span className="dc-tag">added</span>}{row.p.s !== "dv" && <span className="dc-tag" title={row.p.s === "npb" ? "NPB translation" : "No DV projection; ZiPS rate at part-time playing time"}>{row.p.s === "npb" ? "NPB" : "ZiPS"}</span>}</th>
+                            <th scope="row">{label(row.p)}{added.includes(row.p.i) && <span className="dc-tag">added</span>}{row.p.s !== "dv" && <span className="dc-tag" title={row.p.s === "npb" ? "NPB translation" : "No DV projection; ZiPS rate at part-time playing time"}>{row.p.s === "npb" ? "NPB" : "ZiPS"}</span>}{(() => {
+                              const adj = (rateAt(row.p, pos) - row.p.r) * row.pt / 600;
+                              return Math.abs(adj) >= 0.05 ? <span className="dc-tag dc-pos-adj" title={adj > 0 ? `Projected as a ${row.p.mp ?? row.p.e[0]}; credited at ${pos} as a slightly below-average fielder` : `Projected as a ${row.p.mp ?? row.p.e[0]}; loses positional value at ${pos}`}>{signed(adj)} at {pos}</span> : null;
+                            })()}</th>
                             <td className="num">
                               <input type="number" min={0} step={PITCHING.includes(pos) ? 5 : 10} aria-label={`${label(row.p)} ${unitName(pos)} at ${pos}`} value={Math.round(row.pt)} onChange={(e) => setPt(row.p, pos, e.target.value)} className={locked ? "dc-locked" : undefined} />
                               {locked && <button type="button" className="dc-unlock" onClick={() => unlock(row.p)} aria-label={`Return ${label(row.p)} to automatic playing time`} title="Return to automatic playing time">×</button>}
