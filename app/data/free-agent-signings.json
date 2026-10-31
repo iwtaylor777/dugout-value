@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30",
+  "updated": "2026-10-31",
   "note": "Reported outcomes for the 2026–27 class. Outcomes: signed, re-signed, extension, qo-accepted, option-exercised, option-declined, opted-out, opted-in, retired. Contract totals are guaranteed money in millions; option and opt-out entries leave years and total empty unless a new contract was signed.",
   "entries": [
     {
@@ -11,6 +11,285 @@
       "date": "2026-08-16",
       "source": "https://www.mlb.com/redsox/news/aroldis-chapman-triggers-vesting-option-for-2027",
       "note": "Vesting option triggered by his 40th inning; subject to an end-of-season physical."
+    },
+    {
+      "player": "Ronald Acuña Jr.",
+      "outcome": "option-exercised",
+      "team": "ATL",
+      "years": 1,
+      "total_musd": 17.0,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/braves-exercise-options-on-ronald-acuna-ozzie-albies.html"
+    },
+    {
+      "player": "Ozzie Albies",
+      "outcome": "option-exercised",
+      "team": "ATL",
+      "years": 1,
+      "total_musd": 7.0,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/braves-exercise-options-on-ronald-acuna-ozzie-albies.html"
+    },
+    {
+      "player": "Andres Muñoz",
+      "outcome": "option-exercised",
+      "team": "SEA",
+      "years": 1,
+      "total_musd": 9.0,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/mariners-exercise-option-andres-munoz-decline-bryce-miller-victor-robles.html"
+    },
+    {
+      "player": "Tony Gonsolin",
+      "outcome": "option-exercised",
+      "team": "KCR",
+      "years": 1,
+      "total_musd": 2.5,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/royals-exercise-club-option-on-tony-gonsolin-decline-carlos-estevez.html"
+    },
+    {
+      "player": "Sandy Alcantara",
+      "outcome": "option-exercised",
+      "team": "MIA",
+      "years": 1,
+      "total_musd": 21.0,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/marlins-exercise-club-option-on-sandy-alcantara.html"
+    },
+    {
+      "player": "Bo Bichette",
+      "outcome": "opted-in",
+      "team": "NYM",
+      "years": 2,
+      "total_musd": 84.0,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/bo-bichette-to-exercise-player-option-for-2027.html"
+    },
+    {
+      "player": "Ryan Helsley",
+      "outcome": "opted-in",
+      "team": "BAL",
+      "years": 1,
+      "total_musd": 14.0,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/ryan-helsley-exercises-player-option-orioles.html"
+    },
+    {
+      "player": "Tatsuya Imai",
+      "outcome": "opted-in",
+      "team": "HOU",
+      "years": 2,
+      "total_musd": 36.0,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/tatsuya-imai-will-not-opt-out-of-astros-deal.html"
+    },
+    {
+      "player": "Corbin Burnes",
+      "outcome": "opted-in",
+      "team": "ARI",
+      "years": 4,
+      "total_musd": 140.0,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/corbin-burnes-will-not-opt-out-of-diamondbacks-deal.html"
+    },
+    {
+      "player": "Michael King",
+      "outcome": "opted-out",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/michael-king-declines-player-option.html"
+    },
+    {
+      "player": "Mitch Garver",
+      "outcome": "retired",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-22",
+      "source": "https://www.mlb.com/news/mitch-garver-retires"
+    },
+    {
+      "player": "Dustin May",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/dustin-may-declines-mutual-option-with-brewers.html"
+    },
+    {
+      "player": "Victor Robles",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/mariners-exercise-option-andres-munoz-decline-bryce-miller-victor-robles.html"
+    },
+    {
+      "player": "Carlos Estevez",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/royals-exercise-club-option-on-tony-gonsolin-decline-carlos-estevez.html"
+    },
+    {
+      "player": "Ryan Weiss",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-29",
+      "source": "https://www.mlbtraderumors.com/2026/10/astros-decline-club-option-on-ryan-weiss.html"
+    },
+    {
+      "player": "Nick Martinez",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/nick-martinez-declines-mutual-option-with-rays.html"
+    },
+    {
+      "player": "Cedric Mullins",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/rays-decline-mutual-option-on-cedric-mullins.html"
+    },
+    {
+      "player": "Sonny Gray",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/sonny-gray-becomes-free-agent-after-mutual-option-is-declined.html"
+    },
+    {
+      "player": "Matthew Boyd",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/matthew-boyd-carson-kelly-become-free-agents.html"
+    },
+    {
+      "player": "Carson Kelly",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/matthew-boyd-carson-kelly-become-free-agents.html"
+    },
+    {
+      "player": "Robert Stephenson",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/angels-decline-club-option-on-robert-stephenson.html"
+    },
+    {
+      "player": "Zach Eflin",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlb.com/news/zach-eflin-2027-mutual-option-declined-orioles"
+    },
+    {
+      "player": "Josh Bell",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/twins-josh-bell-decline-mutual-option.html"
+    },
+    {
+      "player": "Jeffrey Springs",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/athletics-decline-club-options-on-jeffrey-springs-jeff-mcneil.html"
+    },
+    {
+      "player": "Jeff McNeil",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/athletics-decline-club-options-on-jeffrey-springs-jeff-mcneil.html"
+    },
+    {
+      "player": "Shawn Armstrong",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlb.com/guardians/news/guardians-decline-shawn-armstrong-2027-mutual-option-trevor-stephan-club-option"
+    },
+    {
+      "player": "Trevor Stephan",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlb.com/guardians/news/guardians-decline-shawn-armstrong-2027-mutual-option-trevor-stephan-club-option"
+    },
+    {
+      "player": "Joc Pederson",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/joc-pederson-declines-mutual-option-with-rangers.html"
+    },
+    {
+      "player": "Kyle Higashioka",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/kyle-higashioka-jakob-junis-to-become-free-agents.html"
+    },
+    {
+      "player": "Jakob Junis",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/kyle-higashioka-jakob-junis-to-become-free-agents.html"
+    },
+    {
+      "player": "Michael Soroka",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-30",
+      "source": "https://www.mlbtraderumors.com/2026/10/michael-soroka-declines-mutual-option-with-d-backs.html"
     }
   ]
 }
