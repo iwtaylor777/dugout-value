@@ -38,6 +38,7 @@ export default function ResearchFiles() {
       <p><Link href="/analysis/our-projections-replace-zips">Read the analysis</Link>.</p>
       <ul>
         <li><a href="/research/dv-projections-2026-10-29.tar.gz" download>Download the protocols, locks, results and code</a></li>
+        <li><a href="/research/dv-projections-2026-10-29/components-2026-10-31/README.md">Component projections and v1.5 (October 31)</a>: protocol, code and results</li>
         <li><a href="/research/dv-projections-2026-10-29/PROTOCOL-PROJECTIONS.md">Protocol</a>, <a href="/research/dv-projections-2026-10-29/LOCK-MODEL-v1.json">model lock</a> and <a href="/research/dv-projections-2026-10-29/eval_holdout-v1.json">holdout results (JSON)</a></li>
         <li><a href="/research/dv-projections-2026-10-29/site/horizon_backtest_summary.json">Multi-year backtests</a> and <a href="/research/dv-projections-2026-10-29/site/calibration_dv_results.json">the descriptive price-per-win refit</a></li>
       </ul>
