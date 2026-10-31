@@ -2403,6 +2403,7 @@ footer {
     minmax(220px, 1.35fr)
     repeat(3, minmax(100px, 0.62fr))
     minmax(90px, 0.5fr)
+    minmax(110px, 0.6fr)
     minmax(165px, 0.9fr)
     90px;
   gap: 12px;
@@ -2426,8 +2427,57 @@ footer {
     minmax(200px, 1.35fr)
     repeat(2, minmax(100px, 0.7fr))
     minmax(70px, 0.5fr)
+    minmax(110px, 0.65fr)
     minmax(165px, 1fr)
     90px;
+}
+.three-year-table.future-only { min-width: 960px; }
+.projection-detail-toggle {
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.projection-detail {
+  grid-column: 1 / -1;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffaf0;
+}
+.projection-detail dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  margin: 0 0 8px;
+}
+.projection-detail dt {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+.projection-detail dd {
+  margin: 2px 0 0;
+  color: var(--navy);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+}
+.projection-detail dd small {
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+  color: var(--muted);
+  font-size: 10px;
+}
+.projection-detail p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
 }
 .projection-player strong,
 .projection-player small,
@@ -4362,5 +4412,13 @@ footer {
   }
   .method-hero-actions {
     align-items: flex-start;
+  }
+}
+@media (max-width: 860px) {
+  .projection-detail {
+    position: sticky;
+    left: 0;
+    width: calc(100vw - 72px);
+    box-sizing: border-box;
   }
 }

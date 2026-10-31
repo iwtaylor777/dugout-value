@@ -11,6 +11,7 @@ export const DEFAULT_TARGETS: DepthTargets;
 export function unitOf(p: DepthEntry): number;
 export function targetOf(pos: string, targets?: DepthTargets): number;
 export const BELOW_AVERAGE_FIELDING: number;
+export const DOWNWARD_SHARE: number;
 export function rateAt(p: DepthEntry, pos: string): number;
 export function allocate<T extends DepthEntry>(roster: T[], edits?: Record<string, DepthEdit>, targets?: DepthTargets): DepthResult<T>;
 export function teamsFor<T extends DepthEntry>(players: T[], tracker: { players: { id: string; market: string }[] }, signings: { player: string; outcome: string; team?: string | null }[]): { team: Map<string, string | null>; freeAgents: Set<string> };

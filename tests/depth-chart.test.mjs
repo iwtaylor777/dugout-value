@@ -122,7 +122,23 @@ test('with component projections, a slot swaps role defense for projected fieldi
   const runsPerWin = 9.82, a600 = runs => runs * 600 / 683;
   const mead = { ...h('m', ['2B'], 1.71, 513), d: -11.7, mp: '1B', fs: { '1B': -3.6, '2B': -4.2, '3B': -4.8, SS: -5.7, LF: -2.6, CF: -4.6, RF: -2.6 }, rd: -6.7 };
   assert.ok(Math.abs(rateAt(mead, '2B') - (1.71 + (-4.2 + a600(2.5) + 6.7) / runsPerWin)) < 1e-9);
-  assert.ok(Math.abs(rateAt(mead, 'DH') - (1.71 + (a600(-17.5) + 6.7) / runsPerWin)) < 1e-9);
+  assert.ok(Math.abs(rateAt(mead, 'DH') - (1.71 + 0.55 * (a600(-17.5) + 6.7) / runsPerWin)) < 1e-9, 'losses count at 55%');
   assert.equal(rateAt(mead, 'C'), 1.71, 'no recent catching: keep the projected rate');
   assert.ok(rateAt(mead, 'SS') > rateAt(mead, '2B'), 'shortstop adds positional value even with worse fielding');
+});
+
+test('2027 detail projections cover projected players with plausible values', () => {
+  const detail = read('../app/data/dv-detail-2027.json').players;
+  const dv = read('../app/data/dv-projections.json').players;
+  const ids = Object.keys(detail);
+  assert.ok(ids.length > 1000);
+  for (const id of ids) {
+    assert.ok(dv[id], id);
+    const d = detail[id];
+    if (d.wrc != null) {
+      assert.ok(d.avg > 0.15 && d.avg < 0.35 && d.obp > d.avg && d.slg > d.avg && d.wrc > 30 && d.wrc < 220, id);
+      if (d.fld != null) assert.ok(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'].includes(d.fpos) && Math.abs(d.fld) < 25, id);
+    }
+    if (d.fip != null) assert.ok(d.fip > 1.5 && d.fip < 7 && d.k > 5 && d.k < 45 && d.bb > 2 && d.bb < 20, id);
+  }
 });

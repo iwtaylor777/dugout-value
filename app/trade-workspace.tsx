@@ -5,6 +5,7 @@ import Link from "next/link";
 import databaseJson from "./data/player-database.json";
 import playoffOddsJson from "./data/playoff-odds.json";
 import dvProjectionsJson from "./data/dv-projections.json";
+import dvDetailJson from "./data/dv-detail-2027.json";
 import {
   effectiveSeasons,
   initialSettings as modelInitialSettings,
@@ -233,6 +234,7 @@ type ModelSettings = {
 };
 type ProjectionSource = "zips" | "dv";
 type DvProjectionEntry = {
+  war?: Record<string, number>;
   three: Record<string, number>;
   seasons: Record<string, number>;
   rate?: Record<string, number> | null;
@@ -347,6 +349,11 @@ const dvProjections = dvProjectionsJson as unknown as {
   players: Record<string, DvProjectionEntry>;
 };
 const DV_MODEL_LABEL = dvProjections.meta.model;
+type DvDetail = { avg?: number; obp?: number; slg?: number; wrc?: number; bsr?: number; fld?: number; fpos?: string; era?: number; fip?: number; k?: number; bb?: number };
+const dvDetail = (dvDetailJson as unknown as { players: Record<string, DvDetail> }).players;
+const LATER_YEARS = [2029, 2030, 2031] as const;
+const slash = (v?: number) => (v == null ? "—" : v.toFixed(3).replace(/^0/, ""));
+const runs = (v?: number) => (v == null ? "—" : `${v > 0.05 ? "+" : v < -0.05 ? "−" : ""}${Math.abs(v).toFixed(1)}`);
 // Swap a player's projected WAR for the Dugout Value projections. Players the
 // model can't project (no MLB history) keep their ZiPS-based numbers.
 const playingTimeLine = (dv: DvProjectionEntry, year: number) => {
@@ -1094,6 +1101,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
   const [projectionSort, setProjectionSort] =
     useState<ProjectionSort>("total");
   const [projectionVisible, setProjectionVisible] = useState(PROJECTION_PAGE);
+  const [projectionOpen, setProjectionOpen] = useState<string | null>(null);
   const [driversOrigin, setDriversOrigin] = useState<{
     id: string;
     from: "rankings" | "projections";
@@ -4318,6 +4326,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   <span>2027</span>
                   <span>2028</span>
                   <span>{SEASON_COMPLETE ? "2027–28" : "2026–28"}</span>
+                  <span>2029–31</span>
                   <span>{settings.projectionSource === "dv" ? "Compared with ZiPS*" : "Model adjustment*"}</span>
                   <span />
                 </div>
@@ -4331,6 +4340,17 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                           {teamName(player.team)} · {displayPosition(player)} ·
                           Age {player.age}
                         </small>
+                        {(dv || dvDetail[player.id]) && (
+                          <button
+                            type="button"
+                            className="projection-detail-toggle"
+                            aria-expanded={projectionOpen === player.id}
+                            aria-controls={`projection-detail-${player.id}`}
+                            onClick={() => setProjectionOpen((open) => (open === player.id ? null : player.id))}
+                          >
+                            {projectionOpen === player.id ? "Hide details" : "2027 details"}
+                          </button>
+                        )}
                       </div>
                       {VISIBLE_PROJECTION_YEARS.map((year) => {
                         const season = seasons[year];
@@ -4358,6 +4378,19 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                         {total.toFixed(1)}
                         <small>fWAR</small>
                       </strong>
+                      <div className="projection-war-cell projection-later">
+                        {dv?.war && settings.projectionSource === "dv" ? (
+                          <>
+                            <strong>{LATER_YEARS.reduce((sum, year) => sum + (dv.war?.[String(year)] ?? 0), 0).toFixed(1)}</strong>
+                            <small>{LATER_YEARS.map((year) => (dv.war?.[String(year)] ?? 0).toFixed(1)).join(" · ")}</small>
+                          </>
+                        ) : (
+                          <>
+                            <strong>—</strong>
+                            <small>{settings.projectionSource === "dv" ? "ZiPS covers 2027–28" : "Dugout Value only"}</small>
+                          </>
+                        )}
+                      </div>
                       <div
                         className={`projection-signal ${change > 0 ? "positive" : change < 0 ? "negative" : ""}`}
                       >
@@ -4396,6 +4429,42 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                       >
                         Why this value
                       </button>
+                      {projectionOpen === player.id && (() => {
+                        const detail = dvDetail[player.id];
+                        return (
+                          <div className="projection-detail" id={`projection-detail-${player.id}`}>
+                            {detail && detail.wrc != null && (
+                              <dl>
+                                <div><dt>AVG / OBP / SLG</dt><dd>{slash(detail.avg)} / {slash(detail.obp)} / {slash(detail.slg)}</dd></div>
+                                <div><dt>wRC+</dt><dd>{detail.wrc}</dd></div>
+                                <div><dt>Baserunning</dt><dd>{runs(detail.bsr)} <small>runs per 600 PA</small></dd></div>
+                                <div><dt>Fielding{detail.fpos ? ` at ${detail.fpos}` : ""}</dt><dd>{runs(detail.fld)} <small>runs per full season</small></dd></div>
+                              </dl>
+                            )}
+                            {detail && detail.fip != null && (
+                              <dl>
+                                <div><dt>ERA</dt><dd>{detail.era?.toFixed(2)}</dd></div>
+                                <div><dt>FIP</dt><dd>{detail.fip.toFixed(2)}</dd></div>
+                                <div><dt>K%</dt><dd>{detail.k?.toFixed(1)}%</dd></div>
+                                <div><dt>BB%</dt><dd>{detail.bb?.toFixed(1)}%</dd></div>
+                              </dl>
+                            )}
+                            {dv?.war && (
+                              <dl className="projection-detail-years">
+                                {[2027, 2028, ...LATER_YEARS].map((year) => (
+                                  <div key={year}><dt>{year}</dt><dd>{(dv.war?.[String(year)] ?? 0).toFixed(1)} <small>WAR</small></dd></div>
+                                ))}
+                              </dl>
+                            )}
+                            <p>
+                              Dugout Value 2027 projections.{" "}
+                              {detail?.wrc != null ? "Rate stats, not totals. Fielding is at the position he has played most in 2024–26. " : ""}
+                              {detail?.fip != null && detail?.wrc == null ? "Rates per inning and batter faced, not totals. " : ""}
+                              WAR by year uses full-season playing time and the projected aging path.
+                            </p>
+                          </div>
+                        );
+                      })()}
                     </article>
                   ),
                 )}
