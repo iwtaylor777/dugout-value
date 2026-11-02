@@ -1,4 +1,5 @@
 import type { Article } from "./types";
+import { article as hitterWar } from "./our-hitter-war";
 import { article as bullpenLeverage } from "./bullpen-management-is-harder-than-you-think";
 import { article as dvProjections } from "./our-projections-replace-zips";
 import { article as statcastWar } from "./a-statcast-war";
@@ -24,6 +25,7 @@ export type { Article } from "./types";
  * article marked `featured`.
  */
 export const articles: Article[] = [
+  hitterWar,
   bullpenLeverage,
   dvProjections,
   statcastWar,
