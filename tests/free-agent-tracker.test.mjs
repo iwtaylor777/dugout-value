@@ -41,3 +41,16 @@ test('every signing names a tracked player and a known outcome', () => {
   }
   assert.equal(new Set(signings.entries.map(s => key(s.player))).size, signings.entries.length);
 });
+
+test('every qualifying offer names a tracked player, his team and a known status', () => {
+  const qo = signings.qualifying_offers;
+  assert.ok(qo.amount_musd > 0);
+  assert.match(qo.respond_by, /^\d{4}-\d{2}-\d{2}$/);
+  for (const o of qo.players) {
+    const p = tracker.players.find(r => key(r.name) === key(o.player));
+    assert.ok(p, o.player);
+    assert.equal(o.team, p.team, o.player);
+    assert.ok(['pending', 'rejected'].includes(o.status), o.player);
+  }
+  assert.equal(new Set(qo.players.map(o => key(o.player))).size, qo.players.length);
+});

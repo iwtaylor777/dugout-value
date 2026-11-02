@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31",
+  "updated": "2026-11-02",
   "note": "Reported outcomes for the 2026–27 class. Outcomes: signed, re-signed, extension, qo-accepted, option-exercised, option-declined, opted-out, opted-in, retired. Contract totals are guaranteed money in millions; option and opt-out entries leave years and total empty unless a new contract was signed.",
   "entries": [
     {
@@ -290,6 +290,235 @@
       "total_musd": null,
       "date": "2026-10-30",
       "source": "https://www.mlbtraderumors.com/2026/10/michael-soroka-declines-mutual-option-with-d-backs.html"
+    },
+    {
+      "player": "Drew Rasmussen",
+      "outcome": "option-exercised",
+      "team": "TBR",
+      "years": 1,
+      "total_musd": 20.0,
+      "date": "2026-10-31",
+      "source": "https://www.mlbtraderumors.com/2026/10/rays-exercise-club-option-on-drew-rasmussen.html"
+    },
+    {
+      "player": "Garrett Whitlock",
+      "outcome": "option-exercised",
+      "team": "BOS",
+      "years": 1,
+      "total_musd": 8.3,
+      "date": "2026-11-01",
+      "source": "https://www.mlbtraderumors.com/2026/11/red-sox-exercise-club-option-on-garrett-whitlock.html"
+    },
+    {
+      "player": "Kyle Hart",
+      "outcome": "option-exercised",
+      "team": "SDP",
+      "years": 1,
+      "total_musd": 2.5,
+      "date": "2026-11-01",
+      "source": "https://www.mlbtraderumors.com/2026/11/padres-exercise-club-option-on-kyle-hart-yuki-matsui-declines-to-opt-out.html"
+    },
+    {
+      "player": "Luis Severino",
+      "outcome": "opted-in",
+      "team": "ATH",
+      "years": 1,
+      "total_musd": 22.0,
+      "date": "2026-10-31",
+      "source": "https://www.mlbtraderumors.com/2026/10/luis-severino-to-exercise-player-option-remain-with-as.html"
+    },
+    {
+      "player": "Wandy Peralta",
+      "outcome": "opted-in",
+      "team": "SDP",
+      "years": 1,
+      "total_musd": 4.5,
+      "date": "2026-11-01",
+      "source": "https://www.mlbtraderumors.com/2026/11/padres-wandy-peralta-exercises-player-option.html"
+    },
+    {
+      "player": "Yuki Matsui",
+      "outcome": "opted-in",
+      "team": "SDP",
+      "years": 2,
+      "total_musd": 13.5,
+      "date": "2026-11-01",
+      "source": "https://www.mlbtraderumors.com/2026/11/padres-exercise-club-option-on-kyle-hart-yuki-matsui-declines-to-opt-out.html"
+    },
+    {
+      "player": "Emilio Pagan",
+      "outcome": "opted-out",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-31",
+      "source": "https://www.mlbtraderumors.com/2026/10/emilio-pagan-declines-player-option.html"
+    },
+    {
+      "player": "Nick Pivetta",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-31",
+      "source": "https://www.mlbtraderumors.com/2026/10/padres-decline-club-option-on-nick-pivetta.html"
+    },
+    {
+      "player": "Luis Robert Jr.",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-31",
+      "source": "https://www.mlbtraderumors.com/2026/10/orioles-expected-to-decline-club-option-on-luis-robert-jr.html"
+    },
+    {
+      "player": "Eugenio Suarez",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-31",
+      "source": "https://www.mlbtraderumors.com/2026/10/reds-decline-mutual-options-for-eugenio-suarez-pierce-johnson.html"
+    },
+    {
+      "player": "Pierce Johnson",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-10-31",
+      "source": "https://www.mlbtraderumors.com/2026/10/reds-decline-mutual-options-for-eugenio-suarez-pierce-johnson.html"
+    },
+    {
+      "player": "Miguel Andujar",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-01",
+      "source": "https://www.mlbtraderumors.com/2026/11/miguel-andujar-lucas-giolito-griffin-canning-enter-free-agency-after-declined-mutual-options.html"
+    },
+    {
+      "player": "Lucas Giolito",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-01",
+      "source": "https://www.mlbtraderumors.com/2026/11/miguel-andujar-lucas-giolito-griffin-canning-enter-free-agency-after-declined-mutual-options.html"
+    },
+    {
+      "player": "Griffin Canning",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-01",
+      "source": "https://www.mlbtraderumors.com/2026/11/miguel-andujar-lucas-giolito-griffin-canning-enter-free-agency-after-declined-mutual-options.html"
+    },
+    {
+      "player": "Ryne Stanek",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-01",
+      "source": "https://www.mlbtraderumors.com/2026/11/cardinals-decline-ryne-staneks-club-option.html"
+    },
+    {
+      "player": "Clay Holmes",
+      "outcome": "opted-out",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-02",
+      "source": "https://www.mlbtraderumors.com/2026/11/clay-holmes-declines-player-option.html"
+    },
+    {
+      "player": "Ryan Mountcastle",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-02",
+      "source": "https://www.mlbtraderumors.com/2026/11/orioles-to-turn-down-ryan-mountcastles-club-option.html"
+    },
+    {
+      "player": "Jacob Webb",
+      "outcome": "re-signed",
+      "team": "CHC",
+      "years": 1,
+      "total_musd": 2.5,
+      "date": "2026-11-02",
+      "source": "https://www.mlbtraderumors.com/2026/11/cubs-to-re-sign-jacob-webb.html"
+    },
+    {
+      "player": "Caleb Thielbar",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-02",
+      "source": "https://www.mlbtraderumors.com/2026/11/clay-holmes-declines-player-option.html"
+    },
+    {
+      "player": "Hunter Harvey",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-02",
+      "source": "https://www.mlbtraderumors.com/2026/11/clay-holmes-declines-player-option.html"
     }
-  ]
+  ],
+  "qualifying_offers": {
+    "amount_musd": 23.15,
+    "date": "2026-11-02",
+    "respond_by": "2026-11-17",
+    "source": "https://www.mlbtraderumors.com/2026/11/eight-players-receive-qualifying-offers.html",
+    "note": "Offers made this offseason. Status is pending or rejected; an accepted offer or a new contract goes in entries, which takes precedence on the page.",
+    "players": [
+      {
+        "player": "Randy Arozarena",
+        "team": "SEA",
+        "status": "pending"
+      },
+      {
+        "player": "Jake Bauers",
+        "team": "MIL",
+        "status": "pending"
+      },
+      {
+        "player": "David Bednar",
+        "team": "NYY",
+        "status": "pending"
+      },
+      {
+        "player": "Ryan Jeffers",
+        "team": "MIN",
+        "status": "pending"
+      },
+      {
+        "player": "Brandon Lowe",
+        "team": "PIT",
+        "status": "pending"
+      },
+      {
+        "player": "Adrian Morejon",
+        "team": "SDP",
+        "status": "pending"
+      },
+      {
+        "player": "Trevor Rogers",
+        "team": "BAL",
+        "status": "pending"
+      },
+      {
+        "player": "Seiya Suzuki",
+        "team": "CHC",
+        "status": "pending"
+      }
+    ]
+  }
 }

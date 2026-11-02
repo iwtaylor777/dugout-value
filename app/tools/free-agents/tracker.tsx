@@ -20,6 +20,10 @@ const players = data.players as Player[];
 const signings = (signingsData.entries ?? []) as Signing[];
 const key = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z]/gi, "").toLowerCase();
 const outcomes = new Map(signings.map((s) => [key(s.player), s]));
+const qoInfo = signingsData.qualifying_offers;
+const qualifyingOffers = new Map(qoInfo.players.map((o) => [key(o.player), o]));
+const qoAmount = `$${qoInfo.amount_musd}M`;
+const qoDeadline = new Date(qoInfo.respond_by + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 const OFF_MARKET: Outcome[] = ["signed", "re-signed", "extension", "qo-accepted", "option-exercised", "opted-in", "retired"];
 const ON_MARKET: Outcome[] = ["option-declined", "opted-out"];
 // Only contracts negotiated on the open market are compared with our estimates.
@@ -41,13 +45,17 @@ function stateOf(p: Player): { status: Exclude<Status, "all">; signing?: Signing
   const s = outcomes.get(key(p.name));
   if (s && OFF_MARKET.includes(s.outcome)) return { status: "signed", signing: s };
   if (s && ON_MARKET.includes(s.outcome)) return { status: "available", signing: s };
+  if (qualifyingOffers.get(key(p.name))?.status === "pending") return { status: "pending" };
+  if (qualifyingOffers.has(key(p.name))) return { status: "available" };
   if (p.market === "option" || p.market === "stays" || p.market === "qo") return { status: "pending" };
   return { status: "available" };
 }
 const pendingLabel = (p: Player) => p.market === "option" ? "Option likely exercised" : p.market === "stays" ? "Likely stays under contract" : p.market === "qo" ? "Expected to accept QO" : "";
+const qoStatus = (p: Player) => qualifyingOffers.get(key(p.name))?.status;
+const qoPendingLabel = (p: Player) => `${qoAmount} offer from ${p.team} · decision due ${qoDeadline}${p.market === "qo" ? " · we expect him to accept" : ""}`;
 const statusText = (p: Player) => {
   const { status, signing } = stateOf(p);
-  return signing ? outcomeLabel[signing.outcome] : status === "pending" ? "Decision pending" : p.market === "unmodeled" ? "Not estimated" : "Available";
+  return signing ? outcomeLabel[signing.outcome] : qoStatus(p) === "pending" ? "QO pending" : status === "pending" ? "Decision pending" : p.market === "unmodeled" ? "Not estimated" : "Available";
 };
 
 export function FreeAgentTracker() {
@@ -146,7 +154,9 @@ export function FreeAgentTracker() {
                         {s.team && <> · {s.team}</>}
                         {s.total_musd != null && s.years != null && <small className="dv-war-sub">{yrs(s.years)}, {money(s.total_musd)}{diff != null && <> · <span className={diff >= 0 ? "fa-over" : "fa-under"}>{signedNum(diff)} vs estimate</span></>}</small>}
                       </>
-                    ) : st.status === "pending" ? <><span className="fa-status-chip pending">Decision pending</span><small className="dv-war-sub">{pendingLabel(p)}</small></>
+                    ) : qoStatus(p) === "pending" ? <><span className="fa-status-chip pending">QO pending</span><small className="dv-war-sub">{qoPendingLabel(p)}</small></>
+                      : qoStatus(p) === "rejected" ? <><span className="fa-status-chip available">Available</span><small className="dv-war-sub">Rejected {qoAmount} QO from {p.team}</small></>
+                      : st.status === "pending" ? <><span className="fa-status-chip pending">Decision pending</span><small className="dv-war-sub">{pendingLabel(p)}</small></>
                       : p.market === "unmodeled" ? <span className="fa-status-chip unmodeled">Not estimated</span>
                       : <span className="fa-status-chip available">Available</span>}
                   </td>
