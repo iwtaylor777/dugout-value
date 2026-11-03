@@ -27,6 +27,9 @@ test("cleaned-up tools retain projection controls and omit redundant completed-s
   assert.match(projections, /Explore projection for Shohei Ohtani/);
   assert.match(projections, /2027 details/);
   assert.match(projections, /2029–31/);
+  assert.match(projections, /Position \/ role/);
+  assert.match(projections.replace(/<!-- -->/g, ""), /<option value="C">C · Catcher/);
+  assert.match(projections, /<option value="later">2029–31 total/);
   assert.match(projections, /prioritizing/);
 });
 

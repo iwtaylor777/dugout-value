@@ -14,6 +14,8 @@ import {
 } from "../lib/value-model.mjs";
 import { PlayerValueDialog } from "./player-value-dialog";
 import { ToolConnectionStatus } from "./tool-connection-status";
+import { PROJECTION_POSITIONS, matchesProjectionRole, matchesProjectionSearch, laterProjectionWar } from "../lib/projection-filters.mjs";
+import { compareTableValues } from "../lib/table-sort.mjs";
 import { buildTradeShareUrl, decodeTradeState, isLegacySettingsLink, resolveSharedPlayerId, restoreSharedSettings, sharedModelWarning, sharedSnapshotWarning, TRADE_SHARE_MODEL_VERSION } from "../lib/trade-share.mjs";
 import {
   MAX_CASH_AMOUNT,
@@ -309,8 +311,9 @@ type ProjectionRoleFilter =
   | "position"
   | "starter"
   | "reliever"
-  | "two-way";
-type ProjectionSort = "total" | "2026" | "2027" | "2028" | "change" | "name";
+  | "two-way"
+  | "C" | "1B" | "2B" | "3B" | "SS" | "LF" | "CF" | "RF" | "OF" | "DH" | "SP" | "RP";
+type ProjectionSort = "total" | "2026" | "2027" | "2028" | "later" | "change" | "name";
 type PlayoffOddsData = {
   refreshed: string;
   source: string;
@@ -503,8 +506,6 @@ const displayPosition = (player: PositionDisplayPlayer) =>
         ? "SP"
         : "P"
     : player.position;
-const projectionRoleFor = (player: MLBPlayer): Exclude<ProjectionRoleFilter, "all"> =>
-  player.role ?? (player.position === "P" ? "starter" : "position");
 const rosterContextLabel = (player: ProspectPlayer) =>
   ({
     none: "",
@@ -1575,6 +1576,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
   }, [leagueRankings, rankingSearch, rankingTeam, rankingType, rankingsFiltered]);
   const projectedPlayers = useMemo(() => {
     const query = projectionSearch.trim().toLowerCase();
+    const sort = projectionSort === "later" && settings.projectionSource !== "dv" ? "total" : projectionSort;
     return Object.values(players)
       .filter(
         (player): player is MLBPlayer =>
@@ -1588,15 +1590,10 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
       )
       .filter(
         (player) =>
-          projectionRole === "all" ||
-          projectionRoleFor(player) === projectionRole,
+          matchesProjectionRole(player, projectionRole),
       )
       .filter((player) =>
-        query
-          ? `${player.name} ${player.team} ${teamName(player.team)} ${displayPosition(player)}`
-              .toLowerCase()
-              .includes(query)
-          : true,
+        matchesProjectionSearch(player, query, teamName(player.team)),
       )
       .map((original) => {
         const player = withProjectionSource(original, settings.projectionSource);
@@ -1635,14 +1632,16 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 sum + Number(seasons[year]?.inSeasonAdjustment ?? 0),
               0,
             );
-        return { player, seasons, total, change, dv, editedYears };
+        const laterWar = settings.projectionSource === "dv" ? laterProjectionWar(dv?.war) : null;
+        return { player, seasons, total, change, dv, editedYears, laterWar };
       })
       .sort((left, right) => {
-        if (projectionSort === "name")
+        if (sort === "name")
           return left.player.name.localeCompare(right.player.name);
-        if (projectionSort === "change") return right.change - left.change;
-        if (projectionSort === "total") return right.total - left.total;
-        const year = Number(projectionSort);
+        if (sort === "later") return compareTableValues(left.laterWar, right.laterWar) || left.player.name.localeCompare(right.player.name);
+        if (sort === "change") return right.change - left.change;
+        if (sort === "total") return right.total - left.total;
+        const year = Number(sort);
         return (
           Number(right.seasons[year]?.war ?? 0) -
           Number(left.seasons[year]?.war ?? 0)
@@ -4210,7 +4209,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                 </select>
               </label>
               <label>
-                <span>Role</span>
+                <span>Position / role</span>
                 <select
                   value={projectionRole}
                   onChange={(event) => {
@@ -4220,18 +4219,21 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                     setProjectionVisible(PROJECTION_PAGE);
                   }}
                 >
-                  <option value="all">All roles</option>
+                  <option value="all">All positions</option>
                   <option value="position">Hitters</option>
                   <option value="starter">Starters</option>
                   <option value="reliever">Relievers</option>
                   <option value="two-way">Two-way</option>
+                  <optgroup label="Individual positions">
+                    {PROJECTION_POSITIONS.map(([value, label]) => <option key={value} value={value}>{value} · {label}</option>)}
+                  </optgroup>
                 </select>
               </label>
               {projectionSourceControl()}
               <label>
                 <span>Sort by</span>
                 <select
-                  value={projectionSort}
+                  value={projectionSort === "later" && settings.projectionSource !== "dv" ? "total" : projectionSort}
                   onChange={(event) => {
                     setProjectionSort(event.target.value as ProjectionSort);
                     setProjectionVisible(PROJECTION_PAGE);
@@ -4241,6 +4243,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   {!SEASON_COMPLETE && <option value="2026">2026 RoS fWAR</option>}
                   <option value="2027">2027 fWAR</option>
                   <option value="2028">2028 fWAR</option>
+                  <option value="later" disabled={settings.projectionSource !== "dv"}>{settings.projectionSource === "dv" ? "2029–31 total" : "2029–31 (DV only)"}</option>
                   <option value="change">{settings.projectionSource === "dv" ? "Lead over ZiPS*" : "Model adjustment"}</option>
                   <option value="name">Player name</option>
                 </select>
@@ -4334,7 +4337,7 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                   <span />
                 </div>
                 {projectedPlayers.slice(0, projectionVisible).map(
-                  ({ player, seasons, total, change, dv, editedYears }) => (
+                  ({ player, seasons, total, change, dv, editedYears, laterWar }) => (
                     <article className="three-year-row" key={player.id}>
                       <div className="projection-player">
                         <strong>{player.name}</strong>
@@ -4382,9 +4385,9 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                         <small>fWAR</small>
                       </strong>
                       <div className="projection-war-cell projection-later">
-                        {dv?.war && settings.projectionSource === "dv" ? (
+                        {laterWar !== null && dv?.war ? (
                           <>
-                            <strong>{LATER_YEARS.reduce((sum, year) => sum + (dv.war?.[String(year)] ?? 0), 0).toFixed(1)}</strong>
+                            <strong>{laterWar.toFixed(1)}</strong>
                             <small>{LATER_YEARS.map((year) => (dv.war?.[String(year)] ?? 0).toFixed(1)).join(" · ")}</small>
                           </>
                         ) : (
