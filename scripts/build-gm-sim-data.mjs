@@ -2,7 +2,7 @@
 // Usage: node scripts/build-gm-sim-data.mjs
 // For every MLB player and prospect: surplus value from the site's value model with Dugout Value projections, at three
 // discount rates (win-now 20%, market 10%, rebuilding 5%) so AI teams can value trades by their situation; trade
-// protection; and identity fields. For every team: the 2026 CBT payroll (default budget), the 2027 CBT estimate so far,
+// protection; last year of club control; projected 2027 WAR; and identity fields. For every team: the 2026 CBT payroll (default budget), the 2027 CBT estimate so far,
 // league and division.
 import fs from 'node:fs';
 import { valuePlayer, initialSettings } from '../lib/value-model.mjs';
@@ -26,10 +26,14 @@ const round = v => Math.round(v * 10) / 10;
 const players = {};
 for (const p of db.players) {
   const q = withDv(p);
-  const value = rate => valuePlayer(q, { ...initialSettings, timingPreference: rate }, db).total;
+  const value = rate => valuePlayer(q, { ...initialSettings, timingPreference: rate }, db);
+  const base = value(10);
+  const w27 = p.kind === 'mlb' ? (dv[p.id]?.war?.['2027'] ?? q.threeYearProjection?.find(s => s.year === 2027)?.war ?? 0) : 0;
   players[p.id] = {
     n: p.name, t: p.team, k: p.kind === 'prospect' ? 'p' : 'm', pos: p.position ?? p.depthPosition ?? '', age: p.age,
-    v20: round(value(20)), v10: round(value(10)), v05: round(value(5)),
+    v20: round(value(20).total), v10: round(base.total), v05: round(value(5).total),
+    // Last season of club control (contract or arbitration, excluding player options) and projected 2027 WAR.
+    ctl: base.clubControlThrough ?? base.controlThrough ?? null, w27: round(w27),
     ...(p.tradeProtection && p.tradeProtection !== 'none' ? { prot: p.tradeProtection } : {}),
   };
 }

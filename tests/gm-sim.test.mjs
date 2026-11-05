@@ -35,6 +35,34 @@ test('trade responses honour no-trade clauses, star premiums and fairness', () =
   assert.equal(gift.accepted, true, gift.reason);
 });
 
+test('stars with years of control cost well beyond fair value; rentals on bad teams go near fair value', () => {
+  const league = g.buildLeague(ctx, base), modes = g.teamModes(ctx, league.teamOf);
+  const ask = (partner, give, get) => g.respondToTrade(ctx, league, base, 400, { partner, give: give.map(id), get: get.map(id) }, modes);
+  assert.equal(modes.WSN, 'rebuild');
+  // James Wood has four years of control. A package worth more than him to a rebuilding team still isn't enough.
+  const wood = ask('WSN', ['Payton Tolle', 'Franklin Arias'], ['James Wood']);
+  assert.ok(wood.received > ctx.sim.players[id('James Wood')].v05, 'offer beats his value');
+  assert.equal(wood.accepted, false);
+  assert.match(wood.reason, /well beyond fair value/);
+  // Yordan Alvarez has two years left on a rebuilding team: a fair offer works.
+  assert.equal(modes.HOU, 'rebuild');
+  const yordan = ask('HOU', ['Wilyer Abreu', 'Curtis Mead'], ['Yordan Alvarez']);
+  assert.equal(yordan.accepted, true, yordan.reason);
+  assert.ok(yordan.received < 1.5 * ctx.sim.players[id('Yordan Alvarez')].v05);
+});
+
+test('contenders want MLB-ready talent back for a regular, not just prospects', () => {
+  const league = g.buildLeague(ctx, base), modes = g.teamModes(ctx, league.teamOf);
+  assert.equal(modes.PHI, 'contend');
+  const wheeler = g.respondToTrade(ctx, league, base, 400, { partner: 'PHI', give: [id('Franklin Arias')], get: [id('Zack Wheeler')] }, modes);
+  assert.ok(wheeler.received >= wheeler.need, 'the value alone would do it');
+  assert.equal(wheeler.accepted, false);
+  assert.match(wheeler.reason, /MLB-ready/);
+  // A backup at a position where they have depth can go for a prospect.
+  const backup = g.respondToTrade(ctx, league, base, 400, { partner: 'LAD', give: [id('Justin Gonzales')], get: [id('Hunter Feduccia')] }, modes);
+  assert.equal(backup.accepted, true, backup.reason);
+});
+
 test('a moved player changes teams and payroll follows him', () => {
   const moves = { ...base, trades: [{ partner: 'PIT', give: [id('Roman Anthony')], get: [] }] };
   const before = g.buildLeague(ctx, base), after = g.buildLeague(ctx, moves);

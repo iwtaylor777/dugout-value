@@ -223,7 +223,7 @@ export function GmMode() {
             </label>
             {partner && <p className="gm-note">{ctx.sim.teams[partner].name}: {modes[partner] === "contend" ? "projected contender, values 2027 most" : modes[partner] === "rebuild" ? "projected to miss the playoffs, values the future more" : "in the middle of the pack"}.</p>}
           </div>
-          <p className="gm-note">Values are surplus value from our trade model (projected production minus salary). Teams need to come out ahead by their own measure, ask a big premium for their two most valuable players, and honor no-trade clauses.</p>
+          <p className="gm-note">Values are surplus value from our trade model (projected production minus salary). Teams need to come out ahead by their own measure and honor no-trade clauses. Stars with years of club control cost well beyond fair value, even from rebuilding teams; a star with a year or two left on a rebuilding team goes for about fair value. Contenders want MLB-ready help back for a regular, not just prospects.</p>
           {partner ? (
             <div className="gm-trade">
               {[["You send", yourList, give, setGive], [`${ctx.sim.teams[partner].name} send`, partnerList, get, setGet]].map(([title, list, sel, set]) => {
