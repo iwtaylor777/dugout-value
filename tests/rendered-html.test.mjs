@@ -33,11 +33,11 @@ test("cleaned-up tools retain projection controls and omit redundant completed-s
   assert.match(projections, /prioritizing/);
 });
 
-test("the main banner offers a collapsed dropdown with all seven tools", async () => {
+test("the main banner offers a collapsed dropdown with all eight tools", async () => {
   const html = await (await render("/")).text();
   assert.match(html, /class="tools-navigation-trigger"[^>]*aria-expanded="false"[^>]*aria-controls=/);
   assert.match(html, /class="tools-navigation-panel"[^>]*hidden/);
-  for (const path of ["trade", "projections", "rankings", "finder", "free-agents", "depth-chart", "dv-war"]) {
+  for (const path of ["trade", "projections", "rankings", "finder", "free-agents", "depth-chart", "gm", "dv-war"]) {
     assert.match(html, new RegExp(`href="/tools/${path}"`));
   }
   assert.match(html, /<a\b(?=[^>]*class="tools-navigation-all")(?=[^>]*href="\/tools")[^>]*>/);
@@ -212,4 +212,14 @@ test("projection details start collapsed with a toggle on each row", async () =>
   assert.match(html, /class="projection-detail-toggle"[^>]*aria-expanded="false"/);
   assert.doesNotMatch(html, /class="projection-detail"/);
   assert.match(html, />2029–31</);
+});
+
+test("GM mode renders setup, offseason tabs and the simulate button", async () => {
+  const response = await render("/tools/gm");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<h1>GM mode<\/h1>/);
+  assert.match(html, /2027 budget \(CBT payroll\)/);
+  assert.match(html, /Free agents/);
+  assert.match(html, /Finish offseason and simulate 2027/);
 });
