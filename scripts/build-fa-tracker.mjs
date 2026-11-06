@@ -2,15 +2,15 @@
 // projections, a contract estimate and 2026 fWAR.
 // Usage: node scripts/build-fa-tracker.mjs MLBTR_LIST SATO_JSON RAW_DIRECTORY [EXTRA_PLAYERS EXTRA_PROJECTIONS]
 //
-// The 31 players in the scored October 29 release keep their frozen R2 estimates (public/research/fa-predictions-2026-27).
-// Everyone else is priced now with the same pricing code (lib/free-agent-pricing.mjs) and the current Dugout Value
-// projections. Players outside the site's roster snapshot come from scripts in the research release
+// Current values are refreshed for every player; original R2 quotes remain separate comparison records.
+// Players outside the site's roster snapshot come from scripts in the research release
 // (build-fa-class-coverage.py, then the projection builder); pass those files as EXTRA_PLAYERS and EXTRA_PROJECTIONS.
 // The class list and raw FanGraphs files stay local. The output holds only the fields the tracker shows.
 // Signings are not stored here: they live in app/data/free-agent-signings.json and are applied on the page.
 import fs from 'node:fs';
 import path from 'node:path';
 import { nameKey, projectionAge, forecastWarPath, priceContract, marketReach } from '../lib/free-agent-pricing.mjs';
+import { currentFreeAgentValues } from '../lib/free-agent-current.mjs';
 
 const [listFile, satoFile, rawDir, extraPlayersFile, extraProjectionsFile] = process.argv.slice(2);
 if (!rawDir) throw new Error('Usage: MLBTR_LIST SATO_JSON RAW_DIRECTORY [EXTRA_PLAYERS EXTRA_PROJECTIONS]');
@@ -100,6 +100,9 @@ const out = {
   },
   players: rows,
 };
-fs.writeFileSync('app/data/free-agent-tracker.json', JSON.stringify(out) + '\n');
+const current = currentFreeAgentValues({tracker:out,database:{...db,players:[...db.players,...extraPlayers,...sato.map(e=>e.player)]},projections:{...dv,players:{...dv.players,...extraProjections}},frozen,
+  market:read('app/data/free-agent-market.json'),terms:read('app/data/free-agent-comparison-terms.json'),
+  fallbacks:read('app/data/free-agent-projection-fallbacks.json'),date:out.meta.built});
+fs.writeFileSync('app/data/free-agent-tracker.json', JSON.stringify(current) + '\n');
 const count = k => rows.filter(r => r.market === k).length;
 console.log(JSON.stringify({ players: rows.length, scored: out.meta.scoredRelease.count, expected: count('expected'), option: count('option'), stays: count('stays'), unmodeled: count('unmodeled'), qo: count('qo') }));

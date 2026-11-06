@@ -3,8 +3,9 @@ import fs from 'node:fs';
 import { allocate } from '../lib/depth-chart.mjs';
 import * as g from '../lib/gm-sim.mjs';
 import * as m from '../lib/gm-market.mjs';
+import { marketTracker } from '../lib/free-agent-current.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
-const ctx = { players: read('../app/data/depth-chart.json').players, tracker: read('../app/data/free-agent-tracker.json'), signings: read('../app/data/free-agent-signings.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
+const ctx = { players: read('../app/data/depth-chart.json').players, tracker: marketTracker(read('../app/data/free-agent-tracker.json')), signings: read('../app/data/free-agent-signings.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
 const results = [];
 const seed = Number(process.env.GM_AUDIT_SEED ?? 42);
 for (const team of ['BOS', 'LAD', 'SEA', 'MIL', 'ATH', 'COL']) for (const room of [5, 25, 75]) {

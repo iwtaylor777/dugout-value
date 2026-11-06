@@ -3,7 +3,7 @@ export type GmContractYear = { year: number; salary: number; type: string };
 export type GmPlayerValue = { n: string; t: string; k: "m" | "p"; pos: string; age: number; v20: number; v10: number; v05: number; ctl: number | null; w27: number; prot?: string; contract?: GmContractYear[] };
 export type GmTeam = { name: string; league: "AL" | "NL"; division: string; cbt2026: number; cbt2027: number };
 export type GmSimData = { meta: { built: string; projections: string }; teams: Record<string, GmTeam>; players: Record<string, GmPlayerValue> };
-export type TrackerRow = { id: string; name: string; pos: string; team: string | null; age: number; years?: number | null; total?: number | null; aav?: number | null; market: string; war2027?: number | null; basis: string };
+export type TrackerRow = { id: string; name: string; pos: string; team: string | null; age: number; years?: number | null; total?: number | null; aav?: number | null; modelValue?: { years?: number | null; total?: number | null; aav?: number | null }; market: string; war2027?: number | null; basis: string };
 export type GmContext = {
   players: (DepthEntry & { pid: string })[];
   tracker: { players: TrackerRow[] };

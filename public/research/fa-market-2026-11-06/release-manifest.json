@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-06",
+  "decision": "research models not promoted",
+  "sha256": {
+    ".gitignore": "d56537a93a9565b3322aa9bc821c9cc30a16303467032cade13b069e394cfddc",
+    "AMENDMENT-1.md": "b49dcc4e019c52fd06cb04f3b9fef372e5bdeed89eb4e4d8b8955667e48d431e",
+    "DEPLOYMENT_DECISION.json": "50f5b6de054ae6fb69219afa0949e3034dcb7f0146456747333e75ac1dd87b9b",
+    "PROTOCOL.md": "2347da240d851385093fb9146443399502f3225e45ee9def2b617dc4b4384024",
+    "README.md": "23fb758289cd01440a6efb01ab3ab2e5168c89fc9e624e7e54b3b6f5e43c9dda",
+    "age_value_model.json": "e7e918b99412e6784b11757a6b7b0171e585e36bbaf1dbc862a3fc04d7c2ec70",
+    "age_value_results.json": "ae056f189b5c5fb358e0e4e7b96668a2ff6520632102a3a46bb2678a83ebcaf9",
+    "baselines.mjs": "0b83be7e80188c1c44422ccf053c9721fa81869fa6a0b91333318c93d91f0d5c",
+    "composed.py": "e4757d7a93ba1eeb53347d90c265cfb99a91083a6969a826e0ed8a27c26ca554",
+    "composed_model.json": "baa61dfdb0746c0be9fb74f05349f59247bf193ce2a97b4fa4f36df53af7d9b3",
+    "composed_results.json": "0d00a07bd9ba498c43799e56bb213c3f7413ec76e422172385d9c92267f7327c",
+    "current_valuation_verification.json": "daaaee33a5794bec133fa1382a1b99250aebb0b6d07bc782d7bef43b7dd7a1d8",
+    "experiment.py": "93073c68dc0313060a38826d331ece04fdc2c428666e58b24af7429eaf281cb3",
+    "input_audit.json": "488ba12b6b7185a6c4014f93f97a12cd20faf2d5017fadc12292dd82976aef5f",
+    "javascript_verification.json": "4d4d80f2a68186e3e13817b656ce0679b12ae8f2d7b511614d9637da30cd7759",
+    "legacy/aging-curve.mjs": "c7b8ab4fbe377a2bdec6101e1199c4c0e43ece8a0fff0e207c93d50c5d75b5cc",
+    "legacy/free-agent-pricing.mjs": "f074f4e5df2d73a36ad964745b6fd7f4bd7ca9caf1d3a48ee854c2f88cd2f057",
+    "legacy/value-model.mjs": "faff9392d2b36ba505a3146ce9a896e8f92822ed4120f026bf920263feb62170",
+    "model.json": "40d1d86e82f4b41a8ee4e983a050ab58625c44080d44bc1da352bbae911b541c",
+    "replay.mjs": "ee1be6ffae711be8c38f7857a81731d13a1bd92c9f665a204e00c2280865d967",
+    "results.json": "d97c27181950166602cb0fd8d73b9fe2a584020d1e95b3b07e905c7caf25edf3",
+    "score.py": "70ce4d74261d135f6fcb10ecf06d39c704e35fee9b258f932049cd7ed6d0d43c",
+    "validate.py": "da9fb092a71d4f4c8e0f0783e0f209478b0d1e7d85c8167e02941e340317f1e0",
+    "verification.json": "8d5cdee29a1853a215d92ed3f477839da73bd9999d3c5ef55e7737ab6316a102"
+  }
+}

@@ -1,0 +1,364 @@
+{
+  "pooled": {
+    "n": 373,
+    "players": 265,
+    "methods": {
+      "candidate": {
+        "total_log_mae": 0.616674471565265,
+        "aav_log_mae": 0.44968182444380556,
+        "years_mae": 0.6648793565683646,
+        "total_log_bias": -0.19164335435341906
+      },
+      "legacy": {
+        "total_log_mae": 0.7736096233388281,
+        "aav_log_mae": 0.5228306559286158,
+        "years_mae": 0.7292225201072386,
+        "total_log_bias": 0.03129277519281999
+      },
+      "role_median": {
+        "total_log_mae": 0.9684360559437567,
+        "aav_log_mae": 0.6103845934995923,
+        "years_mae": 0.9490616621983914,
+        "total_log_bias": -0.26697508766558803
+      }
+    }
+  },
+  "by_year": {
+    "2023": {
+      "n": 97,
+      "players": 97,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.719328540617392,
+          "aav_log_mae": 0.4478054169480923,
+          "years_mae": 0.9278350515463918,
+          "total_log_bias": -0.40388374642626557
+        },
+        "legacy": {
+          "total_log_mae": 0.7455565954186874,
+          "aav_log_mae": 0.4567095269794281,
+          "years_mae": 0.845360824742268,
+          "total_log_bias": -0.013619541787425988
+        },
+        "role_median": {
+          "total_log_mae": 1.0465629537953212,
+          "aav_log_mae": 0.5384225053526793,
+          "years_mae": 1.268041237113402,
+          "total_log_bias": -0.6037560075898086
+        }
+      }
+    },
+    "2024": {
+      "n": 93,
+      "players": 93,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.5948823416144069,
+          "aav_log_mae": 0.47887218910536017,
+          "years_mae": 0.5913978494623656,
+          "total_log_bias": -0.1685336734439698
+        },
+        "legacy": {
+          "total_log_mae": 0.7924470236724258,
+          "aav_log_mae": 0.5275500629654193,
+          "years_mae": 0.7634408602150538,
+          "total_log_bias": 0.023272282616834138
+        },
+        "role_median": {
+          "total_log_mae": 0.8569402061609503,
+          "aav_log_mae": 0.5990296204591338,
+          "years_mae": 0.7634408602150538,
+          "total_log_bias": -0.14494832697725146
+        }
+      }
+    },
+    "2025": {
+      "n": 98,
+      "players": 98,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.5868637670778936,
+          "aav_log_mae": 0.4509840965337354,
+          "years_mae": 0.5714285714285714,
+          "total_log_bias": -0.11595919806931962
+        },
+        "legacy": {
+          "total_log_mae": 0.8092620288119249,
+          "aav_log_mae": 0.5954576454568551,
+          "years_mae": 0.673469387755102,
+          "total_log_bias": 0.028018736984313702
+        },
+        "role_median": {
+          "total_log_mae": 0.9275354813990777,
+          "aav_log_mae": 0.6433082976541238,
+          "years_mae": 0.8775510204081632,
+          "total_log_bias": -0.17129883219433775
+        }
+      }
+    },
+    "2026": {
+      "n": 85,
+      "players": 85,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.557741206002158,
+          "aav_log_mae": 0.4183840003114113,
+          "years_mae": 0.5529411764705883,
+          "total_log_bias": -0.06198370269876513
+        },
+        "legacy": {
+          "total_log_mae": 0.7439076202901881,
+          "aav_log_mae": 0.5093882992213333,
+          "years_mae": 0.6235294117647059,
+          "total_log_bias": 0.0950957904996924
+        },
+        "role_median": {
+          "total_log_mae": 1.048425011750554,
+          "aav_log_mae": 0.6669706174509933,
+          "years_mae": 0.8705882352941177,
+          "total_log_bias": -0.1264693529308636
+        }
+      }
+    }
+  },
+  "by_role": {
+    "position": {
+      "n": 148,
+      "players": 106,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.606785819625174,
+          "aav_log_mae": 0.4646734291284923,
+          "years_mae": 0.6621621621621622,
+          "total_log_bias": -0.22855327650577423
+        },
+        "legacy": {
+          "total_log_mae": 0.7234401438775456,
+          "aav_log_mae": 0.47302336230924513,
+          "years_mae": 0.7972972972972973,
+          "total_log_bias": 0.3253454468636945
+        },
+        "role_median": {
+          "total_log_mae": 1.0403541687074045,
+          "aav_log_mae": 0.6930592484288967,
+          "years_mae": 1.0743243243243243,
+          "total_log_bias": -0.2560102984689672
+        }
+      }
+    },
+    "starter": {
+      "n": 88,
+      "players": 66,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.667056899610733,
+          "aav_log_mae": 0.42195106736677235,
+          "years_mae": 0.8977272727272727,
+          "total_log_bias": -0.24237799438862176
+        },
+        "legacy": {
+          "total_log_mae": 0.8061658512578443,
+          "aav_log_mae": 0.5397593597099709,
+          "years_mae": 0.8295454545454546,
+          "total_log_bias": -0.14000012166180478
+        },
+        "role_median": {
+          "total_log_mae": 1.1102928121277025,
+          "aav_log_mae": 0.5901200067298219,
+          "years_mae": 1.3522727272727273,
+          "total_log_bias": -0.46348544702939554
+        }
+      }
+    },
+    "reliever": {
+      "n": 137,
+      "players": 104,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.594994667325355,
+          "aav_log_mae": 0.45129897137406316,
+          "years_mae": 0.5182481751824818,
+          "total_log_bias": -0.1191811879180438
+        },
+        "legacy": {
+          "total_log_mae": 0.8068952795679988,
+          "aav_log_mae": 0.5657631633950944,
+          "years_mae": 0.5912408759124088,
+          "total_log_bias": -0.1763424108223804
+        },
+        "role_median": {
+          "total_log_mae": 0.7996238279641427,
+          "aav_log_mae": 0.5340884964645758,
+          "years_mae": 0.5547445255474452,
+          "total_log_bias": -0.15259462910416324
+        }
+      }
+    }
+  },
+  "at_least_10M": {
+    "n": 205,
+    "players": 164,
+    "methods": {
+      "candidate": {
+        "total_log_mae": 0.7118538706787451,
+        "aav_log_mae": 0.43615877508190254,
+        "years_mae": 1.0439024390243903,
+        "total_log_bias": -0.6004109397273145
+      },
+      "legacy": {
+        "total_log_mae": 0.7072234759524855,
+        "aav_log_mae": 0.45193899558138423,
+        "years_mae": 0.9365853658536586,
+        "total_log_bias": -0.34581955584231977
+      },
+      "role_median": {
+        "total_log_mae": 1.1310195083285328,
+        "aav_log_mae": 0.4843840539739833,
+        "years_mae": 1.648780487804878,
+        "total_log_bias": -1.102877323502708
+      }
+    }
+  },
+  "at_least_100M": {
+    "n": 25,
+    "players": 25,
+    "methods": {
+      "candidate": {
+        "total_log_mae": 0.8267876575579433,
+        "aav_log_mae": 0.3903632575867954,
+        "years_mae": 2.8,
+        "total_log_bias": -0.6857864645033708
+      },
+      "legacy": {
+        "total_log_mae": 0.49148023245115363,
+        "aav_log_mae": 0.35042514309922496,
+        "years_mae": 1.72,
+        "total_log_bias": -0.4524063232559029
+      },
+      "role_median": {
+        "total_log_mae": 2.8648234143974567,
+        "aav_log_mae": 1.1372151113263609,
+        "years_mae": 5.52,
+        "total_log_bias": -2.8648234143974567
+      }
+    }
+  },
+  "leave_one_class_out": {
+    "2023": {
+      "n": 276,
+      "players": 211,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.5805967733839017,
+          "aav_log_mae": 0.4503412864984584,
+          "years_mae": 0.572463768115942,
+          "total_log_bias": -0.11705162235680273
+        },
+        "legacy": {
+          "total_log_mae": 0.7834688396730805,
+          "aav_log_mae": 0.5460688787839462,
+          "years_mae": 0.6884057971014492,
+          "total_log_bias": 0.047077176450370184
+        },
+        "role_median": {
+          "total_log_mae": 0.9409784143075185,
+          "aav_log_mae": 0.6356756172323841,
+          "years_mae": 0.8369565217391305,
+          "total_log_bias": -0.14861367740236553
+        }
+      }
+    },
+    "2024": {
+      "n": 280,
+      "players": 222,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.6239125718703716,
+          "aav_log_mae": 0.4399864533240749,
+          "years_mae": 0.6892857142857143,
+          "total_log_bias": -0.19931906979834327
+        },
+        "legacy": {
+          "total_log_mae": 0.7673529153708831,
+          "aav_log_mae": 0.5212631385913917,
+          "years_mae": 0.7178571428571429,
+          "total_log_bias": 0.03395672451270097
+        },
+        "role_median": {
+          "total_log_mae": 1.0054686060501885,
+          "aav_log_mae": 0.6141560666880302,
+          "years_mae": 1.0107142857142857,
+          "total_log_bias": -0.3075054046084998
+        }
+      }
+    },
+    "2025": {
+      "n": 275,
+      "players": 222,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.6272979226189466,
+          "aav_log_mae": 0.4492177420263033,
+          "years_mae": 0.6981818181818182,
+          "total_log_bias": -0.21861443550193443
+        },
+        "legacy": {
+          "total_log_mae": 0.7609044024793246,
+          "aav_log_mae": 0.49694903784218863,
+          "years_mae": 0.7490909090909091,
+          "total_log_bias": 0.03245952335439676
+        },
+        "role_median": {
+          "total_log_mae": 0.9830115334178605,
+          "aav_log_mae": 0.5986517825645227,
+          "years_mae": 0.9745454545454545,
+          "total_log_bias": -0.301070625978979
+        }
+      }
+    },
+    "2026": {
+      "n": 288,
+      "players": 223,
+      "methods": {
+        "candidate": {
+          "total_log_mae": 0.6340679700821544,
+          "aav_log_mae": 0.4589190294828802,
+          "years_mae": 0.6979166666666666,
+          "total_log_bias": -0.22991095987649393
+        },
+        "legacy": {
+          "total_log_mae": 0.7823758395163782,
+          "aav_log_mae": 0.5267980181512512,
+          "years_mae": 0.7604166666666666,
+          "total_log_bias": 0.01246202414738887
+        },
+        "role_median": {
+          "total_log_mae": 0.944828204403556,
+          "aav_log_mae": 0.5936838572639357,
+          "years_mae": 0.9722222222222222,
+          "total_log_bias": -0.30844379409771155
+        }
+      }
+    }
+  },
+  "bootstrap": {
+    "legacy": {
+      "gain_percent": 20.286090948073443,
+      "interval95": [
+        12.669874902973145,
+        27.26668370336243
+      ]
+    },
+    "role_median": {
+      "gain_percent": 36.32264435215542,
+      "interval95": [
+        30.691491134521463,
+        41.473116005256166
+      ]
+    }
+  },
+  "decision": {
+    "status": "candidate-supported",
+    "interpretation": "Retrospective rolling class checks on the specified saved data; not a new untouched holdout or a full replay of historical DV v1.5 forecasts."
+  }
+}

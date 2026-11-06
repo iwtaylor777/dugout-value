@@ -7,14 +7,27 @@ const signings = read('../app/data/free-agent-signings.json');
 const frozen = read('../public/research/fa-predictions-2026-27/predictions_frozen.json');
 const key = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/gi, '').toLowerCase();
 
-test('scored players carry the frozen R2 estimates unchanged', () => {
-  const scored = tracker.players.filter(p => p.basis === 'scored');
+test('current rows preserve the original R2 estimate in a separate record', () => {
+  const scored = tracker.players.filter(p => p.publishedForecast);
   assert.equal(scored.length, frozen.predictions.length);
   for (const f of frozen.predictions) {
     const p = scored.find(r => key(r.name) === key(f.player));
     assert.ok(p, f.player);
-    assert.deepEqual([p.rank, p.years, p.total, p.aav, p.age], [f.rank, f.years, f.total_musd, f.aav_musd, f.age_2027], f.player);
+    assert.deepEqual([p.publishedForecast.rank, p.publishedForecast.years, p.publishedForecast.total, p.publishedForecast.aav, p.age], [f.rank, f.years, f.total_musd, f.aav_musd, f.age_2027], f.player);
+    assert.equal(p.basis,'live');
   }
+});
+
+test('every canonical player displays current WAR and the complete five-year horizon', () => {
+  const dv=read('../app/data/dv-projections.json');
+  for(const p of tracker.players)if(dv.players[p.id]&&p.total!=null) {
+    assert.equal(p.war2027,dv.players[p.id].war['2027'],p.name);
+    assert.deepEqual(p.warPath,JSON.parse(JSON.stringify(dv.players[p.id].war)),p.name);
+  }
+  const suzuki=tracker.players.find(p=>p.name==='Seiya Suzuki');
+  assert.equal(suzuki.war2027,2.68);assert.equal(suzuki.years,4);assert.equal(suzuki.total,73.8);
+  assert.equal(suzuki.marketForecast.reference.total,105);
+  assert.equal(suzuki.publishedForecast.total,48.3);
 });
 
 test('every row is unique and priced rows are complete', () => {

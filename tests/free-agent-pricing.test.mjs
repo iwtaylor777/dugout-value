@@ -23,13 +23,15 @@ test('reliever aging after the horizon uses WAR per 65 IP, not the stored per-18
   assert.ok(Math.abs(path[2032]-expected)<.006);
 });
 
-test('a contract stops at the first below-threshold year even if a later year rebounds',()=>{
-  assert.equal(contractTerm(hitter,{2027:3,2028:2,2029:.8,2030:2}),2);
+test('a fixed commitment survives a below-threshold forecast and rejects missing seasons',()=>{
+  assert.equal(contractTerm(hitter,{2027:3,2028:2,2029:.8,2030:2},4),4);
+  assert.throws(()=>contractTerm(hitter,{2027:3},2),/Missing comparison season/);
+  assert.throws(()=>contractTerm(hitter,{2027:3},2.5),/whole comparison years/);
 });
 
 test('the quoted flat AAV balances discounted seasonal values',()=>{
   const database={meta:{baseYear:2026}},path={2027:3,2028:2.8,2029:2.6,2030:2.4};
-  const quote=priceContract(hitter,path,database);
+  const quote=priceContract(hitter,path,database,initialSettings,4);
   let value=0,annuity=0;
   for(let i=0;i<quote.years;i++) {
     const factor=1.1**(-i-1);
@@ -37,6 +39,20 @@ test('the quoted flat AAV balances discounted seasonal values',()=>{
     annuity+=factor;
   }
   assert.ok(Math.abs(quote.aav_musd-value/annuity)<=.05);
+});
+
+test('crossing every former WAR cutoff cannot add years or produce a large price jump',()=>{
+  const database={meta:{baseYear:2026}};
+  for(const role of ['position','starter','reliever'])for(const threshold of [.5,.8,1,1.5,2,3,4,4.5,5]) {
+    const player={...hitter,role,position:role==='starter'?'SP':role==='reliever'?'RP':'CF'};
+    const path=war=>Object.fromEntries(Array.from({length:5},(_,i)=>[2027+i,war-.15*i]));
+    const before=priceContract(player,path(threshold-.005),database,initialSettings,5);
+    const after=priceContract(player,path(threshold+.005),database,initialSettings,5);
+    assert.equal(before.years,5);assert.equal(after.years,5);
+    // The reliever premium has its own pre-existing 0.8-WAR boundary. It is a
+    // separate price assumption; all duration tests still keep exactly five years.
+    if(role!=='reliever'||threshold!==.8)assert.ok(Math.abs(after.total_musd-before.total_musd)<2,`${role} ${threshold}`);
+  }
 });
 
 test('an observed opt-out supersedes the market-reach assumption without changing prices',()=>{

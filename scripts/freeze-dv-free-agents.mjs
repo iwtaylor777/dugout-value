@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import {nameKey,projectionAge,forecastWarPath,priceContract,marketReach} from '../lib/free-agent-pricing.mjs';
+import {nameKey,projectionAge,forecastWarPath,priceContract,marketReach} from '../public/research/fa-predictions-2026-27/code/lib/free-agent-pricing.mjs';
 import {initialSettings} from '../lib/value-model.mjs';
 const [root,listFile,satoFile,actualDirectory,output]=process.argv.slice(2);
 if(!output)throw new Error('Usage: ROOT MLBTR_LIST SATO_JSON RAW_DIRECTORY OUTPUT_DIRECTORY');

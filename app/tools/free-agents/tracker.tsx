@@ -8,13 +8,15 @@ type Player = {
   name: string; id: string; pos: string; team: string | null; age: number; role: string; fwar2026: number | null; option: string | null;
   basis: "scored" | "live" | "none"; rank?: number; war2027?: number | null; warPath?: Record<string, number | null>;
   years?: number | null; total?: number | null; aav?: number | null; market: "expected" | "option" | "stays" | "qo" | "unmodeled"; flag: string | null; source?: string;
+  publishedForecast?: { date: string; years: number; total: number; aav: number; war2027: number; flag?: string | null } | null;
+  marketForecast?: { forecasts: { label: string; years: number; total: number; aav: number; url: string }[]; reference: { years: number; total: number; aav: number } } | null;
 };
 type Outcome = "signed" | "re-signed" | "extension" | "qo-accepted" | "option-exercised" | "option-declined" | "opted-out" | "opted-in" | "retired";
 type Signing = { player: string; outcome: Outcome; team?: string | null; years?: number | null; total_musd?: number | null; date: string; source?: string };
 type Status = "available" | "signed" | "pending" | "all";
-type Sort = "total" | "aav" | "war2027" | "war5" | "fwar" | "age" | "name" | "status";
+type Sort = "total" | "marketTotal" | "aav" | "war2027" | "war5" | "fwar" | "age" | "name" | "status";
 type Direction = "ascending" | "descending";
-const SORT_LABELS: Record<Sort, string> = { total: "Our estimate", aav: "AAV", war2027: "DV WAR 2027", war5: "DV WAR 2027–31", fwar: "fWAR 2026", age: "Age", name: "Player", status: "Status" };
+const SORT_LABELS: Record<Sort, string> = { total: "Model value", marketTotal: "Market forecasts", aav: "Model AAV", war2027: "DV WAR 2027", war5: "DV WAR 2027–31", fwar: "fWAR 2026", age: "Age", name: "Player", status: "Status" };
 
 const players = data.players as Player[];
 const signings = (signingsData.entries ?? []) as Signing[];
@@ -84,12 +86,12 @@ export function FreeAgentTracker() {
     const q = key(query);
     const list = players.filter((p) => inGroup(p.pos, group) && (status === "all" || stateOf(p).status === status) && (!q || key(`${p.name}${p.team ?? ""}${p.pos}`).includes(q)));
     const value: Record<Sort, (p: Player) => string | number | null | undefined> = {
-      total: (p) => p.total, aav: (p) => p.aav, war2027: (p) => p.war2027,
+      total: (p) => p.total, marketTotal: (p) => p.marketForecast?.reference.total, aav: (p) => p.aav, war2027: (p) => p.war2027,
       war5, fwar: (p) => p.fwar2026, age: (p) => p.age, name: (p) => p.name, status: statusText,
     };
     return [...list].sort((a, b) => compareTableValues(value[sort](a), value[sort](b), direction) || a.name.localeCompare(b.name));
   }, [status, group, sort, direction, query]);
-  const signedRows = players.map((p) => ({ p, s: stateOf(p).signing })).filter((x) => x.s && x.s.total_musd != null && x.p.total != null && MARKET_DEALS.includes(x.s.outcome));
+  const signedRows = players.map((p) => ({ p, s: stateOf(p).signing })).filter((x) => x.s && x.s.total_musd != null && x.p.publishedForecast && MARKET_DEALS.includes(x.s.outcome));
 
   return (
     <section className="dv-war-board fa-board">
@@ -123,14 +125,14 @@ export function FreeAgentTracker() {
       <div className="fa-results-bar"><p role="status"><strong>{rows.length} {rows.length === 1 ? "player" : "players"}</strong> · {SORT_LABELS[sort]}, {sort === "name" || sort === "status" ? direction === "ascending" ? "A to Z" : "Z to A" : direction === "ascending" ? "low to high" : "high to low"}</p>{filtered && <button type="button" onClick={clearFilters}>Clear filters</button>}<span>Click a column to sort. Scroll sideways for more.</span></div>
       <div className="article-table-wrap" tabIndex={0} role="region" aria-label="Free-agent tracker">
         <table className="fa-table">
-          <caption>2026–27 free-agent class. Ages are for 2027; contract estimates are guaranteed dollars. AAV is average annual value.</caption>
+          <caption>Current DV production values and published market forecasts. Model values cover the term shown; market forecasts describe expected guaranteed contracts. AAV is average annual value.</caption>
           <thead>
             <tr>
-              {sortHeader("name", false)}{sortHeader("fwar")}{sortHeader("war2027")}{sortHeader("war5")}{sortHeader("total")}{sortHeader("aav")}{sortHeader("age")}{sortHeader("status", false)}
+              {sortHeader("name", false)}{sortHeader("fwar")}{sortHeader("war2027")}{sortHeader("war5")}{sortHeader("total")}{sortHeader("aav")}{sortHeader("marketTotal")}{sortHeader("age")}{sortHeader("status", false)}
             </tr>
           </thead>
           <tbody>
-            {rows.length === 0 && <tr><td colSpan={8} className="fa-empty">{status === "signed" && counts.signed === 0 ? "No signings have been recorded yet." : "No players match these filters."} <button type="button" onClick={clearFilters}>Show the whole class</button></td></tr>}
+            {rows.length === 0 && <tr><td colSpan={9} className="fa-empty">{status === "signed" && counts.signed === 0 ? "No signings have been recorded yet." : "No players match these filters."} <button type="button" onClick={clearFilters}>Show the whole class</button></td></tr>}
             {rows.map((p) => {
               const st = stateOf(p), s = st.signing, w5 = war5(p);
               const diff = s?.total_musd != null && p.total != null && MARKET_DEALS.includes(s.outcome) ? s.total_musd - p.total : null;
@@ -139,20 +141,21 @@ export function FreeAgentTracker() {
                   <th scope="row">
                     {p.name}
                     <small className="dv-war-sub">{p.pos} · {p.team ?? "—"}</small>
-                    {(p.flag || p.option || p.basis === "scored") && <details className="fa-player-note"><summary>Player note</summary>{p.option && <p>{p.option}</p>}{p.flag && <p>{p.flag}</p>}{p.basis === "scored" && <p>Published forecast, frozen October 29.</p>}</details>}
+                    {(p.flag || p.option || p.publishedForecast) && <details className="fa-player-note"><summary>Player note</summary>{p.option && <p>{p.option}</p>}{p.flag && <p>{p.flag}</p>}{p.publishedForecast && <><p>October 29 forecast: {yrs(p.publishedForecast.years)}, {money(p.publishedForecast.total)}. Preserved for scoring; the table uses current projections.</p>{p.publishedForecast.flag && p.publishedForecast.flag !== p.flag && <p>Original note: {p.publishedForecast.flag}</p>}</>}</details>}
                   </th>
                   <td className="num">{fmt(p.fwar2026)}</td>
                   <td className="num"><strong>{fmt(p.war2027)}</strong></td>
                   <td className="num">{fmt(w5)}</td>
                   <td className="num fa-estimate">{p.total == null ? "—" : minimum(p) ? "Minimum" : <>{money(p.total)}<small className="dv-war-sub">{yrs(p.years!)}</small></>}</td>
                   <td className="num">{p.aav == null ? "—" : minimum(p) ? "<$1M" : money(p.aav)}</td>
+                  <td className="num fa-market-estimate">{p.marketForecast ? <><strong>{money(p.marketForecast.reference.total)}</strong><small className="dv-war-sub">{yrs(p.marketForecast.reference.years)}</small><details className="fa-player-note"><summary>Sources</summary>{p.marketForecast.forecasts.map(f => <p key={f.label}><a href={f.url}>{f.label}</a>: {yrs(f.years)}, {money(f.total)} ({money(f.aav)} a year).</p>)}<p>Published forecasts, not signed deals.</p></details></> : "—"}</td>
                   <td className="num">{p.age}</td>
                   <td className="fa-status">
                     {s ? (
                       <>
                         <strong className={`fa-status-chip ${st.status}`}>{outcomeLabel[s.outcome]}</strong>
                         {s.team && <> · {s.team}</>}
-                        {s.total_musd != null && s.years != null && <small className="dv-war-sub">{yrs(s.years)}, {money(s.total_musd)}{diff != null && <> · <span className={diff >= 0 ? "fa-over" : "fa-under"}>{signedNum(diff)} vs estimate</span></>}</small>}
+                        {s.total_musd != null && s.years != null && <small className="dv-war-sub">{yrs(s.years)}, {money(s.total_musd)}{diff != null && <> · <span className={diff >= 0 ? "fa-over" : "fa-under"}>{signedNum(diff)} vs current value</span></>}</small>}
                       </>
                     ) : qoStatus(p) === "pending" ? <><span className="fa-status-chip pending">QO pending</span><small className="dv-war-sub">{qoPendingLabel(p)}</small></>
                       : qoStatus(p) === "rejected" ? <><span className="fa-status-chip available">Available</span><small className="dv-war-sub">Rejected {qoAmount} QO from {p.team}</small></>
@@ -167,7 +170,8 @@ export function FreeAgentTracker() {
         </table>
       </div>
       <p className="fa-updated">Signings checked {new Date(signingsData.updated + "T12:00:00Z").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}. Estimates built {new Date(data.meta.built + "T12:00:00Z").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })} with {data.meta.projections}.</p>
-      {signedRows.length > 0 && <p className="fa-updated">Recorded contracts total {signedNum(signedRows.reduce((a, x) => a + (x.s!.total_musd! - x.p.total!), 0))} million dollars versus our estimates, across {signedRows.length} players with both numbers.</p>}
+      <p className="fa-updated">Market forecasts captured {new Date(data.meta.marketAsOf + "T12:00:00Z").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}. The market column shows MLB Trade Rumors where covered, otherwise FanGraphs’ writer estimate. Open Sources for all available forecasts.</p>
+      {signedRows.length > 0 && <p className="fa-updated">Recorded contracts total {signedNum(signedRows.reduce((a, x) => a + (x.s!.total_musd! - x.p.publishedForecast!.total), 0))} million dollars versus the original October 29 forecasts, across {signedRows.length} originally forecast players.</p>}
     </section>
   );
 }

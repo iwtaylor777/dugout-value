@@ -1,0 +1,47 @@
+{
+  "counts": {
+    "2020": 92,
+    "2021": 85,
+    "2022": 97,
+    "2023": 97,
+    "2024": 93,
+    "2025": 98,
+    "2026": 85
+  },
+  "excluded": {
+    "accepted-QO": 12,
+    "not-guaranteed-free-agent": 1084,
+    "under-2M-AAV-or-missing": 258,
+    "outside-years": 242,
+    "insufficient-history": 23
+  },
+  "retained": 647,
+  "deduplicated_eligible": 670,
+  "inputs": {
+    "analysis/fa_market_calibration/raw/fg_fa_tracker_2020_2027.json": "5e6fdd429125172bfb5016f228601e121c3954a7e98570c7fd37c4641d310021",
+    "tmp/war/fg_bat_2015.json": "d457e9be89aa5dedcd485f10f1dedba279f7700d6815ad95aa707383d1a85eb4",
+    "tmp/war/fg_bat_2016.json": "bd6e4164e8b3e4b94bd3b5529a808682013b0e9cf585a2621fcdb958fcb7155d",
+    "tmp/war/fg_bat_2017.json": "f4818faa132c2ea22e9dcaaa6dcf9d5d52981857054bf1cd3f3372370a6e5384",
+    "tmp/war/fg_bat_2018.json": "7aa403c97608e3383f68203564cf3d1a3cc184179372b1b443f1830a6a430bf5",
+    "tmp/war/fg_bat_2019.json": "0715007f8a39beccf7b27b972bef16aa8361bb2f83118e5fd0385ec38c7beea7",
+    "tmp/war/fg_bat_2020.json": "c5467cc62137af4dda678c16be6d7c87474c3dc7be9f7bf3c2b084fd1d70efd3",
+    "tmp/war/fg_bat_2021.json": "89e7523d6dc9b258fdc302a471d0cedc11025fa21350c4547ee4020b76978bd4",
+    "tmp/war/fg_bat_2022.json": "5d053e0ef38e5ccfbd6a1a0ad05ca7002886172917f2aa0a4637f007484b4a9a",
+    "tmp/war/fg_bat_2023.json": "50c177628fdebb3a4543c68ea4f7f1192ecafb89664aadd4fc951ece41585a61",
+    "tmp/war/fg_bat_2024.json": "044a3af6dce8ac75f5660322a0a2cfdbafa412c886b61fbb9a344912163ae47e",
+    "tmp/war/fg_bat_2025.json": "43cf8603f2e2dbb669525798af4ae55e243a0838988b57ec1612f37c40588720",
+    "tmp/war/fg_bat_2026.json": "5eb006b4d1a113a505b3820397724bbb6390271d39c0344f9a43b125ee369926",
+    "tmp/war/fg_pit_2015.json": "bb20471c24f187827a7af1b9d82ba36e571994e1bebdf4b5b4daded8e5896428",
+    "tmp/war/fg_pit_2016.json": "8ef0b1619a6c04fb13b8c66fbe3887e3e6a871911bb9e79b002c3ee3c667501d",
+    "tmp/war/fg_pit_2017.json": "9d46e1240aea2567a9487d73b7b4970034fca5b28e56269a4ddb66f5f2315053",
+    "tmp/war/fg_pit_2018.json": "92e902f10e56b4e529898ee54107d5fe816ad2ae753fe861eeb48df2217df64e",
+    "tmp/war/fg_pit_2019.json": "ef3ff4e35642a3b0308440aca0e2b6ddce5d27b932a20b78925fb3ef59ad15f6",
+    "tmp/war/fg_pit_2020.json": "96221383596f3a649f5bb019563de8fc3e2fb45d3e6e7244667b356c078190eb",
+    "tmp/war/fg_pit_2021.json": "fbafff5d951cff48c13bd4041ce471705a98477172df72a21824fb6e26fa47e5",
+    "tmp/war/fg_pit_2022.json": "f6f9179d7dd8d6bbbfbe3391bf014f878cfeccd00207e83dde5c6db7830830b4",
+    "tmp/war/fg_pit_2023.json": "9a2ee2a1b2d336a88b859e1794a1a04f20870e19596303940901b9f8a972abb5",
+    "tmp/war/fg_pit_2024.json": "ce533a4863c95e881eb0d31bf9d24f9a4de5357dc401abd0107c04b4278c3f2e",
+    "tmp/war/fg_pit_2025.json": "73a9edd6faafc7323cff63698c4090605a6ad4129d1430f70ada8f83b31ecd77",
+    "tmp/war/fg_pit_2026.json": "13ec650f31c9dc75644ed12481c79f29dbc42488904d4f04f43c1b9ac9a36c1c"
+  }
+}

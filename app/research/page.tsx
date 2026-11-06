@@ -63,7 +63,16 @@ export default function ResearchFiles() {
       </ul>
       <p>FanGraphs leaderboards and free-agent tracker data are not redistributed.</p>
     </section>
-    <section id="fa-predictions-2027"><h2>Free-agent contract predictions, 2026–27</h2>
+    <section id="fa-market-2026-11-06"><h2>Current free-agent values and market-model tests</h2>
+      <p>Updated November 6, 2026. Current DV production values use explicit comparison terms and are shown separately from attributed public contract forecasts. Three tested market regressions improved broad errors in retrospective rolling checks but did not pass the upper-tail guard; none sets the live market forecasts.</p>
+      <ul>
+        <li><a href="/research/fa-market-2026-11-06/README.md">Findings, implementation and limitations</a></li>
+        <li><a href="/research/fa-market-2026-11-06/PROTOCOL.md">Original test plan</a> and <a href="/research/fa-market-2026-11-06/AMENDMENT-1.md">post-result diagnostics</a></li>
+        <li>Results: <a href="/research/fa-market-2026-11-06/results.json">log-total model</a>, <a href="/research/fa-market-2026-11-06/composed_results.json">salary and duration</a>, and <a href="/research/fa-market-2026-11-06/age_value_results.json">age/value interactions</a></li>
+        <li><a href="/research/fa-market-2026-11-06/verification.json">Independent checks</a>, <a href="/research/fa-market-2026-11-06/javascript_verification.json">JavaScript replay</a>, and <a href="/research/fa-market-2026-11-06/release-manifest.json">file checksums</a></li>
+      </ul>
+    </section>
+    <section id="fa-predictions-2027"><h2>Original free-agent contract predictions, 2026–27</h2>
       <p>Estimates recorded October 29, 2026, using DV forecasts through the completed 2026 season. The top 30 modeled MLB free agents plus Teruaki Sato are priced with fixed $11M-per-win and contract-term rules. Tarik Skubal is estimated at 10 years and $386M, with his term set by hand (the model’s rule gives nine years and $367M), in a revision recorded the same evening. The download contains the dated predictions, scoring protocol, input hashes, reproducible pricing code and the earlier ZiPS-based release.</p>
       <p><Link href="/analysis/what-this-winters-free-agents-should-cost">Read the predictions</Link>.</p>
       <ul>
