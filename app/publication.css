@@ -317,7 +317,6 @@ figure.article-figure figcaption strong { color: #172d3d; }
 .fa-flag { display: block; max-width: 340px; font-weight: 400; font-style: italic; color: #6c6a64; font-size: 11px; line-height: 1.35; margin-top: 2px; white-space: normal; }
 .fa-table tbody th[scope=row] { min-width: 200px; }
 .fa-table td.fa-status { font-size: 13px; min-width: 150px; }
-.fa-table tbody th, .fa-table tbody td { vertical-align: top; }
 .fa-table td.fa-market-estimate { min-width: 130px; }
 .fa-market-estimate .fa-player-note { text-align: left; white-space: normal; min-width: 130px; max-width: 260px; }
 .fa-muted { color: #6c6a64; }
