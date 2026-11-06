@@ -169,7 +169,11 @@
 .gm-run { margin: 12px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 12px 0; border-top: 1px solid var(--gm-line); border-bottom: 1px solid var(--gm-line); background: transparent; }
 .gm-sim { min-height: 44px; padding: 11px 16px; border: 0; border-radius: 5px; background: #355e4c; color: #fffdf6; font-size: 15px; font-weight: 650; cursor: pointer; }
 .gm-sim:hover { background: #284a3b; }
-.gm-sim:disabled { cursor: progress; }
+.gm[aria-busy=true] .gm-sim:disabled { cursor: progress; }
+.gm-tabs, .gm-market-desk { scroll-margin-top: 20px; }
+.gm-list-summary a, .gm-bottom-nav a { display:inline-flex; align-items:center; min-height:44px; color:var(--gm-green); text-decoration:underline; text-underline-offset:3px; font-weight:600; }
+.gm-bottom-nav { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 16px; padding:10px 14px; margin-top:14px; border:1px solid #c3cebc; border-radius:5px; background:#edf1e5; font-size:14px; }
+.gm-bottom-nav span { color:var(--gm-muted); font-size:13px; }
 .gm-run small { flex: 1 1 240px; font-size: 13px; color: var(--gm-muted); line-height: 1.5; max-width: 65ch; }
 .gm-results { border-top: 2px solid #6d8977; padding-top: 20px; scroll-margin-top: 24px; }
 .gm-headline { display: flex; gap: 20px; align-items: center; }
@@ -183,6 +187,7 @@
 .gm-odds thead th { font-size: 13px; color: var(--gm-muted); background: #eee8d9; }
 .gm-odds tbody th { font-size: 14px; font-weight: 500; }
 .gm-odds .num { text-align: right; font-variant-numeric: tabular-nums; }
+.gm-odds tbody .num { white-space:nowrap; }
 .gm-ledger { display: flex; flex-wrap: wrap; gap: 16px 32px; padding: 12px 0; }
 .gm-ledger p { margin: 0; display: flex; flex-direction: column; gap: 6px; max-width: 300px; }
 .gm-ledger strong { font-size: 20px; font-variant-numeric: tabular-nums; }
@@ -240,6 +245,9 @@
   .gm-offer label { margin-right: 6px; gap: 3px; }
   .gm-offer input { width: 55px; }
   .gm-offer label:nth-of-type(2) input { width: 72px; }
+  .gm-total-label { display:none; }
+  .gm-bottom-nav { align-items:flex-start; flex-direction:column; }
+  .gm-odds tbody .num { font-size:13px; }
   .gm-offer button { padding: 8px 10px; }
   .gm-table td.gm-empty { grid-column: 1 / -1; padding: 20px; }
   .gm-table td.gm-empty::before { display: none; }
