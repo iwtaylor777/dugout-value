@@ -169,7 +169,18 @@ test('closing the market records late signings, honors budgets, and replays via 
   assert.match(news.join(' '), /Late signing/);
   assert.equal(new Set(current.market.deals.map(d => d.pid)).size, current.market.deals.length);
   const after = g.buildLeague(ctx, current);
-  assert.equal(after.freeAgents.size, 0, 'the normal market clears instead of stranding affordable players');
+  // Public market asks can exceed every club's spending/fit ceiling. The
+  // closeout must report that outcome rather than force a star into a minimum deal.
+  const remaining = new Set(ctx.players.filter(p => after.freeAgents.has(p.i)).map(p => p.pid));
+  for (const pid of remaining) {
+    const player = ctx.tracker.players.find(p => p.id === pid);
+    assert.ok(g.closeoutMinimumAav(player, 1, start.seed) > .8, player.name);
+    assert.ok(news.some(line => line.startsWith(`${player.name} did not find a credible offer`)), player.name);
+  }
+  for (const deal of current.market.deals.filter(d => d.closeout)) {
+    const player = ctx.tracker.players.find(p => p.id === deal.pid);
+    assert.ok(deal.total / deal.years + 1e-9 >= g.closeoutMinimumAav(player, deal.years, start.seed), player.name);
+  }
   assert.ok(current.market.deals.some(d => d.closeout && d.total < g.askFor(ctx.tracker.players.find(r => r.id === d.pid), start.seed).total));
   for (const team of Object.keys(ctx.sim.teams).filter(t => t !== start.team)) {
     assert.ok(g.payrollFor(ctx, after, team) <= Math.max(g.payrollFor(ctx, before, team), ctx.sim.teams[team].cbt2026 * 1.02) + 1e-7, team);

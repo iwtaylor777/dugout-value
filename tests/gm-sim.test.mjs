@@ -12,10 +12,11 @@ const base = { team: 'BOS', seed: 42, signings: [], trades: [] };
 
 test('short FA contracts are graded against matching years, not the full long-term estimate', () => {
   const row = fa('Tarik Skubal');
+  const benchmark = row.modelValue ?? row;
   const value = (years, total) => g.movesValue(ctx, { ...base, signings: [{ pid: row.id, years, total }] }).signings;
-  assert.ok(Math.abs(value(1, 30) - (row.total / row.years - 30)) < 1e-8);
-  assert.equal(value(row.years, row.total), 0);
-  assert.ok(value(row.years + 1, row.total + 20) < 0, 'an extra year is not free surplus');
+  assert.ok(Math.abs(value(1, 30) - (benchmark.total / benchmark.years - 30)) < 1e-8);
+  assert.equal(value(benchmark.years, benchmark.total), 0);
+  assert.ok(value(benchmark.years + 1, benchmark.total + 20) < 0, 'an extra year is not free surplus');
 });
 
 test('cash cannot buy premium talent with no players or a token return', () => {
