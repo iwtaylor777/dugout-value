@@ -23,7 +23,7 @@ test('rival bids are seeded, affordable, and reserve one target per club', () =>
   }
 });
 
-test('pending bids reserve payroll together; revisions replace rather than duplicate', () => {
+test('pending bids show combined exposure without a hard cap; revisions replace rather than duplicate', () => {
   let start = game();
   start.budget = g.payrollFor(ctx, g.buildLeague(ctx, start), start.team) + 50;
   const skubal = row('Tarik Skubal'), jazz = row('Jazz Chisholm Jr.');
@@ -32,8 +32,9 @@ test('pending bids reserve payroll together; revisions replace rather than dupli
   start = answer.moves;
   assert.equal(start.signings.length, 0, 'submission is not an instant signing');
   answer = m.submitMarketBid(ctx, start, { pid: jazz.id, years: 4, total: 80 });
-  assert.equal(answer.accepted, false);
-  assert.match(answer.reason, /reserve/);
+  assert.equal(answer.accepted, true);
+  assert.equal(answer.moves.market.bids.length, 2);
+  assert.match(answer.reason, /clear \$15.0M before simulating/);
   answer = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 400 });
   assert.equal(answer.moves.market.bids.length, 1);
   assert.equal(answer.moves.market.bids[0].total, 400);
@@ -77,9 +78,39 @@ test('rivals counter other rivals, but raises are bounded and invalid human bids
   const skubal = row('Tarik Skubal');
   const invalid = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 8 }).moves;
   assert.deepEqual(m.advanceMarket(ctx, invalid).moves.market.deals, result.moves.market.deals);
-  const unaffordable = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 700 }).moves;
-  unaffordable.budget = 60;
-  assert.deepEqual(m.advanceMarket(ctx, unaffordable).moves.market.deals, result.moves.market.deals);
+});
+
+test('over-budget offers can win, but the season waits for payroll repair; late undo preserves rival deals', () => {
+  const start = game(), skubal = row('Tarik Skubal');
+  start.budget = g.payrollFor(ctx, g.buildLeague(ctx, start), start.team) + 5;
+  assert.equal(g.seasonReadiness(ctx, start).ready, false, 'open bidding blocks simulation');
+  let current = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 700 }).moves;
+  for (let i = 0; i < 3; i++) current = m.advanceMarket(ctx, current).moves;
+  assert.ok(current.signings.some(s => s.pid === skubal.id));
+  const check = g.seasonReadiness(ctx, current);
+  assert.equal(check.marketOpen, false);
+  assert.equal(check.ready, false);
+  assert.ok(Math.abs(check.shortfall - 65) < 1e-8);
+  const restored = g.restoreMoves(ctx, g.decodeMoves(g.encodeMoves(current)));
+  assert.ok(restored.moves, restored.reason);
+  assert.equal(g.seasonReadiness(ctx, restored.moves).ready, false);
+  const undone = g.undoMove(ctx, current, 'signing', 0).moves;
+  assert.deepEqual(undone.market, current.market);
+  assert.equal(g.seasonReadiness(ctx, undone).ready, true);
+  assert.ok(g.buildLeague(ctx, undone).freeAgents.has(ctx.players.find(p => p.pid === skubal.id).i));
+});
+
+test('competitive late signings defer the budget check; a salary-clearing trade can unlock the season', () => {
+  const start = { ...game(), budget: 240, market: { ...m.newMarket(), round: 3 } };
+  const league = g.buildLeague(ctx, start), player = row('Freddy Peralta'), ask = g.askFor(player, start.seed);
+  assert.equal(g.signFreeAgent(ctx, league, start, start.budget, player, { years: ask.minYears, total: ask.total }, start.seed).accepted, true);
+  const id = name => Object.entries(ctx.sim.players).find(([, p]) => p.n === name)[0];
+  const proposal = { partner: 'BAL', give: [id('Trevor Story'), id('Roman Anthony')], get: [] };
+  const answer = g.respondToTrade(ctx, league, start, start.budget, proposal, g.teamModes(ctx, league.teamOf));
+  assert.equal(answer.accepted, true, answer.reason);
+  assert.equal(g.seasonReadiness(ctx, start).ready, false);
+  assert.equal(g.seasonReadiness(ctx, { ...start, trades: [proposal] }).ready, true);
+  assert.equal(g.seasonReadiness(ctx, { ...start, budget: 200, trades: [proposal] }).ready, false, 'partial salary relief is not enough');
 });
 
 test('weak bids lose to actual rival offers and signed players leave the market', () => {

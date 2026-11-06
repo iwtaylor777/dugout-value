@@ -11,7 +11,7 @@ import { matchesProjectionRole } from "../../../lib/projection-filters.mjs";
 import { advanceMarket, marketBoard, MARKET_ROUNDS, newMarket, submitMarketBid } from "../../../lib/gm-market.mjs";
 import {
   aiFreeAgency, buildLeague, decodeMoves, encodeMoves, grade, movesValue, payrollFor, respondToTrade, rosterOf,
-  signFreeAgent, simulateSeasons, teamModes, teamStrengths, restoreMoves, undoMove,
+  signFreeAgent, simulateSeasons, teamModes, teamStrengths, restoreMoves, undoMove, seasonReadiness,
 } from "../../../lib/gm-sim.mjs";
 import type { GmContext, GmMoves, GmTeamResult, TrackerRow } from "../../../lib/gm-sim.mjs";
 
@@ -80,6 +80,7 @@ export function GmMode() {
   const league = useMemo(() => buildLeague(ctx, moves), [moves]);
   const modes = useMemo(() => teamModes(ctx, league.teamOf), [league]);
   const payroll = useMemo(() => payrollFor(ctx, league, moves.team), [league, moves.team]);
+  const readiness = useMemo(() => seasonReadiness(ctx, moves), [moves]);
   const roster = useMemo(() => rosterOf(ctx, league.teamOf, moves.team), [league, moves.team]);
   const alloc = useMemo(() => allocate(roster), [roster]);
   const startingWar = useMemo(() => {
@@ -121,6 +122,12 @@ export function GmMode() {
     .sort((a, b) => b.v.v10 - a.v.v10);
   const partnerList = useMemo(() => (partner ? ownedBy(partner) : []), [partner, league]); // eslint-disable-line react-hooks/exhaustive-deps
   const yourList = useMemo(() => ownedBy(moves.team), [moves.team, league]); // eslint-disable-line react-hooks/exhaustive-deps
+  const tradePayroll = useMemo(() => {
+    if (!partner || (!give.length && !get.length)) return null;
+    const after = buildLeague(ctx, { ...moves, trades: [...moves.trades, { partner, give, get }] });
+    const total = payrollFor(ctx, after, moves.team);
+    return { total, change: total - payroll };
+  }, [partner, give, get, moves, payroll]);
 
   const reset = (team: string, competitiveMode = competitive) => {
     runVersion.current++;
@@ -153,7 +160,8 @@ export function GmMode() {
       const nextLeague = buildLeague(ctx, next);
       const gain = allocate(rosterOf(ctx, nextLeague.teamOf, moves.team)).total - alloc.total;
       update(next);
-      setFeedback({ tone: "success", text: `Signed ${row.name}: ${o.years} ${o.years === 1 ? "year" : "years"}, ${money(o.total)} total (${money(o.total / o.years)} a year). ${signedWins(gain)} projected roster WAR. ${money(budget - payrollFor(ctx, nextLeague, moves.team))} left under budget.` });
+      const roomAfter = budget - payrollFor(ctx, nextLeague, moves.team);
+      setFeedback({ tone: "success", text: `Signed ${row.name}: ${o.years} ${o.years === 1 ? "year" : "years"}, ${money(o.total)} total (${money(o.total / o.years)} a year). ${signedWins(gain)} projected roster WAR. ${roomAfter < 0 ? `Clear ${money(-roomAfter)} before simulating the season.` : `${money(roomAfter)} left under budget.`}` });
     }
   };
   const propose = () => {
@@ -175,10 +183,10 @@ export function GmMode() {
     setFeedback({ tone: "success", text: `Withdrew the offer to ${label(pid)}. The reserved payroll is available again.` });
   };
   const undo = (kind: "signing" | "trade", index: number) => {
-    if (moves.market && moves.market.round > 0) return;
     const undone = undoMove(ctx, moves, kind, index);
     update(undone.moves); setGive([]); setGet([]); setTradeNote(null);
-    setFeedback({ tone: "success", text: `Move undone.${undone.removed > 1 ? ` ${undone.removed - 1} later dependent ${undone.removed === 2 ? "trade was" : "trades were"} also removed.` : ""}` });
+    setMarketNews([]); setShowSigningLedger(true);
+    setFeedback({ tone: "success", text: `Move undone.${undone.removed > 1 ? ` ${undone.removed - 1} later dependent ${undone.removed === 2 ? "trade was" : "trades were"} also removed.` : ""}${moves.market ? " Completed market rounds and other clubs’ signings are unchanged." : ""}` });
   };
 
   const nextRound = () => {
@@ -192,13 +200,19 @@ export function GmMode() {
         setMarketNews(next.news);
         setShowSigningLedger(false);
         setOffers({}); setGive([]); setGet([]); setTradeNote(null);
-        setFeedback({ tone: "success", text: `Round ${next.moves.market!.round} complete. ${next.moves.market!.round === MARKET_ROUNDS ? "Bidding is closed. You can sign remaining free agents at their asking prices or simulate the season." : "Review the activity, then keep, revise, or withdraw your offers before advancing."}` });
+        setFeedback({ tone: "success", text: `Round ${next.moves.market!.round} complete. ${next.moves.market!.round === MARKET_ROUNDS ? "Bidding is closed. You can still trade, undo moves, or sign remaining free agents. Get within budget to simulate the season." : "Review the activity, then keep, revise, or withdraw your offers before advancing."}` });
       } catch { setFeedback({ tone: "error", text: "The market round could not finish. Your offers are unchanged; try again." }); }
       finally { setRunning(false); }
     }, 30);
   };
 
   const simulate = (m: GmMoves = moves) => {
+    const check = seasonReadiness(ctx, m);
+    if (!check.ready) {
+      setResults(null);
+      setFeedback({ tone: "error", text: check.marketOpen ? "Finish the bidding rounds before simulating the season." : `Clear ${money(check.shortfall)} of annual payroll through trades or undo moves before simulating the season.` });
+      return;
+    }
     const version = ++runVersion.current;
     setRunning(true);
     setTimeout(async () => {
@@ -249,6 +263,10 @@ export function GmMode() {
   const teamName = ctx.sim.teams[moves.team].name;
   const room = budget - payroll;
   const mine = ranks[moves.team];
+  const showTab = (next: typeof tab) => {
+    setTab(next);
+    document.getElementById(`gm-tab-${next}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <section className="gm" aria-label="GM Mode offseason game" aria-busy={running}>
@@ -276,7 +294,7 @@ export function GmMode() {
         </div>
         <div className="gm-stats" aria-live="polite">
           <p><strong>{money(payroll)}</strong><span>2027 payroll</span></p>
-          <p className={room < 0 ? "gm-bad" : undefined}><strong>{signedMoney(room).replace("+", "")}</strong><span>{room >= 0 ? "room under budget" : "over budget"}</span></p>
+          <p className={room < 0 ? "gm-bad" : undefined}><strong>{money(Math.abs(room))}</strong><span>{room >= 0 ? "room under budget" : "over budget"}</span></p>
           <p><strong>{mine.war.toFixed(1)}</strong><span>projected WAR</span></p>
           <p><strong>{mine.rank}{["th", "st", "nd", "rd"][mine.rank % 10 > 3 || [11, 12, 13].includes(mine.rank % 100) ? 0 : mine.rank % 10]}</strong><span>in MLB</span></p>
         </div>
@@ -284,11 +302,15 @@ export function GmMode() {
       <div className="gm-tools"><span>Changing teams starts a new offseason. This is a sandbox, not live transactions.</span><button type="button" className="gm-link" onClick={() => reset(moves.team)}>Start over</button><button type="button" className="gm-link" onClick={() => copy(shareUrl(), "link")}>Copy offseason link</button>{copied && <span role="status">{copied === "failed" ? "Couldn’t copy. Try again." : `Copied ${copied}`}</span>}</div>
       <div className="gm-brief"><div><strong>Where could you improve?</strong><p>Your lowest-ranked positions in the current league, by projected WAR.</p></div><div className="gm-needs">{needs.map(need => <button key={need.pos} type="button" onClick={() => { setTab("fa"); setFaPos(need.pos); setFaQuery(""); setFaLimit(20); }}><strong>{need.pos}</strong><span>No. {need.rank} of 30 · {need.war.toFixed(1)} WAR</span></button>)}</div></div>
       {feedback && <p className="gm-feedback" data-tone={feedback.tone} role="status">{feedback.text}</p>}
+      {readiness.shortfall > 1e-9 && <aside className="gm-budget-plan" id="gm-budget-plan">
+        <div><strong>Before Opening Day: clear {money(readiness.shortfall)}</strong><p>Your signed roster is over budget. {bidding ? "You can keep negotiating and advancing rounds. " : ""}Make a salary-clearing trade or undo moves before simulating the season.</p></div>
+        <div className="gm-budget-actions"><button type="button" onClick={() => showTab("trade")}>Find a salary-clearing trade</button><button type="button" onClick={() => showTab("moves")}>Review / undo moves</button></div>
+      </aside>}
       {competitive && <section className="gm-market-desk" id="gm-market" aria-label="Free-agent market">
         <div className="gm-scorecard"><div className="gm-scorecard-club"><span className="gm-homeplate" aria-hidden="true">{moves.team}</span><span>OFFSEASON SCORECARD<small>{teamName}</small></span></div><dl><div><dt>Signed</dt><dd>{moves.signings.length}</dd></div><div><dt>Trades</dt><dd>{moves.trades.length}</dd></div><div><dt>WAR added</dt><dd>{signedWins(alloc.total - startingWar)}</dd></div></dl></div>
         <ol className="gm-round-track" aria-label="Market progress">{["Opening offers", "Counteroffers", "Final calls"].map((phase, index) => <li key={phase} data-state={moves.market!.round > index ? "complete" : moves.market!.round === index ? "current" : "next"} aria-current={moves.market!.round === index ? "step" : undefined}><span aria-hidden="true">{moves.market!.round > index ? "✓" : index + 1}</span><span>{phase}<small>{moves.market!.round > index ? "Complete" : moves.market!.round === index ? "Now bidding" : "Up next"}</small></span></li>)}</ol>
-        <div className="gm-market-heading"><div><h2>{bidding ? `Bidding round ${moves.market!.round + 1} of ${MARKET_ROUNDS}` : "The bidding rounds are complete"}</h2><p>{bidding ? "Submit offers below, then advance when you’re ready. Some players will sign elsewhere." : "Market signings are final. Remaining free agents can still take an instant offer."}</p></div>{bidding && <button type="button" className="gm-sim" disabled={reserved > 0 && reserved > room + 1e-9} onClick={nextRound}>{running ? "Clubs are deciding…" : `Advance to round ${moves.market!.round + 1} results`}</button>}</div>
-        <p className="gm-note">{money(reserved)} of annual payroll reserved by {moves.market!.bids.length} pending {moves.market!.bids.length === 1 ? "offer" : "offers"}. {reserved > room ? "Your budget no longer covers all offers. Revise them before advancing." : `${money(room - reserved)} available after pending offers.`} These are simulated negotiations, not news reports.</p>
+        <div className="gm-market-heading"><div><h2>{bidding ? `Bidding round ${moves.market!.round + 1} of ${MARKET_ROUNDS}` : "The bidding rounds are complete"}</h2><p>{bidding ? "Submit offers below, then advance when you’re ready. Some players will sign elsewhere." : "Finish shaping your roster. Trade, undo moves, or sign remaining free agents before simulating."}</p></div>{bidding && <button type="button" className="gm-sim" onClick={nextRound}>{running ? "Clubs are deciding…" : `Advance to round ${moves.market!.round + 1} results`}</button>}</div>
+        <p className="gm-note">{money(reserved)} of annual payroll in {moves.market!.bids.length} pending {moves.market!.bids.length === 1 ? "offer" : "offers"}. {reserved > room ? reserved > 0 ? `If all pending offers land, clear ${money(reserved - room)} before simulating. You can still advance.` : `Clear ${money(-room)} from the signed roster before simulating.` : `${money(room - reserved)} available after pending offers.`} These are simulated negotiations, not news reports.</p>
         {moves.market!.bids.length > 0 && <ul className="gm-market-bids">{moves.market!.bids.map(b => <li key={b.pid}><span><strong>{label(b.pid)}</strong> · {b.years} yrs, {money(b.total)} · {money(b.total / b.years)}/year</span><button type="button" className="gm-link" onClick={() => withdrawBid(b.pid)}>Withdraw<span className="gm-sr"> offer to {label(b.pid)}</span></button></li>)}</ul>}
         {(marketNews.length > 0 || moves.market!.deals.length > 0 || moves.signings.length > 0) && (
           <details className="gm-market-feed" open>
@@ -308,11 +330,11 @@ export function GmMode() {
             ))}</ul>
           </details>
         )}
-        <details className="gm-market-reminder"><summary>Before you advance</summary><p>Completed moves cannot be undone after a round advances. You can revise or withdraw pending bids. The final round also resolves late rival signings, using their remaining budgets, and lists them in the league wire.</p></details>
+        <details className="gm-market-reminder"><summary>Budget and undo rules</summary><p>You may exceed your budget while building the roster, but must get under it before simulating. Revise or withdraw pending bids, trade salary away, or undo your own moves. Undo is a sandbox correction, not a real contract cancellation; it does not rewind market rounds or other clubs’ signings. Rival clubs still use hard budgets. The final round lists late signings in the league wire.</p></details>
       </section>}
       <div className="gm-run">
-        <button type="button" className="gm-sim" onClick={() => results ? document.getElementById("gm-results")?.scrollIntoView({ behavior: "smooth", block: "start" }) : simulate()} disabled={running || bidding}>{running ? "Working…" : results ? "View season results" : "Finish offseason · simulate 2027"}</button>
-        <small>{bidding ? "Finish all three bidding rounds before simulating the season." : competitive ? "Simulate the league with the signings made in this market. Start over to replay the offseason." : results ? "Change a move or your budget to try another plan. The same seed keeps comparisons consistent." : "The other 29 teams fill out their rosters. You can revise your moves after seeing the results."}</small>
+        <button type="button" className="gm-sim" onClick={() => results ? document.getElementById("gm-results")?.scrollIntoView({ behavior: "smooth", block: "start" }) : simulate()} disabled={running || !readiness.ready} aria-describedby={readiness.shortfall > 1e-9 ? "gm-budget-plan" : undefined}>{running ? "Working…" : results ? "View season results" : "Finish offseason · simulate 2027"}</button>
+        <small>{bidding ? "Finish all three bidding rounds before simulating the season." : readiness.shortfall > 1e-9 ? `Clear ${money(readiness.shortfall)} through trades or undo moves to unlock the season.` : competitive ? "Roster is within budget. You’re ready to simulate 2027." : results ? "Change a move or your budget to try another plan. The same seed keeps comparisons consistent." : "The other 29 teams fill out their rosters. You can revise your moves after seeing the results."}</small>
       </div>
 
       <div className="gm-tabs" role="tablist" aria-label="Offseason">
@@ -399,6 +421,7 @@ export function GmMode() {
                 );
               })}
               <div className="gm-propose">
+                {tradePayroll && <p className="gm-payroll-preview">If accepted: {tradePayroll.change < 0 ? `clears ${money(-tradePayroll.change)}` : `adds ${money(tradePayroll.change)}`} of annual payroll. Your payroll would be {money(tradePayroll.total)}{tradePayroll.total > budget ? `, still ${money(tradePayroll.total - budget)} over budget` : `, ${money(budget - tradePayroll.total)} under budget`}.</p>}
                 <button type="button" onClick={propose} disabled={!give.length && !get.length}>Propose trade</button>
                 {tradeNote && <p role="status" className={tradeNote.ok ? "gm-good" : "gm-bad"}>{tradeNote.text}</p>}
               </div>
@@ -427,8 +450,8 @@ export function GmMode() {
         <div className="gm-panel" role="tabpanel" id="gm-panel-moves" aria-labelledby="gm-tab-moves">
           {!moves.signings.length && !moves.trades.length && <p className="gm-muted">No moves yet.</p>}
           <ul className="gm-moves">
-            {moves.signings.map((s, i) => <li key={`s${i}`}>Signed <strong>{label(s.pid)}</strong>, {s.years} yrs, {money(s.total)} ({money(s.total / s.years)} a year) <button type="button" className="gm-link" disabled={competitive && moves.market!.round > 0} aria-label={`Undo signing ${label(s.pid)}`} onClick={() => undo("signing", i)}>undo</button></li>)}
-            {moves.trades.map((t, i) => <li key={`t${i}`}>Traded {t.give.map((p) => V[p]?.n).join(", ") || "nothing"} to {ctx.sim.teams[t.partner].name} for <strong>{t.get.map((p) => V[p]?.n).join(", ") || "nothing"}</strong> <button type="button" className="gm-link" disabled={competitive && moves.market!.round > 0} onClick={() => undo("trade", i)}>undo</button></li>)}
+            {moves.signings.map((s, i) => <li key={`s${i}`}>Signed <strong>{label(s.pid)}</strong>, {s.years} yrs, {money(s.total)} ({money(s.total / s.years)} a year) <button type="button" className="gm-link" aria-label={`Undo signing ${label(s.pid)}`} onClick={() => undo("signing", i)}>undo</button></li>)}
+            {moves.trades.map((t, i) => <li key={`t${i}`}>Traded {t.give.map((p) => V[p]?.n).join(", ") || "nothing"} to {ctx.sim.teams[t.partner].name} for <strong>{t.get.map((p) => V[p]?.n).join(", ") || "nothing"}</strong> <button type="button" className="gm-link" onClick={() => undo("trade", i)}>undo</button></li>)}
           </ul>
         </div>
       )}

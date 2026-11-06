@@ -83,6 +83,11 @@
 .gm-feedback { margin: 12px 0; padding: 12px 14px; border-left: 3px solid #6d8977; background: #e8eee1; color: #294c3b; font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }
 .gm-feedback.gm-bad, .gm-feedback[data-tone="error"] { border-color: #a64d37; background: #f5e8de; color: #7d3525; }
 .gm-feedback p { margin: 0; }
+.gm-budget-plan { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px 20px; border-left:3px solid #a85639; padding:14px 16px; margin:12px 0; background:#f5eadd; color:#763c2b; font-size:14px; }
+.gm-budget-plan p { margin:5px 0 0; max-width:70ch; line-height:1.6; }
+.gm-budget-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.gm-budget-actions button { min-height:44px; padding:8px 12px; background:#fffaf0; color:#763c2b; border:1px solid #bd927a; border-radius:4px; font-size:14px; cursor:pointer; }
+.gm-propose p.gm-payroll-preview { flex:1 1 100%; max-width:none; border-left:3px solid #789174; background:#edf1e5; padding:10px 12px; }
 .gm-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 16px 0 0; border-bottom: 1px solid var(--gm-line); }
 .gm-tabs button { min-height: 44px; padding: 10px 14px; border: 0; border-bottom: 2px solid transparent; background: none; font-size: 14px; font-weight: 600; color: var(--gm-muted); cursor: pointer; }
 .gm-tabs button:first-child { padding-left: 0; }

@@ -46,3 +46,4 @@ export function encodeMoves(moves: GmMoves): string;
 export function decodeMoves(text: string): GmMoves | null;
 export function restoreMoves(ctx: GmContext, candidate: GmMoves): { moves: GmMoves | null; reason?: string };
 export function undoMove(ctx: GmContext, moves: GmMoves, kind: "signing" | "trade", index: number): { moves: GmMoves; removed: number };
+export function seasonReadiness(ctx: GmContext, moves: GmMoves): { ready: boolean; payroll: number; budget: number; shortfall: number; marketOpen: boolean };
