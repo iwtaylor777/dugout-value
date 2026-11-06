@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02",
+  "updated": "2026-11-06",
   "note": "Reported outcomes for the 2026–27 class. Outcomes: signed, re-signed, extension, qo-accepted, option-exercised, option-declined, opted-out, opted-in, retired. Contract totals are guaranteed money in millions; option and opt-out entries leave years and total empty unless a new contract was signed.",
   "entries": [
     {
@@ -470,6 +470,87 @@
       "total_musd": null,
       "date": "2026-11-02",
       "source": "https://www.mlbtraderumors.com/2026/11/clay-holmes-declines-player-option.html"
+    },
+    {
+      "player": "Jose Berrios",
+      "outcome": "opted-in",
+      "team": "TOR",
+      "years": 2,
+      "total_musd": 48.0,
+      "date": "2026-11-03",
+      "source": "https://www.mlb.com/news/mlb-players-with-2027-options-and-opt-outs"
+    },
+    {
+      "player": "Drew Anderson",
+      "outcome": "option-exercised",
+      "team": "DET",
+      "years": 1,
+      "total_musd": 10.0,
+      "date": "2026-11-03",
+      "source": "https://www.mlb.com/news/kenley-jansen-drew-anderson-jacob-waguespack-tigers-moves"
+    },
+    {
+      "player": "Kenley Jansen",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-03",
+      "source": "https://www.mlb.com/news/kenley-jansen-drew-anderson-jacob-waguespack-tigers-moves"
+    },
+    {
+      "player": "Antonio Senzatela",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-03",
+      "source": "https://mlb.com/news/brewers-pick-up-william-contreras-option-extend-jake-bauers-qualifying-offer"
+    },
+    {
+      "player": "Gary Sanchez",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-03",
+      "source": "https://mlb.com/news/brewers-pick-up-william-contreras-option-extend-jake-bauers-qualifying-offer"
+    },
+    {
+      "player": "Myles Straw",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-02",
+      "source": "https://www.mlbtraderumors.com/2026/11/blue-jays-decline-option-on-myles-straw.html"
+    },
+    {
+      "player": "Colin Rea",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-03",
+      "source": "https://www.mlb.com/news/mlb-players-with-2027-options-and-opt-outs"
+    },
+    {
+      "player": "Rowan Wick",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-03",
+      "source": "https://www.mlb.com/news/mlb-players-with-2027-options-and-opt-outs"
+    },
+    {
+      "player": "Dietrich Enns",
+      "outcome": "option-declined",
+      "team": null,
+      "years": null,
+      "total_musd": null,
+      "date": "2026-11-03",
+      "source": "https://www.mlb.com/news/mlb-players-with-2027-options-and-opt-outs"
     }
   ],
   "qualifying_offers": {
