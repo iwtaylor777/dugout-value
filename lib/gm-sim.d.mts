@@ -28,6 +28,7 @@ export function rosterOf(ctx: GmContext, teamOf: Map<string, string | null>, abb
 export function payrollFor(ctx: GmContext, league: GmLeague, abbr: string, extraAav?: Map<string, number>): number;
 export function teamWar(ctx: GmContext, teamOf: Map<string, string | null>, abbr: string): number;
 export function teamModes(ctx: GmContext, teamOf: Map<string, string | null>): Record<string, "contend" | "middle" | "rebuild">;
+export function nickname(ctx: GmContext, abbr: string): string;
 export function isStar(v: GmPlayerValue | undefined): boolean;
 export function controlYears(v: GmPlayerValue | undefined): number;
 export function starPremium(v: GmPlayerValue | undefined, mode: string): number;
