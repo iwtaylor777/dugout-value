@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "independent_metric_checks": 528,
+  "scalar_prediction_replays": 1833,
+  "maximum_prediction_difference_musd": 1.1368683772161603e-12,
+  "future_origin_mutations": 70,
+  "historical_contracts": 647,
+  "rolling_scored_contracts": 373,
+  "rolling_distinct_players": 265,
+  "folds_and_final_fits": 15,
+  "preprocessing": "Every imputer median, scaler mean/variance and training-year cutoff independently verified.",
+  "deployment": "None of the three market candidates is promoted; upper-tail guard failed."
+}

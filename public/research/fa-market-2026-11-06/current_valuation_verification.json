@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "current_price_checks": 256,
+  "preserved_original_forecasts": 31,
+  "maximum_rounding_difference_musd": 0.04956190476190481,
+  "projection_sha256": "4c26ff64d5239834c62e6d82a377f8e332b8ae09e2f27e3ab44ac37bd048d4f7",
+  "frozen_sha256": "6775351b334b778bf12ea0c626173a854af8fd79b72dbec693d58584c936f0c4"
+}

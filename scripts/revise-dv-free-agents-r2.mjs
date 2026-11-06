@@ -8,7 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { projectionAge, forecastWarPath, priceContract } from '../lib/free-agent-pricing.mjs';
+import { projectionAge, forecastWarPath, priceContract } from '../public/research/fa-predictions-2026-27/code/lib/free-agent-pricing.mjs';
 
 const dir = process.argv[2];
 if (!dir) throw new Error('Usage: RELEASE_DIRECTORY');

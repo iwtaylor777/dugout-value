@@ -176,12 +176,14 @@ test("free-agent tracker defaults to the whole class with sortable headers", asy
   assert.doesNotMatch(html, /Scored #|Scored prediction #/);
   assert.match(html, /<option value="all" selected="">Whole class/);
   assert.match(html, /aria-sort="descending"/);
-  for (const label of ["Player", "Age", "fWAR 2026", "DV WAR 2027", "DV WAR 2027–31", "Our estimate", "AAV", "Status"]) {
+  for (const label of ["Player", "Age", "fWAR 2026", "DV WAR 2027", "DV WAR 2027–31", "Model value", "Model AAV", "Market forecasts", "Status"]) {
     assert.ok(html.includes(`aria-label="Sort by ${label}"`), label);
   }
   assert.match(html, /Decision pending/);
-  assert.match(html, /Published forecast, frozen October 29/);
-  assert.match(html, /\$386M/);
+  assert.match(html, /October 29 forecast/);
+  assert.match(html, /Sources/);
+  assert.match(html, /MLB Trade Rumors/);
+  assert.match(html, /\$73\.8M/);
   assert.match(html, /href="\/tools\/free-agents"[^>]*aria-current="page"|href="\/tools"[^>]*aria-current="page"/);
 });
 

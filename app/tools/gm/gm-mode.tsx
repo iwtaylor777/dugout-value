@@ -3,7 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { TradePlayerSearch } from "./trade-player-search";
 import depth from "../../data/depth-chart.json";
-import tracker from "../../data/free-agent-tracker.json";
+import trackerData from "../../data/free-agent-tracker.json";
+import { marketTracker } from "../../../lib/free-agent-current.mjs";
 import signingsData from "../../data/free-agent-signings.json";
 import simData from "../../data/gm-sim.json";
 import payrollData from "../../data/team-payroll.json";
@@ -16,6 +17,7 @@ import {
 } from "../../../lib/gm-sim.mjs";
 import type { GmContext, GmMoves, GmTeamResult, TrackerRow } from "../../../lib/gm-sim.mjs";
 
+const tracker = marketTracker(trackerData);
 const ctx = { players: depth.players, tracker, signings: signingsData, sim: simData, payroll: payrollData.cbt } as unknown as GmContext;
 const teams = Object.entries(ctx.sim.teams).sort((a, b) => a[1].name.localeCompare(b[1].name));
 const faRows = new Map((tracker.players as TrackerRow[]).map((r) => [r.id, r]));
