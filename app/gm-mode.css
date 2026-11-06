@@ -6,6 +6,38 @@
 .gm-market-mode .gm-field { width:250px; max-width:100%; }
 .gm-market-mode p { flex:1 1 280px; margin:0 0 4px; font-size:14px; line-height:1.5; color:var(--gm-muted); max-width:65ch; }
 .gm-market-desk { padding:16px; margin:16px 0; border:1px solid #c3cebc; border-top:3px solid var(--gm-green); border-radius:5px; background:#f4f5e9; }
+.gm-scorecard { display:flex; align-items:center; justify-content:space-between; gap:18px; margin:-16px -16px 0; padding:14px 18px; color:#fff9e9; background:#294c3f; }
+.gm-scorecard-club { display:flex; align-items:center; gap:12px; font-size:11px; font-weight:600; letter-spacing:.08em; }
+.gm-scorecard-club small { display:block; font-size:15px; letter-spacing:0; font-weight:500; margin-top:4px; }
+.gm-homeplate { display:grid; place-content:center; flex:none; width:44px; height:48px; padding-bottom:6px; box-sizing:border-box; clip-path:polygon(0 0,100% 0,100% 65%,50% 100%,0 65%); background:#f3e9cf; color:#294c3f; font-size:13px; font-weight:750; letter-spacing:0; }
+.gm-scorecard dl { display:flex; gap:24px; margin:0; text-align:center; }
+.gm-scorecard dt { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#d6dfcb; }
+.gm-scorecard dd { margin:3px 0 0; font-size:23px; line-height:1.15; font-variant-numeric:tabular-nums; font-family:ui-monospace,monospace; }
+.gm-round-track { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); list-style:none; padding:0; margin:0 0 16px; border-bottom:1px solid var(--gm-line); }
+.gm-round-track li { display:flex; align-items:center; gap:10px; padding:13px 8px; font-size:13px; color:var(--gm-muted); border-bottom:3px solid transparent; }
+.gm-round-track li > span:first-child { display:grid; place-content:center; width:24px; height:24px; flex:none; border:1px solid #b7bfaf; border-radius:50%; font-size:12px; }
+.gm-round-track li small { display:block; font-size:11px; margin-top:2px; }
+.gm-round-track li[data-state=current] { color:#8b4233; border-bottom-color:#a44f38; background:#f7ecd9; font-weight:650; }
+.gm-round-track li[data-state=current] > span:first-child { background:#a44f38; border-color:#a44f38; color:#fff; }
+.gm-round-track li[data-state=complete] > span:first-child { background:#dce8d5; border-color:#77916f; color:#355e4c; }
+.gm-wire-controls { display:flex; flex-wrap:wrap; gap:6px; margin:4px 0; }
+.gm-wire-controls button { min-height:40px; padding:7px 12px; border:1px solid #bec9b6; border-radius:4px; background:#fffdf6; color:#355e4c; font-size:13px; cursor:pointer; }
+.gm-wire-controls button[aria-pressed=true] { background:#dce8d5; border-color:#77916f; }
+.gm-deal-tag { display:inline-block; margin-right:7px; font-size:10px; font-weight:700; letter-spacing:.04em; color:#355e4c; background:#e2ead9; padding:2px 5px; border-radius:2px; }
+.gm-market-feed li.gm-wire-win { background:#e5eedc; border-left:3px solid #5c7e50; padding:8px 10px; list-style:none; margin:6px 0 6px -20px; }
+.gm-market-reminder { font-size:13px; color:var(--gm-muted); margin-top:8px; }
+.gm-market-reminder summary { cursor:pointer; min-height:40px; align-content:center; }
+.gm-market-reminder p { line-height:1.6; max-width:80ch; margin:0 0 8px; }
+.gm-headline p.gm-result-kicker { font-size:11px; letter-spacing:.09em; color:#8b4233; font-weight:700; margin-bottom:6px; }
+@media (max-width:700px) {
+  .gm-scorecard { gap:12px; flex-wrap:wrap; padding:12px 14px; }
+  .gm-scorecard-club { flex:1 1 100%; }
+  .gm-scorecard dl { width:100%; justify-content:space-between; padding-left:56px; box-sizing:border-box; gap:14px; }
+  .gm-scorecard dd { font-size:21px; }
+  .gm-round-track li { flex-direction:column; gap:5px; padding:10px 3px; text-align:center; font-size:11px; }
+  .gm-round-track li small { font-size:10px; }
+  .gm-market-heading .gm-sim { width:100%; }
+}
 .gm-market-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; }
 .gm-market-heading h2 { font-size:21px; margin:0 0 6px; }
 .gm-market-heading p { margin:0; max-width:65ch; font-size:14px; line-height:1.5; }
@@ -82,6 +114,7 @@
 .gm-offer button:hover, .gm-propose button:hover { background: #dce7d5; }
 .gm-offer small { display: block; white-space: normal; margin-top: 6px; font-size: 13px; }
 .gm-offer small.gm-bad { color: #93412f; } .gm-offer small.gm-good { color: var(--gm-green); }
+.gm-offer small.gm-draft-note { color:#8b4233; border-left:2px solid #b16a48; padding-left:7px; }
 .gm-empty { color: var(--gm-muted); padding: 20px; line-height: 1.5; }
 .gm-trade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .gm-side { min-width: 0; border: 1px solid #c9d2c5; border-top: 3px solid #6d8977; border-radius: 6px; background: #fffdf6; padding: 16px; }

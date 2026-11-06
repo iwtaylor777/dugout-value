@@ -54,6 +54,34 @@ test('a strong offer can land a contested player and rivals cannot exceed ceilin
   assert.ok(restored.moves, restored.reason);
 });
 
+test('a strong opening bid can win below rival ceilings, without an automatic exact-price counter', () => {
+  const start = game(), skubal = row('Tarik Skubal');
+  const total = Math.ceil(g.askFor(skubal, start.seed).total * 1.15 * 10) / 10;
+  const rivals = m.marketBoard(ctx, start).find(p => p.pid === skubal.id).rivals;
+  assert.ok(rivals.some(r => r.ceiling > total));
+  const submitted = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total }).moves;
+  const result = m.advanceMarket(ctx, submitted);
+  assert.ok(result.moves.signings.some(s => s.pid === skubal.id), result.news.join(' '));
+});
+
+test('rivals counter other rivals, but raises are bounded and invalid human bids do not move prices', () => {
+  const start = game(), board = m.marketBoard(ctx, start), result = m.advanceMarket(ctx, start);
+  let raises = 0;
+  for (const signing of result.moves.market.deals) {
+    const initial = board.find(p => p.pid === signing.pid).rivals.find(r => r.team === signing.team);
+    assert.ok(signing.total <= initial.total * 1.06 + .051);
+    assert.ok(signing.total <= initial.ceiling);
+    if (signing.total > initial.total) raises++;
+  }
+  assert.ok(raises > 0, 'clubs compete without a human bidder');
+  const skubal = row('Tarik Skubal');
+  const invalid = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 8 }).moves;
+  assert.deepEqual(m.advanceMarket(ctx, invalid).moves.market.deals, result.moves.market.deals);
+  const unaffordable = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 700 }).moves;
+  unaffordable.budget = 60;
+  assert.deepEqual(m.advanceMarket(ctx, unaffordable).moves.market.deals, result.moves.market.deals);
+});
+
 test('weak bids lose to actual rival offers and signed players leave the market', () => {
   const start = game(), skubal = row('Tarik Skubal');
   const submitted = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 8 }).moves;
