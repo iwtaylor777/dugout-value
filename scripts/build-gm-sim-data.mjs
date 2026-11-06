@@ -36,6 +36,7 @@ for (const p of db.players) {
     v20: round(value(20).total), v10: round(base.total), v05: round(value(5).total),
     // Last season of club control (contract or arbitration, excluding player options) and projected 2027 WAR.
     ctl: base.clubControlThrough ?? base.controlThrough ?? null, w27: round(w27),
+    ...(p.kind === 'mlb' ? { contract: base.rows.filter(s => s.year >= 2027 && !s.excluded).map(s => ({ year: s.year, salary: Math.round(s.salary * 100) / 100, type: q.seasons.find(y => y.year === s.year)?.contractType ?? q.seasons.find(y => y.year === s.year)?.salaryMode ?? 'estimate' })) } : {}),
     ...(p.tradeProtection && p.tradeProtection !== 'none' ? { prot: p.tradeProtection } : {}),
   };
 }

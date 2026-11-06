@@ -154,6 +154,8 @@ test('closing the market records late signings, honors budgets, and replays via 
   assert.match(news.join(' '), /Late signing/);
   assert.equal(new Set(current.market.deals.map(d => d.pid)).size, current.market.deals.length);
   const after = g.buildLeague(ctx, current);
+  assert.equal(after.freeAgents.size, 0, 'the normal market clears instead of stranding affordable players');
+  assert.ok(current.market.deals.some(d => d.closeout && d.total < g.askFor(ctx.tracker.players.find(r => r.id === d.pid), start.seed).total));
   for (const team of Object.keys(ctx.sim.teams).filter(t => t !== start.team)) {
     assert.ok(g.payrollFor(ctx, after, team) <= Math.max(g.payrollFor(ctx, before, team), ctx.sim.teams[team].cbt2026 * 1.02) + 1e-7, team);
   }
@@ -164,6 +166,19 @@ test('closing the market records late signings, honors budgets, and replays via 
   assert.deepEqual(restored.moves, current);
   assert.deepEqual(m.standingPatMarket(ctx, start), current);
   assert.deepEqual(m.advanceMarket(ctx, current).moves, current);
+});
+
+test('a below-ask final offer can win the closeout and survives save/restore', () => {
+  const start = game(), player = row('Sonny Gray'), ask = g.askFor(player, start.seed);
+  const bid = { pid: player.id, years: 1, total: Math.round((ask.total - .1) * 10) / 10 };
+  assert.equal(g.respondToOffer(player, bid, start.seed).accepted, false);
+  let current = m.submitMarketBid(ctx, start, bid).moves;
+  for (let i = 0; i < 3; i++) current = m.advanceMarket(ctx, current).moves;
+  const signing = current.signings.find(s => s.pid === player.id);
+  assert.ok(signing, 'a final offer just below the old ask beats the discounted rival market');
+  assert.equal(signing.closeout, true);
+  assert.ok(g.restoreMoves(ctx, current).moves);
+  assert.equal([...current.signings, ...current.market.deals].filter(s => s.pid === player.id).length, 1);
 });
 
 test('malformed market saves and duplicate commitments are rejected', () => {

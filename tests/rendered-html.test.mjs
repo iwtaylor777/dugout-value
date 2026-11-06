@@ -219,7 +219,7 @@ test("GM mode renders setup, offseason tabs and the simulate button", async () =
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /<h1>GM mode<\/h1>/);
-  assert.match(html, /2027 budget \(luxury-tax payroll\)/);
+  assert.match(html, /2027 budget \(payroll \+ trade cash\)/);
   assert.match(html, /Free agents/);
   assert.match(html, /Finish offseason · simulate 2027/);
   assert.match(html, /Most WAR added/);

@@ -139,6 +139,14 @@
 .gm-trade-review { margin: 16px 0; padding: 14px; border: 1px solid var(--gm-line); border-radius: 6px; }
 .gm-trade-review summary { cursor: pointer; font-weight: 700; }
 .gm-trade-review li { margin: 12px 0; font-size: 14px; }
+.gm-contract-line, .gm-contract-detail { flex: 1 1 100%; font-size: 12px; line-height: 1.6; color: var(--gm-muted); }
+.gm-contract-detail summary { cursor: pointer; color: var(--gm-green); }
+.gm-contract-detail ul { padding-left: 16px; }
+.gm-contract-detail ul li { display: list-item; border: 0; padding: 2px 0; }
+.gm-contract-detail p { margin: 8px 0; }
+.gm-trade-cash { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 12px 20px; padding: 14px; background: #edf1e5; border: 1px solid #c9d2c5; border-radius: 6px; }
+.gm-trade-cash .gm-field { flex: 1 1 160px; min-width: 0; }
+.gm-trade-cash p { flex: 1 1 100%; font-size: 12px; line-height: 1.6; }
 .gm-picked { list-style: none; padding: 0; margin: 0 0 12px; font-size: 14px; }
 .gm-picked li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 6px 0; border-bottom: 1px solid #e4dece; }
 .gm-picked b { font-weight: 600; color: var(--gm-green); margin-left: auto; font-variant-numeric: tabular-nums; }

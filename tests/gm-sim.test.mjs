@@ -9,6 +9,45 @@ const id = n => Object.entries(ctx.sim.players).find(([, v]) => v.n === n)[0];
 const fa = n => ctx.tracker.players.find(r => r.name === n);
 const base = { team: 'BOS', seed: 42, signings: [], trades: [] };
 
+test('trade cash changes both budgets and trade value, survives sharing, and reverses on undo', () => {
+  const before = g.buildLeague(ctx, base);
+  const trade = { partner: 'BAL', give: [id('Trevor Story')], get: [], cash: 30 };
+  const noCash = { ...base, trades: [{ ...trade, cash: 0 }] };
+  const moves = { ...base, trades: [trade] }, after = g.buildLeague(ctx, moves), without = g.buildLeague(ctx, noCash);
+  assert.ok(Math.abs(g.payrollFor(ctx, after, 'BOS') - g.payrollFor(ctx, without, 'BOS') - 30) < 1e-8);
+  assert.ok(Math.abs(g.payrollFor(ctx, after, 'BAL') - g.payrollFor(ctx, without, 'BAL') + 30) < 1e-8);
+  assert.equal(g.movesValue(ctx, moves).trades, g.movesValue(ctx, noCash).trades - 30);
+  const modes = g.teamModes(ctx, before.teamOf);
+  assert.equal(g.respondToTrade(ctx, before, base, 400, { ...trade, cash: 0 }, modes).accepted, false);
+  assert.equal(g.respondToTrade(ctx, before, base, 400, trade, modes).accepted, true);
+  const restored = g.restoreMoves(ctx, g.decodeMoves(g.encodeMoves(moves)));
+  assert.ok(restored.moves, restored.reason);
+  assert.equal(restored.moves.trades[0].cash, 30);
+  const undone = g.undoMove(ctx, restored.moves, 'trade', 0).moves;
+  assert.equal(g.payrollFor(ctx, g.buildLeague(ctx, undone), 'BOS'), g.payrollFor(ctx, before, 'BOS'));
+  for (const cash of [NaN, Infinity, 101, -101, '20']) {
+    assert.equal(g.respondToTrade(ctx, before, base, 400, { ...trade, cash }, modes).accepted, false);
+    if (typeof cash === 'string' || Number.isFinite(cash)) assert.equal(g.decodeMoves(g.encodeMoves({ ...base, trades: [{ ...trade, cash }] })), null);
+  }
+  const received = { ...base, trades: [{ partner: 'BAL', give: [id('Roman Anthony')], get: [], cash: -10 }] };
+  assert.equal(g.restoreMoves(ctx, received).moves.trades[0].cash, -10);
+  assert.ok(Math.abs(g.payrollFor(ctx, g.buildLeague(ctx, received), 'BOS') - g.payrollFor(ctx, g.buildLeague(ctx, { ...base, trades: [{ ...received.trades[0], cash: 0 }] }), 'BOS') + 10) < 1e-8);
+});
+
+test('contract display separates annual salary, CBT budget charge, estimates and options', () => {
+  const league = g.buildLeague(ctx, base), story = g.playerContract(ctx, league, id('Trevor Story'));
+  assert.equal(story.salary, 25);
+  assert.equal(story.hit, 23.33);
+  assert.equal(story.seasons.find(s => s.year === 2028).type, 'clubOption');
+  const anthony = g.playerContract(ctx, league, id('Roman Anthony'));
+  assert.equal(anthony.hit, 16.25);
+  assert.equal(anthony.salary, 4.63);
+  assert.ok(g.playerContract(ctx, league, id('Gunnar Henderson')).seasons.every(s => s.type.startsWith('arb')));
+  const prospect = g.playerContract(ctx, league, id('Franklin Arias'));
+  assert.equal(prospect.prospect, true);
+  assert.equal(prospect.hit, 0);
+});
+
 test('data covers 30 teams in six divisions and every depth-chart player', () => {
   assert.equal(Object.keys(ctx.sim.teams).length, 30);
   assert.equal(new Set(Object.values(ctx.sim.teams).map(t => t.division)).size, 6);

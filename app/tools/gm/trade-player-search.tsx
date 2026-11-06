@@ -2,7 +2,7 @@
 import { useId, useRef, useState } from "react";
 import { matchesTradePlayer } from "../../../lib/gm-trade-search.mjs";
 
-type Choice = { pid: string; name: string; position: string; unavailable: string };
+type Choice = { pid: string; name: string; position: string; unavailable: string; contract?: string };
 
 export function TradePlayerSearch({ label, query, onQuery, choices, onAdd }: {
   label: string; query: string; onQuery: (query: string) => void;
@@ -43,7 +43,7 @@ export function TradePlayerSearch({ label, query, onQuery, choices, onAdd }: {
       <ul id={`${id}-options`} role="listbox" aria-label={`${label} matches`}>
         {shown.map((choice, i) => <li key={choice.pid} id={`${id}-${choice.pid}`} role="option" aria-selected={active === i} aria-disabled={!!choice.unavailable}
           onMouseDown={e => e.preventDefault()} onMouseEnter={() => setActive(i)} onClick={() => add(choice)}>
-          <strong>{choice.name}</strong><span>{choice.position}{choice.unavailable ? ` · ${choice.unavailable}` : ""}</span>
+          <strong>{choice.name}</strong><span>{choice.position}{choice.unavailable ? ` · ${choice.unavailable}` : ""}</span>{choice.contract && <span>{choice.contract}</span>}
         </li>)}
       </ul>
       <p role="status">{!matches.length ? "No matching players on this roster." : matches.length > shown.length ? `Showing ${shown.length} of ${matches.length}. Keep typing to narrow the list.` : `${matches.length} ${matches.length === 1 ? "match" : "matches"}. Select a player to add him.`}</p>

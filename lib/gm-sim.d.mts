@@ -1,5 +1,6 @@
 import type { DepthEntry } from "./depth-chart.mjs";
-export type GmPlayerValue = { n: string; t: string; k: "m" | "p"; pos: string; age: number; v20: number; v10: number; v05: number; ctl: number | null; w27: number; prot?: string };
+export type GmContractYear = { year: number; salary: number; type: string };
+export type GmPlayerValue = { n: string; t: string; k: "m" | "p"; pos: string; age: number; v20: number; v10: number; v05: number; ctl: number | null; w27: number; prot?: string; contract?: GmContractYear[] };
 export type GmTeam = { name: string; league: "AL" | "NL"; division: string; cbt2026: number; cbt2027: number };
 export type GmSimData = { meta: { built: string; projections: string }; teams: Record<string, GmTeam>; players: Record<string, GmPlayerValue> };
 export type TrackerRow = { id: string; name: string; pos: string; team: string | null; age: number; years?: number | null; total?: number | null; aav?: number | null; market: string; war2027?: number | null; basis: string };
@@ -10,11 +11,12 @@ export type GmContext = {
   sim: GmSimData;
   payroll: { teams: Record<string, { cbt2026: number; cbt2027: number; guaranteedAav2027: number; arb2027: number }>; thresholdMusd2026: number };
 };
-export type GmSigning = { pid: string; years: number; total: number };
-export type GmTrade = { partner: string; give: string[]; get: string[] };
+export type GmSigning = { pid: string; years: number; total: number; closeout?: boolean };
+export type GmTrade = { partner: string; give: string[]; get: string[]; cash?: number };
 export type GmMarket = { round: number; bids: GmSigning[]; deals: (GmSigning & { team: string; round: number })[]; offers: (GmSigning & { team: string })[] };
 export type GmMoves = { team: string; budget?: number | null; seed: number; signings: GmSigning[]; trades: GmTrade[]; market?: GmMarket };
-export type GmLeague = { base: Map<string, string | null>; teamOf: Map<string, string | null>; freeAgents: Set<string>; userAav: Map<string, number>; owner: Map<string, string | null>; extraAav?: Map<string, number> };
+export type GmLeague = { base: Map<string, string | null>; teamOf: Map<string, string | null>; freeAgents: Set<string>; userAav: Map<string, number>; owner: Map<string, string | null>; extraAav?: Map<string, number>; cash?: Map<string, number> };
+export function playerContract(ctx: GmContext, league: GmLeague, pid: string): { hit: number; salary: number | null; seasons: GmContractYear[]; controlThrough: number | null; prospect: boolean };
 export type GmAnswer = { accepted: boolean; reason: string; received?: number; need?: number; warLoss?: number };
 export type GmTeamResult = { mean: number; p10: number; p50: number; p90: number; division: number; playoffs: number; pennant: number; title: number };
 export function rng(seed: number): () => number;
