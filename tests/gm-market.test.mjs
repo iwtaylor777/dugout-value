@@ -1,0 +1,133 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import fs from 'node:fs';
+import * as g from '../lib/gm-sim.mjs';
+import * as m from '../lib/gm-market.mjs';
+import { allocate } from '../lib/depth-chart.mjs';
+const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
+const ctx = { players: read('../app/data/depth-chart.json').players, tracker: read('../app/data/free-agent-tracker.json'), signings: read('../app/data/free-agent-signings.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
+const game = () => ({ team: 'BOS', seed: 42, budget: 400, signings: [], trades: [], market: m.newMarket() });
+const row = name => ctx.tracker.players.find(p => p.name === name);
+
+test('rival bids are seeded, affordable, and reserve one target per club', () => {
+  const start = game(), league = g.buildLeague(ctx, start), board = m.marketBoard(ctx, start);
+  assert.deepEqual(m.marketBoard(ctx, start), board);
+  const offers = board.flatMap(p => p.rivals);
+  assert.ok(offers.length > 10);
+  assert.equal(new Set(offers.map(o => o.team)).size, offers.length);
+  for (const offer of offers) {
+    assert.notEqual(offer.team, start.team);
+    assert.ok(offer.total <= offer.ceiling);
+    assert.ok(offer.gain >= .3);
+    assert.ok(offer.ceiling / offer.years + g.payrollFor(ctx, league, offer.team) <= ctx.sim.teams[offer.team].cbt2026 * 1.02 + 1e-8);
+  }
+});
+
+test('pending bids reserve payroll together; revisions replace rather than duplicate', () => {
+  let start = game();
+  start.budget = g.payrollFor(ctx, g.buildLeague(ctx, start), start.team) + 50;
+  const skubal = row('Tarik Skubal'), jazz = row('Jazz Chisholm Jr.');
+  let answer = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 450 });
+  assert.equal(answer.accepted, true);
+  start = answer.moves;
+  assert.equal(start.signings.length, 0, 'submission is not an instant signing');
+  answer = m.submitMarketBid(ctx, start, { pid: jazz.id, years: 4, total: 80 });
+  assert.equal(answer.accepted, false);
+  assert.match(answer.reason, /reserve/);
+  answer = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 400 });
+  assert.equal(answer.moves.market.bids.length, 1);
+  assert.equal(answer.moves.market.bids[0].total, 400);
+  assert.equal(m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10.5, total: 400 }).accepted, false);
+  assert.equal(m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: NaN }).accepted, false);
+});
+
+test('a strong offer can land a contested player and rivals cannot exceed ceilings', () => {
+  const start = game(), skubal = row('Tarik Skubal');
+  const submitted = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 700 }).moves;
+  const result = m.advanceMarket(ctx, submitted);
+  assert.ok(result.moves.signings.some(s => s.pid === skubal.id));
+  assert.ok(!result.moves.market.deals.some(s => s.pid === skubal.id));
+  assert.ok(!result.moves.market.bids.some(s => s.pid === skubal.id));
+  assert.match(result.news.join(' '), /You got him/);
+  assert.deepEqual(m.advanceMarket(ctx, submitted), result);
+  const restored = g.restoreMoves(ctx, result.moves);
+  assert.ok(restored.moves, restored.reason);
+});
+
+test('weak bids lose to actual rival offers and signed players leave the market', () => {
+  const start = game(), skubal = row('Tarik Skubal');
+  const submitted = m.submitMarketBid(ctx, start, { pid: skubal.id, years: 10, total: 8 }).moves;
+  const result = m.advanceMarket(ctx, submitted);
+  const signing = result.moves.market.deals.find(s => s.pid === skubal.id);
+  assert.ok(signing);
+  const board = m.marketBoard(ctx, start).find(p => p.pid === skubal.id);
+  assert.ok(signing.total <= board.rivals.find(r => r.team === signing.team).ceiling);
+  const league = g.buildLeague(ctx, result.moves);
+  assert.equal(league.owner.get(skubal.id), signing.team);
+  assert.equal(ctx.players.filter(p => p.pid === skubal.id).some(p => league.freeAgents.has(p.i)), false);
+  assert.equal(m.submitMarketBid(ctx, result.moves, { pid: skubal.id, years: 10, total: 700 }).accepted, false);
+});
+
+test('counteroffers carry into the next round and survive saved-game replay', () => {
+  const start = game(), player = row('Seiya Suzuki');
+  const submitted = m.submitMarketBid(ctx, start, { pid: player.id, years: 3, total: 70 }).moves;
+  const next = m.advanceMarket(ctx, submitted).moves;
+  assert.ok(next.market.offers.length > 0);
+  const board = m.marketBoard(ctx, next);
+  let retained = 0;
+  for (const entry of board) for (const rival of entry.rivals) {
+    const previous = next.market.offers.find(o => o.pid === entry.pid && o.team === rival.team);
+    if (previous && previous.total <= rival.ceiling) { retained++; assert.ok(rival.total >= previous.total); }
+  }
+  assert.ok(retained > 0);
+  const restored = g.restoreMoves(ctx, g.decodeMoves(g.encodeMoves(next)));
+  assert.ok(restored.moves, restored.reason);
+  assert.deepEqual(m.marketBoard(ctx, restored.moves), board);
+});
+
+test('closing the market records late signings, honors budgets, and replays via a share link', () => {
+  const start = game(), before = g.buildLeague(ctx, start);
+  let current = start, news = [];
+  for (let i = 0; i < 3; i++) { const result = m.advanceMarket(ctx, current); current = result.moves; news = result.news; }
+  assert.equal(current.market.round, 3);
+  assert.equal(current.market.bids.length, 0);
+  assert.ok(current.market.deals.length > 20);
+  assert.match(news.join(' '), /Late signing/);
+  assert.equal(new Set(current.market.deals.map(d => d.pid)).size, current.market.deals.length);
+  const after = g.buildLeague(ctx, current);
+  for (const team of Object.keys(ctx.sim.teams).filter(t => t !== start.team)) {
+    assert.ok(g.payrollFor(ctx, after, team) <= Math.max(g.payrollFor(ctx, before, team), ctx.sim.teams[team].cbt2026 * 1.02) + 1e-7, team);
+  }
+  const decoded = g.decodeMoves(g.encodeMoves(current));
+  assert.deepEqual(decoded, current);
+  const restored = g.restoreMoves(ctx, decoded);
+  assert.ok(restored.moves, restored.reason);
+  assert.deepEqual(restored.moves, current);
+  assert.deepEqual(m.standingPatMarket(ctx, start), current);
+  assert.deepEqual(m.advanceMarket(ctx, current).moves, current);
+});
+
+test('malformed market saves and duplicate commitments are rejected', () => {
+  const start = game();
+  assert.equal(g.decodeMoves(g.encodeMoves({ ...start, market: { ...start.market, round: 4 } })), null);
+  const bid = { pid: row('Tarik Skubal').id, years: 10, total: 450 };
+  assert.equal(g.decodeMoves(g.encodeMoves({ ...start, market: { ...start.market, bids: [bid, bid] } })), null);
+  assert.equal(g.decodeMoves(g.encodeMoves({ ...start, market: { round: 1, bids: [], deals: [{ ...bid, team: 'BOS', round: 1 }] } })), null);
+  assert.equal(g.decodeMoves(g.encodeMoves({ ...start, market: { round: 3, bids: [bid], deals: [] } })), null);
+});
+
+test('late signings cannot bypass a competitive club’s need-based spending limit', () => {
+  const start = game(), league = g.buildLeague(ctx, start), modes = g.teamModes(ctx, league.teamOf);
+  const cleanup = g.aiFreeAgency(ctx, league, start, start.seed);
+  const replay = game();
+  for (const deal of cleanup.signings) {
+    const before = g.buildLeague(ctx, replay), player = ctx.tracker.players.find(r => r.id === deal.pid);
+    const roster = g.rosterOf(ctx, before.teamOf, deal.team);
+    const gain = allocate([...roster, ...ctx.players.filter(p => p.pid === deal.pid)]).total - allocate(roster).total;
+    const rate = modes[deal.team] === 'contend' ? 14 : 11;
+    const taste = .94 + .12 * g.hash(`${start.seed}:${deal.pid}:${deal.team}:taste`) / 0xffffffff;
+    const ceiling = Math.min(player.aav * 1.35, (gain * rate + 5) * taste);
+    assert.ok(deal.total / deal.years <= ceiling + 1e-8, player.name);
+    replay.market.deals.push({ ...deal, round: 3 });
+  }
+});

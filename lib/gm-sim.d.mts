@@ -12,7 +12,8 @@ export type GmContext = {
 };
 export type GmSigning = { pid: string; years: number; total: number };
 export type GmTrade = { partner: string; give: string[]; get: string[] };
-export type GmMoves = { team: string; budget?: number | null; seed: number; signings: GmSigning[]; trades: GmTrade[] };
+export type GmMarket = { round: number; bids: GmSigning[]; deals: (GmSigning & { team: string; round: number })[]; offers: (GmSigning & { team: string })[] };
+export type GmMoves = { team: string; budget?: number | null; seed: number; signings: GmSigning[]; trades: GmTrade[]; market?: GmMarket };
 export type GmLeague = { base: Map<string, string | null>; teamOf: Map<string, string | null>; freeAgents: Set<string>; userAav: Map<string, number>; owner: Map<string, string | null>; extraAav?: Map<string, number> };
 export type GmAnswer = { accepted: boolean; reason: string; received?: number; need?: number; warLoss?: number };
 export type GmTeamResult = { mean: number; p10: number; p50: number; p90: number; division: number; playoffs: number; pennant: number; title: number };

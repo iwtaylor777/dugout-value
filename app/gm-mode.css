@@ -2,6 +2,21 @@
 .gm { --gm-ink: #17384b; --gm-muted: #536067; --gm-line: #d5cdbd; --gm-green: #355e4c; margin: 0 0 30px; color: var(--gm-ink); }
 .gm-intro h1 { font-weight: 400; }
 .gm-controls { min-width: 0; margin: 0; padding: 0; border: 0; }
+.gm-market-mode { display:flex; flex-wrap:wrap; align-items:end; gap:12px 24px; margin-bottom:20px; }
+.gm-market-mode .gm-field { width:250px; max-width:100%; }
+.gm-market-mode p { flex:1 1 280px; margin:0 0 4px; font-size:14px; line-height:1.5; color:var(--gm-muted); max-width:65ch; }
+.gm-market-desk { padding:16px; margin:16px 0; border:1px solid #c3cebc; border-top:3px solid var(--gm-green); border-radius:5px; background:#f4f5e9; }
+.gm-market-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; }
+.gm-market-heading h2 { font-size:21px; margin:0 0 6px; }
+.gm-market-heading p { margin:0; max-width:65ch; font-size:14px; line-height:1.5; }
+.gm-market-bids { list-style:none; padding:0; margin:12px 0; }
+.gm-market-bids li { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; border-top:1px solid var(--gm-line); padding:8px 0; font-size:14px; }
+.gm-market-feed summary, .gm-player-market summary { cursor:pointer; min-height:44px; align-content:center; font-weight:600; color:var(--gm-green); }
+.gm-market-feed ul { max-height:260px; overflow:auto; padding-left:22px; font-size:14px; line-height:1.6; }
+.gm-market-feed li { padding:5px 0; }
+.gm-player-market { margin-top:8px; font-size:13px; font-weight:400; white-space:normal; }
+.gm-player-market p { margin:8px 0; line-height:1.5; }
+.gm-player-market ul { padding-left:16px; margin:8px 0; line-height:1.5; }
 .gm-setup { display: grid; grid-template-columns: minmax(190px, .8fr) minmax(240px, 1fr) minmax(0, 1.5fr); gap: 16px 24px; align-items: end; padding: 0 0 16px; border-bottom: 1px solid var(--gm-line); }
 .gm-field { min-width: 0; }
 .gm-field > span { display: block; font-size: 14px; font-weight: 600; color: var(--gm-muted); margin-bottom: 6px; }
