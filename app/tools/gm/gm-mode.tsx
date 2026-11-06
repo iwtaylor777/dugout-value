@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { TradePlayerSearch } from "./trade-player-search";
 import depth from "../../data/depth-chart.json";
 import tracker from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
@@ -119,7 +120,7 @@ export function GmMode() {
 
   const ownedBy = (abbr: string) => Object.entries(V).filter(([pid]) => league.owner.get(pid) === abbr)
     .map(([pid, v]) => ({ pid, v }))
-    .sort((a, b) => b.v.v10 - a.v.v10);
+    .sort((a, b) => a.v.n.localeCompare(b.v.n));
   const partnerList = useMemo(() => (partner ? ownedBy(partner) : []), [partner, league]); // eslint-disable-line react-hooks/exhaustive-deps
   const yourList = useMemo(() => ownedBy(moves.team), [moves.team, league]); // eslint-disable-line react-hooks/exhaustive-deps
   const tradePayroll = useMemo(() => {
@@ -167,11 +168,8 @@ export function GmMode() {
   const propose = () => {
     const proposal = { partner, give, get };
     const ans = respondToTrade(ctx, league, moves, budget, proposal, modes);
-    const net = get.reduce((t, pid) => t + (V[pid]?.v10 ?? 0), 0) - give.reduce((t, pid) => t + (V[pid]?.v10 ?? 0), 0);
-    const balance = ans.accepted ? ` By our market values you ${net >= 0 ? "gained" : "gave up"} ${money(Math.abs(net))} of surplus value.` : "";
-    const detail = !ans.accepted && ans.need != null && ans.received != null ? ` Their valuation of your offer: ${money(ans.received)}; asking value including premiums: ${money(ans.need)}.` : "";
-    setTradeNote({ ok: ans.accepted, text: ans.reason + balance + detail });
-    if (ans.accepted) { update({ ...moves, trades: [...moves.trades, proposal] }); setGive([]); setGet([]); setFeedback({ tone: "success", text: `Trade completed with ${ctx.sim.teams[partner].name}. You acquired ${get.map(pid => V[pid]?.n).join(", ") || "salary relief"}.${balance}` }); }
+    setTradeNote({ ok: ans.accepted, text: ans.reason });
+    if (ans.accepted) { update({ ...moves, trades: [...moves.trades, proposal] }); setGive([]); setGet([]); setFeedback({ tone: "success", text: `Trade completed with ${ctx.sim.teams[partner].name}. You acquired ${get.map(pid => V[pid]?.n).join(", ") || "salary relief"}. See the value breakdown after simulating the season.` }); }
   };
   const withdrawBid = (pid: string) => {
     update({ ...moves, market: { ...moves.market!, bids: moves.market!.bids.filter(x => x.pid !== pid) } });
@@ -395,14 +393,14 @@ export function GmMode() {
         <div className="gm-panel" role="tabpanel" id="gm-panel-trade" aria-labelledby="gm-tab-trade">
           <div className="gm-filters">
             <label className="gm-field"><span>Trade partner</span>
-              <select value={partner} onChange={(e) => { setPartner(e.target.value); setGet([]); setTradeNote(null); }}>
+              <select value={partner} onChange={(e) => { setPartner(e.target.value); setGet([]); setGetQuery(""); setTradeNote(null); }}>
                 <option value="">Choose a team…</option>
                 {teams.filter(([t]) => t !== moves.team).map(([abbr, t]) => <option key={abbr} value={abbr}>{t.name}</option>)}
               </select>
             </label>
             {partner && <p className="gm-note">{ctx.sim.teams[partner].name}: {modes[partner] === "contend" ? "top 10 in current roster WAR; prioritizes 2027" : modes[partner] === "rebuild" ? "bottom 10 in current roster WAR; prioritizes control years" : "middle third in current roster WAR"}.</p>}
           </div>
-          <p className="gm-note">Values are surplus value from our trade model (projected production minus salary). Teams need to come out ahead by their own measure and honor no-trade clauses. Stars with years of club control cost well beyond fair value, even from rebuilding teams; a star with a year or two left on a rebuilding team goes for about fair value. Contenders want MLB-ready help back for a regular, not just prospects.</p>
+          <p className="gm-note">Build an offer and hear what the other club thinks. Contenders want MLB-ready help; rebuilding clubs put more weight on the future. Stars with years of control are tough to pry loose. Exact model values stay hidden until your post-simulation review.</p>
           {partner ? (
             <div className="gm-trade">
               {[["You send", yourList, give, setGive], [`${ctx.sim.teams[partner].name} send`, partnerList, get, setGet]].map(([title, list, sel, set]) => {
@@ -410,13 +408,12 @@ export function GmMode() {
                 return (
                   <div key={title as string} className="gm-side">
                     <h3>{title as string}</h3>
-                    <ul className="gm-picked">{s.map((pid) => <li key={pid}>{V[pid]?.n} <b>{money(V[pid]?.v10 ?? 0)}</b> <button type="button" className="gm-link" aria-label={`Remove ${V[pid]?.n} from offer`} onClick={() => { st(s.filter((x) => x !== pid)); setTradeNote(null); }}>remove</button></li>)}{!s.length && <li className="gm-muted">Nobody yet</li>}</ul>
-                    <label className="gm-field"><span>Search {title === "You send" ? "your players" : "their players"}</span><input value={title === "You send" ? giveQuery : getQuery} onChange={e => title === "You send" ? setGiveQuery(e.target.value) : setGetQuery(e.target.value)} placeholder="Player or prospect name…" /></label>
-                    <select value="" onChange={(e) => { if (e.target.value) { st([...s, e.target.value]); setTradeNote(null); } }} aria-label={`Add to ${title as string}`}>
-                      <option value="">Add a player or prospect…</option>
-                      {l.filter((x) => !s.includes(x.pid) && x.v.n.toLowerCase().includes((title === "You send" ? giveQuery : getQuery).trim().toLowerCase())).map((x) => <option key={x.pid} value={x.pid} disabled={x.v.prot === "full" || league.userAav.has(x.pid) || league.extraAav?.has(x.pid)}>{x.v.n} · {x.v.k === "p" ? "prospect" : x.v.pos} · {money(x.v.v10)}{x.v.prot === "full" ? " · no-trade" : league.userAav.has(x.pid) || league.extraAav?.has(x.pid) ? " · just signed" : ""}</option>)}
-                    </select>
-                    <p className="gm-trade-summary">{s.length} players · {signedMoney(s.reduce((sum, pid) => sum + (V[pid]?.v10 ?? 0), 0))} market surplus</p>
+                    <ul className="gm-picked">{s.map((pid) => <li key={pid}>{V[pid]?.n} <small>{V[pid]?.k === "p" ? "prospect" : V[pid]?.pos}</small> <button type="button" className="gm-link" aria-label={`Remove ${V[pid]?.n} from offer`} onClick={() => { st(s.filter((x) => x !== pid)); setTradeNote(null); }}>remove</button></li>)}{!s.length && <li className="gm-muted">Nobody yet</li>}</ul>
+                    <TradePlayerSearch key={`${moves.team}-${partner}-${title}`} label={`Search ${title === "You send" ? "your players" : "their players"}`}
+                      query={title === "You send" ? giveQuery : getQuery} onQuery={title === "You send" ? setGiveQuery : setGetQuery}
+                      choices={l.filter(x => !s.includes(x.pid)).map(x => ({ pid: x.pid, name: x.v.n, position: x.v.k === "p" ? "prospect" : x.v.pos, unavailable: x.v.prot === "full" ? "no-trade clause" : league.userAav.has(x.pid) || league.extraAav?.has(x.pid) ? "just signed" : "" }))}
+                      onAdd={pid => { st([...s, pid]); setTradeNote(null); }} />
+                    <p className="gm-trade-summary">{s.length} {s.length === 1 ? "player" : "players"} in this side of the offer</p>
                   </div>
                 );
               })}
@@ -485,6 +482,10 @@ export function GmMode() {
             <p><strong>{results.war.toFixed(1)}</strong><span>projected WAR ({signedWins(results.war - results.baseWar)} vs standing pat)</span></p>
           </div>
           <p className="gm-note">This game score combines projected wins gained with model value at $25M per win. It is not an evaluation of a real front office. “Standing pat” means you make no moves while the other 29 teams still sign free agents. Odds describe this simplified simulation, not a calibrated forecast.</p>
+          {moves.trades.length > 0 && <details className="gm-trade-review"><summary>Trade value review</summary><p className="gm-note">Model surplus value is projected production minus salary, not a real club’s asking price.</p><ul>{moves.trades.map((trade, i) => {
+            const sent = trade.give.reduce((sum, pid) => sum + (V[pid]?.v10 ?? 0), 0), received = trade.get.reduce((sum, pid) => sum + (V[pid]?.v10 ?? 0), 0);
+            return <li key={i}><strong>Trade with {ctx.sim.teams[trade.partner].name}</strong><p>Sent: {trade.give.map(pid => V[pid]?.n).join(", ") || "no players"} ({money(sent)}). Received: {trade.get.map(pid => V[pid]?.n).join(", ") || "no players"} ({money(received)}). Net model value: {signedMoney(received - sent)}.</p></li>;
+          })}</ul></details>}
           <div className="gm-two">
             <div>
               <h3>Your division</h3>

@@ -126,6 +126,19 @@
 .gm-side:nth-child(2) { border-color: #c6d2d8; border-top-color: #688393; }
 .gm-side h3 { margin: 0 0 12px; font-size: 17px; }
 .gm-side > .gm-field { display: block; margin-bottom: 10px; }
+.gm-player-search { position: relative; }
+.gm-player-search .gm-field { display: block; }
+.gm-player-search input { width: 100%; }
+.gm-search-popover { position: absolute; z-index: 5; top: 100%; left: 0; right: 0; background: #fffdf6; border: 1px solid #a9b9a9; border-radius: 0 0 6px 6px; box-shadow: 0 8px 18px #263d2920; }
+.gm-search-popover ul { list-style: none; padding: 4px; margin: 0; max-height: 300px; overflow-y: auto; }
+.gm-search-popover li { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; min-height: 44px; font-size: 14px; cursor: pointer; border-radius: 3px; }
+.gm-search-popover li[aria-selected="true"] { background: #e6eddf; outline: 1px solid #a9b9a9; }
+.gm-search-popover li[aria-disabled="true"] { color: #77766c; cursor: not-allowed; }
+.gm-search-popover li span { font-size: 12px; color: var(--gm-muted); }
+.gm-search-popover p { font-size: 12px; line-height: 1.5; margin: 0; padding: 8px 12px; border-top: 1px solid var(--gm-line); }
+.gm-trade-review { margin: 16px 0; padding: 14px; border: 1px solid var(--gm-line); border-radius: 6px; }
+.gm-trade-review summary { cursor: pointer; font-weight: 700; }
+.gm-trade-review li { margin: 12px 0; font-size: 14px; }
 .gm-picked { list-style: none; padding: 0; margin: 0 0 12px; font-size: 14px; }
 .gm-picked li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 6px 0; border-bottom: 1px solid #e4dece; }
 .gm-picked b { font-weight: 600; color: var(--gm-green); margin-left: auto; font-variant-numeric: tabular-nums; }
