@@ -490,7 +490,7 @@ export function GmMode() {
           </table>
           <div className="gm-ledger">
             <p><strong>{money(results.payroll)}</strong><span>2027 payroll + net trade cash, {results.payroll > budget ? `${money(results.payroll - budget)} over` : `${money(budget - results.payroll)} under`} budget</span></p>
-            <p><strong>{signedMoney(results.value.total)}</strong><span>net model value: trades {signedMoney(results.value.trades)}, contracts vs our estimates {signedMoney(results.value.signings)}</span></p>
+            <p><strong>{signedMoney(results.value.total)}</strong><span>net model value: trades {signedMoney(results.value.trades)}, contracts vs term-adjusted estimates {signedMoney(results.value.signings)}</span></p>
             <p><strong>{results.war.toFixed(1)}</strong><span>projected WAR ({signedWins(results.war - results.baseWar)} vs standing pat)</span></p>
           </div>
           <p className="gm-note">This game score combines projected wins gained with model value at $25M per win. It is not an evaluation of a real front office. “Standing pat” means you make no moves while the other 29 teams still sign free agents. Odds describe this simplified simulation, not a calibrated forecast.</p>

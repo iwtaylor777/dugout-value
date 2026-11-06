@@ -9,6 +9,34 @@ const id = n => Object.entries(ctx.sim.players).find(([, v]) => v.n === n)[0];
 const fa = n => ctx.tracker.players.find(r => r.name === n);
 const base = { team: 'BOS', seed: 42, signings: [], trades: [] };
 
+test('short FA contracts are graded against matching years, not the full long-term estimate', () => {
+  const row = fa('Tarik Skubal');
+  const value = (years, total) => g.movesValue(ctx, { ...base, signings: [{ pid: row.id, years, total }] }).signings;
+  assert.ok(Math.abs(value(1, 30) - (row.total / row.years - 30)) < 1e-8);
+  assert.equal(value(row.years, row.total), 0);
+  assert.ok(value(row.years + 1, row.total + 20) < 0, 'an extra year is not free surplus');
+});
+
+test('cash cannot buy premium talent with no players or a token return', () => {
+  const moves = { ...base, budget: 480, market: { round: 0, bids: [], deals: [], offers: [] } };
+  const league = g.buildLeague(ctx, moves), modes = g.teamModes(ctx, league.teamOf);
+  const proposal = { partner: 'ATH', give: [], get: [id('Jacob Wilson')], cash: 100 };
+  assert.match(g.respondToTrade(ctx, league, moves, 480, proposal, modes).reason, /meaningful player return/);
+  assert.equal(g.restoreMoves(ctx, { ...moves, trades: [proposal] }).moves, null, 'saved games cannot bypass the cash rule');
+  const token = Object.entries(ctx.sim.players).find(([pid, p]) => league.owner.get(pid) === 'BOS' && p.v05 > 0 && p.v05 < 2 && p.prot !== 'full')[0];
+  assert.match(g.respondToTrade(ctx, league, moves, 480, { ...proposal, give: [token] }, modes).reason, /meaningful player return/);
+  assert.equal(g.respondToTrade(ctx, league, moves, 480, { partner: 'BAL', give: [], get: [], cash: -1 }, modes).accepted, false);
+});
+
+test('small cash withdrawals cannot repeatedly bypass a rival budget', () => {
+  const league = g.buildLeague(ctx, base), pay = g.payrollFor(ctx, league, 'BAL');
+  const tight = { ...ctx, sim: { ...ctx.sim, teams: { ...ctx.sim.teams, BAL: { ...ctx.sim.teams.BAL, cbt2026: pay / 1.02 } } } };
+  const trade = { partner: 'BAL', give: [id('Roman Anthony')], get: [], cash: 16.15 };
+  const answer = g.respondToTrade(tight, league, base, 480, trade, g.teamModes(ctx, league.teamOf));
+  assert.equal(answer.accepted, false);
+  assert.match(answer.reason, /salary/);
+});
+
 test('trade cash changes both budgets and trade value, survives sharing, and reverses on undo', () => {
   const before = g.buildLeague(ctx, base);
   const trade = { partner: 'BAL', give: [id('Trevor Story')], get: [], cash: 30 };

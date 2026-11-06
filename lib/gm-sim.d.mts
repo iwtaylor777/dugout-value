@@ -23,6 +23,7 @@ export function rng(seed: number): () => number;
 export function hash(text: string): number;
 export function normal(rand: () => number): number;
 export function askMultiplier(seed: number, pid: string): number;
+export function closeoutMinimumAav(row: TrackerRow, years: number, seed: number): number;
 export function askFor(fa: TrackerRow | undefined, seed: number): { total: number; minYears: number; maxYears: number };
 export function respondToOffer(fa: TrackerRow, offer: { years: number; total: number }, seed: number): GmAnswer;
 export function signFreeAgent(ctx: GmContext, league: GmLeague, moves: GmMoves, budget: number, fa: TrackerRow, offer: { years: number; total: number }, seed: number): GmAnswer;

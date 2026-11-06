@@ -9,6 +9,20 @@ const ctx = { players: read('../app/data/depth-chart.json').players, tracker: re
 const game = () => ({ team: 'BOS', seed: 42, budget: 400, signings: [], trades: [], market: m.newMarket() });
 const row = name => ctx.tracker.players.find(p => p.name === name);
 
+test('closeout floors prevent implausible star deals even when rival budgets are exhausted', () => {
+  const start = game(), league = g.buildLeague(ctx, start), star = row('Tarik Skubal');
+  const cramped = { ...ctx, sim: { ...ctx.sim, teams: Object.fromEntries(Object.entries(ctx.sim.teams).map(([t, info]) => [t, { ...info, cbt2026: (g.payrollFor(ctx, league, t) + .8) / 1.02 }])) } };
+  start.market.round = 2;
+  const submitted = m.submitMarketBid(cramped, start, { pid: star.id, years: 1, total: .8 }).moves;
+  const result = m.advanceMarket(cramped, submitted);
+  assert.ok(![...result.moves.signings, ...result.moves.market.deals].some(s => s.pid === star.id));
+  assert.match(result.news.find(n => n.startsWith('Tarik Skubal did not')), /credible offer/);
+  const forged = { ...game(), signings: [{ pid: star.id, years: 1, total: .8, closeout: true }], market: { ...m.newMarket(), round: 3 } };
+  assert.equal(g.restoreMoves(ctx, forged).moves, null, 'saved games cannot bypass the floor');
+  assert.ok(g.closeoutMinimumAav(star, 1, 42) >= .65 * star.aav);
+  assert.ok(g.closeoutMinimumAav(star, 10, 42) >= .75 * star.aav);
+});
+
 test('rival bids are seeded, affordable, and reserve one target per club', () => {
   const start = game(), league = g.buildLeague(ctx, start), board = m.marketBoard(ctx, start);
   assert.deepEqual(m.marketBoard(ctx, start), board);
