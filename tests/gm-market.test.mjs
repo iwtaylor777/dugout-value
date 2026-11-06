@@ -10,6 +10,73 @@ const ctx = { players: read('../app/data/depth-chart.json').players, tracker: ma
 const game = () => ({ team: 'BOS', seed: 42, budget: 400, signings: [], trades: [], market: m.newMarket() });
 const row = name => ctx.tracker.players.find(p => p.name === name);
 
+test('personal offers remain visible through losses, closeout, withdrawal, undo and sharing', () => {
+  const star = row('Tarik Skubal'), regular = row('Edmundo Sosa');
+  let state = game();
+  state = m.submitMarketBid(ctx, state, { pid: star.id, years: star.years, total: .8 * star.years }).moves;
+  state = m.submitMarketBid(ctx, state, { pid: regular.id, years: 1, total: 20 }).moves;
+  assert.equal(m.userOfferOutcomes(ctx, state).length, 2);
+  assert.ok(m.userOfferOutcomes(ctx, state).every(o => o.status === 'submitted'));
+  const withdrawn = m.withdrawMarketBid(state, star.id);
+  assert.equal(m.userOfferOutcomes(ctx, withdrawn).find(o => o.offer.pid === star.id).status, 'withdrawn');
+  assert.equal(withdrawn.market.bids.length, 1);
+  for (let i = 0; i < 3; i++) state = m.advanceMarket(ctx, state).moves;
+  const outcomes = m.userOfferOutcomes(ctx, state);
+  assert.equal(outcomes.find(o => o.offer.pid === regular.id).status, 'signed');
+  const lost = outcomes.find(o => o.offer.pid === star.id);
+  assert.equal(lost.status, 'lost');
+  assert.ok(lost.deal.team !== state.team && lost.deal.total > lost.offer.total);
+  const restored = g.restoreMoves(ctx, g.decodeMoves(g.encodeMoves(state)));
+  assert.ok(restored.moves, restored.reason);
+  assert.deepEqual(m.userOfferOutcomes(ctx, restored.moves), outcomes);
+  const undone = g.undoMove(ctx, state, 'signing', state.signings.findIndex(s => s.pid === regular.id)).moves;
+  assert.equal(m.userOfferOutcomes(ctx, undone).find(o => o.offer.pid === regular.id).status, 'undone');
+});
+
+test('revised bids replace their history and malformed histories are rejected', () => {
+  const p = row('Edmundo Sosa');
+  let state = m.submitMarketBid(ctx, game(), { pid: p.id, years: 1, total: 8 }).moves;
+  state = m.submitMarketBid(ctx, state, { pid: p.id, years: 1, total: 10 }).moves;
+  assert.equal(state.market.history.length, 1);
+  assert.equal(state.market.history[0].total, 10);
+  for (const history of [[{ ...state.market.history[0], total: -1 }], [state.market.history[0], state.market.history[0]], [{ ...state.market.history[0], round: 4 }]]) {
+    assert.equal(g.decodeMoves(g.encodeMoves({ ...state, market: { ...state.market, history } })), null);
+  }
+});
+
+test('older saves keep known offers when another bid is submitted or withdrawn', () => {
+  const p = row('Edmundo Sosa'), star = row('Tarik Skubal');
+  const old = { ...game(), market: { round: 0, bids: [{ pid: p.id, years: 1, total: 20 }], deals: [], offers: [] } };
+  const next = m.submitMarketBid(ctx, old, { pid: star.id, years: star.years, total: star.total }).moves;
+  assert.equal(m.userOfferOutcomes(ctx, next).length, 2);
+  assert.equal(m.userOfferOutcomes(ctx, m.withdrawMarketBid(old, p.id))[0].status, 'withdrawn');
+  const signed = { ...old, signings: old.market.bids, market: { ...old.market, round: 3, bids: [] } };
+  assert.equal(m.userOfferOutcomes(ctx, g.undoMove(ctx, signed, 'signing', 0).moves)[0].status, 'undone');
+});
+
+test('final-round cleanup reports destinations even when a player was not won in the auctions', () => {
+  const p = row('Sonny Gray');
+  let state = { ...game(), market: { ...m.newMarket(), round: 2 } };
+  state = m.submitMarketBid(ctx, state, { pid: p.id, years: 1, total: .8 }).moves;
+  state = m.advanceMarket(ctx, state).moves;
+  const outcome = m.userOfferOutcomes(ctx, state)[0];
+  assert.ok(['lost', 'unsigned'].includes(outcome.status));
+  if (outcome.status === 'lost') assert.deepEqual(outcome.deal, state.market.deals.find(d => d.pid === p.id));
+  assert.equal(outcome.offer.total, .8);
+});
+
+test('FA reserves stay inside existing budgets and remain usable for trades', () => {
+  const state = game(), league = g.buildLeague(ctx, state);
+  for (const team of Object.keys(ctx.sim.teams)) {
+    const plan = g.rivalBudget(ctx, league, team, state.seed);
+    assert.equal(plan.limit, ctx.sim.teams[team].cbt2026 * 1.02);
+    assert.ok(plan.reserve >= 5 && plan.reserve <= 15);
+    assert.ok(Math.abs(plan.faLimit + plan.reserve - plan.limit) < 1e-8);
+    assert.equal(plan.room, Math.max(0, plan.limit - plan.payroll));
+    assert.deepEqual(plan, g.rivalBudget(ctx, league, team, state.seed));
+  }
+});
+
 test('closeout floors prevent implausible star deals even when rival budgets are exhausted', () => {
   const start = game(), league = g.buildLeague(ctx, start), star = row('Tarik Skubal');
   const cramped = { ...ctx, sim: { ...ctx.sim, teams: Object.fromEntries(Object.entries(ctx.sim.teams).map(([t, info]) => [t, { ...info, cbt2026: (g.payrollFor(ctx, league, t) + .8) / 1.02 }])) } };
@@ -83,7 +150,7 @@ test('a strong opening bid can win below rival ceilings, without an automatic ex
 test('rivals counter other rivals, but raises are bounded and invalid human bids do not move prices', () => {
   const start = game(), board = m.marketBoard(ctx, start), result = m.advanceMarket(ctx, start);
   let raises = 0;
-  for (const signing of result.moves.market.deals) {
+  for (const signing of [...result.moves.market.deals, ...result.moves.market.offers]) {
     const initial = board.find(p => p.pid === signing.pid).rivals.find(r => r.team === signing.team);
     assert.ok(signing.total <= initial.total * 1.06 + .051);
     assert.ok(signing.total <= initial.ceiling);
@@ -110,7 +177,10 @@ test('over-budget offers can win, but the season waits for payroll repair; late 
   assert.ok(restored.moves, restored.reason);
   assert.equal(g.seasonReadiness(ctx, restored.moves).ready, false);
   const undone = g.undoMove(ctx, current, 'signing', 0).moves;
-  assert.deepEqual(undone.market, current.market);
+  assert.deepEqual(undone.market.deals, current.market.deals);
+  assert.deepEqual(undone.market.offers, current.market.offers);
+  assert.equal(undone.market.round, current.market.round);
+  assert.equal(undone.market.history[0].undone, true);
   assert.equal(g.seasonReadiness(ctx, undone).ready, true);
   assert.ok(g.buildLeague(ctx, undone).freeAgents.has(ctx.players.find(p => p.pid === skubal.id).i));
 });
@@ -185,6 +255,8 @@ test('closing the market records late signings, honors budgets, and replays via 
   for (const team of Object.keys(ctx.sim.teams).filter(t => t !== start.team)) {
     assert.ok(g.payrollFor(ctx, after, team) <= Math.max(g.payrollFor(ctx, before, team), ctx.sim.teams[team].cbt2026 * 1.02) + 1e-7, team);
   }
+  const rivalPlans = Object.keys(ctx.sim.teams).filter(t => t !== start.team).map(t => g.rivalBudget(ctx, after, t, start.seed));
+  assert.ok(rivalPlans.filter(p => p.room >= 5 - 1e-8).length >= 5, 'the closed market retains multiple salary-dump destinations');
   const decoded = g.decodeMoves(g.encodeMoves(current));
   assert.deepEqual(decoded, current);
   const restored = g.restoreMoves(ctx, decoded);

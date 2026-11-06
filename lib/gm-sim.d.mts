@@ -13,7 +13,8 @@ export type GmContext = {
 };
 export type GmSigning = { pid: string; years: number; total: number; closeout?: boolean };
 export type GmTrade = { partner: string; give: string[]; get: string[]; cash?: number };
-export type GmMarket = { round: number; bids: GmSigning[]; deals: (GmSigning & { team: string; round: number })[]; offers: (GmSigning & { team: string })[] };
+export type GmOfferHistory = GmSigning & { round: number; withdrawn?: boolean; undone?: boolean };
+export type GmMarket = { round: number; bids: GmSigning[]; deals: (GmSigning & { team: string; round: number })[]; offers: (GmSigning & { team: string })[]; history?: GmOfferHistory[] };
 export type GmMoves = { team: string; budget?: number | null; seed: number; signings: GmSigning[]; trades: GmTrade[]; market?: GmMarket };
 export type GmLeague = { base: Map<string, string | null>; teamOf: Map<string, string | null>; freeAgents: Set<string>; userAav: Map<string, number>; owner: Map<string, string | null>; extraAav?: Map<string, number>; cash?: Map<string, number> };
 export function playerContract(ctx: GmContext, league: GmLeague, pid: string): { hit: number; salary: number | null; seasons: GmContractYear[]; controlThrough: number | null; prospect: boolean };
@@ -30,6 +31,7 @@ export function signFreeAgent(ctx: GmContext, league: GmLeague, moves: GmMoves, 
 export function buildLeague(ctx: GmContext, moves: GmMoves): GmLeague;
 export function rosterOf(ctx: GmContext, teamOf: Map<string, string | null>, abbr: string): GmContext["players"];
 export function payrollFor(ctx: GmContext, league: GmLeague, abbr: string, extraAav?: Map<string, number>): number;
+export function rivalBudget(ctx: GmContext, league: GmLeague, team: string, seed: number): { limit: number; reserve: number; payroll: number; room: number; faLimit: number };
 export function teamWar(ctx: GmContext, teamOf: Map<string, string | null>, abbr: string): number;
 export function teamModes(ctx: GmContext, teamOf: Map<string, string | null>): Record<string, "contend" | "middle" | "rebuild">;
 export function nickname(ctx: GmContext, abbr: string): string;

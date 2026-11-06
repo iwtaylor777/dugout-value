@@ -11,10 +11,10 @@ import simData from "../../data/gm-sim.json";
 import payrollData from "../../data/team-payroll.json";
 import { allocate, bestAdditions, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
 import { matchesProjectionRole } from "../../../lib/projection-filters.mjs";
-import { advanceMarket, marketBoard, MARKET_ROUNDS, newMarket, submitMarketBid } from "../../../lib/gm-market.mjs";
+import { advanceMarket, marketBoard, MARKET_ROUNDS, newMarket, submitMarketBid, userOfferOutcomes, withdrawMarketBid } from "../../../lib/gm-market.mjs";
 import {
   aiFreeAgency, buildLeague, decodeMoves, encodeMoves, grade, movesValue, payrollFor, respondToTrade, rosterOf,
-  signFreeAgent, simulateSeasons, teamModes, teamStrengths, restoreMoves, undoMove, seasonReadiness, playerContract,
+  signFreeAgent, simulateSeasons, teamModes, teamStrengths, restoreMoves, undoMove, seasonReadiness, playerContract, rivalBudget,
 } from "../../../lib/gm-sim.mjs";
 import type { GmContext, GmMoves, GmTeamResult, TrackerRow } from "../../../lib/gm-sim.mjs";
 
@@ -30,6 +30,8 @@ const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
 const signedPts = (v: number) => `${v >= 0.0005 ? "+" : v <= -0.0005 ? "−" : ""}${Math.abs(v * 100).toFixed(1)} pts`;
 const signedWins = (v: number) => `${v >= 0.05 ? "+" : v <= -0.05 ? "−" : ""}${Math.abs(v).toFixed(1)}`;
 const yearsLabel = (years: number) => `${years} ${years === 1 ? "yr" : "yrs"}`;
+const budgetRange = (value: number) => value < .05 ? "No room" : value < 5 ? "Under $5M" : `$${Math.floor(value / 5) * 5}–${Math.floor(value / 5) * 5 + 5}M`;
+const outcomeLabels: Record<string, string> = { signed: "Signed with you", lost: "Signed elsewhere", submitted: "Offer submitted", pending: "Still considering", unsigned: "Not signed", withdrawn: "You withdrew", undone: "Signing undone" };
 const newSeed = () => Math.floor(Math.random() * 1e9) + 1;
 const label = (pid: string, i?: string) => `${V[pid]?.n ?? faRows.get(pid)?.name ?? ctx.players.find(p => p.pid === pid)?.n ?? pid}${i?.endsWith("-bat") ? " (hitting)" : i?.endsWith("-pit") ? " (pitching)" : ""}`;
 const defaultOffer = (row: TrackerRow) => ({ years: String(row.years ?? 1), total: String(row.total != null && row.aav != null && row.aav >= 1 ? row.total : 0.8) });
@@ -98,6 +100,9 @@ export function GmMode() {
     return allocate(rosterOf(ctx, initial.teamOf, moves.team)).total;
   }, [moves.team]);
   const market = useMemo(() => new Map(marketBoard(ctx, moves).map(m => [m.pid, m])), [moves]);
+  const offerOutcomes = useMemo(() => userOfferOutcomes(ctx, moves), [moves]);
+  const rivalBudgets = useMemo(() => Object.fromEntries(teams.filter(([t]) => t !== moves.team).map(([t]) => [t, rivalBudget(ctx, league, t, moves.seed)])), [league, moves.team, moves.seed]);
+  const teamsWithRoom = Object.entries(rivalBudgets).filter(([, plan]) => plan.room >= 5).sort((a, b) => b[1].room - a[1].room);
   const competitive = !!moves.market;
   const bidding = competitive && moves.market!.round < MARKET_ROUNDS;
   const reserved = (moves.market?.bids ?? []).reduce((sum, b) => sum + b.total / b.years, 0);
@@ -169,6 +174,7 @@ export function GmMode() {
     setOffers((x) => ({ ...x, [pid]: { ...d, note: ans.reason, ok: ans.accepted } }));
     if (ans.accepted) {
       const next = { ...moves, signings: [...moves.signings, { pid, years: o.years, total: o.total }] };
+      if (next.market) next.market = { ...next.market, history: [...(next.market.history ?? []).filter(h => h.pid !== pid), { pid, ...o, round: 3 }] };
       const nextLeague = buildLeague(ctx, next);
       const gain = allocate(rosterOf(ctx, nextLeague.teamOf, moves.team)).total - alloc.total;
       update(next);
@@ -184,7 +190,7 @@ export function GmMode() {
     if (ans.accepted) { update({ ...moves, trades: [...moves.trades, proposal] }); setGive([]); setGet([]); setGiveQuery(""); setGetQuery(""); setCashAmount("0"); setFeedback({ tone: "success", text: `Trade completed with ${ctx.sim.teams[partner].name}. You received ${get.map(pid => V[pid]?.n).join(", ") || "no players"}.${cash ? ` You ${cash > 0 ? "sent" : "received"} ${money(Math.abs(cash))} in cash.` : ""} See the value breakdown after simulating the season.` }); }
   };
   const withdrawBid = (pid: string) => {
-    update({ ...moves, market: { ...moves.market!, bids: moves.market!.bids.filter(x => x.pid !== pid) } });
+    update(withdrawMarketBid(moves, pid));
     setOffers(previous => {
       const next = { ...previous };
       if (next[pid]) next[pid] = { ...next[pid], note: undefined, ok: undefined };
@@ -211,6 +217,7 @@ export function GmMode() {
         setShowSigningLedger(false);
         setOffers({}); setGive([]); setGet([]); setTradeNote(null);
         setFeedback({ tone: "success", text: `Round ${next.moves.market!.round} complete. ${next.moves.market!.round === MARKET_ROUNDS ? "Bidding is closed. You can still trade, undo moves, or sign remaining free agents. Get within budget to simulate the season." : "Review the activity, then keep, revise, or withdraw your offers before advancing."}` });
+        requestAnimationFrame(() => document.getElementById("gm-offer-results")?.scrollIntoView({ behavior: "smooth", block: "start" }));
       } catch { setFeedback({ tone: "error", text: "The market round could not finish. Your offers are unchanged; try again." }); }
       finally { setRunning(false); }
     }, 30);
@@ -277,6 +284,7 @@ export function GmMode() {
     setTab(next);
     document.getElementById(`gm-tab-${next}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  const choosePartner = (team: string) => { setPartner(team); setGet([]); setGetQuery(""); setCashAmount("0"); setTradeNote(null); };
 
   return (
     <section className="gm" aria-label="GM Mode offseason game" aria-busy={running}>
@@ -322,7 +330,19 @@ export function GmMode() {
         <div className="gm-market-heading"><div><h2>{bidding ? `Bidding round ${moves.market!.round + 1} of ${MARKET_ROUNDS}` : "The bidding rounds are complete"}</h2><p>{bidding ? "Submit offers below, then advance when you’re ready. Some players will sign elsewhere." : "Finish shaping your roster. Trade, undo moves, or sign remaining free agents before simulating."}</p></div>{bidding && <button type="button" className="gm-sim" onClick={nextRound}>{running ? "Clubs are deciding…" : `Advance to round ${moves.market!.round + 1} results`}</button>}</div>
         {bidding && <button type="button" className="gm-link" onClick={() => showTab("fa")}>Browse free agents ↓</button>}
         <p className="gm-note">{money(reserved)} of annual payroll in {moves.market!.bids.length} pending {moves.market!.bids.length === 1 ? "offer" : "offers"}. {reserved > room ? reserved > 0 ? `If all pending offers land, clear ${money(reserved - room)} before simulating. You can still advance.` : `Clear ${money(-room)} from the signed roster before simulating.` : `${money(room - reserved)} available after pending offers.`} These are simulated negotiations, not news reports.</p>
-        {moves.market!.bids.length > 0 && <ul className="gm-market-bids">{moves.market!.bids.map(b => <li key={b.pid}><span><strong>{label(b.pid)}</strong> · {yearsLabel(b.years)}, {money(b.total)} · {money(b.total / b.years)}/year</span><button type="button" className="gm-link" onClick={() => withdrawBid(b.pid)}>Withdraw<span className="gm-sr"> offer to {label(b.pid)}</span></button></li>)}</ul>}
+        <section className="gm-offer-results" id="gm-offer-results" aria-label="Your free-agent offers" aria-live="polite">
+          <h3>Your free-agent offers</h3>
+          <p className="gm-note">{bidding ? "Your latest offer and where things stand. These stay here as the rounds advance." : "Final outcomes, including late signings after the last bidding round."}</p>
+          {!moves.market!.history && <p className="gm-note">This older save does not include past unsuccessful offers.</p>}
+          {!offerOutcomes.length ? <p className="gm-note">No offers yet. Browse free agents to start negotiating.</p> : <ul>{offerOutcomes.map(({ offer: bid, status, deal, reason }) => <li key={bid.pid} data-outcome={status}>
+            <div className="gm-offer-result-heading"><strong>{label(bid.pid)}</strong><span>{outcomeLabels[status]}</span></div>
+            <p>Your offer: {yearsLabel(bid.years)}, {money(bid.total)} total · submitted in round {bid.round}.</p>
+            {deal && <p><strong>{deal.team === moves.team ? "Your deal" : ctx.sim.teams[deal.team].name}:</strong> {yearsLabel(deal.years)}, {money(deal.total)} total ({money(deal.total / deal.years)}/year).</p>}
+            {reason && <p>{reason}</p>}
+            {status === "undone" && <p>You undid this signing. It is no longer on your payroll.</p>}
+            {(status === "pending" || status === "submitted") && <div className="gm-offer-result-actions"><button type="button" className="gm-link" onClick={() => { setFaQuery(label(bid.pid)); setFaPos("All"); setFaLimit(20); showTab("fa"); }}>Review / revise offer<span className="gm-sr"> to {label(bid.pid)}</span></button><button type="button" className="gm-link" onClick={() => withdrawBid(bid.pid)}>Withdraw<span className="gm-sr"> offer to {label(bid.pid)}</span></button></div>}
+          </li>)}</ul>}
+        </section>
         {(marketNews.length > 0 || moves.market!.deals.length > 0 || moves.signings.length > 0) && (
           <details className="gm-market-feed" open>
             <summary>League wire · market activity</summary>
@@ -407,13 +427,19 @@ export function GmMode() {
         <div className="gm-panel" role="tabpanel" id="gm-panel-trade" aria-labelledby="gm-tab-trade">
           <div className="gm-filters">
             <label className="gm-field"><span>Trade partner</span>
-              <select value={partner} onChange={(e) => { setPartner(e.target.value); setGet([]); setGetQuery(""); setCashAmount("0"); setTradeNote(null); }}>
+              <select value={partner} onChange={(e) => choosePartner(e.target.value)}>
                 <option value="">Choose a team…</option>
-                {teams.filter(([t]) => t !== moves.team).map(([abbr, t]) => <option key={abbr} value={abbr}>{t.name}</option>)}
+                {teams.filter(([t]) => t !== moves.team).map(([abbr, t]) => <option key={abbr} value={abbr}>{t.name} · {rivalBudgets[abbr].room < .05 ? "No payroll room" : `${budgetRange(rivalBudgets[abbr].room)} room`}</option>)}
               </select>
             </label>
             {partner && <p className="gm-note">{ctx.sim.teams[partner].name}: {modes[partner] === "contend" ? "top 10 in current roster WAR; prioritizes 2027" : modes[partner] === "rebuild" ? "bottom 10 in current roster WAR; prioritizes control years" : "middle third in current roster WAR"}.</p>}
           </div>
+          <aside className="gm-partner-budgets" aria-label="Trade partner budgets">
+            <h3>{partner ? `${ctx.sim.teams[partner].name}: ${budgetRange(rivalBudgets[partner].room)} to add payroll` : "Who has room for salary?"}</h3>
+            {partner && <p>Estimated budget: {budgetRange(rivalBudgets[partner].limit)} · current payroll and net trade cash: {money(rivalBudgets[partner].payroll)}.</p>}
+            <p>Game estimates, not reported club budgets. Rivals set aside $5–15M for trades and in-season moves; cheap depth signings may use part of it. Room updates after every deal. Having space does not guarantee they’ll accept.</p>
+            <div className="gm-budget-shortlist"><strong>Most room right now</strong>{teamsWithRoom.slice(0, 4).map(([team, plan]) => <button key={team} type="button" onClick={() => choosePartner(team)} aria-pressed={partner === team}>{ctx.sim.teams[team].name}<small>{budgetRange(plan.room)} room</small></button>)}{!teamsWithRoom.length && <span>No rival has $5M available. Include cash or take salary back to reduce the net cost.</span>}</div>
+          </aside>
           <p className="gm-note">Build an offer and hear what the other club thinks. Contenders want MLB-ready help; rebuilding clubs put more weight on the future. Stars with years of control are tough to pry loose. Exact model values stay hidden until your post-simulation review.</p>
           {partner ? (
             <div className="gm-trade">

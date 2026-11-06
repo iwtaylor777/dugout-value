@@ -2,8 +2,9 @@
 import fs from 'node:fs';
 import * as g from '../lib/gm-sim.mjs';
 import * as m from '../lib/gm-market.mjs';
+import { marketTracker } from '../lib/free-agent-current.mjs';
 const read = name => JSON.parse(fs.readFileSync(new URL(`../app/data/${name}.json`, import.meta.url)));
-const ctx = { players: read('depth-chart').players, tracker: read('free-agent-tracker'), signings: read('free-agent-signings'), sim: read('gm-sim'), payroll: read('team-payroll').cbt };
+const ctx = { players: read('depth-chart').players, tracker: marketTracker(read('free-agent-tracker')), signings: read('free-agent-signings'), sim: read('gm-sim'), payroll: read('team-payroll').cbt };
 const scenarios = [], failures = [];
 for (const team of ['BOS', 'LAD', 'SEA', 'ATH']) for (const seed of [42, 137, 901]) {
   let game = { team, seed, budget: 480, signings: [], trades: [], market: m.newMarket() };

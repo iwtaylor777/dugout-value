@@ -43,6 +43,25 @@
 .gm-market-heading p { margin:0; max-width:65ch; font-size:14px; line-height:1.5; }
 .gm-market-bids { list-style:none; padding:0; margin:12px 0; }
 .gm-market-bids li { display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; border-top:1px solid var(--gm-line); padding:8px 0; font-size:14px; }
+.gm-offer-results { scroll-margin-top:20px; padding:16px 0; border-top:1px solid #c3cebc; }
+.gm-offer-results h3, .gm-partner-budgets h3 { margin:0; font-size:18px; }
+.gm-offer-results > ul { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:10px; padding:0; list-style:none; margin:12px 0 0; }
+.gm-offer-results li { padding:12px 14px; border:1px solid var(--gm-line); border-left:3px solid #b69b60; border-radius:4px; background:#fffdf6; font-size:14px; }
+.gm-offer-results li[data-outcome=signed] { border-left-color:#527448; background:#edf3e6; }
+.gm-offer-results li[data-outcome=lost], .gm-offer-results li[data-outcome=unsigned] { border-left-color:#a85639; }
+.gm-offer-results li p { margin:7px 0 0; line-height:1.5; }
+.gm-offer-result-heading { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px 12px; }
+.gm-offer-result-heading span { font-size:12px; font-weight:650; color:#71562d; }
+[data-outcome=signed] .gm-offer-result-heading span { color:var(--gm-green); }
+[data-outcome=lost] .gm-offer-result-heading span, [data-outcome=unsigned] .gm-offer-result-heading span { color:#93412f; }
+.gm-offer-result-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:4px; }
+.gm-partner-budgets { padding:16px; margin:16px 0; background:#edf1e5; border:1px solid #c3cebc; border-radius:5px; }
+.gm-partner-budgets p { font-size:13px; line-height:1.6; margin:8px 0; color:var(--gm-muted); max-width:90ch; }
+.gm-budget-shortlist { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px; font-size:13px; }
+.gm-budget-shortlist > strong { flex:1 1 100%; }
+.gm-budget-shortlist button { text-align:left; min-height:44px; padding:9px 12px; border:1px solid #a5b3a5; border-radius:4px; background:#fffdf6; color:var(--gm-ink); font-size:13px; cursor:pointer; }
+.gm-budget-shortlist button[aria-pressed=true] { border-color:#355e4c; background:#dce8d5; }
+.gm-budget-shortlist small { display:block; color:var(--gm-green); margin-top:3px; }
 .gm-market-feed summary, .gm-player-market summary { cursor:pointer; min-height:44px; align-content:center; font-weight:600; color:var(--gm-green); }
 .gm-market-feed ul { max-height:260px; overflow:auto; padding-left:22px; font-size:14px; line-height:1.6; }
 .gm-market-feed li { padding:5px 0; }
