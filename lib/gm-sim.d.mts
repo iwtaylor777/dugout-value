@@ -43,3 +43,5 @@ export function movesValue(ctx: GmContext, moves: GmMoves): { trades: number; si
 export function grade(deltaWins: number, netValue: number): { points: number; letter: string };
 export function encodeMoves(moves: GmMoves): string;
 export function decodeMoves(text: string): GmMoves | null;
+export function restoreMoves(ctx: GmContext, candidate: GmMoves): { moves: GmMoves | null; reason?: string };
+export function undoMove(ctx: GmContext, moves: GmMoves, kind: "signing" | "trade", index: number): { moves: GmMoves; removed: number };

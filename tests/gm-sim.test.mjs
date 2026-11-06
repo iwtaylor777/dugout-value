@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
 import * as g from '../lib/gm-sim.mjs';
+import { allocate } from '../lib/depth-chart.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
 const ctx = { players: read('../app/data/depth-chart.json').players, tracker: read('../app/data/free-agent-tracker.json'), signings: read('../app/data/free-agent-signings.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
 const id = n => Object.entries(ctx.sim.players).find(([, v]) => v.n === n)[0];
@@ -95,4 +96,97 @@ test('share links round-trip', () => {
   const moves = { team: 'SEA', budget: 210, seed: 99, signings: [{ pid: 'x', years: 2, total: 30 }], trades: [{ partner: 'BOS', give: ['a'], get: ['b'] }] };
   assert.deepEqual(g.decodeMoves(g.encodeMoves(moves)), moves);
   assert.equal(g.decodeMoves('not-valid'), null);
+});
+
+test('share decoder rejects malformed, nonfinite and duplicated move data', () => {
+  for (const mutation of [
+    { signings: [null] }, { trades: [null] }, { budget: -1 }, { seed: 0 },
+    { signings: [{ pid: 'x', years: 0, total: 30 }] },
+    { signings: [{ pid: 'x', years: 1.5, total: 30 }] },
+    { signings: [{ pid: 'x', years: 1, total: Infinity }] },
+    { trades: [{ partner: 'PIT', give: ['x', 'x'], get: ['y'] }] },
+    { trades: [{ partner: 'PIT', give: ['x'], get: ['x'] }] },
+  ]) assert.equal(g.decodeMoves(g.encodeMoves({ ...base, ...mutation })), null);
+  assert.equal(g.restoreMoves(ctx, { ...base, team: 'ZZZ' }).moves, null);
+  assert.ok(g.restoreMoves(ctx, base).moves);
+});
+
+test('no-trade clauses protect user players and duplicate trade assets cannot inflate value', () => {
+  const moves = { ...base, team: 'NYY' }, league = g.buildLeague(ctx, moves), modes = g.teamModes(ctx, league.teamOf);
+  const answer = g.respondToTrade(ctx, league, moves, 480, { partner: 'WSN', give: [id('Aaron Judge')], get: [] }, modes);
+  assert.equal(answer.accepted, false); assert.match(answer.reason, /no-trade/);
+  assert.equal(g.respondToTrade(ctx, league, moves, 480, { partner: 'ZZZ', give: [], get: ['fake'] }, modes).accepted, false);
+  assert.equal(g.respondToTrade(ctx, league, moves, 480, { partner: 'WSN', give: [id('Aaron Judge'), id('Aaron Judge')], get: [] }, modes).accepted, false);
+});
+
+test('undo removes dependent trades but keeps independent moves', () => {
+  const moves = { ...base, trades: [
+    { partner: 'PIT', give: [id('Roman Anthony')], get: [id('Paul Skenes')] },
+    { partner: 'WSN', give: [id('Paul Skenes')], get: [id('James Wood')] },
+    { partner: 'WSN', give: [id('James Wood')], get: [] },
+    { partner: 'PIT', give: [id('Curtis Mead')], get: [] },
+  ] };
+  const undo = g.undoMove(ctx, moves, 'trade', 0);
+  assert.equal(undo.removed, 3);
+  assert.equal(undo.moves.trades.length, 1);
+  const league = g.buildLeague(ctx, undo.moves);
+  assert.equal(league.owner.get(id('Roman Anthony')), 'BOS');
+  assert.equal(league.owner.get(id('Paul Skenes')), 'PIT');
+  assert.equal(league.owner.get(id('James Wood')), 'WSN');
+  assert.equal(league.owner.get(id('Curtis Mead')), 'PIT');
+});
+
+test('free-agent engine rejects already owned players, duplicates and invalid contract numbers', () => {
+  const row = fa('Freddy Peralta'), ask = g.askFor(row, 42);
+  const signed = { ...base, signings: [{ pid: row.id, years: ask.minYears, total: ask.total }] };
+  const league = g.buildLeague(ctx, signed);
+  assert.equal(g.signFreeAgent(ctx, league, signed, 480, row, { years: ask.minYears, total: ask.total }, 42).accepted, false);
+  assert.equal(g.respondToOffer(row, { years: 2.5, total: 100 }, 42).accepted, false);
+  assert.equal(g.respondToOffer(row, { years: 5, total: Infinity }, 42).accepted, false);
+});
+
+test('extra contract years cannot dilute AAV at the same guaranteed asking price', () => {
+  const row = fa('Tarik Skubal'), ask = g.askFor(row, 42);
+  assert.equal(ask.maxYears, Math.min(13, row.years + 1));
+  assert.equal(g.respondToOffer(row, { years: row.years, total: ask.total }, 42).accepted, true);
+  assert.equal(g.respondToOffer(row, { years: ask.minYears, total: ask.total }, 42).accepted, true);
+  const tooCheap = g.respondToOffer(row, { years: ask.maxYears, total: ask.total }, 42);
+  assert.equal(tooCheap.accepted, false);
+  assert.match(tooCheap.reason, /extra year needs more guaranteed money/);
+  assert.equal(g.respondToOffer(row, { years: ask.maxYears, total: ask.total * ask.maxYears / row.years }, 42).accepted, true);
+  assert.equal(g.respondToOffer(row, { years: ask.maxYears + 1, total: 999 }, 42).accepted, false);
+});
+
+test('paired regular-season draws stay identical even if playoff paths change', () => {
+  const league = g.buildLeague(ctx, base), strengths = g.teamStrengths(ctx, league.teamOf);
+  const edited = { ...strengths, BOS: { ...strengths.BOS, war: strengths.BOS.war + 10 } };
+  const before = g.simulateSeasons(ctx, strengths, 500, 42);
+  const after = g.simulateSeasons(ctx, edited, 500, 42);
+  for (const team of Object.keys(strengths)) {
+    const expected = team === 'BOS' ? 10 - 10 / 30 : -10 / 30;
+    assert.ok(Math.abs(after[team].mean - before[team].mean - expected) < 1e-8, team);
+  }
+});
+
+test('one player split between positions retains the same performance uncertainty', () => {
+  const target = { i: 'target', pid: 'target', n: 'Target', t: 'BOS', k: 'b', e: ['LF'], r: 2, x: 600 };
+  const blocker = { i: 'blocker', pid: 'blocker', n: 'Blocker', t: 'BOS', k: 'b', e: ['LF'], r: 3, x: 400 };
+  const split = { ...ctx, players: [target, blocker] };
+  const one = { ...ctx, players: [{ ...target, e: ['RF'] }, blocker] };
+  assert.equal(Object.values(allocate(split.players).positions).filter(slot => slot.rows.some(row => row.p.i === 'target')).length, 2);
+  const ownership = new Map([['target', 'BOS'], ['blocker', 'BOS']]);
+  assert.equal(g.teamStrengths(split, ownership).BOS.sd, g.teamStrengths(one, ownership).BOS.sd);
+});
+
+test('trading an exercised option removes its reported payroll charge from the old team', () => {
+  const pid = id('Drew Rasmussen'), moves = { ...base, team: 'TBR' };
+  const before = g.buildLeague(ctx, moves);
+  const after = g.buildLeague(ctx, { ...moves, trades: [{ partner: 'BOS', give: [pid], get: [] }] });
+  assert.ok(Math.abs(g.payrollFor(ctx, before, 'TBR') - g.payrollFor(ctx, after, 'TBR') - 20) < 1e-9);
+  assert.ok(Math.abs(g.payrollFor(ctx, after, 'BOS') - g.payrollFor(ctx, before, 'BOS') - 20) < 1e-9);
+});
+
+test('restore preserves valid sandbox budgets but rejects ownership theft', () => {
+  assert.ok(g.restoreMoves(ctx, { ...base, budget: 60 }).moves, 'slider may sit below the starting payroll');
+  assert.equal(g.restoreMoves(ctx, { ...base, trades: [{ partner: 'WSN', give: [id('Paul Skenes')], get: [id('James Wood')] }] }).moves, null);
 });

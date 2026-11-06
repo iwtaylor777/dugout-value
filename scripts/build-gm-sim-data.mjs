@@ -6,10 +6,12 @@
 // league and division.
 import fs from 'node:fs';
 import { valuePlayer, initialSettings } from '../lib/value-model.mjs';
+import { contractNameKey, withReportedGmContract } from './gm-contract-inputs.mjs';
 
 const read = f => JSON.parse(fs.readFileSync(f, 'utf8'));
 const db = read('app/data/player-database.json'), dv = read('app/data/dv-projections.json').players;
 const payroll = read('app/data/team-payroll.json').cbt;
+const reported = new Map(read('app/data/free-agent-signings.json').entries.map(row => [contractNameKey(row.player), row]));
 
 // Same substitution the trade tools make when the projection source is Dugout Value.
 function withDv(p) {
@@ -25,12 +27,12 @@ function withDv(p) {
 const round = v => Math.round(v * 10) / 10;
 const players = {};
 for (const p of db.players) {
-  const q = withDv(p);
+  const q = withReportedGmContract(withDv(p), reported.get(contractNameKey(p.name)), dv[p.id]);
   const value = rate => valuePlayer(q, { ...initialSettings, timingPreference: rate }, db);
   const base = value(10);
   const w27 = p.kind === 'mlb' ? (dv[p.id]?.war?.['2027'] ?? q.threeYearProjection?.find(s => s.year === 2027)?.war ?? 0) : 0;
   players[p.id] = {
-    n: p.name, t: p.team, k: p.kind === 'prospect' ? 'p' : 'm', pos: p.position ?? p.depthPosition ?? '', age: p.age,
+    n: p.name, t: q.team, k: p.kind === 'prospect' ? 'p' : 'm', pos: p.position ?? p.depthPosition ?? '', age: p.age,
     v20: round(value(20).total), v10: round(base.total), v05: round(value(5).total),
     // Last season of club control (contract or arbitration, excluding player options) and projected 2027 WAR.
     ctl: base.clubControlThrough ?? base.controlThrough ?? null, w27: round(w27),
