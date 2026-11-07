@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
 import {currentFreeAgentValues,marketTracker} from '../lib/free-agent-current.mjs';
-import {movesValue} from '../lib/gm-sim.mjs';
+import {askFor,askMultiplier,movesValue} from '../lib/gm-sim.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL(p,import.meta.url),'utf8'));
 const tracker=read('../app/data/free-agent-tracker.json');
 const args={tracker,database:read('../app/data/player-database.json'),projections:read('../app/data/dv-projections.json'),frozen:read('../public/research/fa-predictions-2026-27/predictions_frozen.json'),market:read('../app/data/free-agent-market.json'),terms:read('../app/data/free-agent-comparison-terms.json'),fallbacks:read('../app/data/free-agent-projection-fallbacks.json'),date:tracker.meta.built};
@@ -18,10 +18,21 @@ test('a forecast update refreshes both WAR and value while the comparison term a
   assert.equal(after.years,before.years);assert.equal(after.publishedForecast.total,48.3);
   assert.ok(after.total>before.total&&after.total-before.total<1);
 });
-test('game asking prices use attributed market forecasts while the grade retains model value',()=>{
-  const game=marketTracker(tracker),row=game.players.find(p=>p.id==='mlb-673548');
-  assert.equal(row.total,105);assert.equal(row.modelValue.total,73.8);
-  assert.equal(marketTracker(game).players.find(p=>p.id===row.id).modelValue.total,73.8);
-  const result=movesValue({tracker:game,sim:{players:{}}},{signings:[{pid:row.id,total:105,years:4}],trades:[]});
-  assert.ok(Math.abs(result.signings-(73.8-105))<1e-9);
+test('game asks are anchored to the tracker average and Rogers is graded at his signed term',()=>{
+  const game = marketTracker(tracker);
+  const suzuki = game.players.find(p => p.name === 'Seiya Suzuki');
+  const rogers = game.players.find(p => p.name === 'Trevor Rogers');
+  assert.deepEqual(marketTracker(game), game);
+  assert.equal(suzuki.total, 106.5);
+  assert.equal(rogers.total, 109.5);
+  assert.equal(rogers.aav, 21.9);
+  const ask = askFor(rogers, 42);
+  assert.equal(ask.total, Math.round(109.5 * askMultiplier(42, rogers.id) * 10) / 10);
+  assert.ok(ask.minYears <= 4 && ask.maxYears >= 5);
+  const jazz = game.players.find(p => p.name === 'Jazz Chisholm Jr.');
+  assert.equal(askFor(jazz, 42).maxYears, 4);
+  const grade = (row, years, total) => movesValue({ tracker: game, sim: { players: {} } }, { signings: [{ pid: row.id, years, total }] }).signings;
+  assert.equal(grade(suzuki, 4, 73.8), 0);
+  assert.equal(grade(rogers, 4, 63.9), 0);
+  assert.equal(grade(rogers, 5, 74.2), 0);
 });

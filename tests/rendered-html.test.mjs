@@ -194,6 +194,19 @@ test("free-agent tracker defaults to the whole class with sortable headers", asy
   assert.match(html, /href="\/tools\/free-agents"[^>]*aria-current="page"|href="\/tools"[^>]*aria-current="page"/);
 });
 
+test("free-agent article shows the same editorial averages and term-specific values as the tracker", async () => {
+  const response = await render("/analysis/what-this-winters-free-agents-should-cost");
+  assert.equal(response.status, 200);
+  const html = (await response.text()).replaceAll("<!-- -->", "");
+  const rows = html.match(/<tr\b[^>]*>[\s\S]*?<\/tr>/g) ?? [];
+  const suzuki = rows.find(row => row.includes("Seiya Suzuki"));
+  const rogers = rows.find(row => row.includes("Trevor Rogers"));
+  assert.match(suzuki ?? "", /4 yrs \/ \$73\.8M.*4 yrs \/ \$106\.5M/);
+  for (const quote of ["4 yrs / $63.9M", "5 yrs / $74.2M", "4–5 yrs / $109.5M"]) {
+    assert.ok(rogers?.includes(quote), quote);
+  }
+});
+
 test("depth chart renders a team with its total, rank and free-agent fits", async () => {
   const response = await render("/tools/depth-chart");
   assert.equal(response.status, 200);

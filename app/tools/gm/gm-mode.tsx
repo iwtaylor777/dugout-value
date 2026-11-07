@@ -421,7 +421,7 @@ export function GmMode() {
             <label className="gm-field"><span>Position</span><select value={faPos} onChange={(e) => { setFaPos(e.target.value); setFaLimit(20); }}>{["All", "C", "1B", "2B", "3B", "SS", "OF", "LF", "CF", "RF", "DH", "SP", "RP"].map((p) => <option key={p}>{p}</option>)}</select></label>
             <label className="gm-field"><span>Sort free agents</span><select value={faSort} onChange={e => { setFaSort(e.target.value); setFaLimit(20); }}><option value="gain">Most WAR added</option><option value="cost">Lowest expected annual cost</option><option value="market">Largest expected contracts</option></select></label>
           </div>
-          <p className="gm-note">Expected market is a broad guide, not a player’s asking price or a promise he’ll sign. Public contract forecasts inform covered players; others have a wider model-based range. “Adds for you” accounts for playing time displaced.</p>
+          <p className="gm-note">Expected market shows the tracker’s editorial forecast when available. The annual range is a guide for bidding. “Adds for you” accounts for playing time displaced.</p>
           <label className="gm-budget-filter"><input type="checkbox" checked={faBudgetOnly} onChange={e => { setFaBudgetOnly(e.target.checked); setFaLimit(20); }} /> Could fit budget</label>
           {faBudgetOnly && <p className="gm-note">Shows players whose public market range starts within your {money(Math.max(0, room - reserved))} available after pending offers. This is not a guaranteed signing price. Unknown ranges stay visible when the minimum salary fits; pending bids stay visible.</p>}
           <div className="gm-list-summary"><span>{faFiltered.length} free {faFiltered.length === 1 ? "agent matches" : "agents match"} · showing {faShown.length}</span>{bidding && <a href="#gm-market">Review bids and advance</a>}{(faQuery || faPos !== "All" || faBudgetOnly) && <button type="button" className="gm-link" onClick={() => { setFaQuery(""); setFaPos("All"); setFaBudgetOnly(false); setFaLimit(20); }}>Clear filters</button>}</div>
@@ -433,6 +433,10 @@ export function GmMode() {
                   const pending = moves.market?.bids.find(b => b.pid === pid);
                   const d = offers[pid] ?? (pending ? { years: String(pending.years), total: String(pending.total), note: undefined, ok: undefined } : defaultOffer());
                   const guidance = expectedMarket(row);
+                  const consensus = row.marketForecast?.consensus;
+                  const lowYears = consensus?.minYears ?? guidance.lowYears;
+                  const highYears = consensus?.maxYears ?? guidance.highYears;
+                  const marketTerm = lowYears === highYears ? yearsLabel(lowYears) : `${lowYears}–${highYears} yrs`;
                   const interest = market.get(pid);
                   const offerRoom = room - reserved + (pending ? pending.total / pending.years : 0);
                   return (
@@ -440,7 +444,11 @@ export function GmMode() {
                       <th scope="row" role="rowheader">{row.name}<small>{row.pos} · {row.team ?? "—"} · age {row.age}</small>{interest && <details className="gm-player-market"><summary>{interest.rivals.length ? `${interest.rivals.length} rival ${interest.rivals.length === 1 ? "club" : "clubs"} interested` : "No active rival bid"}</summary><p>Decision expected by round {Math.max(moves.market!.round + 1, interest.deadline)}. Values {interest.preference === "role" ? "a clear playing role" : "a chance to contend"} as a small tie-breaker.</p>{interest.rivals.length ? <ul>{interest.rivals.map(r => <li key={r.team}>{ctx.sim.teams[r.team].name}: around {money(Math.floor(r.total / 5) * 5)}–{money(Math.floor(r.total / 5) * 5 + 5)} over {r.years} yrs.</li>)}</ul> : <p>Other clubs could enter after their first choices sign.</p>}<p>Offers are estimates from the simulated market. Clubs may raise them within their limits.</p></details>}</th>
                       <td className="num" role="cell" data-label="2027 WAR">{row.war2027?.toFixed(1) ?? "—"}</td>
                       <td className="num" role="cell" data-label="Adds for you">{signedWins(gain)}<small>{positions.join(", ")}</small></td>
-                      <td className="gm-market-range" role="cell" data-label="Expected market"><strong>{guidance.lowYears === guidance.highYears ? yearsLabel(guidance.lowYears) : `${guidance.lowYears}–${guidance.highYears} yrs`}</strong><span>{guidance.lowAav == null || guidance.highAav == null ? "Market uncertain" : `$${guidance.lowAav}–${guidance.highAav}M/year`}</span><small>{guidance.basis}</small></td>
+                      <td className="gm-market-range" role="cell" data-label="Expected market">
+                        <strong>{consensus && `$${consensus.total.toLocaleString("en-US", { maximumFractionDigits: 2 })}M · `}{marketTerm}</strong>
+                        <span>{guidance.lowAav == null || guidance.highAav == null ? "Market uncertain" : `$${guidance.lowAav}–${guidance.highAav}M/year`}</span>
+                        <small>{consensus ? consensus.singleSource ?? "Editorial average" : guidance.basis}</small>
+                      </td>
                       <td className="gm-offer" role="cell" data-label="Your offer · total guaranteed">
                         <label><span className="gm-sr">Years for {row.name}</span><input type="number" min={1} max={13} value={d.years} onChange={(e) => setOffers((x) => ({ ...x, [pid]: { ...d, years: e.target.value, note: undefined } }))} /> yrs</label>
                         <label><span className="gm-sr">Guaranteed total for {row.name}, $M</span>$<input type="number" min={0.8} step={0.1} placeholder="Total" value={d.total} onChange={(e) => setOffers((x) => ({ ...x, [pid]: { ...d, total: e.target.value, note: undefined } }))} />M <span className="gm-total-label">total</span></label>

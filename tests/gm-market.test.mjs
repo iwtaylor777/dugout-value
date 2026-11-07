@@ -309,13 +309,13 @@ test('non-roster invitations cannot hide a star, duplicate an MLB signing or ena
 });
 
 test('a below-ask final offer can win the closeout and survives save/restore', () => {
-  const start = game(), player = row('Sonny Gray'), ask = g.askFor(player, start.seed);
+  const start = game(), player = row('Jazz Chisholm Jr.'), ask = g.askFor(player, start.seed);
   const bid = { pid: player.id, years: 1, total: Math.round((ask.total - .1) * 10) / 10 };
   assert.equal(g.respondToOffer(player, bid, start.seed).accepted, false);
   let current = m.submitMarketBid(ctx, start, bid).moves;
   for (let i = 0; i < 3; i++) current = m.advanceMarket(ctx, current).moves;
   const signing = current.signings.find(s => s.pid === player.id);
-  assert.ok(signing, 'a final offer just below the old ask beats the discounted rival market');
+  assert.ok(signing, 'a final offer just below the opening ask beats the discounted rival market');
   assert.equal(signing.closeout, true);
   assert.ok(g.restoreMoves(ctx, current).moves);
   assert.equal([...current.signings, ...current.market.deals].filter(s => s.pid === player.id).length, 1);
