@@ -39,6 +39,8 @@
 .fa-board .fa-table tbody th { font-size: 15px; }
 .fa-board .fa-table tr:hover > *, .fa-board .fa-table tr:focus-within > * { background: #f2eedf; }
 .fa-board .fa-table .fa-estimate { font-weight: 700; color: #355e4c; }
+.fa-term + .fa-term { margin-top: 8px; }
+.fa-market-estimate .dv-war-sub { white-space: normal; }
 .fa-board .dv-war-sub { color: #55605f; font-size: 13px; margin-top: 3px; line-height: 1.4; }
 .fa-player-note { margin-top: 4px; font-size: 13px; font-weight: 400; color: #55605f; }
 .fa-player-note summary { cursor: pointer; padding: 4px 0; color: #8b4233; }

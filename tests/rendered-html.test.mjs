@@ -183,7 +183,14 @@ test("free-agent tracker defaults to the whole class with sortable headers", asy
   assert.match(html, /October 29 forecast/);
   assert.match(html, /Sources/);
   assert.match(html, /MLB Trade Rumors/);
-  assert.match(html, /\$73\.8M/);
+  const rows = html.match(/<tr\b[^>]*>[\s\S]*?<\/tr>/g) ?? [];
+  const suzuki = rows.find(row => row.includes("Seiya Suzuki"));
+  const rogers = rows.find(row => row.includes("Trevor Rogers"));
+  assert.match(suzuki ?? "", /\$73\.8M/);
+  assert.match(suzuki ?? "", /\$106\.5M/);
+  for (const text of ["$109.5M", "4–5 yrs", "$63.9M", "$74.2M", "FanGraphs — crowd median"]) {
+    assert.ok(rogers?.includes(text), text);
+  }
   assert.match(html, /href="\/tools\/free-agents"[^>]*aria-current="page"|href="\/tools"[^>]*aria-current="page"/);
 });
 
