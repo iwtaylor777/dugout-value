@@ -6,6 +6,7 @@
 // published 2027 WAR as a rate and start at part-time playing time. Free agents outside the roster snapshot come from
 // the same optional files the free-agent tracker uses, so the tool can suggest them.
 import fs from 'node:fs';
+import { applyPositionUsage } from './refresh-depth-eligibility.mjs';
 const [extraPlayersFile, extraProjectionsFile, fgPayrollFile, impliedDefenseFile, fgPositionsFile, componentsFile] = process.argv.slice(2);
 // Defense built into each hitter's 2027 DV rate (fielding + positional runs per 600 PA: rate x runs per win, less
 // replacement, batting runs from a wOBA projection with the same model inputs, and recent baserunning), and the
@@ -92,5 +93,7 @@ for (const row of tracker.players) {
 }
 const out = { meta: { built: new Date().toISOString().slice(0, 10), projections: dv.meta.model, targets: TARGETS, partTime: PART_TIME },
   teams: db.teams, players };
-fs.writeFileSync('app/data/depth-chart.json', JSON.stringify(out) + '\n');
+const usageFile = 'app/data/depth-position-usage.json';
+const current = fs.existsSync(usageFile) ? applyPositionUsage(out, read(usageFile).players).depth : out;
+fs.writeFileSync('app/data/depth-chart.json', JSON.stringify(current) + '\n');
 console.log(players.length, 'entries;', players.filter(p => p.fa).length, 'in the free-agent class;', players.filter(p => p.s === 'zips').length, 'without DV');

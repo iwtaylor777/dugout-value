@@ -1,4 +1,4 @@
-export type DepthEntry = { i: string; pid?: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s?: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string; fs?: Record<string, number>; rd?: number };
+export type DepthEntry = { i: string; pid?: string; n: string; t: string | null; e: string[]; eSource?: "mlb-2026" | "listed-fallback"; k: "b" | "p"; r: number; x: number; s?: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string; fs?: Record<string, number>; rd?: number };
 export type DepthEdit = { pos?: string; pt?: number };
 export type DepthTargets = { hitter: number; SP: number; RP: number };
 export type DepthRow<T extends DepthEntry = DepthEntry> = { p: T; pt: number; war: number; how: "locked" | "set" | "auto" };
@@ -8,6 +8,8 @@ export const HITTING: string[];
 export const PITCHING: string[];
 export const POSITIONS: string[];
 export const DEFAULT_TARGETS: DepthTargets;
+export const MAX_CONVERTED_RELIEF_IP: number;
+export const MAX_NATIVE_RELIEF_IP: number;
 export function unitOf(p: DepthEntry): number;
 export function targetOf(pos: string, targets?: DepthTargets): number;
 export const BELOW_AVERAGE_FIELDING: number;

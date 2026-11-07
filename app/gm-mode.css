@@ -65,6 +65,11 @@
 .gm-market-feed summary, .gm-player-market summary { cursor:pointer; min-height:44px; align-content:center; font-weight:600; color:var(--gm-green); }
 .gm-market-feed ul { max-height:260px; overflow:auto; padding-left:22px; font-size:14px; line-height:1.6; }
 .gm-market-feed li { padding:5px 0; }
+.gm-offer-standing { font-weight:600; color:var(--gm-green); }
+.gm-invite-feed { border-top:1px solid #d2d8c8; margin-top:8px; }
+.gm-table .gm-market-range { min-width:145px; max-width:200px; line-height:1.5; }
+.gm-market-range strong, .gm-market-range span { display:block; }
+.gm-market-range small { color:var(--gm-muted); font-size:12px; font-weight:400; white-space:normal; }
 .gm-player-market { margin-top:8px; font-size:13px; font-weight:400; white-space:normal; }
 .gm-player-market p { margin:8px 0; line-height:1.5; }
 .gm-player-market ul { padding-left:16px; margin:8px 0; line-height:1.5; }
@@ -176,6 +181,25 @@
 .gm-propose p { margin: 0; max-width: 85ch; font-size: 14px; line-height: 1.6; }
 .gm button:disabled { opacity: .65; cursor: default; }
 .gm-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: 16px; }
+.gm-roster-nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.gm-roster-nav button, .gm-contract-trade { min-height:44px; border:1px solid #a5b3a5; border-radius:4px; background:#fffdf6; color:var(--gm-green); padding:8px 12px; font-size:14px; cursor:pointer; }
+.gm-roster-nav button[aria-pressed=true] { background:#e3ecd9; border-color:#6d8977; font-weight:600; }
+.gm-contracts-wrap { overflow:auto; max-height:70vh; margin-top:12px; border:1px solid var(--gm-line); border-radius:5px; }
+.gm-contracts { border-collapse:separate; border-spacing:0; width:100%; font-size:14px; background:#fffdf6; }
+.gm-contracts th, .gm-contracts td { text-align:left; padding:12px; border-bottom:1px solid #e4dece; vertical-align:top; }
+.gm-contracts thead th { position:sticky; top:0; z-index:1; background:#e8e3d2; font-size:13px; }
+.gm-contracts tbody th { min-width:180px; font-weight:600; }
+.gm-contracts td { min-width:120px; }
+.gm-contracts small { display:block; font-size:12px; color:var(--gm-muted); line-height:1.5; font-weight:400; margin-top:4px; }
+.gm-contracts .gm-contract-detail summary { min-height:44px; align-content:start; }
+.gm-contracts .gm-contract-detail ul { margin:0; }
+.gm-debrief { border-top:1px solid var(--gm-line); border-bottom:1px solid var(--gm-line); margin:18px 0; padding:16px 0; }
+.gm-debrief h3 { font-size:18px; margin:0 0 8px; }
+.gm-debrief > p { font-size:14px; line-height:1.6; margin:8px 0; }
+.gm-debrief ul { list-style:none; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:14px 0; padding:0; }
+.gm-debrief li { border-left:3px solid #9aaf8c; padding-left:10px; font-size:14px; line-height:1.6; }
+.gm-debrief li strong, .gm-debrief li span { display:block; }
+.gm-debrief li span { color:var(--gm-muted); margin-top:4px; }
 .gm-slot { min-width: 0; border: 1px solid #c9d2c5; border-radius: 6px; background: #fffdf6; padding: 0 14px 14px; }
 .gm-slot h3 { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 -14px 10px; padding: 12px 14px; font-size: 15px; background: #e8eee1; border-bottom: 1px solid #c9d2c5; border-radius: 5px 5px 0 0; }
 .gm-slot h3 span { padding: 3px 6px; border-radius: 3px; background: var(--gm-green); color: #fff; font-size: 13px; }
@@ -240,6 +264,7 @@
   .gm-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .gm-filters .gm-field { max-width: none; }
   .gm-filters .gm-field:first-child { grid-column: 1 / -1; }
+  .gm-roster-filters .gm-field { grid-column: 1 / -1; }
   .gm-filters > .gm-note { grid-column: 1 / -1; }
   .gm-trade, .gm-two { grid-template-columns: minmax(0, 1fr); }
   .gm-side { padding: 14px; }
@@ -254,13 +279,24 @@
   .gm-table-wrap { max-height: none; overflow: visible; border: 0; }
   .gm-table, .gm-table tbody { display: block; min-width: 0; width: 100%; }
   .gm-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .gm-table tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 14px; border: 1px solid var(--gm-line); border-radius: 6px; overflow: hidden; background: #fffdf6; }
+  .gm-table tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 14px; border: 1px solid var(--gm-line); border-radius: 6px; overflow: hidden; background: #fffdf6; }
   .gm-table tbody tr > th:first-child { grid-column: 1 / -1; position: static; min-width: 0; max-width: none; padding: 12px; background: #e8eee1; box-shadow: none; border-bottom: 1px solid #c9d2c5; }
   .gm-table td { min-width: 0; padding: 10px 8px; border: 0; }
   .gm-table td::before { content: attr(data-label); display: block; margin-bottom: 5px; font-size: 12px; font-weight: 400; color: var(--gm-muted); line-height: 1.4; }
   .gm-table td.num { text-align: left; white-space: normal; font-size: 16px; font-weight: 600; }
   .gm-table small { font-size: 12px; }
   .gm-table td.gm-offer { grid-column: 1 / -1; padding: 10px 12px 12px; border-top: 1px solid #e4dece; min-width: 0; }
+  .gm-table td.gm-market-range { grid-column:1/-1; max-width:none; min-width:0; display:grid; grid-template-columns:1fr 1fr; gap:0 12px; border-top:1px solid #e4dece; padding:10px 12px; }
+  .gm-table td.gm-market-range::before, .gm-market-range small { grid-column:1/-1; }
+  .gm-contracts-wrap { overflow:visible; max-height:none; border:0; }
+  .gm-contracts, .gm-contracts tbody { display:block; width:100%; }
+  .gm-contracts thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+  .gm-contracts tbody tr { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border:1px solid var(--gm-line); border-radius:5px; margin:12px 0; overflow:hidden; }
+  .gm-contracts tbody th { grid-column:1/-1; min-width:0; padding:12px; background:#e8eee1; }
+  .gm-contracts td { min-width:0; padding:10px; border:0; overflow-wrap:anywhere; }
+  .gm-contracts td::before { content:attr(data-label); display:block; font-size:12px; color:var(--gm-muted); margin-bottom:5px; }
+  .gm-contract-trade { padding:8px; font-size:13px; }
+  .gm-debrief ul { grid-template-columns:1fr; gap:12px; }
   .gm-offer label { margin-right: 6px; gap: 3px; }
   .gm-offer input { width: 55px; }
   .gm-offer label:nth-of-type(2) input { width: 72px; }

@@ -1,11 +1,43 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
-import { allocate, teamsFor, bestAdditions, rateAt, cbtHit, payrollAdjustment, payrollChange, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, targetOf } from '../lib/depth-chart.mjs';
+import { applyPositionUsage, inningsToOuts, positionUsage } from '../scripts/refresh-depth-eligibility.mjs';
+import { allocate, teamsFor, bestAdditions, rateAt, cbtHit, payrollAdjustment, payrollChange, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, MAX_CONVERTED_RELIEF_IP, MAX_NATIVE_RELIEF_IP, targetOf } from '../lib/depth-chart.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
 const data = read('../app/data/depth-chart.json'), tracker = read('../app/data/free-agent-tracker.json'), signings = read('../app/data/free-agent-signings.json');
 const h = (i, e, r, x) => ({ i, n: i, t: 'AAA', e, k: 'b', r, x });
 const pit = (i, e, r, x) => ({ i, n: i, t: 'AAA', e, k: 'p', r, x });
+
+test('MLB usage eligibility preserves contracts and projections, includes utility roles and marks missing samples', () => {
+  const p = { ...h('one', ['CF', '3B'], 2, 500), pid: 'mlb-1', cb: 20, fs: { CF: 1, RF: 2 }, rd: 3 };
+  const noData = { ...h('two', ['C'], 1, 100), pid: 'mlb-2' };
+  const usage = { 'mlb-1': [{ pos: 'RF', outs: 300, games: 12, starts: 12 }, { pos: '2B', outs: 30, games: 10, starts: 0 }, { pos: 'CF', outs: 24, games: 1, starts: 1 }] };
+  const result = applyPositionUsage({ players: [p, noData] }, usage);
+  assert.deepEqual(result.depth.players[0], { ...p, e: ['RF', '2B'], eSource: 'mlb-2026' });
+  assert.deepEqual(result.depth.players[1], { ...noData, eSource: 'listed-fallback' });
+  assert.equal(result.matched, 1); assert.equal(result.fallback, 1);
+  assert.equal(inningsToOuts('1065.1'), 3196);
+  assert.throws(() => inningsToOuts('10.3'));
+});
+
+test('usage import rejects truncated, duplicate, and wrong-season responses', () => {
+  const row = { season: '2026', player: { id: 1 }, position: { abbreviation: 'RF' }, stat: { innings: '75.0', gamesPlayed: 10, gamesStarted: 9 } };
+  const response = rows => ({ stats: [{ group: { displayName: 'fielding' }, totalSplits: rows.length, splits: rows }] });
+  assert.equal(positionUsage(response([row]))['mlb-1'][0].outs, 225);
+  assert.throws(() => positionUsage(response([row, row])));
+  assert.throws(() => positionUsage(response([{ ...row, season: '2025' }])));
+  const partial = response([row]); partial.stats[0].totalSplits = 2;
+  assert.throws(() => positionUsage(partial));
+});
+
+test('saved position usage replays exactly and corrects obsolete defensive positions', () => {
+  const usage = read('../app/data/depth-position-usage.json');
+  assert.equal(usage.meta.season, 2026);
+  assert.deepEqual(applyPositionUsage(data, usage.players).depth, data);
+  assert.deepEqual(data.players.find(p => p.n === 'Nick Castellanos').e, ['RF']);
+  assert.deepEqual(data.players.find(p => p.n === 'Willson Contreras').e, ['1B']);
+  assert.ok(data.players.find(p => p.n === 'Edmundo Sosa').e.includes('SS'));
+});
 
 test('every position fills to a full season, with replacement level for any gap', () => {
   const { team } = teamsFor(data.players, tracker, signings.entries);
@@ -44,6 +76,73 @@ test('starters fill the rotation and spare innings go to the bullpen', () => {
   const a = allocate(roster);
   assert.equal(a.positions.SP.filled, DEFAULT_TARGETS.SP);
   assert.equal(a.positions.RP.filled, 6 * 180 - DEFAULT_TARGETS.SP);
+  assert.ok(a.positions.RP.rows.every(r => r.pt <= MAX_CONVERTED_RELIEF_IP));
+});
+
+test('automatic roles optimize the whole roster rather than committing the best flexible player first', () => {
+  const flexible = h('flexible', ['1B', 'DH'], 3, 683), firstBase = h('first-base', ['1B'], 2.5, 683);
+  const a = allocate([flexible, firstBase]);
+  assert.equal(a.positions.DH.rows[0].p.i, flexible.i);
+  assert.equal(a.positions['1B'].rows[0].p.i, firstBase.i);
+  assert.ok(Math.abs(a.total - (3 + 2.5) * 683 / 600) < 1e-9);
+});
+
+test('optional negative-WAR depth stays unused; explicit user assignments still take effect', () => {
+  const bad = h('negative', ['1B'], -1, 600);
+  const a = allocate([bad]);
+  assert.equal(a.total, 0);
+  assert.deepEqual(a.unused, [bad]);
+  const forced = allocate([bad], { negative: { pos: '1B', pt: 100 } });
+  assert.equal(forced.positions['1B'].rows[0].pt, 100);
+  assert.ok(forced.total < 0);
+});
+
+test('adding a reliever cannot displace better converted-starter innings and lower roster WAR', () => {
+  const starters = [1, 2, 3, 4, 5, 6].map(n => pit(`sp${n}`, ['SP'], 3, 180));
+  const base = allocate(starters), after = allocate([...starters, pit('reliever', ['RP'], 1, 69)]);
+  assert.ok(after.total >= base.total - 1e-9);
+  assert.ok(after.positions.RP.rows.filter(r => r.p.e.includes('SP')).every(r => r.pt <= MAX_CONVERTED_RELIEF_IP));
+  for (const p of starters) {
+    const innings = Object.values(after.positions).flatMap(s => s.rows).filter(r => r.p.i === p.i).reduce((sum, r) => sum + r.pt, 0);
+    assert.ok(innings <= p.x + 1e-9);
+  }
+});
+
+test('usage-verified fielders are not automatically taught new positions', () => {
+  const abreu = data.players.find(p => p.n === 'Wilyer Abreu');
+  const rafaela = data.players.find(p => p.n === 'Ceddanne Rafaela');
+  const { team } = teamsFor(data.players, tracker, signings.entries);
+  const roster = data.players.filter(p => team.get(p.i) === 'BOS'), automatic = allocate(roster);
+  for (const p of [abreu, rafaela]) for (const [pos, slot] of Object.entries(automatic.positions)) {
+    if (slot.rows.some(r => r.p.i === p.i)) assert.ok(pos === 'DH' || p.e.includes(pos), `${p.n} automatically moved to ${pos}`);
+  }
+  const manual = allocate(roster, { [abreu.i]: { pos: '1B', pt: 500 } });
+  assert.equal(manual.positions['1B'].rows.find(r => r.p.i === abreu.i).pt, 500, 'explicit experiments remain possible');
+});
+
+test('RP-tagged bulk projections cannot bypass the automatic relief workload cap', () => {
+  const houck = data.players.find(p => p.n === 'Tanner Houck');
+  assert.ok(houck.e.includes('RP') && houck.x > MAX_NATIVE_RELIEF_IP);
+  assert.equal(allocate([houck]).positions.RP.rows[0].pt, MAX_NATIVE_RELIEF_IP);
+  assert.equal(allocate([houck], { [houck.i]: { pos: 'RP', pt: 111 } }).positions.RP.rows[0].pt, 111, 'manual workload overrides remain explicit');
+});
+
+test('adding real available players never reduces an automatic roster; input order is immaterial', () => {
+  const { team, freeAgents } = teamsFor(data.players, tracker, signings.entries);
+  const candidates = data.players.filter(p => freeAgents.has(p.i));
+  // Cover every available free agent on three different rosters, plus every
+  // club with the actual regression players from the market audit.
+  const regressions = candidates.filter(p => ['Nick Castellanos', 'Enyel De Los Santos', 'Tyler Alexander', 'Rhys Hoskins'].includes(p.n));
+  for (const t of data.teams) {
+    const roster = data.players.filter(p => team.get(p.i) === t.abbr), before = allocate(roster);
+    const sample = ['BOS', 'NYY', 'ATH'].includes(t.abbr) ? candidates : regressions;
+    for (const p of sample) {
+      const after = allocate([...roster, p]);
+      assert.ok(after.total >= before.total - 1e-8, `${t.abbr} adding ${p.n}: ${before.total} → ${after.total}`);
+      for (const slot of Object.values(after.positions)) assert.ok(slot.over < 1e-8);
+    }
+    assert.deepEqual(allocate([...roster].reverse()).positions, before.positions, `${t.abbr} order`);
+  }
 });
 
 test('free agents leave their 2026 team and reported signings move them', () => {

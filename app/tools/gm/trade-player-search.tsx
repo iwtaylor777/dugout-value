@@ -1,6 +1,6 @@
 "use client";
 import { useId, useRef, useState } from "react";
-import { matchesTradePlayer } from "../../../lib/gm-trade-search.mjs";
+import { matchesTradeChoice } from "../../../lib/gm-trade-search.mjs";
 
 type Choice = { pid: string; name: string; position: string; unavailable: string; contract?: string };
 
@@ -12,7 +12,7 @@ export function TradePlayerSearch({ label, query, onQuery, choices, onAdd }: {
   const input = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
-  const matches = choices.filter(choice => matchesTradePlayer(choice.name, query));
+  const matches = choices.filter(choice => matchesTradeChoice(choice, query));
   const shown = matches.slice(0, 10);
   const add = (choice: Choice) => {
     if (choice.unavailable) return;
@@ -21,7 +21,7 @@ export function TradePlayerSearch({ label, query, onQuery, choices, onAdd }: {
   return <div className="gm-player-search" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpen(false); }}>
     <label className="gm-field" htmlFor={id}><span>{label}</span>
       <input ref={input} id={id} role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={`${id}-options`} aria-activedescendant={open && active >= 0 && shown[active] ? `${id}-${shown[active].pid}` : undefined}
-        autoComplete="off" placeholder="Type a player or prospect name…" value={query}
+        autoComplete="off" placeholder="Name, position, prospect, or FV…" value={query}
         onFocus={() => { setOpen(true); setActive(-1); }}
         onChange={e => { onQuery(e.target.value); setOpen(true); setActive(-1); }}
         onKeyDown={e => {

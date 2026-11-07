@@ -10,6 +10,29 @@ const id = n => Object.entries(ctx.sim.players).find(([, v]) => v.n === n)[0];
 const fa = n => ctx.tracker.players.find(r => r.name === n);
 const base = { team: 'BOS', seed: 42, signings: [], trades: [] };
 
+test('salary-dump feedback improves consistently as compensation increases', () => {
+  const state = { ...base, market: {round:0,bids:[],deals:[],offers:[]} };
+  const funded = { ...ctx, sim: { ...ctx.sim, teams: { ...ctx.sim.teams, NYY: { ...ctx.sim.teams.NYY, cbt2026:1000 } } } };
+  const league=g.buildLeague(funded,state), modes=g.teamModes(funded,league.teamOf);
+  const tiers=['Far apart','Significant gap','Within range','Close'];
+  let previous=-1;
+  for(const cash of [0,5,15,25,35,50,75]) {
+    const reply=g.respondToTrade(funded,league,state,480,{partner:'NYY',give:[id('Trevor Story')],get:[],cash},modes);
+    const tier=reply.accepted ? 4 : tiers.indexOf(reply.negotiation);
+    assert.ok(tier>=previous,reply.reason);
+    if(!reply.accepted){ assert.match(reply.reason,/remaining salary/);assert.match(reply.reason,/Cash offsets/);assert.doesNotMatch(reply.reason,/laughed|typo|lost your mind|hung up/); }
+    previous=tier;
+  }
+});
+
+test('contract cards show the actual newly negotiated term and salary', () => {
+  const player=fa('Nick Pivetta');
+  const state={...base,signings:[{pid:player.id,years:3,total:42}]};
+  const contract=g.playerContract(ctx,g.buildLeague(ctx,state),player.id);
+  assert.equal(contract.hit,14);assert.equal(contract.salary,14);assert.equal(contract.controlThrough,2029);
+  assert.deepEqual(contract.seasons,[2027,2028,2029].map(year=>({year,salary:14,type:'fixed'})));
+});
+
 test('short FA contracts are graded against matching years, not the full long-term estimate', () => {
   const row = fa('Tarik Skubal');
   const benchmark = row.modelValue ?? row;
@@ -106,7 +129,7 @@ test('trade responses honour no-trade clauses, star premiums and fairness', () =
 });
 
 test('stars with years of control cost well beyond fair value; rentals on bad teams go near fair value', () => {
-  const league = g.buildLeague(ctx, base), modes = g.teamModes(ctx, league.teamOf);
+  const league = g.buildLeague(ctx, base), modes = { ...g.teamModes(ctx, league.teamOf), HOU: 'rebuild', WSN: 'rebuild' };
   const ask = (partner, give, get) => g.respondToTrade(ctx, league, base, 400, { partner, give: give.map(id), get: get.map(id) }, modes);
   assert.equal(modes.WSN, 'rebuild');
   // James Wood has four years of control. A package worth more than him to a rebuilding team still isn't enough.

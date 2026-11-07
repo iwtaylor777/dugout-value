@@ -33,6 +33,7 @@ for (const p of db.players) {
   const w27 = p.kind === 'mlb' ? (dv[p.id]?.war?.['2027'] ?? q.threeYearProjection?.find(s => s.year === 2027)?.war ?? 0) : 0;
   players[p.id] = {
     n: p.name, t: q.team, k: p.kind === 'prospect' ? 'p' : 'm', pos: p.position ?? p.depthPosition ?? '', age: p.age,
+    ...(p.kind === 'prospect' ? { ...(p.fv != null ? { fv: p.fv } : {}), ...(Number.isFinite(Number(p.eta)) ? { eta: Number(p.eta) } : {}) } : {}),
     v20: round(value(20).total), v10: round(base.total), v05: round(value(5).total),
     // Last season of club control (contract or arbitration, excluding player options) and projected 2027 WAR.
     ctl: base.clubControlThrough ?? base.controlThrough ?? null, w27: round(w27),

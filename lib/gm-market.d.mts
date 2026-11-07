@@ -6,5 +6,5 @@ export function marketBoard(ctx: GmContext, moves: GmMoves): MarketEntry[];
 export function submitMarketBid(ctx: GmContext, moves: GmMoves, bid: GmSigning): { accepted: boolean; reason: string; moves?: GmMoves };
 export function advanceMarket(ctx: GmContext, moves: GmMoves): { moves: GmMoves; news: string[] };
 export function standingPatMarket(ctx: GmContext, moves: GmMoves): GmMoves;
-export function userOfferOutcomes(ctx: GmContext, moves: GmMoves): { offer: GmOfferHistory; status: string; deal: (GmSigning & { team: string }) | null; reason: string }[];
+export function userOfferOutcomes(ctx: GmContext, moves: GmMoves): { offer: GmOfferHistory; status: string; deal: (GmSigning & { team: string }) | null; invite: { pid: string; team: string } | null; reason: string; standing: string; decisionRound: number | null }[];
 export function withdrawMarketBid(moves: GmMoves, pid: string): GmMoves;

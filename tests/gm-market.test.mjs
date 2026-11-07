@@ -84,7 +84,7 @@ test('closeout floors prevent implausible star deals even when rival budgets are
   const submitted = m.submitMarketBid(cramped, start, { pid: star.id, years: 1, total: .8 }).moves;
   const result = m.advanceMarket(cramped, submitted);
   assert.ok(![...result.moves.signings, ...result.moves.market.deals].some(s => s.pid === star.id));
-  assert.match(result.news.find(n => n.startsWith('Tarik Skubal did not')), /credible offer/);
+  assert.match(result.news.find(n => n.startsWith('Tarik Skubal did not')), /credible MLB offer/);
   const forged = { ...game(), signings: [{ pid: star.id, years: 1, total: .8, closeout: true }], market: { ...m.newMarket(), round: 3 } };
   assert.equal(g.restoreMoves(ctx, forged).moves, null, 'saved games cannot bypass the floor');
   assert.ok(g.closeoutMinimumAav(star, 1, 42) >= .65 * star.aav);
@@ -239,13 +239,13 @@ test('closing the market records late signings, honors budgets, and replays via 
   assert.match(news.join(' '), /Late signing/);
   assert.equal(new Set(current.market.deals.map(d => d.pid)).size, current.market.deals.length);
   const after = g.buildLeague(ctx, current);
-  // Public market asks can exceed every club's spending/fit ceiling. The
-  // closeout must report that outcome rather than force a star into a minimum deal.
+  // A player can remain available when no club has a useful MLB role, even
+  // when he would accept a minimum deal. Non-roster invitations are separate.
   const remaining = new Set(ctx.players.filter(p => after.freeAgents.has(p.i)).map(p => p.pid));
   for (const pid of remaining) {
     const player = ctx.tracker.players.find(p => p.id === pid);
-    assert.ok(g.closeoutMinimumAav(player, 1, start.seed) > .8, player.name);
-    assert.ok(news.some(line => line.startsWith(`${player.name} did not find a credible offer`)), player.name);
+    assert.ok(player, pid);
+    assert.ok(!current.market.invites.some(d => d.pid === pid), player.name);
   }
   for (const deal of current.market.deals.filter(d => d.closeout)) {
     const player = ctx.tracker.players.find(p => p.id === deal.pid);
@@ -257,6 +257,22 @@ test('closing the market records late signings, honors budgets, and replays via 
   }
   const rivalPlans = Object.keys(ctx.sim.teams).filter(t => t !== start.team).map(t => g.rivalBudget(ctx, after, t, start.seed));
   assert.ok(rivalPlans.filter(p => p.room >= 5 - 1e-8).length >= 5, 'the closed market retains multiple salary-dump destinations');
+  assert.ok(current.market.invites.length > 0, 'depth players have a separate non-roster path');
+  const replay = { ...start, market: { ...m.newMarket(), round: 3 } };
+  for (const deal of current.market.deals) {
+    const league = g.buildLeague(ctx, replay), roster = g.rosterOf(ctx, league.teamOf, deal.team);
+    const gain = allocate([...roster, ...ctx.players.filter(p => p.pid === deal.pid)]).total - allocate(roster).total;
+    assert.ok(gain >= .1 - 1e-8, `${deal.pid} must fill a useful MLB role, got ${gain}`);
+    replay.market.deals.push(deal);
+  }
+  for (const team of Object.keys(ctx.sim.teams)) assert.ok(current.market.deals.filter(d=>d.team===team).length <= g.MAX_RIVAL_MLB_SIGNINGS);
+  const beforeInvites = g.buildLeague(ctx, { ...current, market: { ...current.market, invites: [] } });
+  for (const invite of current.market.invites) {
+    assert.equal(g.playerContract(ctx, after, invite.pid).hit, 0);
+    assert.equal(g.playerContract(ctx, after, invite.pid).minorInvite, true);
+    assert.equal(g.payrollFor(ctx, after, invite.team), g.payrollFor(ctx, beforeInvites, invite.team));
+    assert.ok(ctx.players.filter(p=>p.pid===invite.pid).every(p=>after.teamOf.get(p.i)===null && !after.freeAgents.has(p.i)));
+  }
   const decoded = g.decodeMoves(g.encodeMoves(current));
   assert.deepEqual(decoded, current);
   const restored = g.restoreMoves(ctx, decoded);
@@ -264,6 +280,16 @@ test('closing the market records late signings, honors budgets, and replays via 
   assert.deepEqual(restored.moves, current);
   assert.deepEqual(m.standingPatMarket(ctx, start), current);
   assert.deepEqual(m.advanceMarket(ctx, current).moves, current);
+});
+
+test('non-roster invitations cannot hide a star, duplicate an MLB signing or enable a trade', () => {
+  const depth = ctx.tracker.players.find(r => r.aav <= 3 && r.war2027 < 1 && ctx.players.some(p=>p.pid===r.id));
+  const state = { ...game(), market: { ...m.newMarket(), round: 3, invites: [{pid:depth.id,team:'NYY'}] } };
+  assert.ok(g.restoreMoves(ctx,state).moves);
+  assert.equal(g.restoreMoves(ctx,{...state, market:{...state.market,invites:[{pid:row('Tarik Skubal').id,team:'NYY'}]}}).moves,null);
+  assert.equal(g.decodeMoves(g.encodeMoves({...state,market:{...state.market,round:2}})),null);
+  const league=g.buildLeague(ctx,state);
+  if(ctx.sim.players[depth.id]) assert.match(g.respondToTrade(ctx,league,state,400,{partner:'NYY',give:[],get:[depth.id]},g.teamModes(ctx,league.teamOf)).reason,/non-roster/);
 });
 
 test('a below-ask final offer can win the closeout and survives save/restore', () => {
