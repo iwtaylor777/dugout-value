@@ -27,6 +27,13 @@ test('every canonical player displays current WAR and the complete five-year hor
   const suzuki=tracker.players.find(p=>p.name==='Seiya Suzuki');
   assert.equal(suzuki.war2027,2.68);assert.equal(suzuki.years,4);assert.equal(suzuki.total,73.8);
   assert.equal(suzuki.marketForecast.reference.total,105);
+  assert.equal(suzuki.marketForecast.consensus.total, 106.5);
+  assert.deepEqual(suzuki.marketForecast.alternateValues, []);
+  const rogers = tracker.players.find(p => p.name === 'Trevor Rogers');
+  assert.deepEqual(rogers.marketForecast.consensus, {total: 109.5, minYears: 4, maxYears: 5, sourceCount: 2, singleSource: null});
+  assert.deepEqual(rogers.marketForecast.alternateValues, [{years: 4, total: 63.9, aav: 16}]);
+  const grisham = tracker.players.find(p => p.name === 'Trent Grisham');
+  assert.equal(grisham.marketForecast.consensus.singleSource, 'FanGraphs — Ben Clemens');
   assert.equal(suzuki.publishedForecast.total,48.3);
 });
 
