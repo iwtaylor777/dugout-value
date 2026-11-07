@@ -152,6 +152,7 @@
 .gm-side > .gm-field { display: block; margin-bottom: 10px; }
 .gm-player-search { position: relative; }
 .gm-player-search .gm-field { display: block; }
+.gm-player-search .gm-field + .gm-field { margin-top: 10px; }
 .gm-player-search input { width: 100%; }
 .gm-search-popover { position: absolute; z-index: 5; top: 100%; left: 0; right: 0; background: #fffdf6; border: 1px solid #a9b9a9; border-radius: 0 0 6px 6px; box-shadow: 0 8px 18px #263d2920; }
 .gm-search-popover ul { list-style: none; padding: 4px; margin: 0; max-height: 300px; overflow-y: auto; }

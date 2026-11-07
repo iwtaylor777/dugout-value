@@ -10,7 +10,7 @@ test('expected market uses broad public ranges, never a private asking threshold
   assert.deepEqual(expectedMarket({ ...row, seed: 901, privateAsk: 15.2 }), range);
   const uncertain = expectedMarket({ years: 2, aav: 13 });
   assert.ok(uncertain.highAav - uncertain.lowAav > range.highAav - range.lowAav);
-  assert.ok(uncertain.highYears > range.highYears);
+  assert.equal(uncertain.highYears, range.highYears, 'the displayed term range stays within accepted negotiation terms');
 });
 
 test('range covers disagreement in public forecasts and handles thin markets', () => {

@@ -16,3 +16,4 @@ export function couldFitBudget(row: MarketGuidanceRow, available: number, pendin
 export function alternativeRole(input: { selectedRole?: string; rememberedRole?: string; eligible?: string[]; projectedPositions?: string[] }): string;
 export function isUsefulAlternative(candidate: { gain: number; positions: string[] }, role: string): boolean;
 export function resultImpact(wins: number, playoffDelta: number): { headline: string; playoffs: string };
+export function gradeContext(budget: number, standardBudget: number, startingPayroll: number, mode: string): string | null;

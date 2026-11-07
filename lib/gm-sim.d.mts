@@ -29,6 +29,11 @@ export function closeoutMinimumAav(row: TrackerRow, years: number, seed: number)
 export const MAX_RIVAL_MLB_SIGNINGS: number;
 export function askFor(fa: TrackerRow | undefined, seed: number): { total: number; minYears: number; maxYears: number };
 export function respondToOffer(fa: TrackerRow, offer: { years: number; total: number }, seed: number): GmAnswer;
+export function requiredOfferTotal(fa: TrackerRow, years: number, seed: number): number;
+export function openingTeamModes(ctx: GmContext): Record<string, "contend" | "middle" | "rebuild">;
+export const MAX_TRADE_PLAYERS: number;
+export function packageValue(values: number[]): number;
+export function tradePlayerValue(player: GmPlayerValue, mode: string): number;
 export function signFreeAgent(ctx: GmContext, league: GmLeague, moves: GmMoves, budget: number, fa: TrackerRow, offer: { years: number; total: number }, seed: number): GmAnswer;
 export function buildLeague(ctx: GmContext, moves: GmMoves): GmLeague;
 export function rosterOf(ctx: GmContext, teamOf: Map<string, string | null>, abbr: string): GmContext["players"];

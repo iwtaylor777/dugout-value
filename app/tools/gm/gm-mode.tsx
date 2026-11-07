@@ -11,12 +11,12 @@ import simData from "../../data/gm-sim.json";
 import payrollData from "../../data/team-payroll.json";
 import { allocate, bestAdditions, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
 import { matchesProjectionRole } from "../../../lib/projection-filters.mjs";
-import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget, alternativeRole, isUsefulAlternative, resultImpact } from "../../../lib/gm-experience.mjs";
+import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget, alternativeRole, isUsefulAlternative, resultImpact, gradeContext } from "../../../lib/gm-experience.mjs";
 import { matchesTradePlayer } from "../../../lib/gm-trade-search.mjs";
 import { advanceMarket, marketBoard, MARKET_ROUNDS, newMarket, submitMarketBid, userOfferOutcomes, withdrawMarketBid } from "../../../lib/gm-market.mjs";
 import {
   aiFreeAgency, buildLeague, decodeMoves, encodeMoves, grade, movesValue, payrollFor, respondToTrade, rosterOf,
-  signFreeAgent, simulateSeasons, teamModes, teamStrengths, restoreMoves, undoMove, seasonReadiness, playerContract, rivalBudget,
+  signFreeAgent, simulateSeasons, openingTeamModes, teamStrengths, restoreMoves, undoMove, seasonReadiness, playerContract, rivalBudget,
 } from "../../../lib/gm-sim.mjs";
 import type { GmContext, GmMoves, GmTeamResult, TrackerRow } from "../../../lib/gm-sim.mjs";
 
@@ -78,28 +78,41 @@ export function GmMode() {
   const [budgetDraft, setBudgetDraft] = useState<string | null>(null);
   const [marketNews, setMarketNews] = useState<string[]>([]);
   const [showSigningLedger, setShowSigningLedger] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const autoRun = useRef<GmMoves | null>(null);
   const runVersion = useRef(0);
 
   const budget = moves.budget ?? Math.round(ctx.sim.teams[moves.team].cbt2026);
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
+    const load = () => {
+    setLoaded(true);
     try {
-      const s = readGmSaveUrl(window.location.href);
+      const shared = readGmSaveUrl(window.location.href);
+      const s = shared ?? window.sessionStorage.getItem("dugout-gm-session-v2");
       const m = s ? decodeMoves(s) : null;
       if (s) {
         const restored = m ? restoreMoves(ctx, m) : null;
-        if (restored?.moves) { setMoves(restored.moves); if (!restored.moves.market || restored.moves.market.round === MARKET_ROUNDS) autoRun.current = restored.moves; return; }
+        if (restored?.moves) { runVersion.current++; setResults(null); setRunning(false); setOffers({}); setTradeNote(null); setFeedback(null); setGive([]); setGet([]); setMarketNews([]); setMoves(restored.moves); if (shared && (!restored.moves.market || restored.moves.market.round === MARKET_ROUNDS)) autoRun.current = restored.moves; return; }
         setFeedback({ tone: "error", text: restored?.reason ?? "This saved offseason could not be loaded. Start a new one below; no moves were applied." });
       }
     } catch { /* ignore */ }
     setMoves((m) => ({ ...m, seed: newSeed() }));
-    });
-    return () => cancelAnimationFrame(frame);
+    };
+    const frame = requestAnimationFrame(load);
+    const navigate = () => { if (readGmSaveUrl(window.location.href)) load(); };
+    window.addEventListener("hashchange", navigate);
+    window.addEventListener("popstate", navigate);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("hashchange", navigate); window.removeEventListener("popstate", navigate); };
   }, []);
+  useEffect(() => {
+    if (!loaded) return;
+    try { window.sessionStorage.setItem("dugout-gm-session-v2", encodeMoves(moves)); } catch { /* Private browsing may block storage; share links still work. */ }
+  }, [loaded, moves]);
 
   const league = useMemo(() => buildLeague(ctx, moves), [moves]);
-  const modes = useMemo(() => teamModes(ctx, league.teamOf), [league]);
+  const modes = openingTeamModes(ctx);
+  const startingPayroll = useMemo(() => payrollFor(ctx, buildLeague(ctx, { team: moves.team, seed: moves.seed, signings: [], trades: [] }), moves.team), [moves.team, moves.seed]);
+  const gradeNote = gradeContext(budget, Math.round(ctx.sim.teams[moves.team].cbt2026), startingPayroll, modes[moves.team]);
   const payroll = useMemo(() => payrollFor(ctx, league, moves.team), [league, moves.team]);
   const readiness = useMemo(() => seasonReadiness(ctx, moves), [moves]);
   const roster = useMemo(() => rosterOf(ctx, league.teamOf, moves.team), [league, moves.team]);
@@ -169,7 +182,7 @@ export function GmMode() {
   const positionChanges = POSITIONS.map(pos => ({ pos, before: startingAlloc.positions[pos].war, after: alloc.positions[pos].war, change: alloc.positions[pos].war - startingAlloc.positions[pos].war })).sort((a, b) => b.change - a.change);
   const tradePayroll = useMemo(() => {
     if (!partner || (!give.length && !get.length)) return null;
-    if (!cashAmount.trim() || Number(cashAmount) < 0 || !Number.isFinite(cash) || Math.abs(cash) > 100) return null;
+    if (!cashAmount.trim() || Number(cashAmount) < 0 || !Number.isFinite(cash) || Math.abs(cash) > 50) return null;
     const after = buildLeague(ctx, { ...moves, trades: [...moves.trades, { partner, give, get, cash }] });
     const total = payrollFor(ctx, after, moves.team);
     return { total, change: total - payroll };
@@ -177,14 +190,14 @@ export function GmMode() {
 
   const reset = (team: string, competitiveMode = competitive) => {
     runVersion.current++;
-    setMoves({ team, budget: null, seed: newSeed(), signings: [], trades: [], ...(competitiveMode ? { market: newMarket() } : {}) });
+    setMoves({ team, budget: null, seed: moves.seed, signings: [], trades: [], ...(competitiveMode ? { market: newMarket() } : {}) });
     setOffers({}); setGive([]); setGet([]); setTradeNote(null); setResults(null); setPartner("");
     setFaQuery(""); setFaPos("All"); setFaBudgetOnly(false); setFaAlternatives(false); setBidRoles({}); setFaLimit(20); setGiveQuery(""); setGetQuery(""); setCashAmount("0"); setCashDirection("send"); setRunning(false);
     setBudgetDraft(null);
     setMarketNews([]);
     setRosterQuery(""); setRosterSort("salary"); setRosterView("contracts"); setRosterLimit(30);
     setShowSigningLedger(false);
-    setFeedback({ tone: "success", text: `New ${ctx.sim.teams[team].name} offseason. No moves made yet.` });
+    setFeedback({ tone: "success", text: `${ctx.sim.teams[team].name} offseason started. No moves made yet. The same market seed is retained.` });
     window.history.replaceState(null, "", window.location.pathname);
   };
   const update = (m: GmMoves) => { runVersion.current++; setMoves(m); setResults(null); setRunning(false); window.history.replaceState(null, "", window.location.pathname); };
@@ -221,13 +234,14 @@ export function GmMode() {
       update(next);
       const roomAfter = budget - payrollFor(ctx, nextLeague, moves.team);
       setFeedback({ tone: "success", text: `Signed ${row.name}: ${o.years} ${o.years === 1 ? "year" : "years"}, ${money(o.total)} total (${money(o.total / o.years)} a year). ${signedWins(gain)} projected roster WAR. ${roomAfter < 0 ? `Clear ${money(-roomAfter)} before simulating the season.` : `${money(roomAfter)} left under budget.`}` });
-    }
+    } else setFeedback({ tone: "error", text: `${row.name}: ${ans.reason}` });
   };
   const propose = () => {
-    if (!cashAmount.trim() || !Number.isFinite(Number(cashAmount)) || Number(cashAmount) < 0 || Number(cashAmount) > 100) { setTradeNote({ ok: false, text: "Enter cash from $0M to $100M." }); return; }
+    if (!cashAmount.trim() || !Number.isFinite(Number(cashAmount)) || Number(cashAmount) < 0 || Number(cashAmount) > 50) { const text = "Enter cash from $0M to $50M, within the outgoing players’ 2027 budget charges."; setTradeNote({ ok: false, text }); setFeedback({ tone: "error", text }); return; }
     const proposal = { partner, give, get, ...(cash ? { cash } : {}) };
     const ans = respondToTrade(ctx, league, moves, budget, proposal, modes);
     setTradeNote({ ok: ans.accepted, text: ans.reason });
+    if (!ans.accepted) setFeedback({ tone: "error", text: ans.reason });
     if (ans.accepted) { update({ ...moves, trades: [...moves.trades, proposal] }); setGive([]); setGet([]); setGiveQuery(""); setGetQuery(""); setCashAmount("0"); setFeedback({ tone: "success", text: `Trade completed with ${ctx.sim.teams[partner].name}. You received ${get.map(pid => V[pid]?.n).join(", ") || "no players"}.${cash ? ` You ${cash > 0 ? "sent" : "received"} ${money(Math.abs(cash))} in cash.` : ""} See the value breakdown after simulating the season.` }); }
   };
   const withdrawBid = (pid: string) => {
@@ -360,6 +374,7 @@ export function GmMode() {
           <p><strong>{mine.rank}{["th", "st", "nd", "rd"][mine.rank % 10 > 3 || [11, 12, 13].includes(mine.rank % 100) ? 0 : mine.rank % 10]}</strong><span>in MLB</span></p>
         </div>
       </div>
+      {gradeNote && <p className="gm-note">{gradeNote}</p>}
       <div className="gm-tools"><span>Changing teams starts a new offseason. This is a sandbox, not live transactions.</span><button type="button" className="gm-link" onClick={() => reset(moves.team)}>Start over</button><button type="button" className="gm-link" onClick={() => copy(shareUrl(), "link")}>Copy offseason link</button>{copied && <span role="status">{copied === "failed" ? "Couldn’t copy. Try again." : `Copied ${copied}`}</span>}</div>
       <div className="gm-brief"><div><strong>Where could you improve?</strong><p>Your lowest-ranked positions. Pick one to find free agents who can help.</p></div><div className="gm-needs">{needs.map(need => <button key={need.pos} type="button" onClick={() => { showTab("fa"); setFaPos(need.pos); setFaQuery(""); setFaLimit(20); }}><strong>{need.pos}</strong><span>No. {need.rank} of 30 · {need.war.toFixed(1)} WAR</span></button>)}</div></div>
       {feedback && <p className="gm-feedback" data-tone={feedback.tone} role="status">{feedback.text}</p>}
@@ -435,7 +450,7 @@ export function GmMode() {
             <label className="gm-field"><span>Position</span><select value={faPos} onChange={(e) => { setFaPos(e.target.value); setFaLimit(20); }}>{["All", "C", "1B", "2B", "3B", "SS", "OF", "LF", "CF", "RF", "DH", "SP", "RP"].map((p) => <option key={p}>{p}</option>)}</select></label>
             <label className="gm-field"><span>Sort free agents</span><select value={faSort} onChange={e => { setFaSort(e.target.value); setFaLimit(20); }}><option value="gain">Most WAR added</option><option value="cost">Lowest expected annual cost</option><option value="market">Largest expected contracts</option></select></label>
           </div>
-          <p className="gm-note">Expected market shows the tracker’s editorial forecast when available. The annual range is a guide for bidding. “Adds for you” accounts for playing time displaced.</p>
+          <p className="gm-note">Expected market shows the tracker’s editorial forecast when available. Shorter accepted terms cost less in total but require higher annual pay. “Adds for you” accounts for playing time displaced. You can complete up to 12 MLB signings.</p>
           <label className="gm-budget-filter"><input type="checkbox" checked={faBudgetOnly} onChange={e => { setFaBudgetOnly(e.target.checked); setFaLimit(20); }} /> Could fit budget</label>
           {faAlternatives && <p className="gm-note">Showing remaining free agents who add projected WAR{faPos !== "All" ? ` and can fill ${faPos}` : ""}. <button type="button" className="gm-link" onClick={() => { setFaAlternatives(false); setFaLimit(20); }}>Include depth options</button></p>}
           {faBudgetOnly && <p className="gm-note">Shows players whose public market range starts within your {money(Math.max(0, room - reserved))} available after pending offers. This is not a guaranteed signing price. Unknown ranges stay visible when the minimum salary fits; pending bids stay visible.</p>}
@@ -493,7 +508,7 @@ export function GmMode() {
                 {teams.filter(([t]) => t !== moves.team).map(([abbr, t]) => <option key={abbr} value={abbr}>{t.name} · {rivalBudgets[abbr].room < .05 ? "No payroll room" : `${budgetRange(rivalBudgets[abbr].room)} room`}</option>)}
               </select>
             </label>
-            {partner && <p className="gm-note">{ctx.sim.teams[partner].name}: {modes[partner] === "contend" ? "top 10 in current roster WAR; prioritizes 2027" : modes[partner] === "rebuild" ? "bottom 10 in current roster WAR; prioritizes control years" : "middle third in current roster WAR"}.</p>}
+            {partner && <p className="gm-note">{ctx.sim.teams[partner].name}: {modes[partner] === "contend" ? "top 10 in opening roster WAR; prioritizes 2027" : modes[partner] === "rebuild" ? "bottom 10 in opening roster WAR; prioritizes control years" : "middle third in opening roster WAR"}. Strategy stays fixed for this offseason.</p>}
           </div>
           <aside className="gm-partner-budgets" aria-label="Trade partner budgets">
             <h3>{partner ? `${ctx.sim.teams[partner].name}: ${budgetRange(rivalBudgets[partner].room)} to add payroll` : "Who has room for salary?"}</h3>
@@ -502,7 +517,7 @@ export function GmMode() {
             <p>Game estimates, not reported club budgets. Rivals set aside $5–15M for trades and in-season moves; cheap depth signings may use part of it. Room updates after every deal. Having space does not guarantee they’ll accept.</p>
             <div className="gm-budget-shortlist"><strong>Most room right now</strong>{teamsWithRoom.slice(0, 4).map(([team, plan]) => <button key={team} type="button" onClick={() => choosePartner(team)} aria-pressed={partner === team}>{ctx.sim.teams[team].name}<small>{budgetRange(plan.room)} room</small></button>)}{!teamsWithRoom.length && <span>No rival has $5M available. Include cash or take salary back to reduce the net cost.</span>}</div>
           </aside>
-          <p className="gm-note">Build an offer and hear what the other club thinks. Contenders want MLB-ready help; rebuilding clubs put more weight on the future. Stars with years of control are tough to pry loose. Exact model values stay hidden until your post-simulation review.</p>
+          <p className="gm-note">Up to five players per side. Clubs give less credit to extra depth pieces and require a centerpiece for controllable stars. Cash can cover the paying club’s outgoing 2027 budget charges, up to $50M paid per club across the offseason. Exact model values stay hidden until your post-simulation review.</p>
           {partner ? (
             <div className="gm-trade">
               {[["You send", yourList, give, setGive], [`${ctx.sim.teams[partner].name} send`, partnerList, get, setGet]].map(([title, list, sel, set]) => {
@@ -516,14 +531,14 @@ export function GmMode() {
                     </li>)}{!s.length && <li className="gm-muted">Nobody yet</li>}</ul>
                     <TradePlayerSearch key={`${moves.team}-${partner}-${title}`} label={`Search ${title === "You send" ? "your players" : "their players"}`}
                       query={title === "You send" ? giveQuery : getQuery} onQuery={title === "You send" ? setGiveQuery : setGetQuery}
-                      choices={l.filter(x => !s.includes(x.pid)).map(x => ({ pid: x.pid, name: x.v.n, position: x.v.k === "p" ? `Prospect · ${prospectBrief(x.v)}` : x.v.pos, contract: contractBrief(contracts[x.pid]), unavailable: !x.priced ? "no trade valuation available" : x.v.prot === "full" ? "no-trade clause" : league.userAav.has(x.pid) || league.extraAav?.has(x.pid) || contracts[x.pid].minorInvite ? "just signed" : "" }))}
-                      onAdd={pid => { st([...s, pid]); setTradeNote(null); }} />
+                      choices={l.filter(x => !s.includes(x.pid)).map(x => ({ pid: x.pid, name: x.v.n, position: x.v.k === "p" ? `Prospect · ${prospectBrief(x.v)}` : x.v.pos, war: x.v.k === "p" ? undefined : V[x.pid]?.w27, salary: contracts[x.pid].hit, control: contracts[x.pid].controlThrough, contract: contractBrief(contracts[x.pid]), unavailable: !x.priced ? "no trade valuation available" : x.v.prot === "full" ? "no-trade clause" : league.userAav.has(x.pid) || league.extraAav?.has(x.pid) || contracts[x.pid].minorInvite ? "just signed" : "" }))}
+                      onAdd={pid => { if (s.length >= 5) { setTradeNote({ ok: false, text: "Each side can include at most five players. Remove a player before adding another." }); return; } st([...s, pid]); setTradeNote(null); }} />
                     <p className="gm-trade-summary">{s.length} {s.length === 1 ? "player" : "players"} in this side of the offer</p>
                   </div>
                 );
               })}
               <div className="gm-propose">
-                <div className="gm-trade-cash"><label className="gm-field"><span>Cash in this trade</span><select value={cashDirection} onChange={e => { setCashDirection(e.target.value); setTradeNote(null); }}><option value="send">You send cash</option><option value="receive">You receive cash</option></select></label><label className="gm-field"><span>Cash amount ($M)</span><input type="number" min="0" max="100" step="0.1" value={cashAmount} onChange={e => { setCashAmount(e.target.value); setTradeNote(null); }} /></label><p>One-time 2027 payment. Cash sent uses your budget and reduces theirs; cash received does the reverse. This is a game budget adjustment, not a full MLB luxury-tax accounting model.</p></div>
+                <div className="gm-trade-cash"><label className="gm-field"><span>Cash in this trade</span><select value={cashDirection} onChange={e => { setCashDirection(e.target.value); setTradeNote(null); }}><option value="send">You send cash</option><option value="receive">You receive cash</option></select></label><label className="gm-field"><span>Cash amount ($M)</span><input type="number" min="0" max="50" step="0.1" value={cashAmount} onChange={e => { setCashAmount(e.target.value); setTradeNote(null); }} /></label><p>One-time 2027 salary coverage. The paying club must send players with at least this much budget charge. A club can pay at most $50M across the offseason. This is a game budget adjustment, not MLB luxury-tax accounting.</p></div>
                 {tradePayroll && <p className="gm-payroll-preview">If accepted: {tradePayroll.change < 0 ? `clears ${money(-tradePayroll.change)}` : `adds ${money(tradePayroll.change)}`} of your 2027 budget{cash ? ", including cash" : ""}. Your payroll plus net trade cash would be {money(tradePayroll.total)}{tradePayroll.total > budget ? `, still ${money(tradePayroll.total - budget)} over budget` : `, ${money(budget - tradePayroll.total)} under budget`}.</p>}
                 <button type="button" onClick={propose} disabled={!give.length && !get.length}>Propose trade</button>
                 {tradeNote && <p role="status" className={tradeNote.ok ? "gm-good" : "gm-bad"}>{tradeNote.text}</p>}
@@ -588,7 +603,7 @@ export function GmMode() {
             </div>
           </div>
           <div className="gm-share gm-result-actions">
-            <button type="button" onClick={() => showTab("moves")}>Try another move</button>
+            <button type="button" onClick={() => showTab("moves")}>Review or adjust moves</button>
             <button type="button" onClick={() => copy(shareUrl(), "link")}>Copy link to this offseason</button>
             <button type="button" onClick={() => copy(summaryText(), "summary")}>Copy summary</button>
             {copied && <span role="status">{copied === "failed" ? "Copy failed" : `Copied ${copied}`}</span>}
@@ -598,7 +613,7 @@ export function GmMode() {
             <h3>What your offseason changed</h3>
             <p>{positionChanges[0].change > .05 ? <><strong>{positionChanges[0].pos} improved most:</strong> {positionChanges[0].before.toFixed(1)} → {positionChanges[0].after.toFixed(1)} projected WAR. </> : "No position improved by more than 0.05 projected WAR. "}{moves.signings.length} MLB {moves.signings.length === 1 ? "signing" : "signings"} and {moves.trades.length} {moves.trades.length === 1 ? "trade" : "trades"} completed.</p>
             <ul><li><strong>On the field</strong><span>{signedWins(results.you.mean - results.base.mean)} expected wins; {signedPts(results.you.playoffs - results.base.playoffs)} in playoff odds.</span></li><li><strong>Contract discipline</strong><span>{money(Math.max(0, budget - results.payroll))} under budget. {moves.signings.length ? <>Your signed contracts are {money(Math.abs(results.value.signings))} {results.value.signings >= 0 ? "below" : "above"} our term-adjusted model valuation.</> : "No free-agent guarantees added."}</span></li><li><strong>Future talent</strong><span>{moves.trades.flatMap(t => t.give).filter(pid => V[pid]?.k === "p").length} prospects sent; {moves.trades.flatMap(t => t.get).filter(pid => V[pid]?.k === "p").length} received. Trade value is {signedMoney(results.value.trades)}, including cash.</span></li></ul>
-            <p className="gm-note"><span className="gm-grade">Sandbox grade <strong>{results.grade.letter}</strong></span> Based on {signedWins(results.you.mean - results.base.mean)} wins gained plus {signedWins(results.value.total / 25)} points for model value. It rewards both roster improvement and price discipline, so a useful upgrade can still receive a modest grade.</p>
+            <p className="gm-note">{gradeNote ?? <><span className="gm-grade">Sandbox grade <strong>{results.grade.letter}</strong></span> Based on {signedWins(results.you.mean - results.base.mean)} wins gained plus {signedWins(results.value.total / 25)} points for model value. It rewards both roster improvement and price discipline, so a useful upgrade can still receive a modest grade.</>}</p>
           </section>
           <table className="gm-odds">
             <thead><tr><th scope="col" /><th scope="col" className="num">Your moves</th><th scope="col" className="num">Standing pat</th><th scope="col" className="num">Change</th></tr></thead>

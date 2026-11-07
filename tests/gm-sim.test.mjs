@@ -39,7 +39,7 @@ test('salary-dump feedback improves consistently as compensation increases', () 
   const league=g.buildLeague(funded,state), modes=g.teamModes(funded,league.teamOf);
   const tiers=['Far apart','Significant gap','Within range','Close'];
   let previous=-1;
-  for(const cash of [0,5,15,25,35,50,75]) {
+  for(const cash of [0,5,15,20,23.33]) {
     const reply=g.respondToTrade(funded,league,state,480,{partner:'NYY',give:[id('Trevor Story')],get:[],cash},modes);
     const tier=reply.accepted ? 4 : tiers.indexOf(reply.negotiation);
     assert.ok(tier>=previous,reply.reason);
@@ -87,18 +87,18 @@ test('small cash withdrawals cannot repeatedly bypass a rival budget', () => {
 
 test('trade cash changes both budgets and trade value, survives sharing, and reverses on undo', () => {
   const before = g.buildLeague(ctx, base);
-  const trade = { partner: 'BAL', give: [id('Trevor Story')], get: [], cash: 30 };
+  const trade = { partner: 'BAL', give: [id('Brayan Bello')], get: [], cash: 9.17 };
   const noCash = { ...base, trades: [{ ...trade, cash: 0 }] };
   const moves = { ...base, trades: [trade] }, after = g.buildLeague(ctx, moves), without = g.buildLeague(ctx, noCash);
-  assert.ok(Math.abs(g.payrollFor(ctx, after, 'BOS') - g.payrollFor(ctx, without, 'BOS') - 30) < 1e-8);
-  assert.ok(Math.abs(g.payrollFor(ctx, after, 'BAL') - g.payrollFor(ctx, without, 'BAL') + 30) < 1e-8);
-  assert.equal(g.movesValue(ctx, moves).trades, g.movesValue(ctx, noCash).trades - 30);
+  assert.ok(Math.abs(g.payrollFor(ctx, after, 'BOS') - g.payrollFor(ctx, without, 'BOS') - 9.17) < 1e-8);
+  assert.ok(Math.abs(g.payrollFor(ctx, after, 'BAL') - g.payrollFor(ctx, without, 'BAL') + 9.17) < 1e-8);
+  assert.equal(g.movesValue(ctx, moves).trades, g.movesValue(ctx, noCash).trades - 9.17);
   const modes = g.teamModes(ctx, before.teamOf);
   assert.equal(g.respondToTrade(ctx, before, base, 400, { ...trade, cash: 0 }, modes).accepted, false);
   assert.equal(g.respondToTrade(ctx, before, base, 400, trade, modes).accepted, true);
   const restored = g.restoreMoves(ctx, g.decodeMoves(g.encodeMoves(moves)));
   assert.ok(restored.moves, restored.reason);
-  assert.equal(restored.moves.trades[0].cash, 30);
+  assert.equal(restored.moves.trades[0].cash, 9.17);
   const undone = g.undoMove(ctx, restored.moves, 'trade', 0).moves;
   assert.equal(g.payrollFor(ctx, g.buildLeague(ctx, undone), 'BOS'), g.payrollFor(ctx, before, 'BOS'));
   for (const cash of [NaN, Infinity, 101, -101, '20']) {
@@ -106,8 +106,7 @@ test('trade cash changes both budgets and trade value, survives sharing, and rev
     if (typeof cash === 'string' || Number.isFinite(cash)) assert.equal(g.decodeMoves(g.encodeMoves({ ...base, trades: [{ ...trade, cash }] })), null);
   }
   const received = { ...base, trades: [{ partner: 'BAL', give: [id('Roman Anthony')], get: [], cash: -10 }] };
-  assert.equal(g.restoreMoves(ctx, received).moves.trades[0].cash, -10);
-  assert.ok(Math.abs(g.payrollFor(ctx, g.buildLeague(ctx, received), 'BOS') - g.payrollFor(ctx, g.buildLeague(ctx, { ...base, trades: [{ ...received.trades[0], cash: 0 }] }), 'BOS') + 10) < 1e-8);
+  assert.equal(g.restoreMoves(ctx, received).moves, null, 'selling a player for unrestricted cash cannot create payroll room');
 });
 
 test('contract display separates annual salary, CBT budget charge, estimates and options', () => {
@@ -134,7 +133,7 @@ test('free agents accept offers at or above a seeded private ask, and ownership 
   const row = fa('Freddy Peralta'), ask = g.askFor(row, 42);
   assert.deepEqual(g.askFor(row, 42), ask, 'deterministic');
   assert.equal(g.respondToOffer(row, { years: ask.minYears, total: ask.total }, 42).accepted, true);
-  assert.equal(g.respondToOffer(row, { years: ask.minYears, total: ask.total - 1 }, 42).accepted, false);
+  assert.equal(g.respondToOffer(row, { years: ask.minYears, total: g.requiredOfferTotal(row, ask.minYears, 42) - 1 }, 42).accepted, false);
   assert.equal(g.respondToOffer(row, { years: Math.max(1, ask.minYears - 1), total: ask.total * 2 }, 42).accepted, ask.minYears === 1);
   const league = g.buildLeague(ctx, base);
   const tight = g.signFreeAgent(ctx, league, base, 100, row, { years: ask.minYears, total: ask.total }, 42);

@@ -2,7 +2,7 @@
 import { useId, useRef, useState } from "react";
 import { matchesTradeChoice } from "../../../lib/gm-trade-search.mjs";
 
-type Choice = { pid: string; name: string; position: string; unavailable: string; contract?: string };
+type Choice = { pid: string; name: string; position: string; unavailable: string; contract?: string; war?: number; salary?: number; control?: number | null };
 
 export function TradePlayerSearch({ label, query, onQuery, choices, onAdd }: {
   label: string; query: string; onQuery: (query: string) => void;
@@ -12,13 +12,15 @@ export function TradePlayerSearch({ label, query, onQuery, choices, onAdd }: {
   const input = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
-  const matches = choices.filter(choice => matchesTradeChoice(choice, query));
+  const [sort, setSort] = useState("war");
+  const matches = choices.filter(choice => matchesTradeChoice(choice, query)).sort((a,b) => (sort === "war" ? (b.war ?? 0) - (a.war ?? 0) : sort === "salary" ? (b.salary ?? 0) - (a.salary ?? 0) : sort === "control" ? (b.control ?? 0) - (a.control ?? 0) : 0) || a.name.localeCompare(b.name));
   const shown = matches.slice(0, 10);
   const add = (choice: Choice) => {
     if (choice.unavailable) return;
     onAdd(choice.pid); onQuery(""); setOpen(false); setActive(-1); input.current?.focus();
   };
   return <div className="gm-player-search" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpen(false); }}>
+    <label className="gm-field"><span>Browse order</span><select aria-label={`${label} sort`} value={sort} onChange={e => { setSort(e.target.value); setOpen(true); setActive(-1); }}><option value="war">Projected 2027 WAR</option><option value="salary">2027 budget charge</option><option value="control">Latest control year</option><option value="name">Name</option></select></label>
     <label className="gm-field" htmlFor={id}><span>{label}</span>
       <input ref={input} id={id} role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={`${id}-options`} aria-activedescendant={open && active >= 0 && shown[active] ? `${id}-${shown[active].pid}` : undefined}
         autoComplete="off" placeholder="Name, position, prospect, or FV…" value={query}
@@ -43,7 +45,7 @@ export function TradePlayerSearch({ label, query, onQuery, choices, onAdd }: {
       <ul id={`${id}-options`} role="listbox" aria-label={`${label} matches`}>
         {shown.map((choice, i) => <li key={choice.pid} id={`${id}-${choice.pid}`} role="option" aria-selected={active === i} aria-disabled={!!choice.unavailable}
           onMouseDown={e => e.preventDefault()} onMouseEnter={() => setActive(i)} onClick={() => add(choice)}>
-          <strong>{choice.name}</strong><span>{choice.position}{choice.unavailable ? ` · ${choice.unavailable}` : ""}</span>{choice.contract && <span>{choice.contract}</span>}
+          <strong>{choice.name}</strong><span>{choice.position}{choice.unavailable ? ` · ${choice.unavailable}` : ""}</span>{choice.war != null && <span>{choice.war.toFixed(1)} projected WAR in 2027{choice.control ? ` · control through ${choice.control}` : ""}</span>}{choice.contract && <span>{choice.contract}</span>}
         </li>)}
       </ul>
       <p role="status">{!matches.length ? "No matching players on this roster." : matches.length > shown.length ? `Showing ${shown.length} of ${matches.length}. Keep typing to narrow the list.` : `${matches.length} ${matches.length === 1 ? "match" : "matches"}. Select a player to add him.`}</p>
