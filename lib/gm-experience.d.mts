@@ -13,3 +13,6 @@ export function prospectBrief(player: { pos?: string; age?: number; fv?: string 
 export type RosterIdentity = { n: string; pos: string; k: "m" | "p"; age?: number; fv?: string | number; eta?: number; prot?: string };
 export function ownedRoster(ctx: import("./gm-sim.mjs").GmContext, owner: Map<string, string | null>, team: string): { pid: string; v: RosterIdentity; priced: boolean }[];
 export function couldFitBudget(row: MarketGuidanceRow, available: number, pending?: boolean): boolean;
+export function alternativeRole(input: { selectedRole?: string; rememberedRole?: string; eligible?: string[]; projectedPositions?: string[] }): string;
+export function isUsefulAlternative(candidate: { gain: number; positions: string[] }, role: string): boolean;
+export function resultImpact(wins: number, playoffDelta: number): { headline: string; playoffs: string };

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget } from '../lib/gm-experience.mjs';
+import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget, alternativeRole, isUsefulAlternative, resultImpact } from '../lib/gm-experience.mjs';
 import { playerContract } from '../lib/gm-sim.mjs';
 
 test('expected market uses broad public ranges, never a private asking threshold', () => {
@@ -50,4 +50,23 @@ test('budget discovery uses public low range, preserves pending bids and unknown
   assert.equal(couldFitBudget({}, .8), true);
   assert.equal(couldFitBudget({}, -1, true), true);
   assert.equal(couldFitBudget({ aav: .8, years: 1 }, -1), false);
+});
+
+test('alternatives preserve the intended Sosa shortstop role instead of listed third base', () => {
+  const sosa = { eligible: ['3B', 'SS', '2B'], projectedPositions: ['3B'] };
+  assert.equal(alternativeRole({ ...sosa, selectedRole: 'SS' }), 'SS');
+  assert.equal(alternativeRole({ ...sosa, selectedRole: 'All', rememberedRole: 'SS' }), 'SS');
+  // Restored saves derive fit even when the original target signed elsewhere.
+  assert.equal(alternativeRole({ ...sosa, projectedPositions: ['SS'] }), 'SS');
+  assert.equal(alternativeRole({ ...sosa, projectedPositions: [] }), '3B');
+  assert.equal(alternativeRole({ eligible: [] }), 'All');
+  assert.equal(isUsefulAlternative({ gain: 0, positions: ['SS'] }, 'SS'), false);
+  assert.equal(isUsefulAlternative({ gain: 1, positions: ['DH'] }, 'SS'), false);
+  assert.equal(isUsefulAlternative({ gain: 1, positions: ['SS'] }, 'SS'), true);
+});
+
+test('result headline describes positive, negative and effectively unchanged outcomes honestly', () => {
+  assert.deepEqual(resultImpact(1.4, .052), { headline: '1.4 more projected wins', playoffs: 'Playoff odds 5.2 points higher' });
+  assert.deepEqual(resultImpact(-1.4, -.052), { headline: '1.4 fewer projected wins', playoffs: 'Playoff odds 5.2 points lower' });
+  assert.deepEqual(resultImpact(-.001, -.00001), { headline: 'No change in projected wins', playoffs: 'Playoff odds unchanged' });
 });
