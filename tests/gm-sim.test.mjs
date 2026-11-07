@@ -10,6 +10,29 @@ const id = n => Object.entries(ctx.sim.players).find(([, v]) => v.n === n)[0];
 const fa = n => ctx.tracker.players.find(r => r.name === n);
 const base = { team: 'BOS', seed: 42, signings: [], trades: [] };
 
+test('salary-dump feedback explains little roster improvement without blaming every included player', () => {
+  const state = { ...base, team: 'PIT', market: {round:0,bids:[],deals:[],offers:[]} };
+  const league = g.buildLeague(ctx, state), modes = g.teamModes(ctx, league.teamOf);
+  for (const proposal of [
+    { partner: 'MIL', give: [id("Ryan O'Hearn")], get: [], cash: 9 },
+    { partner: 'MIL', give: [id("Ryan O'Hearn"), id('Carlson Reed')], get: [], cash: 3 },
+  ]) {
+    const response = g.respondToTrade(ctx, league, state, 145, proposal, modes);
+    assert.equal(response.accepted, false);
+    assert.equal(response.warLoss, 0);
+    assert.match(response.reason, /This deal adds little to their projected 2027 roster/);
+  }
+  // Negative contract value does not imply that the player cannot improve a roster.
+  const useful = { ...ctx, players: ctx.players.map(p => p.pid === id('Trevor Story') ? { ...p, r: 5 } : p) };
+  const otherState = { ...base, market: {round:0,bids:[],deals:[],offers:[]} };
+  const otherLeague = g.buildLeague(useful, otherState);
+  const response = g.respondToTrade(useful, otherLeague, otherState, 480, {partner:'NYY',give:[id('Trevor Story')],get:[],cash:0}, g.teamModes(useful, otherLeague.teamOf));
+  assert.equal(response.accepted, false);
+  assert.ok(response.warLoss < -.05);
+  assert.match(response.reason, /remaining salary/);
+  assert.doesNotMatch(response.reason, /adds little/);
+});
+
 test('salary-dump feedback improves consistently as compensation increases', () => {
   const state = { ...base, market: {round:0,bids:[],deals:[],offers:[]} };
   const funded = { ...ctx, sim: { ...ctx.sim, teams: { ...ctx.sim.teams, NYY: { ...ctx.sim.teams.NYY, cbt2026:1000 } } } };
@@ -244,7 +267,8 @@ test('extra contract years cannot dilute AAV at the same guaranteed asking price
   assert.equal(g.respondToOffer(row, { years: ask.minYears, total: ask.total }, 42).accepted, true);
   const tooCheap = g.respondToOffer(row, { years: ask.maxYears, total: ask.total }, 42);
   assert.equal(tooCheap.accepted, false);
-  assert.match(tooCheap.reason, /extra year needs more guaranteed money/);
+  assert.match(tooCheap.reason, /extra year lowers the annual pay/);
+  assert.doesNotMatch(tooCheap.reason, /\$|at least.*total/, 'feedback explains the issue without revealing a private threshold');
   assert.equal(g.respondToOffer(row, { years: ask.maxYears, total: ask.total * ask.maxYears / row.years }, 42).accepted, true);
   assert.equal(g.respondToOffer(row, { years: ask.maxYears + 1, total: 999 }, 42).accepted, false);
 });

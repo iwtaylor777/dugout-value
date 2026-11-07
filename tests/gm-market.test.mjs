@@ -10,6 +10,22 @@ const ctx = { players: read('../app/data/depth-chart.json').players, tracker: ma
 const game = () => ({ team: 'BOS', seed: 42, budget: 400, signings: [], trades: [], market: m.newMarket() });
 const row = name => ctx.tracker.players.find(p => p.name === name);
 
+test('market news explains a diluted annual salary instead of asking for more total guarantee', () => {
+  const player = row('A.J. Puk'), bid = { pid: player.id, years: 3, total: 13.2 };
+  const response = g.respondToOffer(player, bid, 42);
+  assert.equal(response.accepted, false);
+  assert.match(response.reason, /annual pay/);
+  assert.doesNotMatch(response.reason, /\$/);
+  let current = m.submitMarketBid(ctx, game(), bid).moves;
+  for (let i = 0; i < 3; i++) {
+    const result = m.advanceMarket(ctx, current);
+    const news = result.news.filter(line => line.startsWith(`${player.name} `));
+    assert.ok(news.some(line => line.includes(response.reason)), 'pending and resolved news preserve the actual rejection reason');
+    current = result.moves;
+  }
+  assert.equal(m.userOfferOutcomes(ctx, current)[0].status, 'lost');
+});
+
 test('personal offers remain visible through losses, closeout, withdrawal, undo and sharing', () => {
   const star = row('Tarik Skubal'), regular = row('Edmundo Sosa');
   let state = game();

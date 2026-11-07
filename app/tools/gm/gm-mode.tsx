@@ -11,7 +11,7 @@ import simData from "../../data/gm-sim.json";
 import payrollData from "../../data/team-payroll.json";
 import { allocate, bestAdditions, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
 import { matchesProjectionRole } from "../../../lib/projection-filters.mjs";
-import { expectedMarket, prospectBrief } from "../../../lib/gm-experience.mjs";
+import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget } from "../../../lib/gm-experience.mjs";
 import { matchesTradePlayer } from "../../../lib/gm-trade-search.mjs";
 import { advanceMarket, marketBoard, MARKET_ROUNDS, newMarket, submitMarketBid, userOfferOutcomes, withdrawMarketBid } from "../../../lib/gm-market.mjs";
 import {
@@ -54,6 +54,7 @@ export function GmMode() {
   const [faQuery, setFaQuery] = useState("");
   const [faPos, setFaPos] = useState("All");
   const [faSort, setFaSort] = useState("gain");
+  const [faBudgetOnly, setFaBudgetOnly] = useState(false);
   const [faLimit, setFaLimit] = useState(20);
   const [rosterView, setRosterView] = useState("contracts");
   const [rosterQuery, setRosterQuery] = useState("");
@@ -141,22 +142,20 @@ export function GmMode() {
     return list.map((x) => ({ ...x, gain: gains.get(x.pid)?.gain ?? 0, positions: gains.get(x.pid)?.positions ?? [] }))
       .sort((a, b) => (b.row.total ?? 0) - (a.row.total ?? 0));
   }, [league, roster]);
-  const faFiltered = freeAgents.filter((f) => (faPos === "All" || matchesProjectionRole({ position: f.entries.flatMap(p => p.e).join("/") }, faPos))
+  const faFiltered = freeAgents.filter((f) => (!faBudgetOnly || couldFitBudget(f.row, budget - payroll - reserved, moves.market?.bids.some(b => b.pid === f.pid))) && (faPos === "All" || matchesProjectionRole({ position: f.entries.flatMap(p => p.e).join("/") }, faPos))
     && (!faQuery.trim() || f.row.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(faQuery.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase())))
     .sort((a, b) => (faSort === "gain" ? b.gain - a.gain : faSort === "cost" ? (a.row.aav ?? 0.8) - (b.row.aav ?? 0.8) : (b.row.total ?? 0) - (a.row.total ?? 0)) || a.row.name.localeCompare(b.row.name));
   const faShown = faFiltered.slice(0, faLimit);
 
-  const ownedBy = (abbr: string) => Object.entries(V).filter(([pid]) => league.owner.get(pid) === abbr)
-    .map(([pid, v]) => ({ pid, v }))
-    .sort((a, b) => a.v.n.localeCompare(b.v.n));
+  const ownedBy = (abbr: string) => ownedRoster(ctx, league.owner, abbr);
   const partnerList = useMemo(() => (partner ? ownedBy(partner) : []), [partner, league]); // eslint-disable-line react-hooks/exhaustive-deps
   const yourList = useMemo(() => ownedBy(moves.team), [moves.team, league]); // eslint-disable-line react-hooks/exhaustive-deps
   const contracts = useMemo(() => Object.fromEntries([...yourList, ...partnerList].map(p => [p.pid, playerContract(ctx, league, p.pid)])), [yourList, partnerList, league]);
-  const rosterContracts = useMemo(() => tab !== "roster" ? [] : yourList.map(({ pid, v }) => {
+  const rosterContracts = useMemo(() => tab !== "roster" ? [] : yourList.map(({ pid, v, priced }) => {
     const slots = Object.values(alloc.positions).flatMap(slot => slot.rows).filter(row => row.p.pid === pid);
     const used = slots.reduce((sum, row) => sum + row.pt, 0);
     const without = used > 0 ? allocate(roster.filter(p => p.pid !== pid)).total : alloc.total;
-    return { pid, v, contract: contracts[pid], used, lostWar: Math.max(0, alloc.total - without), roles: POSITIONS.filter(pos => alloc.positions[pos].rows.some(row => row.p.pid === pid)) };
+    return { pid, v, priced, contract: contracts[pid], used, lostWar: Math.max(0, alloc.total - without), roles: POSITIONS.filter(pos => alloc.positions[pos].rows.some(row => row.p.pid === pid)) };
   }), [yourList, alloc, roster, contracts, tab]);
   const rosterShown = rosterContracts.filter(p => matchesTradePlayer(`${p.v.n} ${p.v.pos} ${p.v.k === "p" ? "prospect" : ""}`, rosterQuery))
     .sort((a, b) => (rosterSort === "salary" ? b.contract.hit - a.contract.hit : rosterSort === "impact" ? b.lostWar - a.lostWar : 0) || a.v.n.localeCompare(b.v.n));
@@ -173,7 +172,7 @@ export function GmMode() {
     runVersion.current++;
     setMoves({ team, budget: null, seed: newSeed(), signings: [], trades: [], ...(competitiveMode ? { market: newMarket() } : {}) });
     setOffers({}); setGive([]); setGet([]); setTradeNote(null); setResults(null); setPartner("");
-    setFaQuery(""); setFaPos("All"); setFaLimit(20); setGiveQuery(""); setGetQuery(""); setCashAmount("0"); setCashDirection("send"); setRunning(false);
+    setFaQuery(""); setFaPos("All"); setFaBudgetOnly(false); setFaLimit(20); setGiveQuery(""); setGetQuery(""); setCashAmount("0"); setCashDirection("send"); setRunning(false);
     setBudgetDraft(null);
     setMarketNews([]);
     setRosterQuery(""); setRosterSort("salary"); setRosterView("contracts"); setRosterLimit(30);
@@ -367,7 +366,7 @@ export function GmMode() {
           {!moves.market!.history && <p className="gm-note">This older save does not include past unsuccessful offers.</p>}
           {!offerOutcomes.length ? <p className="gm-note">No offers yet. Browse free agents to start negotiating.</p> : <ul>{offerOutcomes.map(({ offer: bid, status, deal, invite, reason, standing, decisionRound }) => <li key={bid.pid} data-outcome={status}>
             <div className="gm-offer-result-heading"><strong>{label(bid.pid)}</strong><span>{outcomeLabels[status]}</span></div>
-            <p>Your offer: {yearsLabel(bid.years)}, {money(bid.total)} total · submitted in round {bid.round}.</p>
+            <p>Your offer: {yearsLabel(bid.years)}, {money(bid.total)} total ({money(bid.total / bid.years)}/year) · submitted in round {bid.round}.</p>
             {deal && <p><strong>{deal.team === moves.team ? "Your deal" : ctx.sim.teams[deal.team].name}:</strong> {yearsLabel(deal.years)}, {money(deal.total)} total ({money(deal.total / deal.years)}/year).</p>}
             {invite && <p><strong>{ctx.sim.teams[invite.team].name}:</strong> non-roster invitation, not a guaranteed MLB contract.{status === "minor" && " Your MLB offer was not accepted."}</p>}
             {reason && <p>{reason}</p>}
@@ -423,7 +422,9 @@ export function GmMode() {
             <label className="gm-field"><span>Sort free agents</span><select value={faSort} onChange={e => { setFaSort(e.target.value); setFaLimit(20); }}><option value="gain">Most WAR added</option><option value="cost">Lowest expected annual cost</option><option value="market">Largest expected contracts</option></select></label>
           </div>
           <p className="gm-note">Expected market is a broad guide, not a player’s asking price or a promise he’ll sign. Public contract forecasts inform covered players; others have a wider model-based range. “Adds for you” accounts for playing time displaced.</p>
-          <div className="gm-list-summary"><span>{faFiltered.length} free {faFiltered.length === 1 ? "agent matches" : "agents match"} · showing {faShown.length}</span>{bidding && <a href="#gm-market">Review bids and advance</a>}{(faQuery || faPos !== "All") && <button type="button" className="gm-link" onClick={() => { setFaQuery(""); setFaPos("All"); setFaLimit(20); }}>Clear filters</button>}</div>
+          <label className="gm-budget-filter"><input type="checkbox" checked={faBudgetOnly} onChange={e => { setFaBudgetOnly(e.target.checked); setFaLimit(20); }} /> Could fit budget</label>
+          {faBudgetOnly && <p className="gm-note">Shows players whose public market range starts within your {money(Math.max(0, room - reserved))} available after pending offers. This is not a guaranteed signing price. Unknown ranges stay visible when the minimum salary fits; pending bids stay visible.</p>}
+          <div className="gm-list-summary"><span>{faFiltered.length} free {faFiltered.length === 1 ? "agent matches" : "agents match"} · showing {faShown.length}</span>{bidding && <a href="#gm-market">Review bids and advance</a>}{(faQuery || faPos !== "All" || faBudgetOnly) && <button type="button" className="gm-link" onClick={() => { setFaQuery(""); setFaPos("All"); setFaBudgetOnly(false); setFaLimit(20); }}>Clear filters</button>}</div>
           <div className="gm-table-wrap" tabIndex={0} role="region" aria-label="Free-agent offers">
             <table className="gm-table" role="table">
               <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Player</th><th scope="col" role="columnheader" className="num">2027 WAR</th><th scope="col" role="columnheader" className="num">Adds for you</th><th scope="col" role="columnheader">Expected market</th><th scope="col" role="columnheader">Your offer</th></tr></thead>
@@ -451,7 +452,7 @@ export function GmMode() {
                     </tr>
                   );
                 })}
-                {!faShown.length && <tr><td colSpan={5} className="gm-empty">{competitive && !bidding && !freeAgents.length ? <>Everyone in this market has signed. <a href="#gm-market">See the league wire</a> for destinations, or keep building through trades.</> : "No free agents match."}</td></tr>}
+                {!faShown.length && <tr><td colSpan={5} className="gm-empty">{competitive && !bidding && !freeAgents.length ? <>Everyone in this market has signed. <a href="#gm-market">See the league wire</a> for destinations, or keep building through trades.</> : faBudgetOnly ? <>No players match these filters within your available payroll. <button type="button" className="gm-link" onClick={() => { setFaBudgetOnly(false); setFaLimit(20); }}>Turn off budget filter</button> to consider offers that would need a later salary-clearing move.</> : "No free agents match."}</td></tr>}
               </tbody>
             </table>
           </div>
@@ -492,7 +493,7 @@ export function GmMode() {
                     </li>)}{!s.length && <li className="gm-muted">Nobody yet</li>}</ul>
                     <TradePlayerSearch key={`${moves.team}-${partner}-${title}`} label={`Search ${title === "You send" ? "your players" : "their players"}`}
                       query={title === "You send" ? giveQuery : getQuery} onQuery={title === "You send" ? setGiveQuery : setGetQuery}
-                      choices={l.filter(x => !s.includes(x.pid)).map(x => ({ pid: x.pid, name: x.v.n, position: x.v.k === "p" ? `Prospect · ${prospectBrief(x.v)}` : x.v.pos, contract: contractBrief(contracts[x.pid]), unavailable: x.v.prot === "full" ? "no-trade clause" : league.userAav.has(x.pid) || league.extraAav?.has(x.pid) || contracts[x.pid].minorInvite ? "just signed" : "" }))}
+                      choices={l.filter(x => !s.includes(x.pid)).map(x => ({ pid: x.pid, name: x.v.n, position: x.v.k === "p" ? `Prospect · ${prospectBrief(x.v)}` : x.v.pos, contract: contractBrief(contracts[x.pid]), unavailable: !x.priced ? "no trade valuation available" : x.v.prot === "full" ? "no-trade clause" : league.userAav.has(x.pid) || league.extraAav?.has(x.pid) || contracts[x.pid].minorInvite ? "just signed" : "" }))}
                       onAdd={pid => { st([...s, pid]); setTradeNote(null); }} />
                     <p className="gm-trade-summary">{s.length} {s.length === 1 ? "player" : "players"} in this side of the offer</p>
                   </div>
@@ -516,9 +517,9 @@ export function GmMode() {
             <p className="gm-note">Every player in your organization, including prospects and contracts outside the projected lineup. “WAR at risk” estimates the roster impact of moving a player with no replacement coming back. A club still needs a reason to take his contract.</p>
             <div className="gm-filters gm-roster-filters"><label className="gm-field"><span>Find a roster player</span><input value={rosterQuery} onChange={e => { setRosterQuery(e.target.value); setRosterLimit(30); }} placeholder="Name, position, or prospect" /></label><label className="gm-field"><span>Sort your roster</span><select value={rosterSort} onChange={e => { setRosterSort(e.target.value); setRosterLimit(30); }}><option value="salary">Highest 2027 budget hit</option><option value="impact">Most WAR at risk</option><option value="name">Player name</option></select></label></div>
             <p className="gm-note">{rosterShown.length} {rosterShown.length === 1 ? "player matches" : "players match"} · showing {Math.min(rosterLimit, rosterShown.length)}</p>
-            <div className="gm-contracts-wrap"><table className="gm-contracts" role="table"><thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Player</th><th scope="col" role="columnheader">2027 budget</th><th scope="col" role="columnheader">Contract / control</th><th scope="col" role="columnheader">WAR at risk</th><th scope="col" role="columnheader">Trade options</th></tr></thead><tbody role="rowgroup">{rosterShown.slice(0, rosterLimit).map(({ pid, v, contract, used, lostWar, roles }) => {
-              const blocked = v.prot === "full" ? "Full no-trade clause" : league.userAav.has(pid) || league.extraAav?.has(pid) || contract.minorInvite ? "Just signed this offseason" : "";
-              return <tr key={pid} role="row"><th scope="row" role="rowheader">{v.n}<small>{v.k === "p" ? `Prospect · ${prospectBrief(v)}` : `${v.pos} · age ${v.age}`}</small><small>{contract.minorInvite ? "Non-roster invitation" : v.k === "p" ? "Not in the MLB playing-time projection" : used ? `${roles.join(" / ")} · ${Math.round(used)} ${roster.some(p => p.pid === pid && p.k === "b") ? roster.some(p => p.pid === pid && p.k === "p") ? "PA + IP" : "PA" : "IP"} assigned` : "Outside projected playing time"}</small></th>
+            <div className="gm-contracts-wrap"><table className="gm-contracts" role="table"><thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Player</th><th scope="col" role="columnheader">2027 budget</th><th scope="col" role="columnheader">Contract / control</th><th scope="col" role="columnheader">WAR at risk</th><th scope="col" role="columnheader">Trade options</th></tr></thead><tbody role="rowgroup">{rosterShown.slice(0, rosterLimit).map(({ pid, v, priced, contract, used, lostWar, roles }) => {
+              const blocked = !priced ? "No trade valuation available" : v.prot === "full" ? "Full no-trade clause" : league.userAav.has(pid) || league.extraAav?.has(pid) || contract.minorInvite ? "Just signed this offseason" : "";
+              return <tr key={pid} role="row"><th scope="row" role="rowheader">{v.n}<small>{v.k === "p" ? `Prospect · ${prospectBrief(v)}` : prospectBrief(v)}</small><small>{contract.minorInvite ? "Non-roster invitation" : v.k === "p" ? "Not in the MLB playing-time projection" : used ? `${roles.join(" / ")} · ${Math.round(used)} ${roster.some(p => p.pid === pid && p.k === "b") ? roster.some(p => p.pid === pid && p.k === "p") ? "PA + IP" : "PA" : "IP"} assigned` : "Outside projected playing time"}</small></th>
                 <td role="cell" data-label="2027 budget">{contract.prospect || contract.minorInvite ? "No MLB charge" : <>{money(contract.hit)}<small>{contract.salary != null ? `${money(contract.salary)} cash salary` : "Estimated budget charge"}</small></>}</td>
                 <td role="cell" data-label="Contract / control">{contract.seasons.length ? <details className="gm-contract-detail"><summary>Through {contract.controlThrough ?? contract.seasons.at(-1)?.year}</summary><ul>{contract.seasons.map(year => <li key={year.year}>{year.year}: {money(year.salary)} · {contractType(year.type)}</li>)}</ul></details> : contract.prospect ? "Pre-MLB" : contract.minorInvite ? "Non-guaranteed" : "No future MLB seasons modeled"}</td>
                 <td role="cell" data-label="WAR at risk">{lostWar.toFixed(1)}<small>{used ? "Projected roster loss" : "No current MLB playing time"}</small></td>
