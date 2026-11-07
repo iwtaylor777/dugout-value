@@ -62,7 +62,7 @@ test('short FA contracts are graded against matching years, not the full long-te
   const value = (years, total) => g.movesValue(ctx, { ...base, signings: [{ pid: row.id, years, total }] }).signings;
   assert.ok(Math.abs(value(1, 30) - (benchmark.total / benchmark.years - 30)) < 1e-8);
   assert.equal(value(benchmark.years, benchmark.total), 0);
-  assert.ok(value(benchmark.years + 1, benchmark.total + 20) < 0, 'an extra year is not free surplus');
+  assert.equal(value(benchmark.years + 2, benchmark.total + 20), -20, 'an unquoted longer term keeps the primary benchmark');
 });
 
 test('cash cannot buy premium talent with no players or a token return', () => {
@@ -224,6 +224,18 @@ test('share decoder rejects malformed, nonfinite and duplicated move data', () =
   ]) assert.equal(g.decodeMoves(g.encodeMoves({ ...base, ...mutation })), null);
   assert.equal(g.restoreMoves(ctx, { ...base, team: 'ZZZ' }).moves, null);
   assert.ok(g.restoreMoves(ctx, base).moves);
+});
+
+test('saved signings and rival deals can restore at the previous market price', () => {
+  const player = fa('Jazz Chisholm Jr.');
+  const previous = { ...player, ...player.marketForecast.reference, marketForecast: null };
+  const signing = { pid: player.id, years: previous.years, total: g.askFor(previous, base.seed).total };
+  assert.equal(g.respondToOffer(player, signing, base.seed).accepted, false);
+  assert.deepEqual(g.restoreMoves(ctx, { ...base, signings: [signing] }).moves.signings, [signing]);
+  const deal = { ...signing, team: 'NYY', round: 1 };
+  const market = { round: 1, bids: [], offers: [], deals: [deal] };
+  assert.deepEqual(g.restoreMoves(ctx, { ...base, market }).moves.market.deals, [deal]);
+  assert.equal(g.restoreMoves(ctx, { ...base, signings: [{ ...signing, total: 5 }] }).moves, null);
 });
 
 test('no-trade clauses protect user players and duplicate trade assets cannot inflate value', () => {
