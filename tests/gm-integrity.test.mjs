@@ -70,7 +70,7 @@ test('midpriced closeouts retain a floor, and minimum offers cannot flood the ro
   const rows=ctx.tracker.players.filter(r=>ctx.players.some(p=>p.pid===r.id&&league.freeAgents.has(p.i))).slice(0,13);
   for(const row of rows.slice(0,12)) {const reply=m.submitMarketBid(ctx,state,{pid:row.id,years:1,total:.8});assert.equal(reply.accepted,true);state=reply.moves;}
   assert.equal(m.submitMarketBid(ctx,state,{pid:rows[12].id,years:1,total:.8}).accepted,false);
-  assert.match(m.submitMarketBid(ctx,state,{pid:rows[0].id,years:1,total:.8}).reason,/unlikely to consider/);
+  assert.match(m.submitMarketBid(ctx,state,{pid:rows[0].id,years:1,total:.8}).reason,/below the public annual estimate/);
   const closed=m.advanceMarket(ctx,state).moves;
   assert.ok(closed.signings.length<=12);
   for(const deal of [...closed.signings,...closed.market.deals]) {

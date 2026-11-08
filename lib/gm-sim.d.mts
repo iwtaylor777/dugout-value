@@ -16,7 +16,7 @@ export type GmSigning = { pid: string; years: number; total: number; closeout?: 
 export type GmTrade = { partner: string; give: string[]; get: string[]; cash?: number };
 export type GmOfferHistory = GmSigning & { round: number; withdrawn?: boolean; undone?: boolean };
 export type GmMarket = { round: number; bids: GmSigning[]; deals: (GmSigning & { team: string; round: number })[]; offers: (GmSigning & { team: string })[]; history?: GmOfferHistory[]; invites?: { pid: string; team: string }[] };
-export type GmMoves = { team: string; budget?: number | null; seed: number; signings: GmSigning[]; trades: GmTrade[]; market?: GmMarket };
+export type GmMoves = { team: string; budget?: number | null; seed: number; signings: GmSigning[]; trades: GmTrade[]; market?: GmMarket; journal?: unknown[][] };
 export type GmLeague = { base: Map<string, string | null>; teamOf: Map<string, string | null>; freeAgents: Set<string>; userAav: Map<string, number>; owner: Map<string, string | null>; extraAav?: Map<string, number>; cash?: Map<string, number>; invites?: Set<string>; newContracts?: Map<string,GmSigning> };
 export function playerContract(ctx: GmContext, league: GmLeague, pid: string): { hit: number; salary: number | null; seasons: GmContractYear[]; controlThrough: number | null; prospect: boolean; minorInvite?: boolean };
 export type GmAnswer = { accepted: boolean; reason: string; negotiation?: string; received?: number; need?: number; warLoss?: number };
@@ -54,6 +54,8 @@ export function teamStrengths(ctx: GmContext, teamOf: Map<string, string | null>
 export function simulateSeasons(ctx: GmContext, strengths: Record<string, { war: number; sd: number }>, n?: number, seed?: number): Record<string, GmTeamResult>;
 export function movesValue(ctx: GmContext, moves: GmMoves): { trades: number; signings: number; total: number };
 export function grade(deltaWins: number, netValue: number): { points: number; letter: string };
+export function offseasonObjective(ctx:GmContext,moves:GmMoves):{label:string;winWeight:number;shortfall:number};
+export function objectiveGrade(ctx:GmContext,moves:GmMoves,wins:number,value:number):{points:number;letter:string;label:string;winWeight:number;shortfall:number;repair:number};
 export function encodeMoves(moves: GmMoves): string;
 export function decodeMoves(text: string): GmMoves | null;
 export function restoreMoves(ctx: GmContext, candidate: GmMoves): { moves: GmMoves | null; reason?: string };

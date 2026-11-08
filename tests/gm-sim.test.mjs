@@ -159,10 +159,10 @@ test('stars with years of control cost well beyond fair value; rentals on bad te
   assert.ok(wood.received > ctx.sim.players[id('James Wood')].v05, 'offer beats his value');
   assert.equal(wood.accepted, false);
   assert.match(wood.reason, /well beyond fair value/);
-  // Yordan Alvarez has two years left on a rebuilding team: a fair offer works.
-  assert.equal(modes.HOU, 'rebuild');
+  // Houston's payroll investment now keeps it out of the rebuilding category.
+  assert.notEqual(g.openingTeamModes(ctx).HOU, 'rebuild');
   const yordan = ask('HOU', ['Wilyer Abreu', 'Curtis Mead'], ['Yordan Alvarez']);
-  assert.equal(yordan.accepted, true, yordan.reason);
+  assert.equal(yordan.accepted, false, yordan.reason);
   assert.ok(yordan.received < 1.5 * ctx.sim.players[id('Yordan Alvarez')].v05);
 });
 
@@ -229,7 +229,7 @@ test('saved signings and rival deals can restore at the previous market price', 
   const player = fa('Jazz Chisholm Jr.');
   const previous = { ...player, ...player.marketForecast.reference, marketForecast: null };
   const signing = { pid: player.id, years: previous.years, total: g.askFor(previous, base.seed).total };
-  assert.equal(g.respondToOffer(player, signing, base.seed).accepted, false);
+  assert.equal(g.respondToOffer(player, signing, base.seed).accepted, true, 'same-term public quote is no longer inflated by a longer quote');
   assert.deepEqual(g.restoreMoves(ctx, { ...base, signings: [signing] }).moves.signings, [signing]);
   const deal = { ...signing, team: 'NYY', round: 1 };
   const market = { round: 1, bids: [], offers: [], deals: [deal] };

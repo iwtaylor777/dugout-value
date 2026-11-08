@@ -66,6 +66,14 @@
 .gm-market-feed ul { max-height:260px; overflow:auto; padding-left:22px; font-size:14px; line-height:1.6; }
 .gm-market-feed li { padding:5px 0; }
 .gm-offer-standing { font-weight:600; color:var(--gm-green); }
+.gm-offer-standing[data-tone="warning"] { color:#98452e; }
+.gm-live-status { position:sticky;top:8px;z-index:20;background:#fffdf6;border:1px solid #b9c4ae;border-radius:6px;padding:10px 14px;box-shadow:0 3px 12px #233b2412;margin-bottom:16px; }
+.gm-live-status>div { display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px; }
+.gm-live-status span { flex:1;font-size:14px; }
+.gm-live-status p { margin:8px 0 0;font-size:14px;line-height:1.4;max-height:6em;overflow:auto;color:#294c3b; }
+.gm-live-status p[data-tone="error"] { color:#98452e; }
+.gm-tabs,.gm-market-desk,.gm-results { scroll-margin-top:140px; }
+.gm-named-moves { display:block!important; }
 .gm-invite-feed { border-top:1px solid #d2d8c8; margin-top:8px; }
 .gm-table .gm-market-range { min-width:145px; max-width:200px; line-height:1.5; }
 .gm-market-range strong, .gm-market-range span { display:block; }
@@ -226,8 +234,8 @@
 .gm-headline p.gm-result-impact { font-weight:650; margin:0 0 10px; }
 .gm-headline p.gm-result-impact.gm-good { color:var(--gm-green); }
 .gm-headline p.gm-result-impact.gm-bad { color:#a34332; }
-.gm-grade { display:inline-flex; align-items:center; gap:7px; margin-right:6px; padding:3px 7px; border:1px solid #bdcdb7; border-radius:4px; background:#e8eee1; color:var(--gm-green); font-size:12px; }
-.gm-grade strong { font-size:16px; line-height:1.3; }
+.gm-grade { display:inline-flex; align-items:center; gap:10px; margin:0 10px 8px 0; padding:8px 12px; border:1px solid #bdcdb7; border-radius:6px; background:#e8eee1; color:var(--gm-green); font-size:14px; }
+.gm-grade strong { font-size:28px; line-height:1.2; }
 .gm-result-actions { margin-top:16px; }
 .gm-odds { width: 100%; max-width: 680px; border-collapse: collapse; margin: 20px 0; font-size: 15px; }
 .gm-odds th, .gm-odds td { padding: 10px 8px; border-bottom: 1px solid #ddd5c4; text-align: left; }
@@ -256,6 +264,12 @@
   .gm-stats { grid-column: 1 / -1; justify-content: flex-start; }
 }
 @media (max-width: 700px) {
+  .gm-live-status { padding:8px 10px; }
+  .gm-live-status>div { gap:6px 10px; }
+  .gm-live-status strong { flex:1;font-size:13px; }
+  .gm-live-status button { font-size:12px; }
+  .gm-live-status span { flex:1 0 100%;order:3;font-size:12px; }
+  .gm-live-status p { font-size:12px;max-height:3em; }
   .gm-setup { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .gm-stats { gap: 14px 24px; }
   .gm-stats p { flex: 1 1 calc(50% - 24px); }
