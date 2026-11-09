@@ -158,21 +158,21 @@ test('stars with years of control cost well beyond fair value; rentals on bad te
   const wood = ask('WSN', ['Payton Tolle', 'Franklin Arias'], ['James Wood']);
   assert.ok(wood.received > ctx.sim.players[id('James Wood')].v05, 'offer beats his value');
   assert.equal(wood.accepted, false);
-  assert.match(wood.reason, /well beyond fair value/);
+  assert.match(wood.reason, /more than fair value|well beyond fair value/);
   // Houston's payroll investment now keeps it out of the rebuilding category.
   assert.notEqual(g.openingTeamModes(ctx).HOU, 'rebuild');
   const yordan = ask('HOU', ['Wilyer Abreu', 'Curtis Mead'], ['Yordan Alvarez']);
-  assert.equal(yordan.accepted, false, yordan.reason);
+  assert.equal(yordan.accepted, true, 'a weak but expensive club can exchange a star for a strong return');
   assert.ok(yordan.received < 1.5 * ctx.sim.players[id('Yordan Alvarez')].v05);
 });
 
-test('contenders want MLB-ready talent back for a regular, not just prospects', () => {
+test('losing immediate production adds a finite cost, not a prospect-only veto', () => {
   const league = g.buildLeague(ctx, base), modes = g.teamModes(ctx, league.teamOf);
   assert.equal(modes.PHI, 'contend');
   const wheeler = g.respondToTrade(ctx, league, base, 400, { partner: 'PHI', give: [id('Franklin Arias')], get: [id('Zack Wheeler')] }, modes);
-  assert.ok(wheeler.received >= wheeler.need, 'the value alone would do it');
-  assert.equal(wheeler.accepted, false);
-  assert.match(wheeler.reason, /MLB-ready/);
+  assert.ok(wheeler.winCost>0,'losing immediate production raises the required return');
+  assert.ok(wheeler.received >= wheeler.need);
+  assert.equal(wheeler.accepted, true,'a sufficiently strong prospect can pay the premium');
   // A backup at a position where they have depth can go for a prospect.
   const backup = g.respondToTrade(ctx, league, base, 400, { partner: 'LAD', give: [id('Justin Gonzales')], get: [id('Hunter Feduccia')] }, modes);
   assert.equal(backup.accepted, true, backup.reason);

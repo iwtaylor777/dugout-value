@@ -17,7 +17,7 @@ import { matchesTradePlayer } from "../../../lib/gm-trade-search.mjs";
 import { advanceMarket, marketBoard, MARKET_ROUNDS, newMarket, userOfferOutcomes } from "../../../lib/gm-market.mjs";
 import {
   aiFreeAgency, buildLeague, movesValue, payrollFor, rosterOf, offseasonObjective, objectiveGrade,
-  simulateSeasons, openingTeamModes, teamStrengths, seasonReadiness, playerContract, rivalBudget,
+  simulateSeasons, tradeOutlook, teamStrengths, seasonReadiness, playerContract, rivalBudget,
 } from "../../../lib/gm-sim.mjs";
 import type { GmContext, GmMoves, GmTeamResult, TrackerRow } from "../../../lib/gm-sim.mjs";
 
@@ -116,7 +116,6 @@ export function GmMode() {
   }, [loaded, moves]);
 
   const league = useMemo(() => buildLeague(ctx, moves), [moves]);
-  const modes = openingTeamModes(ctx);
   const objective = useMemo(()=>offseasonObjective(ctx,moves),[moves.team,moves.budget]); // eslint-disable-line react-hooks/exhaustive-deps
   const payroll = useMemo(() => payrollFor(ctx, league, moves.team), [league, moves.team]);
   const readiness = useMemo(() => seasonReadiness(ctx, moves), [moves]);
@@ -526,7 +525,7 @@ export function GmMode() {
                 {teams.filter(([t]) => t !== moves.team).map(([abbr, t]) => <option key={abbr} value={abbr}>{t.name} · {rivalBudgets[abbr].room < .05 ? "No payroll room" : `${budgetRange(rivalBudgets[abbr].room)} room`}</option>)}
               </select>
             </label>
-            {partner && <p className="gm-note">{ctx.sim.teams[partner].name}: {modes[partner] === "contend" ? "prioritizes 2027, based on its roster or payroll investment" : modes[partner] === "rebuild" ? "lower payroll and projected wins; prioritizes control years" : "balances current help with future value"}. Strategy stays fixed for this offseason.</p>}
+            {partner && <p className="gm-note"><strong>{tradeOutlook(ctx,partner).label}.</strong> {ctx.sim.teams[partner].name} entered this offseason projected for about {Math.round(tradeOutlook(ctx,partner).wins)} wins. {tradeOutlook(ctx,partner).wins<80?"They can trade current production for a strong prospect return.":"Losing current production raises their price, but a strong enough return can still work."} Payroll affects what they can afford, not whether they can consider selling.</p>}
           </div>
           <aside className="gm-partner-budgets" aria-label="Trade partner budgets">
             <h3>{partner ? `${ctx.sim.teams[partner].name}: ${budgetRange(rivalBudgets[partner].room)} to add payroll` : "Who has room for salary?"}</h3>

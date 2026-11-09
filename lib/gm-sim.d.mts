@@ -31,6 +31,9 @@ export function askFor(fa: TrackerRow | undefined, seed: number): { total: numbe
 export function respondToOffer(fa: TrackerRow, offer: { years: number; total: number }, seed: number): GmAnswer;
 export function requiredOfferTotal(fa: TrackerRow, years: number, seed: number): number;
 export function openingTeamModes(ctx: GmContext): Record<string, "contend" | "middle" | "rebuild">;
+export function tradeOutlook(ctx:GmContext,team:string):{wins:number;urgency:number;label:string};
+export function tradeAssetValue(player:GmPlayerValue,urgency:number):number;
+export function tradeWinCost(urgency:number,loss:number):number;
 export const MAX_TRADE_PLAYERS: number;
 export function packageValue(values: number[]): number;
 export function tradePlayerValue(player: GmPlayerValue, mode: string): number;
@@ -44,8 +47,7 @@ export function teamModes(ctx: GmContext, teamOf: Map<string, string | null>): R
 export function nickname(ctx: GmContext, abbr: string): string;
 export function isStar(v: GmPlayerValue | undefined): boolean;
 export function controlYears(v: GmPlayerValue | undefined): number;
-export function starPremium(v: GmPlayerValue | undefined, mode: string): number;
-export const CONTENDER_WAR_LOSS: number;
+export function starPremium(v: GmPlayerValue | undefined, mode: string|number): number;
 export function respondToTrade(ctx: GmContext, league: GmLeague, moves: GmMoves, budget: number, proposal: GmTrade, modes: Record<string, string>): GmAnswer;
 export function aiFreeAgency(ctx: GmContext, league: GmLeague, moves: GmMoves, seed: number): { league: GmLeague; signings: { pid: string; name: string; team: string; years: number; total: number }[] };
 export const PERFORMANCE_SD: number;

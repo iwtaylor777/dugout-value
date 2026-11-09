@@ -11,14 +11,17 @@ const step=(state,action)=>{const result=game.act(ctx,state,action);assert.ok(re
 const roundtrip=state=>assert.deepEqual(game.replayGame(ctx,game.decodeGame(game.encodeGame(state))).moves,state);
 
 test('undo rechecks roster-dependent later trades and the resulting game reloads',()=>{
+  // A boundary-value fixture keeps this a dependency test, not an assertion
+  // that the real 60-FV Arias can never buy Wells without an earlier trade.
+  const fixture={...ctx,sim:{...ctx.sim,players:{...ctx.sim.players,[id('Franklin Arias')]:{...ctx.sim.players[id('Franklin Arias')],v10:60,v05:60,v20:60}}}};
   let state=game.createGame('BOS',42);
   const dump={partner:'NYY',give:[id('Adley Rutschman')],get:[]};
   const wells={partner:'NYY',give:[id('Franklin Arias')],get:[id('Austin Wells')]};
-  assert.equal(game.act(ctx,state,['trade',wells]).accepted,false);
-  state=step(state,['trade',dump]);
-  const second=game.act(ctx,state,['trade',wells]);
-  if(second.accepted) state=second.moves;
-  const undone=game.undoGame(ctx,state,'trade',0);
+  assert.equal(game.act(fixture,state,['trade',wells]).accepted,false);
+  state=game.act(fixture,state,['trade',dump]).moves;
+  const second=game.act(fixture,state,['trade',wells]);
+  assert.ok(second.accepted,second.reason);state=second.moves;
+  const undone=game.undoGame(fixture,state,'trade',0);
   assert.equal(undone.moves.trades.length,0);
   assert.equal(g.buildLeague(ctx,undone.moves).owner.get(id('Austin Wells')),'NYY');
   roundtrip(undone.moves);
@@ -79,7 +82,7 @@ test('outgoing packages are valued in full and grade cannot change by partitioni
   assert.equal(get.length,5);
   const proposal={partner:'NYY',give:[id('Roman Anthony')],get};
   const response=g.respondToTrade(ctx,league,state,480,proposal,{});
-  const value=pid=>g.tradePlayerValue(ctx.sim.players[pid],g.openingTeamModes(ctx).NYY);
+  const value=pid=>g.tradeAssetValue(ctx.sim.players[pid],g.tradeOutlook(ctx,'NYY').urgency);
   assert.ok(response.need>=get.reduce((sum,pid)=>sum+value(pid),0),response.reason);
   const grouped={...state,trades:[proposal]};
   const split={...state,trades:get.map((pid,i)=>({...proposal,give:i?[]:proposal.give,get:[pid]}))};
@@ -88,10 +91,11 @@ test('outgoing packages are valued in full and grade cannot change by partitioni
 
 test('partner roster-loss protection considers earlier trades, not just the latest deal',()=>{
   const state={...game.createGame('BOS',42),trades:[{partner:'ATL',give:[],get:[id('Austin Riley'),id('Ronald Acuña Jr.'),id('Michael Harris II')]}]};
-  const proposal={partner:'ATL',give:[id('Payton Tolle'),id('Franklin Arias')],get:[id('Matt Olson')]};
+  const proposal={partner:'ATL',give:[id('Franklin Arias')],get:[id('Matt Olson')]};
   const response=g.respondToTrade(ctx,g.buildLeague(ctx,state),state,480,proposal,{});
-  assert.equal(response.accepted,false);
-  assert.match(response.reason,/across your trades/);
+  const fresh=game.createGame('BOS',42),single=g.respondToTrade(ctx,g.buildLeague(ctx,fresh),fresh,480,proposal,{});
+  assert.ok(response.winCost>single.winCost,'earlier roster depletion increases the next price');
+  assert.ok(response.need>single.need);
 });
 
 for(const [team,seed,budget] of [['BOS',42,300],['ATH',73,147],['TBR',91,110]])test(`${team} full offseason: bids, three rounds, undo, reload, budget, season and compact share`,()=>{
