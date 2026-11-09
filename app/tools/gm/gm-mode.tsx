@@ -10,7 +10,7 @@ import { marketTracker } from "../../../lib/free-agent-current.mjs";
 import signingsData from "../../data/free-agent-signings.json";
 import simData from "../../data/gm-sim.json";
 import payrollData from "../../data/team-payroll.json";
-import { allocate, bestAdditions, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
+import { allocate, bestAdditions, POSITIONS, PITCHING, eligiblePositions, isInferredPosition } from "../../../lib/depth-chart.mjs";
 import { matchesProjectionRole } from "../../../lib/projection-filters.mjs";
 import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget, alternativeRole, isUsefulAlternative, resultImpact, tradeRosterImpact } from "../../../lib/gm-experience.mjs";
 import { matchesTradePlayer } from "../../../lib/gm-trade-search.mjs";
@@ -131,7 +131,7 @@ export function GmMode() {
   const offerRoles = useMemo(() => Object.fromEntries(offerOutcomes.filter(outcome => ["lost", "unsigned", "minor"].includes(outcome.status)).map(({ offer: bid }) => {
     const entries = ctx.players.filter(player => player.pid === bid.pid);
     const fit = bestAdditions(roster, {}, entries);
-    return [bid.pid, alternativeRole({ rememberedRole: bidRoles[bid.pid], eligible: entries.flatMap(player => player.e), projectedPositions: fit.flatMap(player => player.positions) })];
+    return [bid.pid, alternativeRole({ rememberedRole: bidRoles[bid.pid], eligible: entries.flatMap(eligiblePositions), projectedPositions: fit.flatMap(player => player.positions) })];
   })), [offerOutcomes, roster, bidRoles]);
   const rivalBudgets = useMemo(() => Object.fromEntries(teams.filter(([t]) => t !== moves.team).map(([t]) => [t, rivalBudget(ctx, league, t, moves.seed)])), [league, moves.team, moves.seed]);
   const teamsWithRoom = Object.entries(rivalBudgets).filter(([, plan]) => plan.room >= 5).sort((a, b) => b[1].room - a[1].room);
@@ -166,7 +166,7 @@ export function GmMode() {
     return list.map((x) => ({ ...x, gain: gains.get(x.pid)?.gain ?? 0, positions: gains.get(x.pid)?.positions ?? [] }))
       .sort((a, b) => (b.row.total ?? 0) - (a.row.total ?? 0));
   }, [league, roster]);
-  const faFiltered = freeAgents.filter((f) => (!faAlternatives || isUsefulAlternative(f, faPos)) && (!faBudgetOnly || couldFitBudget(f.row, budget - payroll - reserved, moves.market?.bids.some(b => b.pid === f.pid))) && (faPos === "All" || matchesProjectionRole({ position: f.entries.flatMap(p => p.e).join("/") }, faPos))
+  const faFiltered = freeAgents.filter((f) => (!faAlternatives || isUsefulAlternative(f, faPos)) && (!faBudgetOnly || couldFitBudget(f.row, budget - payroll - reserved, moves.market?.bids.some(b => b.pid === f.pid))) && (faPos === "All" || matchesProjectionRole({ position: f.entries.flatMap(eligiblePositions).join("/") }, faPos))
     && (!faQuery.trim() || f.row.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(faQuery.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase())))
     .sort((a, b) => (faSort === "gain" ? b.gain - a.gain : faSort === "cost" ? (a.row.aav ?? 0.8) - (b.row.aav ?? 0.8) : (b.row.total ?? 0) - (a.row.total ?? 0)) || a.row.name.localeCompare(b.row.name));
   const faShown = faFiltered.slice(0, faLimit);
@@ -179,7 +179,7 @@ export function GmMode() {
     const slots = Object.values(alloc.positions).flatMap(slot => slot.rows).filter(row => row.p.pid === pid);
     const used = slots.reduce((sum, row) => sum + row.pt, 0);
     const without = used > 0 ? allocate(roster.filter(p => p.pid !== pid)).total : alloc.total;
-    return { pid, v, priced, contract: contracts[pid], used, lostWar: Math.max(0, alloc.total - without), roles: POSITIONS.filter(pos => alloc.positions[pos].rows.some(row => row.p.pid === pid)) };
+    return { pid, v, priced, contract: contracts[pid], used, lostWar: Math.max(0, alloc.total - without), roles: POSITIONS.filter(pos => alloc.positions[pos].rows.some(row => row.p.pid === pid)).map(pos => `${pos}${alloc.positions[pos].rows.some(row => row.p.pid === pid && isInferredPosition(row.p,pos)) ? " (secondary)" : ""}`) };
   }), [yourList, alloc, roster, contracts, tab]);
   const rosterShown = rosterContracts.filter(p => matchesTradePlayer(`${p.v.n} ${p.v.pos} ${p.v.k === "p" ? "prospect" : ""}`, rosterQuery))
     .sort((a, b) => (rosterSort === "salary" ? b.contract.hit - a.contract.hit : rosterSort === "impact" ? b.lostWar - a.lostWar : 0) || a.v.n.localeCompare(b.v.n));
@@ -234,7 +234,7 @@ export function GmMode() {
       if (ans.moves) {
         const entries = ctx.players.filter(player => player.pid === pid);
         const fit = bestAdditions(roster, {}, entries);
-        setBidRoles(previous => ({ ...previous, [pid]: alternativeRole({ selectedRole: faPos, rememberedRole: previous[pid], eligible: entries.flatMap(player => player.e), projectedPositions: fit.flatMap(player => player.positions) }) }));
+        setBidRoles(previous => ({ ...previous, [pid]: alternativeRole({ selectedRole: faPos, rememberedRole: previous[pid], eligible: entries.flatMap(eligiblePositions), projectedPositions: fit.flatMap(player => player.positions) }) }));
         update(ans.moves);
       }
       setFeedback({ tone: ans.accepted ? "success" : "error", text: `${row.name}: ${ans.reason}` });
@@ -563,10 +563,10 @@ export function GmMode() {
                   <p><strong>{signedWins(tradePayroll.impact.warChange)} projected 2027 roster WAR</strong> after replacing the players you send and sharing playing time.</p>
                   <ul>{get.map(pid => {
                     const rows = tradePayroll.impact.incoming.filter(row => row.pid === pid);
-                    return <li key={pid}><strong>{label(pid)}:</strong> {rows.length ? rows.map(row => row.roles.map(role => `${Math.round(role.pt)} ${row.unit} at ${role.pos}`).join(", ")).join("; ") : V[pid]?.k === "p" ? "Future talent; no projected MLB playing time in 2027." : "No projected playing time on this roster."}</li>;
+                    return <li key={pid}><strong>{label(pid)}:</strong> {rows.length ? rows.map(row => row.roles.map(role => `${Math.round(role.pt)} ${row.unit} at ${role.pos}${role.inferred ? " (secondary)" : ""}`).join(", ")).join("; ") : V[pid]?.k === "p" ? "Future talent; no projected MLB playing time in 2027." : "No projected playing time on this roster."}</li>;
                   })}{tradePayroll.impact.displaced.slice(0, 2).map(row => <li key={`${row.name}-${row.unit}`}>{row.name}: about {Math.round(row.loss)} fewer {row.unit}.</li>)}</ul>
                   <p>{tradePayroll.impact.positions.filter(pos => Math.abs(pos.change) >= .1).map(pos => `${pos.pos} ${signedWins(pos.change)} WAR`).join(" · ") || "No position changes by 0.1 WAR or more."}</p>
-                  <p className="gm-fit-caveat">Uses the game’s current position eligibility and automatic playing time. A prospect can help your future without adding wins next season. This is a roster preview, not a promise the other team will accept.</p>
+                  <p className="gm-fit-caveat">Secondary means a plausible new role, with a small transition penalty included, not verified experience there. Playing time is automatic. Prospects can help your future without adding wins next season. This preview does not reveal whether the other team will accept.</p>
                 </section>}
                 <button type="button" onClick={propose} disabled={!give.length && !get.length}>Propose trade</button>
                 {tradeNote && <p role="status" className={tradeNote.ok ? "gm-good" : "gm-bad"}>{tradeNote.text}</p>}
@@ -598,7 +598,7 @@ export function GmMode() {
             return (
               <div key={pos} className={`gm-slot${PITCHING.includes(pos) ? " gm-slot-pitching" : ""}`}>
                 <h3><span>{pos}</span>{slot.war.toFixed(1)} WAR</h3>
-                <ul>{slot.rows.map((r) => <li key={r.p.i}>{label(r.p.pid, r.p.i)} <small>{Math.round(r.pt)} {PITCHING.includes(pos) ? "IP" : "PA"} · {r.war.toFixed(1)}</small></li>)}
+                <ul>{slot.rows.map((r) => <li key={r.p.i}>{label(r.p.pid, r.p.i)} <small>{Math.round(r.pt)} {PITCHING.includes(pos) ? "IP" : "PA"} · {r.war.toFixed(1)}{isInferredPosition(r.p,pos) ? " · assumed secondary role" : ""}</small></li>)}
                   {slot.replacement >= 1 && <li className="gm-muted">Replacement level · {Math.round(slot.replacement)} {PITCHING.includes(pos) ? "IP" : "PA"}</li>}</ul>
               </div>
             );

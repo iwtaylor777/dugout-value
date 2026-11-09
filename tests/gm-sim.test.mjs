@@ -19,7 +19,7 @@ test('salary-dump feedback explains little roster improvement without blaming ev
   ]) {
     const response = g.respondToTrade(ctx, league, state, 145, proposal, modes);
     assert.equal(response.accepted, false);
-    assert.equal(response.warLoss, 0);
+    assert.ok(Math.abs(response.warLoss)<.05,'any roster gain remains below the meaningful-improvement threshold');
     assert.match(response.reason, /This deal adds little to their projected 2027 roster/);
   }
   // Negative contract value does not imply that the player cannot improve a roster.

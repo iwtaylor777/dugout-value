@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
 import { applyPositionUsage, inningsToOuts, positionUsage } from '../scripts/refresh-depth-eligibility.mjs';
-import { allocate, teamsFor, bestAdditions, rateAt, cbtHit, payrollAdjustment, payrollChange, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, MAX_CONVERTED_RELIEF_IP, MAX_NATIVE_RELIEF_IP, targetOf } from '../lib/depth-chart.mjs';
+import { allocate, teamsFor, bestAdditions, rateAt, cbtHit, payrollAdjustment, payrollChange, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, MAX_CONVERTED_RELIEF_IP, MAX_NATIVE_RELIEF_IP, targetOf, eligiblePositions, isInferredPosition, SECONDARY_TRANSITION_RUNS } from '../lib/depth-chart.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
 const data = read('../app/data/depth-chart.json'), tracker = read('../app/data/free-agent-tracker.json'), signings = read('../app/data/free-agent-signings.json');
 const h = (i, e, r, x) => ({ i, n: i, t: 'AAA', e, k: 'b', r, x });
@@ -108,16 +108,64 @@ test('adding a reliever cannot displace better converted-starter innings and low
   }
 });
 
-test('usage-verified fielders are not automatically taught new positions', () => {
+test('usage-verified outfielders can cover plausible corners but not become infielders', () => {
   const abreu = data.players.find(p => p.n === 'Wilyer Abreu');
   const rafaela = data.players.find(p => p.n === 'Ceddanne Rafaela');
   const { team } = teamsFor(data.players, tracker, signings.entries);
   const roster = data.players.filter(p => team.get(p.i) === 'BOS'), automatic = allocate(roster);
   for (const p of [abreu, rafaela]) for (const [pos, slot] of Object.entries(automatic.positions)) {
-    if (slot.rows.some(r => r.p.i === p.i)) assert.ok(pos === 'DH' || p.e.includes(pos), `${p.n} automatically moved to ${pos}`);
+    if (slot.rows.some(r => r.p.i === p.i)) assert.ok(eligiblePositions(p).includes(pos), `${p.n} automatically moved to ${pos}`);
   }
+  assert.ok(eligiblePositions(abreu).includes('LF'));
+  assert.ok(!eligiblePositions(abreu).includes('1B'));
+  assert.ok(!eligiblePositions(abreu).includes('CF'));
+  assert.ok(eligiblePositions(rafaela).includes('RF'));
   const manual = allocate(roster, { [abreu.i]: { pos: '1B', pt: 500 } });
   assert.equal(manual.positions['1B'].rows.find(r => r.p.i === abreu.i).pt, 500, 'explicit experiments remain possible');
+});
+
+test('secondary positions are direct conversions, not blanket eligibility or a defensive ladder', () => {
+  for (const source of ['mlb-2026','listed-fallback']) {
+    const player = roles => ({...h('role',roles,3,600),eSource:source});
+    assert.deepEqual(eligiblePositions(player(['SS'])),['SS','2B','3B','DH']);
+    assert.deepEqual(eligiblePositions(player(['CF'])),['CF','LF','RF','DH']);
+    assert.deepEqual(eligiblePositions(player(['1B'])),['1B','DH']);
+    assert.deepEqual(eligiblePositions(player(['DH'])),['DH']);
+    assert.deepEqual(eligiblePositions(player(['C'])),['C','1B','DH']);
+    assert.ok(!eligiblePositions(player(['3B'])).includes('SS'));
+    assert.ok(!eligiblePositions(player(['2B'])).includes('3B'));
+  }
+  assert.deepEqual(eligiblePositions(pit('reliever',['RP'],2,65)),['RP']);
+  assert.deepEqual(eligiblePositions(pit('starter',['SP'],3,180)),['SP','RP']);
+  const contreras=data.players.find(p=>p.n==='Willson Contreras');
+  assert.ok(contreras.fs.C!=null,'old catcher defense remains in the component data');
+  assert.ok(!eligiblePositions(contreras).includes('C'),'old fielding model is not current eligibility');
+  assert.deepEqual(eligiblePositions(data.players.find(p=>p.n==='Shohei Ohtani'&&p.k==='b')),['DH']);
+});
+
+test('inferred roles cannot create individual WAR or dodge the transition penalty', () => {
+  const players=[...data.players,{...h('inflated',['SS'],3,600),fs:{SS:0,'2B':99,'3B':99},rd:5}];
+  for(const p of players.filter(p=>p.k==='b')) {
+    const known=p.e.filter(pos=>pos!=='DH');
+    for(const pos of eligiblePositions(p).filter(pos=>isInferredPosition(p,pos))) {
+      assert.ok(Number.isFinite(rateAt(p,pos)),`${p.n} ${pos}`);
+      assert.ok(rateAt(p,pos)<=Math.max(...known.map(role=>rateAt(p,role)))-SECONDARY_TRANSITION_RUNS/9.82+1e-9,`${p.n} gains value at ${pos}`);
+    }
+  }
+  const rookie=h('rookie',['SS'],3,600);
+  assert.ok(rateAt(rookie,'2B')<3-SECONDARY_TRANSITION_RUNS/9.82,'missing components still pay positional cost');
+  assert.equal(rateAt({...rookie,e:['SS','2B']},'2B'),3,'a listed role is not penalized as speculative');
+});
+
+test('crowded shortstop rosters can fill the infield without exceeding any player workload', () => {
+  const stars=[{...h('one',['SS'],5,650),eSource:'mlb-2026'},{...h('two',['SS'],4,600),eSource:'mlb-2026'}];
+  const a=allocate(stars);
+  assert.equal(a.positions.DH.rows.length,0,'an open realistic secondary role beats DH');
+  assert.ok(a.positions['2B'].filled+a.positions['3B'].filled>500);
+  for(const p of stars) assert.ok(Object.values(a.positions).flatMap(slot=>slot.rows).filter(row=>row.p.i===p.i).reduce((sum,row)=>sum+row.pt,0)<=p.x+1e-8);
+  assert.deepEqual(allocate([...stars].reverse()),a);
+  const full=allocate([...stars,h('first',['1B'],9,683),h('second',['2B'],8,683),h('third',['3B'],8,683)]);
+  assert.ok(full.positions.DH.filled>0,'DH remains a legitimate option when the infield really is full');
 });
 
 test('RP-tagged bulk projections cannot bypass the automatic relief workload cap', () => {

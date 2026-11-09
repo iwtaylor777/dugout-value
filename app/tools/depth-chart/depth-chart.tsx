@@ -4,7 +4,7 @@ import data from "../../data/depth-chart.json";
 import tracker from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
 import payrollData from "../../data/team-payroll.json";
-import { allocate, bestAdditions, teamsFor, payrollAdjustment, payrollChange, rateAt, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
+import { allocate, bestAdditions, teamsFor, payrollAdjustment, payrollChange, rateAt, POSITIONS, PITCHING, isInferredPosition } from "../../../lib/depth-chart.mjs";
 import type { DepthEdit as Edit } from "../../../lib/depth-chart.mjs";
 
 type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string; fs?: Record<string, number>; rd?: number };
@@ -181,8 +181,8 @@ export function DepthChart() {
                               const why = row.p.fs && row.p.rd != null
                                 ? (pos === "DH" ? `At DH he has no fielding value and a DH's positional adjustment, compared with ${row.p.rd.toFixed(1)} runs of defense per 600 PA in his 2026 role.` : `Projected fielding at ${pos}: ${f != null ? `${f > 0 ? "+" : ""}${f.toFixed(1)}` : "average"} runs a season, plus the position's adjustment, compared with ${row.p.rd.toFixed(1)} runs of defense per 600 PA in his 2026 role.`)
                                 : adj > 0 ? `Projected as a ${row.p.mp ?? row.p.e[0]}; credited at ${pos} as a slightly below-average fielder` : `Projected as a ${row.p.mp ?? row.p.e[0]}; loses positional value at ${pos}`;
-                              return <span className="dc-tag dc-pos-adj" title={why}>{signed(adj)} at {pos}</span>;
-                            })()}</th>
+                              return <span className="dc-tag dc-pos-adj" title={isInferredPosition(row.p,pos) ? `${why} Assumed secondary role: capped at his best known-role rate, then reduced by 2 runs per 600 PA for the transition.` : why}>{signed(adj)} at {pos}</span>;
+                            })()}{isInferredPosition(row.p,pos) && <span className="dc-tag" title="Plausible conversion, not verified experience. A transition penalty is included in WAR.">secondary role</span>}</th>
                             <td className="num">
                               <input type="number" min={0} step={PITCHING.includes(pos) ? 5 : 10} aria-label={`${label(row.p)} ${unitName(pos)} at ${pos}`} value={Math.round(row.pt)} onChange={(e) => setPt(row.p, pos, e.target.value)} className={locked ? "dc-locked" : undefined} />
                               {locked && <button type="button" className="dc-unlock" onClick={() => unlock(row.p)} aria-label={`Return ${label(row.p)} to automatic playing time`} title="Return to automatic playing time">×</button>}

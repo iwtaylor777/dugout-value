@@ -95,7 +95,7 @@ test('Yankees contender can buy Neto, move Volpe, and finish after losing a free
   assert.equal(sato.deal.team, 'CHC');
 });
 
-test('Neto preview matches allocated roster WAR and exposes his unexpected DH role', () => {
+test('Neto preview matches allocated roster WAR and uses realistic secondary infield roles', () => {
   const state = createGame('NYY', seed);
   const proposal = trade('LAA', ['Carlos Lagrange', 'Ben Hess', 'Spencer Jones'], ['Zach Neto']);
   const before = g.buildLeague(ctx, state);
@@ -109,8 +109,10 @@ test('Neto preview matches allocated roster WAR and exposes his unexpected DH ro
   assert.ok(Math.abs(preview.positions.reduce((sum, p) => sum + p.change, 0) - actualChange) < 1e-10);
   const neto = preview.incoming.find(p => p.pid === id('Zach Neto'));
   assert.equal(neto.unit, 'PA');
-  assert.ok(neto.roles.some(r => r.pos === 'DH' && r.pt > 0));
+  assert.ok(!neto.roles.some(r => r.pos === 'DH' && r.pt > 0));
+  assert.ok(neto.roles.some(r => ['2B','3B'].includes(r.pos) && r.pt > 0 && r.inferred));
   assert.ok(neto.roles.some(r => r.pos === 'SS' && r.pt > 0));
+  assert.ok(actualChange>.5,'secondary positions recover meaningful roster fit without altering the trade price model');
   assert.equal(neto.pt, neto.roles.reduce((sum, r) => sum + r.pt, 0));
   assert.ok(preview.displaced.length > 0, 'the user sees incumbents losing playing time');
 });

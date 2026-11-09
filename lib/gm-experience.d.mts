@@ -2,7 +2,7 @@ type MarketConsensus = { total: number; minYears: number; maxYears: number; sing
 export function tradeRosterImpact(before: import('./depth-chart.mjs').DepthResult, after: import('./depth-chart.mjs').DepthResult, incomingIds?: string[]): {
   warChange: number;
   positions: {pos: string; change: number}[];
-  incoming: {pid: string; name: string; pt: number; unit: string; roles: {pos: string; pt: number}[]}[];
+  incoming: {pid: string; name: string; pt: number; unit: string; roles: {pos: string; pt: number; inferred: boolean}[]}[];
   displaced: {name: string; unit: string; loss: number}[];
 };
 export type MarketGuidanceRow = {
