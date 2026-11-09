@@ -11,6 +11,7 @@
     "build:vercel": "next build",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "data:refresh": "node scripts/refresh-baseball-data.mjs",
+    "data:prospect-evidence": "node scripts/build-prospect-evidence.mjs",
     "audit:values": "node scripts/audit-baseball-values.mjs",
     "audit:arbitration": "node scripts/calibrate-arbitration.mjs",
     "audit:aging": "node scripts/audit-aging-curve.mjs",

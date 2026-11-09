@@ -141,6 +141,17 @@ type LastProspect = {
   year: number;
   serviceTime: number;
   risk: string | null;
+  evidence?: { pa: number; mlbPa: number; upperMinorsPa: number; bf?: number; through: number } | null;
+};
+// FanGraphs reports service time as years.days (0.086 = 86 days).
+const serviceTimeLabel = (value: number) => {
+  const years = Math.floor(value);
+  const days = Math.round((value - years) * 1000);
+  const parts = [
+    years ? `${years} year${years === 1 ? "" : "s"}` : "",
+    days || !years ? `${days} day${days === 1 ? "" : "s"}` : "",
+  ].filter(Boolean);
+  return parts.join(", ");
 };
 type ContractScenarioOption = {
   id: string;
@@ -2822,8 +2833,12 @@ export default function TradeWorkspace({ initialTab = "trade" }: { initialTab?: 
                           : ""}
                       </strong>
                       <small>
-                        {selected.lastProspect.serviceTime.toFixed(3)} years of
+                        {serviceTimeLabel(selected.lastProspect.serviceTime)} of
                         service at last ranking
+                        {selected.lastProspect.evidence &&
+                        !selected.position.includes("P")
+                          ? ` · ${Math.round(selected.lastProspect.evidence.pa)} PA since (${Math.round(selected.lastProspect.evidence.mlbPa)} MLB, ${Math.round(selected.lastProspect.evidence.upperMinorsPa)} AA/AAA after debut)`
+                          : ""}
                       </small>
                     </div>
                     <label>

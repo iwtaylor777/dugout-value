@@ -17,9 +17,15 @@ import {
   isReliever,
   marketValueForSeason,
   postseasonRotationValueForSeason,
+  prospectGradeWeight,
   prospectRankAdjustment,
+  serviceYears,
   valuePlayer,
 } from "../lib/value-model.mjs";
+import {
+  applyProspectEvidence,
+  evidenceFromStats,
+} from "../lib/prospect-evidence.mjs";
 
 // The July 31 view keeps rest-of-2026 seasons in value; deadline tests use it.
 const archivedDatabase = JSON.parse(await readFile(new URL("../public/research/snapshots/2026-10-17/app/data/player-database.json", import.meta.url)));
@@ -1115,6 +1121,76 @@ test("rookie blends are labeled as blended with prospect grade", () => {
   );
   assert.equal(projectionOnly.valuationBasis, "projection");
   assert.equal(projectionOnly.prospectWeight, 0);
+});
+
+test("FanGraphs service time is read as years and days", () => {
+  assert.equal(serviceYears("0.086"), 86 / 172);
+  assert.equal(serviceYears(1.12), 1 + 120 / 172);
+  assert.equal(serviceYears(2.171), 2 + 171 / 172);
+  assert.equal(serviceYears(undefined), 0);
+});
+
+test("a hitter's prospect weight falls with plate appearances since the grade", () => {
+  const hitter = (pa) => ({
+    position: "2B",
+    lastProspect: { fv: "60", year: 2025, serviceTime: 0.086, evidence: { pa } },
+  });
+  assert.equal(prospectGradeWeight(hitter(0), 2026), 0.8);
+  assert.ok(Math.abs(prospectGradeWeight(hitter(263), 2026) - 190 / 356) < 1e-12);
+  assert.ok(prospectGradeWeight(hitter(725), 2026) < 0.24);
+  assert.ok(prospectGradeWeight(hitter(1100), 2026) < prospectGradeWeight(hitter(725), 2026));
+  // Pitchers and hitters without recorded evidence keep the year-and-service decay.
+  const pitcher = { position: "SP", lastProspect: { fv: "55", year: 2025, serviceTime: 0.086, evidence: { pa: 0 } } };
+  assert.ok(Math.abs(prospectGradeWeight(pitcher, 2026) - 0.64 * Math.exp(-(86 / 172) / 0.75)) < 1e-12);
+});
+
+test("Kristian Campbell's grade no longer carries a demoted season", () => {
+  const campbell = database.players.find((player) => player.name === "Kristian Campbell");
+  assert.equal(campbell.lastProspect.evidence.mlbPa, 263);
+  assert.equal(campbell.lastProspect.evidence.upperMinorsPa, 462);
+  const result = valuePlayer(campbell, initialSettings, database);
+  assert.ok(result.prospectWeight > 0.2 && result.prospectWeight < 0.25);
+  // His extension pays more than standard control, so the grade's value is cut.
+  assert.ok(result.prospectContractAdjustment < -15);
+  const without = { ...campbell, lastProspect: { ...campbell.lastProspect, evidence: undefined } };
+  assert.ok(valuePlayer(without, initialSettings, database).prospectWeight > result.prospectWeight);
+});
+
+test("standard-control graduates get no contract adjustment", () => {
+  const standard = database.players.filter(
+    (player) =>
+      player.rookieMode === "blend" &&
+      player.seasons.every((season) => season.ros || season.salaryMode === "prearb" || season.salaryMode.startsWith("arb")),
+  );
+  assert.ok(standard.length > 50);
+  for (const player of standard)
+    assert.equal(valuePlayer(player, initialSettings, database).prospectContractAdjustment, 0, player.name);
+});
+
+test("prospect evidence counts MLB PA and upper-minors PA after the debut season", () => {
+  const payload = {
+    stats: [
+      {
+        group: { displayName: "hitting" },
+        splits: [
+          { season: "2024", sport: { abbreviation: "AAA" }, stat: { plateAppearances: 85 } },
+          { season: "2025", sport: { abbreviation: "AAA" }, stat: { plateAppearances: 319 } },
+          { season: "2025", sport: { abbreviation: "MLB" }, stat: { plateAppearances: 263 } },
+          { season: "2026", sport: { abbreviation: "AAA" }, stat: { plateAppearances: 462 } },
+          { season: "2026", sport: { abbreviation: "Minors" }, stat: { plateAppearances: 462 } },
+          { season: "2026", sport: { abbreviation: "A+" }, stat: { plateAppearances: 20 } },
+        ],
+      },
+    ],
+  };
+  const evidence = evidenceFromStats(payload, 2025, 2026);
+  assert.equal(evidence.pa, 725);
+  assert.equal(evidence.firstMlbSeason, 2025);
+  const db = { players: [{ id: "a", lastProspect: { year: 2026 } }, { id: "b", lastProspect: { year: 2025 } }] };
+  const applied = applyProspectEvidence(db, { players: { a: { gradeYear: 2025, pa: 5 }, b: { gradeYear: 2025, pa: 9 } } });
+  assert.equal(applied, 1);
+  assert.equal(db.players[0].lastProspect.evidence, undefined);
+  assert.equal(db.players[1].lastProspect.evidence.pa, 9);
 });
 
 test("Soto's post-2029 opt-out is one all-or-nothing option", () => {

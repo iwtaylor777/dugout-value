@@ -208,7 +208,7 @@ test('competitive late signings defer the budget check; a salary-clearing trade 
   const league = g.buildLeague(ctx, start), player = row('Freddy Peralta'), ask = g.askFor(player, start.seed);
   assert.equal(g.signFreeAgent(ctx, league, start, start.budget, player, { years: ask.minYears, total: ask.total }, start.seed).accepted, true);
   const id = name => Object.entries(ctx.sim.players).find(([, p]) => p.n === name)[0];
-  const proposal = { partner: 'BAL', give: [id('Trevor Story'), id('Roman Anthony')], get: [] };
+  const proposal = { partner: 'BAL', give: [id('Trevor Story'), id('Roman Anthony'), id('Justin Gonzales')], get: [] };
   const answer = g.respondToTrade(ctx, league, start, start.budget, proposal, g.teamModes(ctx, league.teamOf));
   assert.equal(answer.accepted, true, answer.reason);
   assert.equal(g.seasonReadiness(ctx, start).ready, false);

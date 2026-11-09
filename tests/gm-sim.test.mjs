@@ -173,8 +173,8 @@ test('losing immediate production adds a finite cost, not a prospect-only veto',
   assert.ok(wheeler.winCost>0,'losing immediate production raises the required return');
   assert.ok(wheeler.received >= wheeler.need);
   assert.equal(wheeler.accepted, true,'a sufficiently strong prospect can pay the premium');
-  // A backup at a position where they have depth can go for a prospect.
-  const backup = g.respondToTrade(ctx, league, base, 400, { partner: 'LAD', give: [id('Justin Gonzales')], get: [id('Hunter Feduccia')] }, modes);
+  // A backup at a position where they have depth can go for prospects.
+  const backup = g.respondToTrade(ctx, league, base, 400, { partner: 'LAD', give: [id('Justin Gonzales'), id('John Holobetz')], get: [id('Hunter Feduccia')] }, modes);
   assert.equal(backup.accepted, true, backup.reason);
 });
 

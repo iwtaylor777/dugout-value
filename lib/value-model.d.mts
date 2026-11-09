@@ -50,6 +50,10 @@ export type PlayerValue = {
   projectionTotal?: number;
   prospectTotal?: number;
   prospectRankAdjustment: number;
+  /** Discounted salary the player's actual contract saves (+) or costs (−) versus standard control, applied to the prospect-grade value. */
+  prospectContractAdjustment?: number;
+  /** Plate appearances since the last prospect grade (MLB, AA, AAA), when the refresh recorded them. */
+  prospectEvidencePa?: number | null;
   rookieAdjustment?: number;
   deadlineAdjustment: number;
   deadlineCurrentWinAdjustment: number;
@@ -94,6 +98,22 @@ export function isReliever(player: {
   position: string;
   role?: "position" | "starter" | "reliever" | "two-way";
 }): boolean;
+export const SERVICE_DAYS_PER_YEAR: number;
+export const PROSPECT_EVIDENCE_PA_SCALE: number;
+export const PROSPECT_EVIDENCE_PA_NUMERATOR: number;
+export const PROSPECT_WEIGHT_CAP: number;
+/** Converts FanGraphs years.days service time (e.g. 0.086 = 86 days) to years. */
+export function serviceYears(value: unknown): number;
+export function currentProspectServiceYears(lastProspect: unknown): number;
+export function prospectGradeWeight(player: unknown, baseYear: number): number;
+export function prospectContractAdjustment(
+  player: unknown,
+  rows: ValueRow[],
+  seasons: unknown[],
+  settings: unknown,
+  database: unknown,
+  gradeWar?: number,
+): number;
 export function prospectRankAdjustment(
   player: { fv?: string; rank?: number | null },
   database: unknown,

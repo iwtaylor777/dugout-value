@@ -28,6 +28,7 @@ import { applyReviewedContractPaths, reconcileMlbUniverse, depthChartControlCont
 import { reviewDataRefresh } from "../lib/data-refresh-review.mjs";
 import { reconcilePlayerIdentities } from "../lib/refresh-identities.mjs";
 import { verifyRefreshEvidence, reconcileMissingProspects } from "../lib/refresh-evidence.mjs";
+import { applyProspectEvidence } from "../lib/prospect-evidence.mjs";
 
 const BASE_YEAR = 2026;
 // Downloads are candidates. They must never overwrite the reviewed production
@@ -1662,6 +1663,15 @@ const playoffOddsOutput = {
   odds: playoffOdds,
 };
 
+// Reapply stored evidence since each graduate's last grade (rookie blend
+// weight). Rerun scripts/build-prospect-evidence.mjs to bring it up to date.
+const storedProspectEvidence = await readFile(new URL("../data/prospect-evidence.json", import.meta.url), "utf8")
+  .then(JSON.parse)
+  .catch((error) => (error.code === "ENOENT" ? null : Promise.reject(error)));
+if (storedProspectEvidence) {
+  const applied = applyProspectEvidence(output, storedProspectEvidence);
+  console.log(`Prospect evidence reapplied for ${applied} graduates (built ${storedProspectEvidence.meta.built}); rerun scripts/build-prospect-evidence.mjs to update it.`);
+}
 await writeFile(OUT, `${JSON.stringify(output)}\n`, { flag: "wx" });
 await writeFile(PLAYOFF_ODDS_OUT, `${JSON.stringify(playoffOddsOutput, null, 2)}\n`, { flag: "wx" });
 await writeFile(join(outputDirectory, "source-manifest.json"), JSON.stringify(sourceManifest, null, 2) + "\n");
