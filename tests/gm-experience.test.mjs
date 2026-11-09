@@ -1,7 +1,25 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget, alternativeRole, isUsefulAlternative, resultImpact } from '../lib/gm-experience.mjs';
+import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget, alternativeRole, isUsefulAlternative, resultImpact, tradeRosterImpact } from '../lib/gm-experience.mjs';
+import { allocate } from '../lib/depth-chart.mjs';
 import { playerContract } from '../lib/gm-sim.mjs';
+
+test('trade fit separates two-way workloads and reports a retained player losing all playing time', () => {
+  const bat = { i:'two-bat', pid:'two', n:'Two-way', k:'b', e:['DH'], r:4, x:700 };
+  const pit = { i:'two-pit', pid:'two', n:'Two-way', k:'p', e:['SP'], r:4, x:150 };
+  const incumbent = { i:'inc', pid:'inc', n:'Incumbent', k:'b', e:['DH'], r:1, x:300 };
+  const outgoing = { i:'out', pid:'out', n:'Outgoing', k:'b', e:['LF'], r:1, x:300 };
+  const before=allocate([incumbent,outgoing]),after=allocate([incumbent,bat,pit]);
+  const impact=tradeRosterImpact(before,after,['two','prospect']);
+  assert.equal(impact.warChange,after.total-before.total);
+  assert.ok(Math.abs(impact.positions.reduce((n,p)=>n+p.change,0)-impact.warChange)<1e-8);
+  assert.deepEqual(impact.incoming.map(row=>row.unit).sort(),['IP','PA']);
+  assert.ok(impact.displaced.some(row=>row.name==='Incumbent'));
+  assert.equal(impact.displaced.find(row=>row.name==='Incumbent').loss, 300);
+  assert.ok(!impact.displaced.some(row=>row.name==='Outgoing'));
+  assert.ok(!impact.incoming.some(row=>row.pid==='prospect'));
+  assert.ok(!('need' in impact)&&!('received' in impact));
+});
 
 test('expected market uses broad public ranges, never a private asking threshold', () => {
   const row = { years: 2, aav: 13, marketForecast: { reference: { years: 2, aav: 13 } } };

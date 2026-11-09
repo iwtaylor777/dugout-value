@@ -12,7 +12,7 @@ import simData from "../../data/gm-sim.json";
 import payrollData from "../../data/team-payroll.json";
 import { allocate, bestAdditions, POSITIONS, PITCHING } from "../../../lib/depth-chart.mjs";
 import { matchesProjectionRole } from "../../../lib/projection-filters.mjs";
-import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget, alternativeRole, isUsefulAlternative, resultImpact } from "../../../lib/gm-experience.mjs";
+import { expectedMarket, prospectBrief, ownedRoster, couldFitBudget, alternativeRole, isUsefulAlternative, resultImpact, tradeRosterImpact } from "../../../lib/gm-experience.mjs";
 import { matchesTradePlayer } from "../../../lib/gm-trade-search.mjs";
 import { advanceMarket, marketBoard, MARKET_ROUNDS, newMarket, userOfferOutcomes } from "../../../lib/gm-market.mjs";
 import {
@@ -189,8 +189,9 @@ export function GmMode() {
     if (!cashAmount.trim() || Number(cashAmount) < 0 || !Number.isFinite(cash) || Math.abs(cash) > 50) return null;
     const after = buildLeague(ctx, { ...moves, trades: [...moves.trades, { partner, give, get, cash }] });
     const total = payrollFor(ctx, after, moves.team);
-    return { total, change: total - payroll };
-  }, [partner, give, get, cash, cashAmount, moves, payroll]);
+    const impact = tradeRosterImpact(alloc, allocate(rosterOf(ctx, after.teamOf, moves.team)), get);
+    return { total, change: total - payroll, impact };
+  }, [partner, give, get, cash, cashAmount, moves, payroll, alloc]);
 
   const reset = (team: string, competitiveMode = competitive, confirmed=false) => {
     if ((moves.journal?.length ?? 0)>0 && !confirmed) {setPendingReset({team,competitive:competitiveMode});return;}
@@ -557,6 +558,16 @@ export function GmMode() {
               <div className="gm-propose">
                 <div className="gm-trade-cash"><label className="gm-field"><span>Cash in this trade</span><select value={cashDirection} onChange={e => { setCashDirection(e.target.value); setTradeNote(null); }}><option value="send">You send cash</option><option value="receive">You receive cash</option></select></label><label className="gm-field"><span>Cash amount ($M)</span><input type="number" min="0" max="50" step="0.1" value={cashAmount} onChange={e => { setCashAmount(e.target.value); setTradeNote(null); }} /></label><p>One-time 2027 salary coverage. The paying club must send players with at least this much budget charge. A club can pay at most $50M across the offseason. This is a game budget adjustment, not MLB luxury-tax accounting.</p></div>
                 {tradePayroll && <p className="gm-payroll-preview">If accepted: {tradePayroll.change < 0 ? `clears ${money(-tradePayroll.change)}` : `adds ${money(tradePayroll.change)}`} of your 2027 budget{cash ? ", including cash" : ""}. Your payroll plus net trade cash would be {money(tradePayroll.total)}{tradePayroll.total > budget ? `, still ${money(tradePayroll.total - budget)} over budget` : `, ${money(budget - tradePayroll.total)} under budget`}.</p>}
+                {tradePayroll && <section className="gm-fit-preview" aria-label="Trade roster impact">
+                  <h3>How this fits your roster</h3>
+                  <p><strong>{signedWins(tradePayroll.impact.warChange)} projected 2027 roster WAR</strong> after replacing the players you send and sharing playing time.</p>
+                  <ul>{get.map(pid => {
+                    const rows = tradePayroll.impact.incoming.filter(row => row.pid === pid);
+                    return <li key={pid}><strong>{label(pid)}:</strong> {rows.length ? rows.map(row => row.roles.map(role => `${Math.round(role.pt)} ${row.unit} at ${role.pos}`).join(", ")).join("; ") : V[pid]?.k === "p" ? "Future talent; no projected MLB playing time in 2027." : "No projected playing time on this roster."}</li>;
+                  })}{tradePayroll.impact.displaced.slice(0, 2).map(row => <li key={`${row.name}-${row.unit}`}>{row.name}: about {Math.round(row.loss)} fewer {row.unit}.</li>)}</ul>
+                  <p>{tradePayroll.impact.positions.filter(pos => Math.abs(pos.change) >= .1).map(pos => `${pos.pos} ${signedWins(pos.change)} WAR`).join(" · ") || "No position changes by 0.1 WAR or more."}</p>
+                  <p className="gm-fit-caveat">Uses the game’s current position eligibility and automatic playing time. A prospect can help your future without adding wins next season. This is a roster preview, not a promise the other team will accept.</p>
+                </section>}
                 <button type="button" onClick={propose} disabled={!give.length && !get.length}>Propose trade</button>
                 {tradeNote && <p role="status" className={tradeNote.ok ? "gm-good" : "gm-bad"}>{tradeNote.text}</p>}
               </div>
@@ -631,6 +642,7 @@ export function GmMode() {
             <p>{positionChanges[0].change > .05 ? <><strong>{positionChanges[0].pos} improved most:</strong> {positionChanges[0].before.toFixed(1)} → {positionChanges[0].after.toFixed(1)} projected WAR. </> : "No position improved by more than 0.05 projected WAR. "}{moves.signings.length} MLB {moves.signings.length === 1 ? "signing" : "signings"} and {moves.trades.length} {moves.trades.length === 1 ? "trade" : "trades"} completed.</p>
             <ul><li><strong>On the field</strong><span>{signedWins(results.you.mean - results.base.mean)} expected wins; {signedPts(results.you.playoffs - results.base.playoffs)} in playoff odds.</span></li><li><strong>Contract discipline</strong><span>{money(Math.max(0, budget - results.payroll))} under budget. {moves.signings.length ? <>Your signed contracts are {money(Math.abs(results.value.signings))} {results.value.signings >= 0 ? "below" : "above"} our term-adjusted model valuation.</> : "No free-agent guarantees added."}</span></li><li><strong>Future talent</strong><span>{moves.trades.flatMap(t => t.give).filter(pid => V[pid]?.k === "p").length} prospects sent; {moves.trades.flatMap(t => t.get).filter(pid => V[pid]?.k === "p").length} received. Trade value is {signedMoney(results.value.trades)}, including cash.</span></li></ul>
             <p className="gm-note"><span className="gm-grade">{results.grade.label} <strong>{results.grade.letter}</strong></span> {results.grade.winWeight} × wins gained + model value ÷ $25M{results.grade.shortfall>0?` + ${results.grade.repair.toFixed(1)} payroll-repair points`:""}. These are disclosed game weights, not a measure of real GM skill.</p>
+            {results.you.mean-results.base.mean>.25 && results.value.total< -5 && <p>You improved next season’s outlook, but paid for it in future talent or contract commitments. That cost also counts toward the grade.</p>}
             <ul className="gm-named-moves">{moves.signings.map(s=><li key={s.pid}><strong>Signed {label(s.pid)}</strong>: {yearsLabel(s.years)}, {money(s.total)}.</li>)}{moves.trades.map((t,i)=><li key={`trade-${i}`}><strong>Trade with {ctx.sim.teams[t.partner].name}</strong>: received {t.get.map(pid=>label(pid)).join(", ")||"salary relief"}; sent {t.give.map(pid=>label(pid)).join(", ")||"no players"}.</li>)}</ul>
           </section>
           <table className="gm-odds">
