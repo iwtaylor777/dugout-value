@@ -9,7 +9,7 @@ import "./park-fit.css";
 
 const path = "/tools/park-fit";
 const title = "Ballpark fit";
-const description = `Replay contact from ${parkPlayers.length} free-agent hitters across all 30 MLB home parks. See which balls change home-run status and how the rest of the batting line moves over 81 home games.`;
+const description = `Replay contact from ${parkPlayers.length} hitters across all 30 MLB home parks. See which balls change home-run status and how the rest of the batting line moves over 81 home games.`;
 
 export const metadata: Metadata = pageMetadata({ title, description, path });
 

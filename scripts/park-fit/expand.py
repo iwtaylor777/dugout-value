@@ -1,4 +1,4 @@
-"""Add eligible free-agent hitter replays while preserving the article's original cohort."""
+"""Add free-agent or selected MLB hitter replays while preserving published results."""
 
 import argparse
 import hashlib
@@ -21,14 +21,14 @@ def name_key(name):
     return "".join(c for c in unicodedata.normalize("NFD", name.lower()) if c.isascii() and c.isalpha())
 
 
-def free_agent_hitters(original_ids):
+def free_agent_hitters(existing_ids):
     tracker = json.loads((ROOT / "app/data/free-agent-tracker.json").read_text())
     signings = json.loads((ROOT / "app/data/free-agent-signings.json").read_text())
     outcomes = {name_key(row["player"]): row["outcome"] for row in signings["entries"]}
     for player in tracker["players"]:
         if player["role"] != "position" or not player["id"].startswith("mlb-"):
             continue
-        if player["id"][4:] in original_ids:
+        if player["id"][4:] in existing_ids:
             continue
         outcome = outcomes.get(name_key(player["name"]))
         if outcome in OFF_MARKET or (player["market"] in {"option", "stays"} and outcome not in ON_MARKET):
@@ -57,21 +57,35 @@ def main():
     parser.add_argument("--analysis", required=True, type=Path)
     parser.add_argument("--inputs", required=True, type=Path)
     parser.add_argument("--pa", required=True, type=Path)
+    parser.add_argument("--players", nargs="+", metavar="MLB_ID",
+                        help="Add these hitters instead of scanning the free-agent tracker.")
     args = parser.parse_args()
 
     index_path = ROOT / "app/data/park-fit.json"
     index = json.loads(index_path.read_text())
-    original_ids = set(index["examples"])
-    original_players = [p for p in index["players"] if p["id"] in original_ids]
-    for p in original_players:
-        p["seasons"] = list(REPLAY_SEASONS)
+    existing = index["players"]
+    existing_ids = {p["id"] for p in existing}
+    if args.players:
+        database = json.loads((ROOT / "app/data/player-database.json").read_text())
+        by_id = {p["id"].removeprefix("mlb-"): p for p in database["players"]
+                 if p["id"].startswith("mlb-")}
+        selected_ids = list(dict.fromkeys(args.players))
+        unknown = set(selected_ids) - by_id.keys() - existing_ids
+        if unknown:
+            parser.error(f"unknown MLB hitter IDs: {', '.join(sorted(unknown))}")
+        candidates = [by_id[player_id] for player_id in selected_ids if player_id not in existing_ids]
+    else:
+        candidates = list(free_agent_hitters(existing_ids))
+    if not candidates:
+        print("No new hitters to add.")
+        return
     history = pd.read_parquet(args.pa)
     venues = dimensions(args.inputs, {y: schedule(args.analysis, y) for y in range(2023, 2027)})
     parks = {year: sorted(venues[year].values(), key=lambda p: p["id"]) for year in REPLAY_SEASONS}
     replays = {year: {} for year in REPLAY_SEASONS}
     additions = []
 
-    for player in free_agent_hitters(original_ids):
+    for player in candidates:
         player_id = player["id"][4:]
         rows = history.loc[history.batter.eq(int(player_id))]
         seasons = []
@@ -87,14 +101,18 @@ def main():
             seasons.append(year)
         if seasons:
             additions.append({"id": player_id, "name": player["name"], "seasons": seasons})
+        elif args.players:
+            parser.error(f"{player['name']} does not have a usable {REPLAY_SEASONS[0]} replay.")
 
-    # Fit the same model on a sample that excludes every hitter shown in the
-    # expanded tool. The original 11 keep their published replays and model.
-    omitted = [int(p["id"]) for p in original_players + additions]
+    # Exclude every displayed hitter from the fit used for the new replays.
+    # Previously published replays keep their original fit.
+    omitted = [int(p["id"]) for p in existing + additions]
     contacts = history.loc[history.primary & history.supported & ~history.batter.isin(omitted)]
     output = ROOT / "public/data/park-fit"
     with threadpool_limits(limits=4):
         for year, profiles in replays.items():
+            if not profiles:
+                continue
             train = contacts.loc[contacts.year.le(year)]
             prior = index["study"]["prior"]
             model = fit_models(train, [prior], wall=index["study"]["wallPass"], visiting_defense=True)[prior]
@@ -108,7 +126,7 @@ def main():
                 }
             print(year, len(profiles), "added replays", flush=True)
 
-    index["players"] = sorted(original_players + additions, key=lambda p: (p["id"] != DEFAULT_HITTER, p["name"]))
+    index["players"] = sorted(existing + additions, key=lambda p: (p["id"] != DEFAULT_HITTER, p["name"]))
     index_path.write_text(json.dumps(index, ensure_ascii=False, separators=(",", ":")) + "\n")
     print(len(index["players"]), "hitters in dropdown", flush=True)
 
