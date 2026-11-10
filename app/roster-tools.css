@@ -64,3 +64,4 @@
   .fa-board .fa-table :is(th, td) { padding: 10px; }
   .fa-board .fa-table thead th { padding: 0; }
 }
+.fa-park-link { display: inline-block; margin: 3px 0; color: var(--navy); font-size: .77rem; text-decoration: underline; text-underline-offset: 2px; }

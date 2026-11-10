@@ -1,8 +1,12 @@
 "use client";
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { parkPlayers } from "../park-fit/data";
 import data from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
 import { compareTableValues } from "../../../lib/table-sort.mjs";
+
+const parkPlayerIds = new Set(parkPlayers.map(player => `mlb-${player.id}`));
 
 type ContractValue = { years: number; total: number; aav: number };
 type Player = {
@@ -151,6 +155,7 @@ export function FreeAgentTracker() {
                   <th scope="row">
                     {p.name}
                     <small className="dv-war-sub">{p.pos} · {p.team ?? "—"}</small>
+                    {parkPlayerIds.has(p.id) && <Link className="fa-park-link" href={`/tools/park-fit?p=${p.id.slice(4)}`}>Ballpark fit<span className="sr-only"> for {p.name}</span></Link>}
                     {(p.flag || p.option || p.publishedForecast) && <details className="fa-player-note"><summary>Player note</summary>{p.option && <p>{p.option}</p>}{p.flag && <p>{p.flag}</p>}{p.publishedForecast && <><p>October 29 forecast: {yrs(p.publishedForecast.years)}, {money(p.publishedForecast.total)}. Preserved for scoring; the table uses current projections.</p>{p.publishedForecast.flag && p.publishedForecast.flag !== p.flag && <p>Original note: {p.publishedForecast.flag}</p>}</>}</details>}
                   </th>
                   <td className="num">{fmt(p.fwar2026)}</td>

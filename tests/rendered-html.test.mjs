@@ -56,10 +56,12 @@ test("the ballpark fit article and replay agree on the Suzuki scenario and cross
   assert.match(toolHtml, /−2\.8/);
   assert.match(toolHtml, /Brandon Lowe/);
   assert.match(articleHtml, /href="\/tools\/park-fit"/);
-  for (const html of [articleHtml, toolHtml]) {
-    assert.match(html, /\.259 \/ \.350 \/ \.431/);
-    assert.match(html, /20\.4/);
-  }
+  assert.match(toolHtml, /Actual 2026 line/);
+  assert.match(toolHtml, /\.270 \/ \.368 \/ \.473/);
+  assert.match(toolHtml, /Total effect in wOBA/);
+  assert.match(toolHtml, /Standard trajectory/);
+  assert.match(articleHtml, /288 of 319/);
+  assert.match(articleHtml, /five batting runs/i);
 });
 
 test("trade route presents the reviewed snapshot, the offseason default and the verdict", async () => {
@@ -191,6 +193,7 @@ test("free-agent tracker defaults to the whole class with sortable headers", asy
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /<h1>Free-agent tracker<\/h1>/);
+  assert.match(html, /href="\/tools\/park-fit\?p=673548"/);
   assert.match(html, /Tarik Skubal/);
   assert.doesNotMatch(html, /Scored #|Scored prediction #/);
   assert.match(html, /<option value="all" selected="">Whole class/);
