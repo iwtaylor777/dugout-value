@@ -16,12 +16,14 @@ export type Profile = {
   generic: number[]; points: number[][]; plays: Play[];
   modes: Record<Mode, { parks: ReplayLine[]; ranges: Range[]; extraRanges: Range[] }>;
 };
+type ParkPlayer = { id: string; name: string; seasons: Season[] };
 export type Selection = { player: string; year: Season; from: string; to: string; pa: number; mode: Mode };
 export type Switch = { play: Play; gained: boolean; staysAt: Park; chances: number[]; runs: number };
 export const playingTime = [400, 500, 600, 700];
 export const defaultSelection: Selection = { player: "673548", year: 2026, from: "", to: "bos", pa: 600, mode: "adjusted" };
-export const parkPlayers = data.players;
+export const parkPlayers = data.players as ParkPlayer[];
 export const parkSeasons = data.seasons as Season[];
+export const availableSeasons = (player: string) => parkPlayers.find(option => option.id === player)?.seasons ?? parkSeasons;
 export const parksFor = (year: Season): Park[] => data.parks[year];
 export const dateLabel = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 export const battingLine = (slash: number[]) => slash.map(value => value.toFixed(3).replace(/^0/, "")).join(" / ");
@@ -36,14 +38,16 @@ export function rangeLabel(range: Range, multiplier = 1, precision = 0) {
 }
 
 export function readSelection(params: URLSearchParams): Selection {
-  const player = params.get("p");
-  const year = Number(params.get("year")) === 2025 ? 2025 : 2026;
+  const player = parkPlayers.find(option => option.id === params.get("p"))?.id ?? defaultSelection.player;
+  const requested = Number(params.get("year")) === 2025 ? 2025 : 2026;
+  const seasons = availableSeasons(player);
+  const year = seasons.includes(requested) ? requested : seasons[0];
   const parks = parksFor(year);
   const from = params.get("from");
   const to = params.get("to");
   const pa = Number(params.get("pa"));
   return {
-    player: parkPlayers.find(option => option.id === player)?.id ?? defaultSelection.player,
+    player,
     year,
     from: parks.find(park => park.id === from)?.id ?? "",
     to: parks.find(park => park.id === to)?.id ?? defaultSelection.to,

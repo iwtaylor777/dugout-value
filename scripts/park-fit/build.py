@@ -19,9 +19,15 @@ DEFAULT_HITTER = "673548"
 HALF_PA = 300
 SAVANT_SOURCE = ("https://baseballsavant.mlb.com/leaderboard/home-runs"
                  "?type=details&player_id={player_id}&year={year}&player_type=Batter&cat={cat}")
-# Official game feeds supply the two same-game matches and one missing chart point.
+# Official game feeds supply the two same-game matches and missing chart points.
 PLAY_AT_BAT = {"ce2aa285-efc4-3528-a863-470968ea37c0": 19, "ed5413ee-adf5-39fd-881f-84b27c416c8f": 35}
-LOCATION_PLAY = "dfef569d-7877-33ee-aac1-ad3373dc4975"
+PLAY_LOCATION = {
+    "dfef569d-7877-33ee-aac1-ad3373dc4975": (1.0, 99.07),    # Game 777401
+    "878d49f2-4ca3-3287-8297-4a60dbdfbdad": (1.93, 92.36),  # Game 776727
+    "87fbc617-7e43-3055-9345-f2a467feb8ea": (253.83, 84.64), # Game 776626
+    "c0895a65-a4ed-33c6-b19b-34dda17c7774": (1.66, 84.62),  # Game 823567
+    "0d3239de-e229-3742-8307-cb43c2fe6da1": (1.3, 81.35),   # Game 824264
+}
 
 
 def read_flags(path, rows, codes, category):
@@ -82,10 +88,11 @@ def prepare_contact(rows, flags, codes):
     # A home run with no record in either Savant mode stays fixed in both modes.
     excluded = rows.y.eq(4) & ~rows.index.isin(available)
     for i, p in flags["adjusted"].items():
-        if p["play_id"] == LOCATION_PLAY:
-            # Use the official play chart coordinates, from game 777401.
-            spray = .75 * np.degrees(np.arctan2(1.0 - 125.42, 198.27 - 99.07))
-            contact.loc[i, ["supported", "spray", "zone"]] = [True, spray, 0]
+        if p["play_id"] in PLAY_LOCATION:
+            x, y = PLAY_LOCATION[p["play_id"]]
+            spray = .75 * np.degrees(np.arctan2(x - 125.42, 198.27 - y))
+            zone = np.digitize(spray, [-30, -15, 15, 30])
+            contact.loc[i, ["supported", "spray", "zone"]] = [True, spray, zone]
     for mode, plays in flags.items():
         for i, p in plays.items():
             if not contact.at[i, "supported"]:
@@ -224,7 +231,8 @@ def main():
     index = {"seasons": list(REPLAY_SEASONS), "referencePa": 600,
              "wobaScale": WOBA_SCALE, "runsPerWin": RUNS_PER_WIN, "runWeights": RUN_WEIGHTS.tolist(),
              "parks": park_metadata,
-             "players": [{"id": p["id"].removeprefix("mlb-"), "name": p["name"]} for p in hitters],
+             "players": [{"id": p["id"].removeprefix("mlb-"), "name": p["name"],
+                          "seasons": list(REPLAY_SEASONS)} for p in hitters],
              "study": {k: v for k, v in study.items() if k != "calibration"},
              "examples": examples,
              "source": {"savant": SAVANT_SOURCE, "sha256": provenance,

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import initialProfile from "../../../public/data/park-fit/2026-673548.json";
 import {
-  battingLine, compare, dateLabel, defaultSelection, parkPlayers, parkSeasons, parksFor, playingTime,
+  availableSeasons, battingLine, compare, dateLabel, defaultSelection, parkPlayers, parksFor, playingTime,
   rangeLabel, readSelection, selectionUrl, signed, switchesFor,
   type Mode, type Park, type Profile, type Season, type Selection, type Switch,
 } from "./data";
@@ -152,6 +152,8 @@ export function ParkFit() {
     ?? parks.find(park => park.id === "chc")!;
   function update(next: Partial<Selection>) {
     const value = { ...selection, ...next };
+    const seasons = availableSeasons(value.player);
+    if (!seasons.includes(value.year)) value.year = seasons[0];
     setError("");
     setShare("");
     setSelection(value);
@@ -174,7 +176,7 @@ export function ParkFit() {
             {parkPlayers.map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
           </select></div>
           <div className="park-fit-control"><label htmlFor="pf-year">Contact season</label><select id="pf-year" value={year} onChange={event => update({ year: Number(event.target.value) as Season, from: "" })}>
-            {parkSeasons.map(option => <option key={option}>{option}</option>)}
+            {availableSeasons(player).map(option => <option key={option}>{option}</option>)}
           </select></div>
           <div className="park-fit-control"><label htmlFor="pf-from">Reference park</label><select id="pf-from" value={from?.id ?? ""} onChange={event => update({ from: event.target.value })}>
             {!from && <option value="">Loading home park</option>}
@@ -202,6 +204,7 @@ export function ParkFit() {
         : <section className="park-fit-panel" role="status">{error ? <>{error} <button type="button" onClick={() => { setError(""); setAttempt(n => n + 1); }}>Retry</button></> : "Loading the selected replay…"}</section>}
       <details className="dv-war-notes roster-method">
         <summary>How to read the replay</summary>
+        <p>The dropdown includes {parkPlayers.length} free-agent hitters. For the expanded list I require at least 100 usable batted balls and 60 road PA in each displayed season, with enough tracked plays to reconcile both carry settings.</p>
         <p>Both lines combine the same observed road rates with modeled home contact. I keep walk and strikeout rates fixed, and the batting-side benchmark uses league-average contact with the hitter’s mix of left- and right-handed batted balls. The gap from that benchmark is a result for this sample.</p>
         <p>Adjusted uses typical carry for the park. Standard uses the observed trajectory. I take both home-run calls from Savant and estimate in-play odds using wall dimensions and expected carry. Those odds describe possible results at the destination. <a href="https://baseballsavant.mlb.com/leaderboard/home-runs">Baseball Savant Home Run Tracker.</a></p>
         <p>The wOBA and batting-wins figures express the same batting runs at different scales. Batting wins divide by 9.774 runs per win. WAR also accounts for park context, baserunning, fielding, position and replacement level. <a href="https://www.fangraphs.com/tools/guts?type=cn">FanGraphs Guts.</a></p>
