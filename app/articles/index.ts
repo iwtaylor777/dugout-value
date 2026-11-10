@@ -16,6 +16,7 @@ import { article as statcastNulls } from "./three-statcast-ideas-that-didnt-impr
 import { article as ridgeNote } from "./when-a-better-fit-isnt-a-better-forecast";
 import { article as whatTradeValueMeasures } from "./what-trade-value-measures";
 import { article as howToReadValueRanges } from "./how-to-read-value-ranges";
+import { article as parkFit } from "./what-a-new-ballpark-changes";
 
 export type { Article } from "./types";
 
@@ -25,6 +26,7 @@ export type { Article } from "./types";
  * article marked `featured`.
  */
 export const articles: Article[] = [
+  parkFit,
   hitterWar,
   bullpenLeverage,
   dvProjections,

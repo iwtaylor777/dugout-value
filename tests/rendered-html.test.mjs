@@ -33,14 +33,33 @@ test("cleaned-up tools retain projection controls and omit redundant completed-s
   assert.match(projections, /prioritizing/);
 });
 
-test("the main banner offers a collapsed dropdown with all eight tools", async () => {
+test("the main banner offers a collapsed dropdown with all tools", async () => {
   const html = await (await render("/")).text();
   assert.match(html, /class="tools-navigation-trigger"[^>]*aria-expanded="false"[^>]*aria-controls=/);
   assert.match(html, /class="tools-navigation-panel"[^>]*hidden/);
-  for (const path of ["trade", "projections", "rankings", "finder", "free-agents", "depth-chart", "gm", "dv-war"]) {
+  for (const path of ["trade", "projections", "rankings", "finder", "free-agents", "depth-chart", "gm", "dv-war", "park-fit"]) {
     assert.match(html, new RegExp(`href="/tools/${path}"`));
   }
   assert.match(html, /<a\b(?=[^>]*class="tools-navigation-all")(?=[^>]*href="\/tools")[^>]*>/);
+});
+
+test("the ballpark fit article and replay agree on the Suzuki scenario and cross-link", async () => {
+  const tool = await render("/tools/park-fit");
+  const article = await render("/analysis/what-a-new-ballpark-changes");
+  assert.equal(tool.status, 200);
+  assert.equal(article.status, 200);
+  const toolHtml = (await tool.text()).replaceAll("<!-- -->", "");
+  const articleHtml = (await article.text()).replaceAll("<!-- -->", "");
+  assert.match(toolHtml, /href="\/analysis\/what-a-new-ballpark-changes"/);
+  assert.match(toolHtml, /Fenway Park vs\. Wrigley Field/);
+  assert.match(toolHtml, /0 HR gained and 6 lost/);
+  assert.match(toolHtml, /−2\.8/);
+  assert.match(toolHtml, /Brandon Lowe/);
+  assert.match(articleHtml, /href="\/tools\/park-fit"/);
+  for (const html of [articleHtml, toolHtml]) {
+    assert.match(html, /\.259 \/ \.350 \/ \.431/);
+    assert.match(html, /20\.4/);
+  }
 });
 
 test("trade route presents the reviewed snapshot, the offseason default and the verdict", async () => {
