@@ -6,14 +6,16 @@ import data from "../app/data/park-fit.json" with { type: "json" };
 const load = (year, id) => JSON.parse(readFileSync(new URL(`../public/data/park-fit/${year}-${id}.json`, import.meta.url)));
 
 test("both Savant modes reconcile park totals with individual switches and wOBA", () => {
-  assert.equal(data.players.length, 11);
+  assert.equal(Object.keys(data.examples).length, 11);
+  assert.equal(data.players.length, 58);
   for (const year of data.seasons) {
     const parks = data.parks[year];
     const ids = parks.map(park => park.id);
     assert.equal(new Set(ids).size, 30);
     assert.ok(parks.every(park => park.distances.length === 5 && park.heights.length === 5));
-    for (const player of data.players) {
+    for (const player of data.players.filter(player => player.seasons.includes(year))) {
       const profile = load(year, player.id);
+      assert.ok(profile.measuredContact >= 100 && profile.roadPa >= 60);
       const home = ids.indexOf(profile.home);
       assert.ok(home >= 0);
       assert.ok(profile.homePa > 0 && profile.homePa <= profile.totalHomePa);
@@ -44,6 +46,12 @@ test("both Savant modes reconcile park totals with individual switches and wOBA"
       }
     }
   }
+});
+
+test("the expanded hitter list includes both two-season and current-only replays", () => {
+  assert.ok(data.players.every(player => player.seasons[0] === 2026));
+  assert.deepEqual(data.players.find(player => player.name === "George Springer").seasons, [2026, 2025]);
+  assert.deepEqual(data.players.find(player => player.name === "Victor Robles").seasons, [2026]);
 });
 
 test("Suzuki’s Yankees replay retains the observed-trajectory sensitivity", () => {

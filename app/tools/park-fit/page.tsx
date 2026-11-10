@@ -4,11 +4,12 @@ import { pageMetadata, webPageJsonLd } from "../../seo";
 import { JsonLd } from "../../json-ld";
 import { Publication } from "../../site-shell";
 import { ParkFit } from "./park-fit";
+import { parkPlayers } from "./data";
 import "./park-fit.css";
 
 const path = "/tools/park-fit";
 const title = "Ballpark fit";
-const description = "Replay 2025 or 2026 contact from 11 hitters across all 30 MLB home parks. See which balls change home-run status and how the rest of the batting line moves over 81 home games.";
+const description = `Replay contact from ${parkPlayers.length} free-agent hitters across all 30 MLB home parks. See which balls change home-run status and how the rest of the batting line moves over 81 home games.`;
 
 export const metadata: Metadata = pageMetadata({ title, description, path });
 

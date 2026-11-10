@@ -18,7 +18,8 @@ const standardNY = compare(suzuki, "standard", wrigley, index("nyy"));
 const study = data.study;
 const example = "https://baseballsavant.mlb.com/sporty-videos?playId=01565f18-15cc-31ae-90c9-888646383e85";
 const boston = index("bos");
-const fenwayRows = data.players.map(player => {
+const originalPlayers = data.players.filter(player => player.id in data.examples);
+const fenwayRows = originalPlayers.map(player => {
   const result = data.examples[player.id as keyof typeof data.examples];
   return { ...player, delta: result.runs[boston] - result.runs[index(result.home)], range: result.fenwayRange };
 }).sort((a, b) => b.delta - a.delta);
@@ -37,7 +38,7 @@ export const article: Article = {
   relatedTool: { href: "/tools/park-fit", label: "Try Ballpark Fit" },
   evidence: { href: "/research/park-fit-20261110/validation.json", label: "Held-out results and calibration by park, batting side and spray direction" },
   body: <>
-    <p className="article-lead">Move 81 of Seiya Suzuki’s games from Wrigley to Fenway and the replay takes away about three homers. It also gives him about four extra doubles and four extra singles. That works out to roughly {signed(fenway.runs)} batting runs, with a sample range from {rangeLabel(fenway.range)}. Among the {data.players.length} hitters I looked at, {underFive} of {comparisons.length} comparisons with their actual home park came in under five runs in either direction.</p>
+    <p className="article-lead">Move 81 of Seiya Suzuki’s games from Wrigley to Fenway and the replay takes away about three homers. It also gives him about four extra doubles and four extra singles. That works out to roughly {signed(fenway.runs)} batting runs, with a sample range from {rangeLabel(fenway.range)}. Among the {originalPlayers.length} hitters I looked at, {underFive} of {comparisons.length} comparisons with their actual home park came in under five runs in either direction.</p>
 
     <h2>Fenway can take a homer and give back a hit</h2>
     <p>Suzuki hit a 113 mph double on June 12. Statcast’s adjusted replay has it clearing the fence at Wrigley and staying in play at Fenway. At Cincinnati and Wrigley, Suzuki’s total home-run count comes out the same. Three balls clear only one park and three clear only the other. The individual plays tell you more than the net count. <a href={example}>Watch the June 12 double on Savant.</a></p>
@@ -70,7 +71,7 @@ export const article: Article = {
     <p>A park may help left-handed hitters as a group. I compare each replay with the effect on league-average contact with the same batting-side mix. For Suzuki at Fenway, the benchmark is about {signed(fenway.generic)} runs, leaving {signed(fenway.extra)} runs beyond that benchmark. Resampling his games puts that extra effect between {rangeLabel(fenway.extraRange)} runs. The sample leaves room for an effect in either direction.</p>
 
     <h2>The wall model helped on contact. The mover test was harder.</h2>
-    <p>I replay 300 home PA from the selected season’s contact profile and keep the other 300 at the hitter’s observed road rates. The tool shows his actual line separately. Savant supplies the home-run calls. For the balls that stay in, I estimate the mix of hits and outs using expected carry, spray direction and the park’s wall measurements. I estimate the local park adjustments using visiting defenses to reduce the influence of the regular home fielders. For the replays I fit through the selected year and leave the 11 displayed hitters out of the fit. The public dimensions give five fence points per park, so the outlines in the tool are approximate. <a href="https://baseballsavant.mlb.com/leaderboard/statcast-park-factors?type=dimensions&amp;year=2026">Savant park dimensions.</a></p>
+    <p>I replay 300 home PA from the selected season’s contact profile and keep the other 300 at the hitter’s observed road rates. The tool shows his actual line separately. Savant supplies the home-run calls. For the balls that stay in, I estimate the mix of hits and outs using expected carry, spray direction and the park’s wall measurements. I estimate the local park adjustments using visiting defenses to reduce the influence of the regular home fielders. For this article I fit through the selected year and leave the original {originalPlayers.length} hitters out of the fit. The public dimensions give five fence points per park, so the outlines in the tool are approximate. <a href="https://baseballsavant.mlb.com/leaderboard/statcast-park-factors?type=dimensions&amp;year=2026">Savant park dimensions.</a></p>
     <p>On {study.nonHr.n.toLocaleString("en-US")} held-out balls that stayed in play in 2026, the wall model’s probability error fell from {study.nonHr.loss.hand.toFixed(4)} to {study.nonHr.loss.wall_visitor.toFixed(4)} in log loss. The near-fence sample also improved. That test uses the measured contact and checks the resulting hit type. I then tested {study.movers.n} actual moves from 2024–26 using only prior contact to estimate the change in home-minus-road wOBA. The batting-side benchmark missed by about {Math.round(study.movers.rmse.hand * 1000)} wOBA points on the RMSE scale. The two-year wall model missed by about {Math.round(study.movers.rmse.two_year_wall * 1000)}. I use the batting-side benchmark as the first estimate and the replay to find plays worth examining.</p>
   </>,
 };
