@@ -1,163 +1,210 @@
 "use client";
 
-import { useState } from "react";
-import data from "../../data/park-fit.json";
+import { useEffect, useState } from "react";
+import initialProfile from "../../../public/data/park-fit/2026-673548.json";
+import {
+  battingLine, compare, dateLabel, defaultSelection, parkPlayers, parkSeasons, parksFor, playingTime,
+  rangeLabel, readSelection, selectionUrl, signed, switchesFor,
+  type Mode, type Park, type Profile, type Season, type Selection, type Switch,
+} from "./data";
+import { SprayChart } from "./spray-chart";
 
-type Park = keyof (typeof data.players)[number]["parks"];
-type Play = {
-  id: string; date: string; result: string; ev: number; la: number; spray: number;
-  distance: number | null; clears: string[]; inPlay: Partial<Record<Park, number[]>>;
+const recorded: Record<string, string> = {
+  home_run: "home run", single: "single", double: "double", triple: "triple",
+  field_out: "out", sac_fly: "sacrifice fly", double_play: "double play", field_error: "reached on error",
 };
-type Switch = { play: Play; gained: boolean; inPlay: number[] };
-const parks = data.parks as { id: Park; name: string }[];
-const outcomes: Record<string, string> = {
-  home_run: "Home run", single: "Single", double: "Double", triple: "Triple",
-  field_out: "Out", sac_fly: "Sacrifice fly", double_play: "Double play", field_error: "Reached on error",
-};
-const dateLabel = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-const signed = (n: number) => Math.abs(n) < .05 ? "0.0" : `${n > 0 ? "+" : "−"}${Math.abs(n).toFixed(1)}`;
-const rate = (n: number) => n.toFixed(3).replace(/^0/, "");
-const polar = (feet: number, angle: number) => {
-  const radians = angle * Math.PI / 180;
-  return [190 + feet * .45 * Math.sin(radians), 233 - feet * .45 * Math.cos(radians)];
-};
+const samplesIncludeZero = (range: number[]) => range[0] <= 0 && range[1] >= 0;
+const outcomeLabels = ["No hit", "Single", "Double", "Triple"];
+const modeLabel = { adjusted: "adjusted carry", standard: "the standard trajectory" };
 
-function SprayChart({ switches }: { switches: Switch[] }) {
+function PlayList({ switches, from, to, points }: { switches: Switch[]; from: Park; to: Park; points: number[][] }) {
+  const [expanded, setExpanded] = useState(false);
+  const count = switches.length;
+  function focusPlay(id: string) {
+    setExpanded(true);
+    window.requestAnimationFrame(() => {
+      const play = document.getElementById(`replay-${id}`);
+      play?.focus({ preventScroll: true });
+      play?.scrollIntoView({ block: "nearest" });
+    });
+  }
+  const gains = switches.filter(play => play.gained).length;
   return (
-    <figure className="park-fit-spray">
-      <svg viewBox="0 0 380 252" role="img" aria-label="Spray chart of home-run changes by recorded direction and distance">
-        <text x="60" y="44">LF</text><text x="190" y="16">CF</text><text x="320" y="44">RF</text>
-        {[200, 300, 400].map(distance => {
-          const [x1, y1] = polar(distance, -49);
-          const [x2, y2] = polar(distance, 49);
-          const r = distance * .45;
-          return <g key={distance}>
-            <path d={`M${x1},${y1} A${r},${r} 0 0 1 ${x2},${y2}`} />
-            <text x={x2 + 22} y={y2 + 4}>{distance}′</text>
-          </g>;
-        })}
-        {[-49, 49].map(angle => {
-          const [x, y] = polar(470, angle);
-          return <path key={angle} d={`M190,233 L${x},${y}`} />;
-        })}
-        <path d="M190,233 215,208 190,183 165,208 Z" />
-        <circle className="park-fit-plate" cx="190" cy="233" r="3" />
-        {switches.map(({ play, gained }) => {
-          if (play.distance == null) return null;
-          const [x, y] = polar(play.distance, play.spray);
-          return <g key={play.id} className={gained ? "park-fit-dot park-fit-dot-gain" : "park-fit-dot park-fit-dot-loss"}>
-            <title>{dateLabel.format(new Date(play.date))} · {gained ? "HR gained" : "HR lost"} · {play.distance} ft</title>
-            {gained ? <circle cx={x} cy={y} r="6" /> : <rect x={x - 5} y={y - 5} width="10" height="10" transform={`rotate(45 ${x} ${y})`} />}
-          </g>;
-        })}
-      </svg>
-      <figcaption><span className="park-fit-gain">● HR gained</span><span className="park-fit-loss">◆ HR lost</span><small>Distance and direction come from the original play.</small></figcaption>
-    </figure>
+    <section className="park-fit-panel" aria-labelledby="park-fit-plays">
+      <h2 id="park-fit-plays">Which balls switch?</h2>
+      <p className="park-fit-note">{gains} HR gained and {switches.length - gains} lost on the full contact sample. The batting lines above scale those changes to the selected playing time.</p>
+      {switches.length > 0 ? <div className="park-fit-events">
+        <SprayChart from={from} to={to} points={points} switches={switches} onSelect={focusPlay} />
+        <div>
+          <ol id="park-fit-ledger" className="park-fit-ledger">{switches.slice(0, expanded ? count : 6).map(({ play, gained, staysAt, chances, runs }) => <li key={play.id} id={`replay-${play.id}`} tabIndex={-1}>
+            <div className="park-fit-play-title">
+              <strong className={gained ? "park-fit-gain" : "park-fit-loss"}>{gained ? "● HR gained" : "◆ HR lost"}</strong>
+              <span>{signed(runs, 1)} runs on this ball</span>
+              <a href={`https://baseballsavant.mlb.com/sporty-videos?playId=${play.id}`}>Watch {dateLabel.format(new Date(play.date))} play ↗</a>
+            </div>
+            <small>Recorded {recorded[play.result] ?? play.result.replaceAll("_", " ")} · {play.ev.toFixed(1)} mph · {play.la}°{play.distance == null ? "" : ` · ${play.distance} ft`}</small>
+            <div className="park-fit-odds">
+              <span>In play at {staysAt.name}</span>
+              <div className="park-fit-odds-bar" aria-hidden="true">{chances.map((p, i) => <span key={i} style={{ flexGrow: p }} />)}</div>
+              <small>{chances.map((p, i) => `${Math.round(p * 100)}% ${outcomeLabels[i].toLowerCase()}`).join(" · ")}</small>
+            </div>
+          </li>)}</ol>
+          {count > 6 && <button className="park-fit-button" type="button" aria-expanded={expanded} aria-controls="park-fit-ledger" onClick={() => setExpanded(value => !value)}>{expanded ? "Show fewer plays" : `Show all ${count} changed plays`}</button>}
+        </div>
+      </div> : <>
+        <p>None of this hitter’s tracked balls changes home-run status between these parks.</p>
+        <SprayChart from={from} to={to} points={points} switches={switches} onSelect={focusPlay} />
+      </>}
+    </section>
   );
 }
 
-export function ParkFit() {
-  const [hitterId, setHitterId] = useState(data.players[0].id);
-  const [reference, setReference] = useState<Park>("chc");
-  const [destination, setDestination] = useState<Park>("bos");
-  const [pa, setPa] = useState(data.referencePa);
-  const hitter = data.players.find(player => player.id === hitterId) ?? data.players[0];
-  const base = hitter.parks[reference];
-  const target = hitter.parks[destination];
-  const scale = pa / data.referencePa;
-  const referenceName = parks.find(park => park.id === reference)!.name;
-  const destinationName = parks.find(park => park.id === destination)!.name;
-  const switches: Switch[] = [];
-  const plays: Play[] = hitter.plays;
-  for (const play of plays) {
-    const clearsReference = play.clears.includes(reference);
-    const clearsDestination = play.clears.includes(destination);
-    if (clearsReference === clearsDestination) continue;
-    switches.push({
-      play, gained: clearsDestination,
-      inPlay: play.inPlay[clearsDestination ? reference : destination]!,
-    });
-  }
-  const gains = switches.filter(change => change.gained).length;
-  const losses = switches.length - gains;
+function Replay({ profile, parks, from, to, pa, mode, onDestination }: {
+  profile: Profile; parks: Park[]; from: Park; to: Park; pa: number; mode: Mode; onDestination: (id: string) => void;
+}) {
+  const fromIndex = parks.findIndex(park => park.id === from.id);
+  const toIndex = parks.findIndex(park => park.id === to.id);
+  const result = compare(profile, mode, fromIndex, toIndex, pa);
+  const alternateMode = mode === "adjusted" ? "standard" : "adjusted";
+  const alternate = compare(profile, alternateMode, fromIndex, toIndex, pa);
+  const switches = switchesFor(profile, mode, from, to);
+  const destinations = parks.map((park, i) => ({ park, result: compare(profile, mode, fromIndex, i, pa) }))
+    .filter(row => row.park.id !== from.id).sort((a, b) => b.result.extra - a.result.extra);
+  const maxRange = Math.max(1, ...destinations.flatMap(({ result: row }) => row.extraRange.map(Math.abs)));
+  const position = (runs: number) => `${Math.max(0, Math.min(100, 50 + runs / maxRange * 50))}%`;
+  return <>
+    <section className="park-fit-panel" aria-labelledby="park-fit-lines">
+      <h2 id="park-fit-lines">{to.name} vs. {from.name}</h2>
+      <p className="park-fit-verdict" role="status">
+        {samplesIncludeZero(result.extraRange)
+          ? "The sample doesn’t separate this hitter from the batting-side benchmark."
+          : `This contact sample plays ${result.extra > 0 ? "better" : "worse"} than the batting-side benchmark.`}
+      </p>
+      <div className="park-fit-metrics">
+        <div className="park-fit-primary"><span>Beyond batting-side benchmark</span><strong>{signed(result.extra)} runs</strong><small>Sample range {rangeLabel(result.extraRange)}</small></div>
+        <div><span>Total park effect</span><strong>{signed(result.runs)} runs</strong><small>Sample range {rangeLabel(result.range)}</small><small>Batting-side benchmark {signed(result.generic)} runs</small></div>
+        <div><span>Total effect in wOBA</span><strong>{signed(result.wobaPoints)} pts</strong><small>Sample range {rangeLabel(result.range, result.runsToWobaPoints)}</small></div>
+        <div><span>Batting wins equivalent</span><strong>{signed(result.wins, 2)}</strong><small>Sample range {rangeLabel(result.range, result.runsToWins, 2)}</small></div>
+      </div>
+      <p className="park-fit-note">The 95% sample ranges come from resampling the hitter’s games. They hold the fitted model and carry setting fixed.</p>
+      <div className="park-fit-lines">
+        {[{ stadium: from, estimate: result.base }, { stadium: to, estimate: result.target }].map(({ stadium, estimate }, i) => {
+          return <div key={stadium.id} className={i ? "park-fit-destination-line" : undefined}>
+            <small>{i ? "Destination replay" : "Reference replay"}</small><strong>{stadium.name}</strong>
+            <span>{battingLine(estimate.slash)} · {estimate.woba.toFixed(3).replace(/^0/, "")} wOBA</span>
+            <dl aria-label="Expected hits">{estimate.hits.map((n, j) => <div key={j}><dt>{["1B", "2B", "3B", "HR"][j]}</dt><dd>{(n * result.scale).toFixed(1)}</dd></div>)}</dl>
+          </div>;
+        })}
+      </div>
+      <p className="park-fit-note">Expected hit counts at {pa} PA. This move changes expected homers by <strong>{signed(result.hits[3], 1)}</strong> with {modeLabel[mode]} and <strong>{signed(alternate.hits[3], 1)}</strong> with {modeLabel[alternateMode]}.</p>
+    </section>
 
+    <PlayList switches={switches} from={from} to={to} points={profile.points} />
+
+    <details className="park-fit-panel park-fit-all-parks">
+      <summary>Compare all {parks.length - 1} destinations</summary>
+      <p className="park-fit-note">Ordered by extra batting runs beyond the batting-side benchmark. The sample ranges show how much that order can move.</p>
+      <ul className="park-fit-rank">
+        {destinations.map(({ park, result: row }) => <li key={park.id}>
+          <button type="button" aria-pressed={park.id === to.id} onClick={() => onDestination(park.id)}>{park.name}</button>
+          <span><strong>{signed(row.extra)} extra runs</strong><small>{rangeLabel(row.extraRange)} sample range</small>
+            <span className="park-fit-range-plot" aria-hidden="true">
+              <i style={{ left: position(row.extraRange[0]), right: position(-row.extraRange[1]) }} />
+              <b style={{ left: position(row.extra) }} />
+            </span>
+          </span>
+          <span>{signed(row.runs)} total runs <small>{rangeLabel(row.range)} sample range</small></span>
+          <span>{signed(row.hits[3], 1)} expected HR</span>
+        </li>)}
+      </ul>
+    </details>
+  </>;
+}
+
+export function ParkFit() {
+  const [selection, setSelection] = useState<Selection>(defaultSelection);
+  const [profile, setProfile] = useState<Profile>(initialProfile);
+  const [error, setError] = useState("");
+  const [share, setShare] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    const read = () => setSelection(readSelection(new URLSearchParams(window.location.search)));
+    const frame = window.requestAnimationFrame(read);
+    window.addEventListener("popstate", read);
+    return () => { window.cancelAnimationFrame(frame); window.removeEventListener("popstate", read); };
+  }, []);
+  const { player, year, pa, mode } = selection;
+  const ready = profile.id === player && profile.year === year;
+  useEffect(() => {
+    if (ready) return;
+    const request = new AbortController();
+    fetch(`/data/park-fit/${year}-${player}.json`, { signal: request.signal })
+      .then(response => { if (!response.ok) throw new Error("Replay unavailable"); return response.json(); })
+      .then(result => { if (!request.signal.aborted) setProfile(result as Profile); })
+      .catch(() => { if (!request.signal.aborted) setError("This replay couldn’t load."); });
+    return () => request.abort();
+  }, [year, player, ready, attempt]);
+
+  const parks = parksFor(year);
+  const from = parks.find(park => park.id === selection.from || (!selection.from && ready && park.id === profile.home));
+  const to = parks.find(park => park.id === selection.to && park.id !== from?.id)
+    ?? parks.find(park => park.id === "bos" && park.id !== from?.id)
+    ?? parks.find(park => park.id === "chc")!;
+  function update(next: Partial<Selection>) {
+    const value = { ...selection, ...next };
+    setError("");
+    setShare("");
+    setSelection(value);
+    window.history.replaceState(window.history.state, "", selectionUrl(value, window.location.href));
+  }
+  async function copyLink() {
+    const url = selectionUrl({ ...selection, from: from?.id ?? "", to: to.id }, window.location.href);
+    try { await navigator.clipboard.writeText(url.href); setShare("Link copied."); }
+    catch { setShare(url.href); }
+  }
+  function setDestination(id: string) {
+    update({ to: id });
+  }
   return (
     <div className="park-fit">
-      <section className="park-fit-panel" aria-labelledby="park-fit-controls-title">
-        <h2 id="park-fit-controls-title">Set up the replay</h2>
+      <section className="park-fit-panel" aria-labelledby="park-fit-controls">
+        <h2 id="park-fit-controls">Set up the replay</h2>
         <div className="park-fit-controls">
-          <label>Hitter
-            <select value={hitterId} onChange={event => setHitterId(event.target.value)}>
-              {data.players.map(player => <option key={player.id} value={player.id}>{player.name}</option>)}
-            </select>
-          </label>
-          <label>Reference park
-            <select value={reference} onChange={event => setReference(event.target.value as Park)}>
-              {parks.map(park => <option key={park.id} value={park.id}>{park.name}</option>)}
-            </select>
-          </label>
-          <label>Destination park
-            <select value={destination} onChange={event => setDestination(event.target.value as Park)}>
-              {parks.map(park => <option key={park.id} value={park.id}>{park.name}</option>)}
-            </select>
-          </label>
-          <label>Season playing time
-            <select value={pa} onChange={event => setPa(Number(event.target.value))}>
-              {[400, 500, 600, 700].map(total => <option key={total} value={total}>{total} PA</option>)}
-            </select>
-          </label>
+          <div className="park-fit-control"><label htmlFor="pf-hitter">Hitter</label><select id="pf-hitter" value={player} onChange={event => update({ player: event.target.value, from: "" })}>
+            {parkPlayers.map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
+          </select></div>
+          <div className="park-fit-control"><label htmlFor="pf-year">Contact season</label><select id="pf-year" value={year} onChange={event => update({ year: Number(event.target.value) as Season, from: "" })}>
+            {parkSeasons.map(option => <option key={option}>{option}</option>)}
+          </select></div>
+          <div className="park-fit-control"><label htmlFor="pf-from">Reference park</label><select id="pf-from" value={from?.id ?? ""} onChange={event => update({ from: event.target.value })}>
+            {!from && <option value="">Loading home park</option>}
+            {parks.map(park => <option key={park.id} value={park.id} disabled={park.id === to.id}>{park.name}</option>)}
+          </select></div>
+          <div className="park-fit-control"><label htmlFor="pf-to">Destination park</label><select id="pf-to" value={to.id} onChange={event => setDestination(event.target.value)}>
+            {parks.map(park => <option key={park.id} value={park.id} disabled={park.id === from?.id}>{park.name}</option>)}
+          </select></div>
+          <div className="park-fit-control"><label htmlFor="pf-pa">Season playing time</label><select id="pf-pa" value={pa} onChange={event => update({ pa: Number(event.target.value) })}>
+            {playingTime.map(option => <option key={option} value={option}>{option} PA</option>)}
+          </select></div>
+          <div className="park-fit-control"><label htmlFor="pf-carry">Home-run carry</label><select id="pf-carry" value={mode} onChange={event => update({ mode: event.target.value as Mode })}>
+            <option value="adjusted">Adjusted for typical carry</option><option value="standard">Standard trajectory</option>
+          </select></div>
         </div>
-        <p className="park-fit-note">{hitter.name} had {hitter.samplePa} PA in 2026, with {hitter.measuredContact} tracked contacts in the model. The replay moves {pa / 2} home PA and keeps the other {pa / 2} at his observed road rates.</p>
-      </section>
-
-      <section className="park-fit-panel" aria-labelledby="park-fit-lines-title">
-        <h2 id="park-fit-lines-title">{destinationName} vs. {referenceName}</h2>
-        <div className="park-fit-metrics" aria-live="polite">
-          {[
-            { label: "Batting runs", delta: target.contactValue - base.contactValue },
-            { label: "Home runs", delta: target.hits[3] - base.hits[3] },
-            { label: "Doubles", delta: target.hits[1] - base.hits[1] },
-          ].map(({ label, delta }) => <div key={label}>
-            <strong className={delta * scale >= .05 ? "park-fit-gain" : delta * scale <= -.05 ? "park-fit-loss" : undefined}>{signed(delta * scale)}</strong>
-            <span>{label}</span>
-          </div>)}
+        <div className="park-fit-actions">
+          <button type="button" className="park-fit-button" disabled={!ready || !from} onClick={() => from && update({ from: to.id, to: from.id })}>Swap parks</button>
+          <button type="button" className="park-fit-button" disabled={!ready} onClick={copyLink}>Copy replay link</button>
+          <span role="status">{share.startsWith("http") ? <a href={share}>Open share link</a> : share}</span>
         </div>
-        <div className="article-table-wrap park-fit-table" tabIndex={0} role="region" aria-label="Batting lines at all five parks">
-          <table>
-            <caption>Full-season replay at {pa} PA</caption>
-            <thead><tr><th scope="col">Home park</th><th scope="col">AVG / OBP / SLG</th>{["1B", "2B", "3B", "HR", "Runs vs. ref."].map(label => <th key={label} scope="col" className="num">{label}</th>)}</tr></thead>
-            <tbody>{parks.map(park => {
-              const line = hitter.parks[park.id];
-              return <tr key={park.id} className={park.id === destination ? "park-fit-target" : undefined}>
-                <th scope="row">{park.name}{park.id === reference && <small>Reference</small>}</th>
-                <td className="park-fit-line">{[line.avg, line.obp, line.slg].map(rate).join(" / ")}</td>
-                {line.hits.map((hits, i) => <td key={i} className="num">{(hits * scale).toFixed(1)}</td>)}
-                <td className="num">{signed((line.contactValue - base.contactValue) * scale)}</td>
-              </tr>;
-            })}</tbody>
-          </table>
-        </div>
+        {ready && <p className="park-fit-note"><strong>Actual {profile.year} line</strong> {battingLine(profile.actual.slash)} · {profile.actual.hits[3]} HR in {profile.samplePa} PA. He took {profile.homePa} of {profile.totalHomePa} home PA at {parks.find(park => park.id === profile.home)?.name}, the default reference.</p>}
+        <p className="park-fit-note">The replay uses {pa / 2} home PA from the selected year’s contact and keeps the other {pa / 2} at the hitter’s observed road rates.</p>
       </section>
-
-      <section className="park-fit-panel" aria-labelledby="park-fit-plays-title">
-        <h2 id="park-fit-plays-title">Which balls switch?</h2>
-        <p className="park-fit-note">{gains} HR gained and {losses} lost on the full 2026 contact sample. The batting lines above scale that sample to the chosen playing time.</p>
-        {switches.length ? <div className="park-fit-events">
-          <SprayChart switches={switches} />
-          <div className="park-fit-ledger" role="region" aria-label="Changed home-run plays" tabIndex={0}>
-            <ul>{switches.map(({ play, gained, inPlay }) => <li key={play.id}>
-              <div className="park-fit-play-title"><strong className={gained ? "park-fit-gain" : "park-fit-loss"}>{gained ? "● HR gained" : "◆ HR lost"}</strong><a href={`https://baseballsavant.mlb.com/sporty-videos?playId=${play.id}`}>{dateLabel.format(new Date(play.date))} · {outcomes[play.result] ?? play.result.replaceAll("_", " ")}</a></div>
-              <small>{play.ev.toFixed(1)} mph · {play.la}°{play.distance == null ? "" : ` · ${play.distance} ft`}</small>
-              <p>In play at {gained ? referenceName : destinationName}<br />{["non-hit", "1B", "2B", "3B"].map((label, i) => `${Math.round(inPlay[i] * 100)}% ${label}`).join(" · ")}</p>
-            </li>)}</ul>
-          </div>
-        </div> : <p>None of this hitter’s tracked balls changes home-run status between these parks.</p>}
-      </section>
-
+      {ready && from ? <Replay key={`${year}-${player}-${from.id}-${to.id}-${mode}`} profile={profile} parks={parks} from={from} to={to} pa={pa} mode={mode} onDestination={setDestination} />
+        : <section className="park-fit-panel" role="status">{error ? <>{error} <button type="button" onClick={() => { setError(""); setAttempt(n => n + 1); }}>Retry</button></> : "Loading the selected replay…"}</section>}
       <details className="dv-war-notes roster-method">
-        <summary>What the replay measures</summary>
-        <p>I use adjusted <a href="https://baseballsavant.mlb.com/leaderboard/home-runs">Baseball Savant home-run flags</a> for the fences and carry. For balls that stay in, I estimate the hit mix from exit velocity, launch angle, spray direction, batting side, pitcher handedness and park. A non-hit usually means an out and can also include reaching on an error.</p>
-        <p>The road half uses the hitter’s 2026 road rates. The home half uses his full 2026 contact profile, with observed walk, strikeout and playing-time rates held fixed. The batting runs compare expected hit outcomes using 2025 <a href="https://www.fangraphs.com/tools/guts?type=cn">FanGraphs run weights</a>. Use the comparison to see how the same contact plays in each park. A future forecast would also need to estimate which contact the hitter will produce.</p>
+        <summary>How to read the replay</summary>
+        <p>Both lines combine the same observed road rates with modeled home contact. I keep walk and strikeout rates fixed, and the batting-side benchmark uses league-average contact with the hitter’s mix of left- and right-handed batted balls. The gap from that benchmark is a result for this sample.</p>
+        <p>Adjusted uses typical carry for the park. Standard uses the observed trajectory. I take both home-run calls from Savant and estimate in-play odds using wall dimensions and expected carry. Those odds describe possible results at the destination. <a href="https://baseballsavant.mlb.com/leaderboard/home-runs">Baseball Savant Home Run Tracker.</a></p>
+        <p>The wOBA and batting-wins figures express the same batting runs at different scales. Batting wins divide by 9.774 runs per win. WAR also accounts for park context, baserunning, fielding, position and replacement level. <a href="https://www.fangraphs.com/tools/guts?type=cn">FanGraphs Guts.</a></p>
       </details>
     </div>
   );

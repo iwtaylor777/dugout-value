@@ -8,7 +8,7 @@ import "./park-fit.css";
 
 const path = "/tools/park-fit";
 const title = "Ballpark fit";
-const description = "Replay 2026 contact from 11 hitters across five MLB parks. See which balls change home-run status and how the rest of the batting line moves over 81 home games.";
+const description = "Replay 2025 or 2026 contact from 11 hitters across all 30 MLB home parks. See which balls change home-run status and how the rest of the batting line moves over 81 home games.";
 
 export const metadata: Metadata = pageMetadata({ title, description, path });
 
@@ -17,9 +17,9 @@ export default function ParkFitPage() {
     <Publication active="tools">
       <JsonLd data={webPageJsonLd({ type: "WebApplication", title, description, path })} />
       <header className="section-intro roster-tool-intro">
-        <p className="eyebrow">2026 contact replay · Research tool</p>
+        <p className="eyebrow">2025–26 contact replay · Research tool</p>
         <h1>{title}</h1>
-        <p>Move a hitter’s 81 home games to another park. See which balls clear the fence and what changes in his batting line when the road half stays fixed.</p>
+        <p>Replay a hitter’s past contact over 81 home games. Compare his batting line with the usual effect for his batting side and watch the balls that change.</p>
         <nav className="roster-tool-links" aria-label="Related reading">
           <Link href="/analysis/what-a-new-ballpark-changes">How I tested ballpark fit</Link>
           <Link href="/tools/free-agents">Free-agent tracker</Link>
