@@ -19,14 +19,22 @@ DEFAULT_HITTER = "673548"
 HALF_PA = 300
 SAVANT_SOURCE = ("https://baseballsavant.mlb.com/leaderboard/home-runs"
                  "?type=details&player_id={player_id}&year={year}&player_type=Batter&cat={cat}")
-# Official game feeds supply the two same-game matches and missing chart points.
-PLAY_AT_BAT = {"ce2aa285-efc4-3528-a863-470968ea37c0": 19, "ed5413ee-adf5-39fd-881f-84b27c416c8f": 35}
+# Official game feeds supply ambiguous at-bat matches and missing chart points.
+PLAY_AT_BAT = {
+    "ce2aa285-efc4-3528-a863-470968ea37c0": 19,
+    "ed5413ee-adf5-39fd-881f-84b27c416c8f": 35,
+    "8b9a9be0-6225-3da5-a8f5-fa058a3483ec": 38,  # Game 824015
+}
 PLAY_LOCATION = {
     "dfef569d-7877-33ee-aac1-ad3373dc4975": (1.0, 99.07),    # Game 777401
     "878d49f2-4ca3-3287-8297-4a60dbdfbdad": (1.93, 92.36),  # Game 776727
     "87fbc617-7e43-3055-9345-f2a467feb8ea": (253.83, 84.64), # Game 776626
     "c0895a65-a4ed-33c6-b19b-34dda17c7774": (1.66, 84.62),  # Game 823567
     "0d3239de-e229-3742-8307-cb43c2fe6da1": (1.3, 81.35),   # Game 824264
+    "4affcff3-bb29-37d9-a914-9c3022a3e3fc": (254.0, 84.4), # Game 777687
+    "5790a767-3ca7-372f-8a76-05aef4e4b612": (248.92, 88.93), # Game 776792
+    "a58c2690-0959-372b-afe1-c137ccf1f9b2": (252.9, 87.69), # Game 776821
+    "7175423a-6a55-332d-8d07-f144674f8b8a": (1.0, 72.21),   # Game 777430
 }
 
 

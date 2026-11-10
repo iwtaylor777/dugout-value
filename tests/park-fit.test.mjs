@@ -7,7 +7,7 @@ const load = (year, id) => JSON.parse(readFileSync(new URL(`../public/data/park-
 
 test("both Savant modes reconcile park totals with individual switches and wOBA", () => {
   assert.equal(Object.keys(data.examples).length, 11);
-  assert.equal(data.players.length, 58);
+  assert.equal(data.players.length, 68);
   for (const year of data.seasons) {
     const parks = data.parks[year];
     const ids = parks.map(park => park.id);
