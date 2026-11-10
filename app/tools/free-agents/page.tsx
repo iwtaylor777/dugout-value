@@ -13,7 +13,7 @@ export const metadata: Metadata = pageMetadata({ title, description, path: "/too
 export default function FreeAgentsPage() {
   return <Publication active="tools">
     <JsonLd data={webPageJsonLd({ type: "CollectionPage", title, description, path: "/tools/free-agents" })} />
-    <header className="section-intro roster-tool-intro"><p className="eyebrow">2026–27 offseason</p><h1>Free-agent tracker</h1><p>Compare current DV values with public market forecasts, and follow the deals as they happen.</p><nav className="roster-tool-links" aria-label="Related tools"><Link href="/tools/depth-chart">Try a signing on your team</Link><DisclosureLink target="tracker-method">How to read this</DisclosureLink></nav></header>
+    <header className="section-intro roster-tool-intro"><p className="eyebrow">2026–27 offseason</p><h1>Free-agent tracker</h1><p>Compare current DV values with public market forecasts, and follow the deals as they happen.</p><nav className="roster-tool-links" aria-label="Related tools"><Link href="/tools/depth-chart">Try a signing on your team</Link><Link href="/tools/park-fit">Compare ballpark fit</Link><DisclosureLink target="tracker-method">How to read this</DisclosureLink></nav></header>
     <FreeAgentTracker />
     <details className="dv-war-notes roster-method" id="tracker-method">
       <summary>How to read the tracker</summary>
