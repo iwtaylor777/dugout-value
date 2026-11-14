@@ -1,0 +1,37 @@
+{
+  "updated": "2026-11-14",
+  "note": "Trades and waiver claims since the 2026 season ended, applied on top of the depth-chart rosters. Each move lists a player in the depth-chart data and the team he goes to; prospects and other pieces outside that data go in the trade's note.",
+  "trades": [
+    {
+      "date": "2026-10-29",
+      "kind": "trade",
+      "teams": ["ATH", "BOS"],
+      "moves": [{ "player": "Nate Eaton", "from": "BOS", "to": "ATH" }],
+      "note": "Red Sox receive minor-league RHP Jareth Rayo.",
+      "source": "https://www.mlb.com/news/nate-eaton-red-sox-athletics-trade"
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "waiver-claim",
+      "teams": ["WSN", "SFG"],
+      "moves": [{ "player": "Braxton Roxby", "from": "SFG", "to": "WSN" }],
+      "source": "https://www.mlbtraderumors.com/2026/11/nationals-acquire-nate-furman-from-giants.html"
+    },
+    {
+      "date": "2026-11-01",
+      "kind": "trade",
+      "teams": ["WSN", "SFG"],
+      "moves": [{ "player": "Nate Furman", "from": "SFG", "to": "WSN" }],
+      "note": "Giants receive minor-league LHP Tony Neubeck.",
+      "source": "https://www.mlbtraderumors.com/2026/11/nationals-acquire-nate-furman-from-giants.html"
+    },
+    {
+      "date": "2026-11-03",
+      "kind": "trade",
+      "teams": ["STL", "BOS"],
+      "moves": [{ "player": "Eduardo Rivera", "from": "BOS", "to": "STL" }],
+      "note": "Red Sox receive minor-league RHP Juan Carlos García.",
+      "source": "https://www.mlb.com/news/eduardo-rivera-traded-to-cardinals-from-red-sox"
+    }
+  ]
+}

@@ -110,3 +110,15 @@
   .dc-score p.dc-change { flex-basis: 100%; }
   .dc-team { width: auto; }
 }
+.dc-card tr.dc-new-row > th, .dc-card tr.dc-new-row > td { background: #fff4d6; }
+.dc-card tr.dc-new-row > th { box-shadow: inset 3px 0 0 #c98a1b; }
+.dc-tag.dc-new { background: #c98a1b; color: #fff; font-weight: 600; }
+.dc-moves { margin: 16px 0; padding: 14px 16px; border: 1px solid #e3cf9d; border-left: 4px solid #c98a1b; border-radius: 6px; background: #fffaf0; }
+.dc-moves h2 { font-size: 17px; margin: 0 0 8px; }
+.dc-moves > div { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 24px; }
+.dc-moves h3 { font-size: 14px; margin: 0 0 4px; text-transform: uppercase; letter-spacing: .04em; color: #6b5a33; }
+.dc-moves ul { list-style: none; margin: 0; padding: 0; }
+.dc-moves li { padding: 5px 0; font-size: 14px; line-height: 1.45; border-bottom: 1px solid #f0e4c6; }
+.dc-moves li span { color: #536067; font-size: 13px; }
+.dc-moves .dc-note { margin: 8px 0 0; }
+.dc-bench li.dc-new-row { background: #fff4d6; box-shadow: inset 3px 0 0 #c98a1b; padding-left: 6px; }

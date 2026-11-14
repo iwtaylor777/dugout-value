@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
 import { applyPositionUsage, inningsToOuts, positionUsage } from '../scripts/refresh-depth-eligibility.mjs';
-import { allocate, teamsFor, bestAdditions, rateAt, cbtHit, payrollAdjustment, payrollChange, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, MAX_CONVERTED_RELIEF_IP, MAX_NATIVE_RELIEF_IP, targetOf, eligiblePositions, isInferredPosition, SECONDARY_TRANSITION_RUNS } from '../lib/depth-chart.mjs';
+import { allocate, teamsFor, rosterChanges, bestAdditions, rateAt, cbtHit, payrollAdjustment, payrollChange, MINIMUM_SALARY, POSITIONS, DEFAULT_TARGETS, MAX_CONVERTED_RELIEF_IP, MAX_NATIVE_RELIEF_IP, targetOf, eligiblePositions, isInferredPosition, SECONDARY_TRANSITION_RUNS } from '../lib/depth-chart.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
-const data = read('../app/data/depth-chart.json'), tracker = read('../app/data/free-agent-tracker.json'), signings = read('../app/data/free-agent-signings.json');
+const data = read('../app/data/depth-chart.json'), tracker = read('../app/data/free-agent-tracker.json'), signings = read('../app/data/free-agent-signings.json'), trades = read('../app/data/trades.json');
 const h = (i, e, r, x) => ({ i, n: i, t: 'AAA', e, k: 'b', r, x });
 const pit = (i, e, r, x) => ({ i, n: i, t: 'AAA', e, k: 'p', r, x });
 
@@ -288,4 +288,39 @@ test('2027 detail projections cover projected players with plausible values', ()
     }
     if (d.fip != null) assert.ok(d.fip > 1.5 && d.fip < 7 && d.k > 5 && d.k < 45 && d.bb > 2 && d.bb < 20, id);
   }
+});
+
+test('every reported trade moves a depth-chart player between known teams', () => {
+  const abbrs = new Set(data.teams.map(t => t.abbr));
+  assert.match(trades.updated, /^\d{4}-\d{2}-\d{2}$/);
+  for (const tr of trades.trades) {
+    assert.match(tr.date, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(['trade', 'waiver-claim'].includes(tr.kind ?? 'trade'), tr.kind);
+    assert.match(tr.source, /^https:\/\//);
+    for (const t of tr.teams) assert.ok(abbrs.has(t), t);
+    assert.ok(tr.moves.length > 0);
+    for (const m of tr.moves) {
+      assert.ok(data.players.some(p => (m.pid ? p.pid === m.pid : p.n === m.player)), m.player);
+      assert.ok(abbrs.has(m.to) && tr.teams.includes(m.to) && tr.teams.includes(m.from), m.player);
+    }
+  }
+  const { team } = teamsFor(data.players, tracker, signings.entries, trades.trades);
+  for (const tr of trades.trades) for (const m of tr.moves) for (const p of data.players.filter(x => x.n === m.player)) assert.equal(team.get(p.i), m.to, m.player);
+});
+
+test('trades move players, mark arrivals and departures, and carry payroll', () => {
+  const a = { ...h('a', ['SS'], 2, 600), t: 'AAA', cb: 10 }, b = { ...h('b', ['CF'], 1, 600), t: 'BBB', cb: 4 }, fa = { ...h('fa', ['C'], 1, 400), pid: 'fa', t: 'BBB', fa: 1 };
+  const trs = [{ date: '2026-11-05', kind: 'trade', teams: ['AAA', 'BBB'], moves: [{ player: 'a', from: 'AAA', to: 'BBB' }, { player: 'b', from: 'BBB', to: 'AAA' }], source: 'https://x' }];
+  const t = { players: [{ id: 'fa', market: 'expected' }] };
+  const sg = [{ player: 'fa', outcome: 'signed', team: 'AAA', years: 1, total_musd: 3, date: '2026-11-10' }];
+  const { team, changes } = teamsFor([a, b, fa], t, sg, trs);
+  assert.equal(team.get('a'), 'BBB'); assert.equal(team.get('b'), 'AAA'); assert.equal(team.get('fa'), 'AAA');
+  const r = rosterChanges([a, b, fa], 'AAA', team, changes);
+  assert.deepEqual(r.arrivals.map(x => [x.p.i, x.kind]), [['fa', 'signed'], ['b', 'trade']]);
+  assert.deepEqual(r.departures.map(x => [x.p.i, x.to]), [['a', 'BBB']]);
+  // Payroll: the traded-in player joins at his CBT hit and the traded-away one comes off.
+  assert.equal(payrollAdjustment([a, b, fa], 'AAA', team, new Set(['fa', 'b']), p => (p.i === 'fa' ? 3 : null)), 3 + 4 - 10);
+  // A player traded back to his own team is no longer new.
+  const back = teamsFor([a], t, [], [...trs, { date: '2026-11-12', teams: ['AAA', 'BBB'], moves: [{ player: 'a', from: 'BBB', to: 'AAA' }], source: 'https://x' }]);
+  assert.equal(back.team.get('a'), 'AAA'); assert.ok(!back.changes.has('a'));
 });

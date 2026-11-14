@@ -4,14 +4,15 @@ import data from "../../data/depth-chart.json";
 import tracker from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
 import payrollData from "../../data/team-payroll.json";
-import { allocate, bestAdditions, teamsFor, payrollAdjustment, payrollChange, rateAt, POSITIONS, PITCHING, isInferredPosition } from "../../../lib/depth-chart.mjs";
-import type { DepthEdit as Edit } from "../../../lib/depth-chart.mjs";
+import tradesData from "../../data/trades.json";
+import { allocate, bestAdditions, teamsFor, rosterChanges, payrollAdjustment, payrollChange, rateAt, POSITIONS, PITCHING, isInferredPosition } from "../../../lib/depth-chart.mjs";
+import type { DepthEdit as Edit, RosterChange, TradeRecord } from "../../../lib/depth-chart.mjs";
 
 type Entry = { i: string; pid: string; n: string; t: string | null; e: string[]; k: "b" | "p"; r: number; x: number; s: string; fa?: number; cb?: number; co?: number; ex?: number; d?: number; mp?: string; fs?: Record<string, number>; rd?: number };
 
 const players = data.players as Entry[];
 const teams = data.teams as { abbr: string; name: string }[];
-const { team: teamOf, freeAgents } = teamsFor(players, tracker, signingsData.entries as { player: string; outcome: string; team?: string | null }[]);
+const { team: teamOf, freeAgents, changes } = teamsFor(players, tracker, signingsData.entries as { player: string; outcome: string; team?: string | null; date?: string; source?: string }[], tradesData.trades as TradeRecord[]);
 const faRows = new Map((tracker.players as { id: string; aav?: number | null; years?: number | null; total?: number | null; basis: string }[]).map((r) => [r.id, r]));
 const rosterOf = (abbr: string) => players.filter((p) => teamOf.get(p.i) === abbr);
 const signedAav = new Map((signingsData.entries as { player: string; outcome: string; years?: number | null; total_musd?: number | null }[])
@@ -22,6 +23,13 @@ const cbtTeams = cbt.teams as Record<string, { cbt2026: number; cbt2027: number;
 const nameKey = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/gi, "").toLowerCase();
 const outcomes = new Map((signingsData.entries as { player: string; outcome: string }[]).map((s) => [nameKey(s.player), s.outcome]));
 const signedIds = new Set(players.filter((p) => p.fa && ["signed", "re-signed", "extension", "qo-accepted", "option-exercised", "opted-in"].includes(outcomes.get(nameKey(p.n)) ?? "")).map((p) => p.i));
+const movedIds = new Set([...signedIds, ...[...changes].filter(([, c]) => c.kind !== "signed").map(([i]) => i)]);
+const teamNames = new Map(teams.map((t) => [t.abbr, t.name]));
+const shortDate = (d?: string) => d ? new Date(`${d}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
+const howText = (c: RosterChange, joined: boolean) => c.kind === "signed" ? (joined ? `Signed as a free agent${c.from ? ` (2026: ${c.from})` : ""}` : `Signed with ${c.to}`)
+  : c.kind === "waiver-claim" ? (joined ? `Claimed off waivers from ${c.from}` : `Claimed by ${c.to}`)
+  : joined ? `Acquired by trade from ${c.from}` : `Traded to ${c.to}`;
+const newTag = (c: RosterChange) => c.kind === "signed" ? "signed" : c.kind === "waiver-claim" ? "claimed" : "acquired";
 const money = (v: number) => `$${v.toFixed(1)}M`;
 const moneyDelta = (v: number) => `${v >= 0.05 ? "+" : v <= -0.05 ? "−" : ""}$${Math.abs(v).toFixed(1)}M`;
 const defaults = new Map(teams.map((t) => [t.abbr, allocate(rosterOf(t.abbr)).total]));
@@ -81,8 +89,9 @@ export function DepthChart() {
   const baseRank = [...defaults.values()].filter((v) => v > base).length + 1;
   const teamName = teams.find((t) => t.abbr === team)?.name ?? team;
   const changed = Object.keys(edits).length + removed.length + added.length > 0;
+  const moves = useMemo(() => rosterChanges(players, team, teamOf, changes), [team]);
   const pay = cbtTeams[team];
-  const adjustment = useMemo(() => payrollAdjustment(players, team, teamOf, signedIds, faSalary), [team]);
+  const adjustment = useMemo(() => payrollAdjustment(players, team, teamOf, movedIds, faSalary), [team]);
   const base2027 = pay ? pay.cbt2027 + adjustment : null;
   const payChange = useMemo(() => payrollChange(rosterOf(team), roster, freeAgents, faSalary), [team, roster]);
 
@@ -133,6 +142,16 @@ export function DepthChart() {
         <details className="dc-payroll-history"><summary>2026 luxury-tax context <span>{pay ? money(pay.cbt2026) : "Not available"}</span></summary><p>2026 CBT payroll{pay ? ` was ${money(pay.cbt2026)}, ${money(Math.abs(pay.cbt2026 - cbt.thresholdMusd2026))} ${pay.cbt2026 > cbt.thresholdMusd2026 ? "over" : "under"} the $${cbt.thresholdMusd2026}M threshold.` : " is not available for this team."} Historical context only. The 2027 tax threshold depends on the next labor agreement.</p></details>
       </div>
 
+      {(moves.arrivals.length > 0 || moves.departures.length > 0) && (
+        <section className="dc-moves" aria-label={`${teamName} roster changes since the 2026 season`}>
+          <h2>Roster changes since the season</h2>
+          <div>
+            <div><h3>New ({moves.arrivals.length})</h3>{moves.arrivals.length ? <ul>{moves.arrivals.map((m) => <li key={m.p.i}><strong>{m.p.n}</strong> <span>{howText(m, true)}{result.unused.some((u) => u.i === m.p.i) ? " · no projected playing time yet" : ""}{m.date ? ` · ${shortDate(m.date)}` : ""}{m.source ? <> · <a href={m.source}>source</a></> : null}</span></li>)}</ul> : <p className="dc-note">None yet.</p>}</div>
+            <div><h3>Gone ({moves.departures.length})</h3>{moves.departures.length ? <ul>{moves.departures.map((m) => <li key={m.p.i}><strong>{m.p.n}</strong> <span>{howText(m, false)}{m.to ? ` (${teamNames.get(m.to) ?? m.to})` : ""}{m.date ? ` · ${shortDate(m.date)}` : ""}</span></li>)}</ul> : <p className="dc-note">None yet.</p>}</div>
+          </div>
+          <p className="dc-note">Reported signings, trades and waiver claims. New players are highlighted in the depth chart. Unsigned free agents are not listed as departures.</p>
+        </section>
+      )}
       <div className="dc-layout">
         <div className="dc-main">
           <div className="dc-add" ref={searchRoot}
@@ -173,8 +192,8 @@ export function DepthChart() {
                       {slot.rows.map((row) => {
                         const locked = edits[row.p.i]?.pt != null;
                         return (
-                          <tr key={row.p.i}>
-                            <th scope="row">{label(row.p)}{added.includes(row.p.i) && <span className="dc-tag">added</span>}{row.p.s !== "dv" && <span className="dc-tag" title={row.p.s === "npb" ? "NPB translation" : "No DV projection; ZiPS rate at part-time playing time"}>{row.p.s === "npb" ? "NPB" : "ZiPS"}</span>}{(() => {
+                          <tr key={row.p.i} className={changes.has(row.p.i) && teamOf.get(row.p.i) === team ? "dc-new-row" : undefined}>
+                            <th scope="row">{label(row.p)}{(() => { const c = changes.get(row.p.i); return c && teamOf.get(row.p.i) === team ? <span className="dc-tag dc-new" title={`${howText(c, true)}${c.date ? `, ${shortDate(c.date)}` : ""}`}>new · {newTag(c)}</span> : null; })()}{added.includes(row.p.i) && <span className="dc-tag">added</span>}{row.p.s !== "dv" && <span className="dc-tag" title={row.p.s === "npb" ? "NPB translation" : "No DV projection; ZiPS rate at part-time playing time"}>{row.p.s === "npb" ? "NPB" : "ZiPS"}</span>}{(() => {
                               const adj = (rateAt(row.p, pos) - row.p.r) * row.pt / 600;
                               if (Math.abs(adj) < 0.1) return null;
                               const f = row.p.fs?.[pos];
@@ -222,7 +241,7 @@ export function DepthChart() {
                   <p><strong>No projected playing time.</strong> Their positions are full with better projections. Place one to give him time.</p>
                   <ul className="dc-bench">
                     {result.unused.map((p) => (
-                      <li key={p.i}>{label(p)} <span>{p.e.join("/")}</span>
+                      <li key={p.i} className={changes.has(p.i) && teamOf.get(p.i) === team ? "dc-new-row" : undefined}>{label(p)}{changes.has(p.i) && teamOf.get(p.i) === team && <span className="dc-tag dc-new">new · {newTag(changes.get(p.i)!)}</span>} <span>{p.e.join("/")}</span>
                         <select aria-label={`Place ${label(p)}`} value="" onChange={(e) => move(p, e.target.value)}>
                           <option value="" disabled>Place at…</option>
                           {POSITIONS.filter((x) => PITCHING.includes(x) === (p.k === "p")).map((x) => <option key={x} value={x}>{x}</option>)}
