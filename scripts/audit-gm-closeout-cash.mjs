@@ -4,7 +4,7 @@ import * as g from '../lib/gm-sim.mjs';
 import * as m from '../lib/gm-market.mjs';
 import { marketTracker } from '../lib/free-agent-current.mjs';
 const read = name => JSON.parse(fs.readFileSync(new URL(`../app/data/${name}.json`, import.meta.url)));
-const ctx = { players: read('depth-chart').players, tracker: marketTracker(read('free-agent-tracker')), signings: read('free-agent-signings'), sim: read('gm-sim'), payroll: read('team-payroll').cbt };
+const ctx = { players: read('depth-chart').players, tracker: marketTracker(read('free-agent-tracker')), signings: read('free-agent-signings'),trades:read('trades'), sim: read('gm-sim'), payroll: read('team-payroll').cbt };
 const scenarios = [], failures = [];
 for (const team of ['BOS', 'LAD', 'SEA', 'ATH']) for (const seed of [42, 137, 901]) {
   let game = { team, seed, budget: 480, signings: [], trades: [], market: m.newMarket() };
@@ -20,7 +20,7 @@ for (const team of ['BOS', 'LAD', 'SEA', 'ATH']) for (const seed of [42, 137, 90
   const league = g.buildLeague(ctx, game), deals = [...game.signings, ...game.market.deals];
   const stars = deals.filter(s => { const r = ctx.tracker.players.find(r => r.id === s.pid); return r.war2027 >= 3 || r.aav >= 25; });
   const starRatios = stars.map(s => s.total / s.years / ctx.tracker.players.find(r => r.id === s.pid).aav);
-  const badBudgets = Object.keys(ctx.sim.teams).filter(t => t !== team && g.payrollFor(ctx, league, t) > Math.max(g.payrollFor(ctx, before, t), ctx.sim.teams[t].cbt2026 * 1.02) + 1e-8);
+  const badBudgets = Object.keys(ctx.sim.teams).filter(t => t !== team && g.payrollFor(ctx, league, t) > Math.max(g.payrollFor(ctx, before, t), g.rivalLimit(ctx, t)) + 1e-8);
   const restored = g.restoreMoves(ctx, g.decodeMoves(g.encodeMoves(game)));
   const result = { team, seed, budget: game.budget, remaining: league.freeAgents.size, lowballWins: game.signings.length, duplicates: deals.length - new Set(deals.map(s => s.pid)).size, badBudgets, restores: !!restored.moves, cheapestStarRatio: +Math.min(...starRatios).toFixed(3) };
   scenarios.push(result);

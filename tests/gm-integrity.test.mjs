@@ -6,7 +6,7 @@ import * as m from '../lib/gm-market.mjs';
 import { marketTracker } from '../lib/free-agent-current.mjs';
 import { gradeContext } from '../lib/gm-experience.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
-const ctx = { players: read('../app/data/depth-chart.json').players, tracker: marketTracker(read('../app/data/free-agent-tracker.json')), signings: read('../app/data/free-agent-signings.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
+const ctx = { players: read('../app/data/depth-chart.json').players, tracker: marketTracker(read('../app/data/free-agent-tracker.json')), signings: read('../app/data/free-agent-signings.json'),trades:read('../app/data/trades.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
 const id = name => Object.keys(ctx.sim.players).find(id => ctx.sim.players[id].n === name);
 const start = { team:'BOS', seed:42, budget:400, signings:[], trades:[], market:m.newMarket() };
 

@@ -5,7 +5,7 @@ import * as g from '../lib/gm-sim.mjs';
 import * as game from '../lib/gm-game.mjs';
 import {marketTracker} from '../lib/free-agent-current.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL(p,import.meta.url)));
-const ctx={players:read('../app/data/depth-chart.json').players,tracker:marketTracker(read('../app/data/free-agent-tracker.json')),signings:read('../app/data/free-agent-signings.json'),sim:read('../app/data/gm-sim.json'),payroll:read('../app/data/team-payroll.json').cbt};
+const ctx={players:read('../app/data/depth-chart.json').players,tracker:marketTracker(read('../app/data/free-agent-tracker.json')),signings:read('../app/data/free-agent-signings.json'),trades:read('../app/data/trades.json'),sim:read('../app/data/gm-sim.json'),payroll:read('../app/data/team-payroll.json').cbt};
 const id=name=>Object.keys(ctx.sim.players).find(pid=>ctx.sim.players[pid].n===name);
 const step=(state,action)=>{const result=game.act(ctx,state,action);assert.ok(result.accepted,result.reason);return result.moves;};
 const roundtrip=state=>assert.deepEqual(game.replayGame(ctx,game.decodeGame(game.encodeGame(state))).moves,state);

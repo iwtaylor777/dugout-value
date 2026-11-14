@@ -5,7 +5,7 @@ import * as g from '../lib/gm-sim.mjs';
 import { allocate } from '../lib/depth-chart.mjs';
 import { marketTracker } from '../lib/free-agent-current.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
-const ctx = { players: read('../app/data/depth-chart.json').players, tracker: marketTracker(read('../app/data/free-agent-tracker.json')), signings: read('../app/data/free-agent-signings.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
+const ctx = { players: read('../app/data/depth-chart.json').players, tracker: marketTracker(read('../app/data/free-agent-tracker.json')), signings: read('../app/data/free-agent-signings.json'),trades:read('../app/data/trades.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
 const id = n => Object.entries(ctx.sim.players).find(([, v]) => v.n === n)[0];
 const fa = n => ctx.tracker.players.find(r => r.name === n);
 const base = { team: 'BOS', seed: 42, signings: [], trades: [] };
@@ -13,9 +13,10 @@ const base = { team: 'BOS', seed: 42, signings: [], trades: [] };
 test('salary-dump feedback explains little roster improvement without blaming every included player', () => {
   const state = { ...base, team: 'PIT', market: {round:0,bids:[],deals:[],offers:[]} };
   const league = g.buildLeague(ctx, state), modes = g.teamModes(ctx, league.teamOf);
+  // Toronto has a set first baseman. (Milwaukee no longer works: Jake Bauers left, so O'Hearn would help them.)
   for (const proposal of [
-    { partner: 'MIL', give: [id("Ryan O'Hearn")], get: [], cash: 9 },
-    { partner: 'MIL', give: [id("Ryan O'Hearn"), id('Carlson Reed')], get: [], cash: 3 },
+    { partner: 'TOR', give: [id("Ryan O'Hearn")], get: [], cash: 9 },
+    { partner: 'TOR', give: [id("Ryan O'Hearn"), id('Carlson Reed')], get: [], cash: 3 },
   ]) {
     const response = g.respondToTrade(ctx, league, state, 145, proposal, modes);
     assert.equal(response.accepted, false);

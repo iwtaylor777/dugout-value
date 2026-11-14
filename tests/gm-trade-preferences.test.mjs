@@ -5,7 +5,7 @@ import * as g from '../lib/gm-sim.mjs';
 import * as game from '../lib/gm-game.mjs';
 import {marketTracker} from '../lib/free-agent-current.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL(p,import.meta.url)));
-const ctx={players:read('../app/data/depth-chart.json').players,tracker:marketTracker(read('../app/data/free-agent-tracker.json')),signings:read('../app/data/free-agent-signings.json'),sim:read('../app/data/gm-sim.json'),payroll:read('../app/data/team-payroll.json').cbt};
+const ctx={players:read('../app/data/depth-chart.json').players,tracker:marketTracker(read('../app/data/free-agent-tracker.json')),signings:read('../app/data/free-agent-signings.json'),trades:read('../app/data/trades.json'),sim:read('../app/data/gm-sim.json'),payroll:read('../app/data/team-payroll.json').cbt};
 const id=name=>{const pid=Object.keys(ctx.sim.players).find(pid=>ctx.sim.players[pid].n===name);assert.ok(pid,name);return pid;};
 const state=game.createGame('BOS',42),league=g.buildLeague(ctx,state);
 const trio=['Franklin Arias','Justin Gonzales','John Holobetz'];

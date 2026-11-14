@@ -8,6 +8,7 @@ import depth from "../../data/depth-chart.json";
 import trackerData from "../../data/free-agent-tracker.json";
 import { marketTracker } from "../../../lib/free-agent-current.mjs";
 import signingsData from "../../data/free-agent-signings.json";
+import tradesData from "../../data/trades.json";
 import simData from "../../data/gm-sim.json";
 import payrollData from "../../data/team-payroll.json";
 import { allocate, bestAdditions, POSITIONS, PITCHING, eligiblePositions, isInferredPosition } from "../../../lib/depth-chart.mjs";
@@ -18,11 +19,12 @@ import { advanceMarket, marketBoard, MARKET_ROUNDS, newMarket, userOfferOutcomes
 import {
   aiFreeAgency, buildLeague, movesValue, payrollFor, rosterOf, offseasonObjective, objectiveGrade,
   simulateSeasons, tradeOutlook, teamStrengths, seasonReadiness, playerContract, rivalBudget,
+  defaultBudget,
 } from "../../../lib/gm-sim.mjs";
 import type { GmContext, GmMoves, GmTeamResult, TrackerRow } from "../../../lib/gm-sim.mjs";
 
 const tracker = marketTracker(trackerData);
-const ctx = { players: depth.players, tracker, signings: signingsData, sim: simData, payroll: payrollData.cbt } as unknown as GmContext;
+const ctx = { players: depth.players, tracker, signings: signingsData, sim: simData, payroll: payrollData.cbt, trades: tradesData } as unknown as GmContext;
 const teams = Object.entries(ctx.sim.teams).sort((a, b) => a[1].name.localeCompare(b[1].name));
 const faRows = new Map((tracker.players as TrackerRow[]).map((r) => [r.id, r]));
 const V = ctx.sim.players;
@@ -86,7 +88,7 @@ export function GmMode() {
   const autoRun = useRef<GmMoves | null>(null);
   const runVersion = useRef(0);
 
-  const budget = moves.budget ?? Math.round(ctx.sim.teams[moves.team].cbt2026);
+  const budget = moves.budget ?? defaultBudget(ctx, moves.team);
   useEffect(() => {
     const load = () => {
     setLoaded(true);
@@ -384,7 +386,7 @@ export function GmMode() {
               setBudgetDraft(null);
             }
           }} />M</label>
-          <small>{money(budget)} · 2026 payroll was {money(ctx.sim.teams[moves.team].cbt2026)}{moves.budget != null && <> · <button type="button" className="gm-link" onClick={() => update({ ...moves, budget: null })}>reset</button></>}</small>
+          <small>{money(budget)} · 2026 payroll was {money(ctx.sim.teams[moves.team].cbt2026)}{defaultBudget(ctx, moves.team) > Math.round(ctx.sim.teams[moves.team].cbt2026) && <> · 2027 payroll already tops that, so the budget starts at that payroll + 5%</>}{moves.budget != null && <> · <button type="button" className="gm-link" onClick={() => update({ ...moves, budget: null })}>reset</button></>}</small>
         </div>
         <div className="gm-stats" aria-live="polite">
           <p><strong>{money(payroll)}</strong><span>2027 payroll{league.cash?.get(moves.team) ? " + net cash" : ""}</span></p>
@@ -393,7 +395,7 @@ export function GmMode() {
           <p><strong>{mine.rank}{["th", "st", "nd", "rd"][mine.rank % 10 > 3 || [11, 12, 13].includes(mine.rank % 100) ? 0 : mine.rank % 10]}</strong><span>in MLB</span></p>
         </div>
       </div>
-      <p className="gm-note">Objective: <strong>{objective.label}</strong>. {moves.budget!=null&&budget!==Math.round(ctx.sim.teams[moves.team].cbt2026)?"Custom budget: compare this score only with games using the same spending limit.":"Your score considers roster improvement and contract value."}</p>
+      <p className="gm-note">Objective: <strong>{objective.label}</strong>. {moves.budget!=null&&budget!==defaultBudget(ctx,moves.team)?"Custom budget: compare this score only with games using the same spending limit.":"Your score considers roster improvement and contract value."}</p>
       <div className="gm-tools"><span>Changing teams starts a new offseason. This is a sandbox, not live transactions.</span><button type="button" className="gm-link" onClick={() => reset(moves.team)}>Start over</button><button type="button" className="gm-link" onClick={() => copy(shareUrl(), "link")}>Copy offseason link</button>{copied && <span role="status">{copied === "failed" ? "Couldn’t copy. Try again." : `Copied ${copied}`}</span>}</div>
       <div className="gm-brief"><div><strong>Where could you improve?</strong><p>Your lowest-ranked positions. Pick one to find free agents who can help.</p></div><div className="gm-needs">{needs.map(need => <button key={need.pos} type="button" onClick={() => { showTab("fa"); setFaPos(need.pos); setFaQuery(""); setFaLimit(20); }}><strong>{need.pos}</strong><span>No. {need.rank} of 30 · {need.war.toFixed(1)} WAR</span></button>)}</div></div>
       {readiness.shortfall > 1e-9 && <aside className="gm-budget-plan" id="gm-budget-plan">

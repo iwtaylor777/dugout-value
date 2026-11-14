@@ -11,6 +11,7 @@ export type GmContext = {
   signings: { entries: { player: string; outcome: string; team?: string | null; years?: number | null; total_musd?: number | null }[] };
   sim: GmSimData;
   payroll: { teams: Record<string, { cbt2026: number; cbt2027: number; guaranteedAav2027: number; arb2027: number }>; thresholdMusd2026: number };
+  trades?: { trades: import("./depth-chart.mjs").TradeRecord[] } | import("./depth-chart.mjs").TradeRecord[];
 };
 export type GmSigning = { pid: string; years: number; total: number; closeout?: boolean };
 export type GmTrade = { partner: string; give: string[]; get: string[]; cash?: number };
@@ -40,6 +41,10 @@ export function tradePlayerValue(player: GmPlayerValue, mode: string): number;
 export function signFreeAgent(ctx: GmContext, league: GmLeague, moves: GmMoves, budget: number, fa: TrackerRow, offer: { years: number; total: number }, seed: number): GmAnswer;
 export function buildLeague(ctx: GmContext, moves: GmMoves): GmLeague;
 export function rosterOf(ctx: GmContext, teamOf: Map<string, string | null>, abbr: string): GmContext["players"];
+export function tradesOf(ctx: GmContext): import("./depth-chart.mjs").TradeRecord[];
+export function openingPayrolls(ctx: GmContext): Record<string, number>;
+export function defaultBudget(ctx: GmContext, team: string): number;
+export function rivalLimit(ctx: GmContext, team: string): number;
 export function payrollFor(ctx: GmContext, league: GmLeague, abbr: string, extraAav?: Map<string, number>): number;
 export function rivalBudget(ctx: GmContext, league: GmLeague, team: string, seed: number): { limit: number; reserve: number; payroll: number; room: number; faLimit: number };
 export function teamWar(ctx: GmContext, teamOf: Map<string, string | null>, abbr: string): number;

@@ -6,7 +6,7 @@ import * as m from '../lib/gm-market.mjs';
 import { allocate } from '../lib/depth-chart.mjs';
 import { marketTracker } from '../lib/free-agent-current.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
-const ctx = { players: read('../app/data/depth-chart.json').players, tracker: marketTracker(read('../app/data/free-agent-tracker.json')), signings: read('../app/data/free-agent-signings.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
+const ctx = { players: read('../app/data/depth-chart.json').players, tracker: marketTracker(read('../app/data/free-agent-tracker.json')), signings: read('../app/data/free-agent-signings.json'),trades:read('../app/data/trades.json'), sim: read('../app/data/gm-sim.json'), payroll: read('../app/data/team-payroll.json').cbt };
 const game = () => ({ team: 'BOS', seed: 42, budget: 400, signings: [], trades: [], market: m.newMarket() });
 const row = name => ctx.tracker.players.find(p => p.name === name);
 
@@ -86,11 +86,19 @@ test('FA reserves stay inside existing budgets and remain usable for trades', ()
   const state = game(), league = g.buildLeague(ctx, state);
   for (const team of Object.keys(ctx.sim.teams)) {
     const plan = g.rivalBudget(ctx, league, team, state.seed);
-    assert.equal(plan.limit, ctx.sim.teams[team].cbt2026 * 1.02);
+    const base = ctx.sim.teams[team].cbt2026 * 1.02, opening = g.openingPayrolls(ctx)[team];
+    // Clubs already over their starting limit after reported moves get that payroll plus a 5% buffer.
+    assert.equal(plan.limit, opening > base ? opening * 1.05 : base, team);
+    assert.equal(plan.limit, g.rivalLimit(ctx, team));
     assert.ok(plan.reserve >= 5 && plan.reserve <= 15);
     assert.ok(Math.abs(plan.faLimit + plan.reserve - plan.limit) < 1e-8);
     assert.equal(plan.room, Math.max(0, plan.limit - plan.payroll));
     assert.deepEqual(plan, g.rivalBudget(ctx, league, team, state.seed));
+  }
+  const over = Object.keys(ctx.sim.teams).filter(t => g.openingPayrolls(ctx)[t] > ctx.sim.teams[t].cbt2026);
+  for (const team of Object.keys(ctx.sim.teams)) {
+    const opening = g.openingPayrolls(ctx)[team], cbt = ctx.sim.teams[team].cbt2026;
+    assert.equal(g.defaultBudget(ctx, team), Math.round(over.includes(team) ? opening * 1.05 : cbt), team);
   }
 });
 
@@ -271,7 +279,7 @@ test('closing the market records late signings, honors budgets, and replays via 
   }
   assert.ok(current.market.deals.some(d => d.closeout && d.total < g.askFor(ctx.tracker.players.find(r => r.id === d.pid), start.seed).total));
   for (const team of Object.keys(ctx.sim.teams).filter(t => t !== start.team)) {
-    assert.ok(g.payrollFor(ctx, after, team) <= Math.max(g.payrollFor(ctx, before, team), ctx.sim.teams[team].cbt2026 * 1.02) + 1e-7, team);
+    assert.ok(g.payrollFor(ctx, after, team) <= Math.max(g.payrollFor(ctx, before, team), g.rivalLimit(ctx, team)) + 1e-7, team);
   }
   const rivalPlans = Object.keys(ctx.sim.teams).filter(t => t !== start.team).map(t => g.rivalBudget(ctx, after, t, start.seed));
   assert.ok(rivalPlans.filter(p => p.room >= 5 - 1e-8).length >= 5, 'the closed market retains multiple salary-dump destinations');
