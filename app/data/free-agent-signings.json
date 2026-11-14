@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06",
+  "updated": "2026-11-14",
   "note": "Reported outcomes for the 2026–27 class. Outcomes: signed, re-signed, extension, qo-accepted, option-exercised, option-declined, opted-out, opted-in, retired. Contract totals are guaranteed money in millions; option and opt-out entries leave years and total empty unless a new contract was signed.",
   "entries": [
     {
@@ -347,12 +347,12 @@
     },
     {
       "player": "Emilio Pagan",
-      "outcome": "opted-out",
-      "team": null,
-      "years": null,
-      "total_musd": null,
-      "date": "2026-10-31",
-      "source": "https://www.mlbtraderumors.com/2026/10/emilio-pagan-declines-player-option.html"
+      "outcome": "signed",
+      "team": "DET",
+      "years": 1,
+      "total_musd": 11.0,
+      "date": "2026-11-10",
+      "source": "https://www.mlb.com/news/emilio-pagan-contract-with-tigers"
     },
     {
       "player": "Nick Pivetta",
@@ -551,6 +551,24 @@
       "total_musd": null,
       "date": "2026-11-03",
       "source": "https://www.mlb.com/news/mlb-players-with-2027-options-and-opt-outs"
+    },
+    {
+      "player": "Evan Phillips",
+      "outcome": "signed",
+      "team": "ATL",
+      "years": 3,
+      "total_musd": 35.0,
+      "date": "2026-11-12",
+      "source": "https://www.mlbtraderumors.com/2026/11/braves-sign-evan-phillips-to-three-year-deal.html"
+    },
+    {
+      "player": "Jake Bauers",
+      "outcome": "signed",
+      "team": "BOS",
+      "years": 4,
+      "total_musd": 58.0,
+      "date": "2026-11-13",
+      "source": "https://www.mlbtraderumors.com/2026/11/red-sox-sign-jake-bauers.html"
     }
   ],
   "qualifying_offers": {
