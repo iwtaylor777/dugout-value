@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14",
+  "updated": "2026-11-16",
   "note": "Trades and waiver claims since the 2026 season ended, applied on top of the depth-chart rosters. Each move lists a player in the depth-chart data and the team he goes to; prospects and other pieces outside that data go in the trade's note.",
   "trades": [
     {
@@ -32,6 +32,14 @@
       "moves": [{ "player": "Eduardo Rivera", "from": "BOS", "to": "STL" }],
       "note": "Red Sox receive minor-league RHP Juan Carlos García.",
       "source": "https://www.mlb.com/news/eduardo-rivera-traded-to-cardinals-from-red-sox"
+    },
+    {
+      "date": "2026-11-15",
+      "kind": "trade",
+      "teams": ["MIL", "SFG"],
+      "moves": [{ "player": "Ryan Walker", "from": "SFG", "to": "MIL" }],
+      "note": "Giants receive RHP prospects Blake Holub and Gavin Perry.",
+      "source": "https://www.mlbtraderumors.com/2026/11/brewers-acquire-ryan-walker.html"
     }
   ]
 }

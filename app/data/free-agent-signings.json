@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14",
+  "updated": "2026-11-16",
   "note": "Reported outcomes for the 2026–27 class. Outcomes: signed, re-signed, extension, qo-accepted, option-exercised, option-declined, opted-out, opted-in, retired. Contract totals are guaranteed money in millions; option and opt-out entries leave years and total empty unless a new contract was signed.",
   "entries": [
     {
@@ -569,6 +569,15 @@
       "total_musd": 58.0,
       "date": "2026-11-13",
       "source": "https://www.mlbtraderumors.com/2026/11/red-sox-sign-jake-bauers.html"
+    },
+    {
+      "player": "Tim Hill",
+      "outcome": "re-signed",
+      "team": "NYY",
+      "years": 1,
+      "total_musd": 2.3,
+      "date": "2026-11-15",
+      "source": "https://www.mlbtraderumors.com/2026/11/yankees-re-sign-tim-hill-to-one-year-deal.html"
     }
   ],
   "qualifying_offers": {
