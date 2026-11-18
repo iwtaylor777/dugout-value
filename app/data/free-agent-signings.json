@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-16",
+  "updated": "2026-11-18",
   "note": "Reported outcomes for the 2026–27 class. Outcomes: signed, re-signed, extension, qo-accepted, option-exercised, option-declined, opted-out, opted-in, retired. Contract totals are guaranteed money in millions; option and opt-out entries leave years and total empty unless a new contract was signed.",
   "entries": [
     {
@@ -110,15 +110,6 @@
       "total_musd": null,
       "date": "2026-10-22",
       "source": "https://www.mlb.com/news/mitch-garver-retires"
-    },
-    {
-      "player": "Dustin May",
-      "outcome": "option-declined",
-      "team": null,
-      "years": null,
-      "total_musd": null,
-      "date": "2026-10-29",
-      "source": "https://www.mlbtraderumors.com/2026/10/dustin-may-declines-mutual-option-with-brewers.html"
     },
     {
       "player": "Victor Robles",
@@ -578,6 +569,33 @@
       "total_musd": 2.3,
       "date": "2026-11-15",
       "source": "https://www.mlbtraderumors.com/2026/11/yankees-re-sign-tim-hill-to-one-year-deal.html"
+    },
+    {
+      "player": "Dustin May",
+      "outcome": "signed",
+      "team": "CHW",
+      "years": 3,
+      "total_musd": 52.5,
+      "date": "2026-11-17",
+      "source": "https://www.mlbtraderumors.com/2026/11/white-sox-to-sign-dustin-may.html"
+    },
+    {
+      "player": "David Bednar",
+      "outcome": "qo-accepted",
+      "team": "NYY",
+      "years": 1,
+      "total_musd": 23.15,
+      "date": "2026-11-17",
+      "source": "https://www.mlbtraderumors.com/2026/11/david-bednar-to-accept-qualifying-offer-from-yankees.html"
+    },
+    {
+      "player": "Ryan Jeffers",
+      "outcome": "qo-accepted",
+      "team": "MIN",
+      "years": 1,
+      "total_musd": 23.15,
+      "date": "2026-11-17",
+      "source": "https://www.mlbtraderumors.com/2026/11/ryan-jeffers-to-accept-qualifying-offer.html"
     }
   ],
   "qualifying_offers": {
@@ -590,12 +608,12 @@
       {
         "player": "Randy Arozarena",
         "team": "SEA",
-        "status": "pending"
+        "status": "rejected"
       },
       {
         "player": "Jake Bauers",
         "team": "MIL",
-        "status": "pending"
+        "status": "rejected"
       },
       {
         "player": "David Bednar",
@@ -610,22 +628,22 @@
       {
         "player": "Brandon Lowe",
         "team": "PIT",
-        "status": "pending"
+        "status": "rejected"
       },
       {
         "player": "Adrian Morejon",
         "team": "SDP",
-        "status": "pending"
+        "status": "rejected"
       },
       {
         "player": "Trevor Rogers",
         "team": "BAL",
-        "status": "pending"
+        "status": "rejected"
       },
       {
         "player": "Seiya Suzuki",
         "team": "CHC",
-        "status": "pending"
+        "status": "rejected"
       }
     ]
   }
