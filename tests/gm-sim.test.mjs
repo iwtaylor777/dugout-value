@@ -10,6 +10,30 @@ const id = n => Object.entries(ctx.sim.players).find(([, v]) => v.n === n)[0];
 const fa = n => ctx.tracker.players.find(r => r.name === n);
 const base = { team: 'BOS', seed: 42, signings: [], trades: [] };
 
+test('November 18 moves set opening ownership, availability and reported contract cards', () => {
+  const league = g.buildLeague(ctx, base);
+  for (const [name, team] of [
+    ['Maikel Garcia', 'SEA'], ['James McArthur', 'SEA'],
+    ['Bryce Miller', 'KCR'], ['Logan Evans', 'KCR'], ['José A. Ferrer', 'KCR'],
+    ['Nick Fortes', 'BOS'], ['Jace Jung', 'LAA'],
+    ['Sonny Gray', 'MIN'], ['Dustin May', 'CHW'],
+    ['David Bednar', 'NYY'], ['Ryan Jeffers', 'MIN'],
+    ['Connor Wong', null], ['Kyle Isbel', null], ['Jordan Leasure', null],
+  ]) {
+    const pid = id(name);
+    assert.equal(league.owner.get(pid), team, name);
+    for (const player of ctx.players.filter(player => player.pid === pid)) {
+      assert.equal(league.teamOf.get(player.i), team, name);
+      assert.equal(league.freeAgents.has(player.i), false, name);
+    }
+  }
+  assert.equal(g.playerContract(ctx, league, id('Dustin May')).hit, 17.5);
+  const gray = g.playerContract(ctx, league, id('Sonny Gray'));
+  assert.equal(gray.hit, 27.5);
+  assert.equal(gray.controlThrough, 2027);
+  assert.equal(gray.seasons.find(season => season.year === 2028).type, 'playerOption');
+});
+
 test('salary-dump feedback explains little roster improvement without blaming every included player', () => {
   const state = { ...base, team: 'PIT', market: {round:0,bids:[],deals:[],offers:[]} };
   const league = g.buildLeague(ctx, state), modes = g.teamModes(ctx, league.teamOf);

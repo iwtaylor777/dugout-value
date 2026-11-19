@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 /** One article on the site. Each lives in its own file in app/articles/ and is listed in app/articles/index.ts. */
 export type Article = {
   slug: string;                 // URL: /analysis/<slug>
-  category: "Research" | "Research note" | "Explainer" | "Model guide";
+  category: "Analysis" | "Research" | "Research note" | "Explainer" | "Model guide";
   title: string;                // sentence case, a claim, no trailing period
   summary: string;              // deck: number behind the title + biggest caveat, 2–3 sentences
   author: string;               // byline name, see AUTHOR below

@@ -27,6 +27,7 @@ const movedIds = new Set([...signedIds, ...[...changes].filter(([, c]) => c.kind
 const teamNames = new Map(teams.map((t) => [t.abbr, t.name]));
 const shortDate = (d?: string) => d ? new Date(`${d}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
 const howText = (c: RosterChange, joined: boolean) => c.kind === "signed" ? (joined ? `Signed as a free agent${c.from ? ` (2026: ${c.from})` : ""}` : `Signed with ${c.to}`)
+  : c.kind === "dfa" ? "Designated for assignment"
   : c.kind === "waiver-claim" ? (joined ? `Claimed off waivers from ${c.from}` : `Claimed by ${c.to}`)
   : joined ? `Acquired by trade from ${c.from}` : `Traded to ${c.to}`;
 const newTag = (c: RosterChange) => c.kind === "signed" ? "signed" : c.kind === "waiver-claim" ? "claimed" : "acquired";
@@ -149,7 +150,7 @@ export function DepthChart() {
             <div><h3>New ({moves.arrivals.length})</h3>{moves.arrivals.length ? <ul>{moves.arrivals.map((m) => <li key={m.p.i}><strong>{m.p.n}</strong> <span>{howText(m, true)}{result.unused.some((u) => u.i === m.p.i) ? " · no projected playing time yet" : ""}{m.date ? ` · ${shortDate(m.date)}` : ""}{m.source ? <> · <a href={m.source}>source</a></> : null}</span></li>)}</ul> : <p className="dc-note">None yet.</p>}</div>
             <div><h3>Gone ({moves.departures.length})</h3>{moves.departures.length ? <ul>{moves.departures.map((m) => <li key={m.p.i}><strong>{m.p.n}</strong> <span>{howText(m, false)}{m.to ? ` (${teamNames.get(m.to) ?? m.to})` : ""}{m.date ? ` · ${shortDate(m.date)}` : ""}</span></li>)}</ul> : <p className="dc-note">None yet.</p>}</div>
           </div>
-          <p className="dc-note">Reported signings, trades and waiver claims. New players are highlighted in the depth chart. Unsigned free agents are not listed as departures.</p>
+          <p className="dc-note">Reported signings, trades, waiver claims and designations for assignment. New players are highlighted in the depth chart. Unsigned free agents are not listed as departures.</p>
         </section>
       )}
       <div className="dc-layout">

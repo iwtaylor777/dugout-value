@@ -26,5 +26,15 @@ export function withReportedGmContract(player, reported, projection, firstYear =
   // Exercising one club option does not erase a later club option. An opt-in or
   // new reported deal does fix its remaining term; drop stale extrapolated rows.
   const later = reported.outcome === 'option-exercised' ? original.filter(s => s.year > end) : [];
-  return { ...player, team: reported.team ?? player.team, seasons: [...original.filter(s => s.year < firstYear), ...guaranteed, ...later] };
+  const seasons = [...original.filter(s => s.year < firstYear), ...guaranteed, ...later];
+  const optOutAfter = reported.opt_out_after;
+  if (Number.isInteger(optOutAfter) && optOutAfter >= firstYear && optOutAfter < end) {
+    for (const season of seasons) {
+      if (season.year > optOutAfter && season.year <= end) {
+        season.contractType = 'playerOption';
+        season.optionBlock = true;
+      }
+    }
+  }
+  return { ...player, team: reported.team ?? player.team, seasons };
 }

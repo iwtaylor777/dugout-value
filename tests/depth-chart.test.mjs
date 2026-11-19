@@ -290,18 +290,20 @@ test('2027 detail projections cover projected players with plausible values', ()
   }
 });
 
-test('every reported trade moves a depth-chart player between known teams', () => {
+test('reported transactions move covered players to known teams or pending DFA status', () => {
   const abbrs = new Set(data.teams.map(t => t.abbr));
   assert.match(trades.updated, /^\d{4}-\d{2}-\d{2}$/);
   for (const tr of trades.trades) {
     assert.match(tr.date, /^\d{4}-\d{2}-\d{2}$/);
-    assert.ok(['trade', 'waiver-claim'].includes(tr.kind ?? 'trade'), tr.kind);
+    assert.ok(['trade', 'waiver-claim', 'dfa'].includes(tr.kind ?? 'trade'), tr.kind);
     assert.match(tr.source, /^https:\/\//);
     for (const t of tr.teams) assert.ok(abbrs.has(t), t);
     assert.ok(tr.moves.length > 0);
     for (const m of tr.moves) {
       assert.ok(data.players.some(p => (m.pid ? p.pid === m.pid : p.n === m.player)), m.player);
-      assert.ok(abbrs.has(m.to) && tr.teams.includes(m.to) && tr.teams.includes(m.from), m.player);
+      assert.ok(tr.teams.includes(m.from), m.player);
+      if (tr.kind === 'dfa') assert.equal(m.to, null, m.player);
+      else assert.ok(abbrs.has(m.to) && tr.teams.includes(m.to), m.player);
     }
   }
   const { team } = teamsFor(data.players, tracker, signings.entries, trades.trades);

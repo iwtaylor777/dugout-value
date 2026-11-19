@@ -101,7 +101,7 @@ const out = {
   players: rows,
 };
 const current = currentFreeAgentValues({tracker:out,database:{...db,players:[...db.players,...extraPlayers,...sato.map(e=>e.player)]},projections:{...dv,players:{...dv.players,...extraProjections}},frozen,
-  market:read('app/data/free-agent-market.json'),terms:read('app/data/free-agent-comparison-terms.json'),
+  market:read('app/data/free-agent-market.json'),terms:read('app/data/free-agent-comparison-terms.json'),signings:read('app/data/free-agent-signings.json'),
   fallbacks:read('app/data/free-agent-projection-fallbacks.json'),date:out.meta.built});
 fs.writeFileSync('app/data/free-agent-tracker.json', JSON.stringify(current) + '\n');
 const count = k => rows.filter(r => r.market === k).length;
