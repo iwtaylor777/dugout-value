@@ -57,7 +57,7 @@ test('payroll ambition does not turn a weak club into an untouchable win-now ros
 });
 
 test('a genuine contender charges for current wins but is not barred from trading a regular',()=>{
-  const answer=quote('Austin Wells',['Franklin Arias']);
+  const answer=quote('Austin Wells',['Franklin Arias','Justin Gonzales']);
   assert.ok(g.tradeOutlook(ctx,'NYY').urgency>.9);
   assert.ok(answer.warLoss>.75&&answer.winCost>20);
   assert.ok(answer.accepted,answer.reason);

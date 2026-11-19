@@ -21,7 +21,7 @@ type Player = {
   } | null;
 };
 type Outcome = "signed" | "re-signed" | "extension" | "qo-accepted" | "option-exercised" | "option-declined" | "opted-out" | "opted-in" | "retired";
-type Signing = { player: string; outcome: Outcome; team?: string | null; years?: number | null; total_musd?: number | null; date: string; source?: string };
+type Signing = { player: string; outcome: Outcome; team?: string | null; years?: number | null; total_musd?: number | null; opt_out_after?: number; date: string; source?: string };
 type Status = "available" | "signed" | "pending" | "all";
 type Sort = "total" | "marketTotal" | "aav" | "war2027" | "war5" | "fwar" | "age" | "name" | "status";
 type Direction = "ascending" | "descending";
@@ -193,6 +193,7 @@ export function FreeAgentTracker() {
                         <strong className={`fa-status-chip ${st.status}`}>{outcomeLabel[s.outcome]}</strong>
                         {s.team && <> · {s.team}</>}
                         {s.total_musd != null && s.years != null && <small className="dv-war-sub">{yrs(s.years)}, {money(s.total_musd)}{diff != null && <> · <span className={diff >= 0 ? "fa-over" : "fa-under"}>{signedNum(diff)} vs {values.length > 1 ? `${yrs(p.years!)} model value` : "current value"}</span></>}</small>}
+                        {s.opt_out_after != null && <small className="dv-war-sub">Player opt-out after {s.opt_out_after}</small>}
                       </>
                     ) : qoStatus(p) === "pending" ? <><span className="fa-status-chip pending">QO pending</span><small className="dv-war-sub">{qoPendingLabel(p)}</small></>
                       : qoStatus(p) === "rejected" ? <><span className="fa-status-chip available">Available</span><small className="dv-war-sub">Rejected {qoAmount} QO from {p.team}</small></>
@@ -208,6 +209,7 @@ export function FreeAgentTracker() {
       </div>
       <p className="fa-updated">Signings checked {new Date(signingsData.updated + "T12:00:00Z").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}. Estimates built {new Date(data.meta.built + "T12:00:00Z").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })} with {data.meta.projections}.</p>
       <p className="fa-updated">Market forecasts captured {new Date(data.meta.marketAsOf + "T12:00:00Z").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}. The market column averages the two editorial guarantees where both are available. Open Sources for the individual forecasts and the FanGraphs crowd estimate.</p>
+      <p className="fa-updated">Signed contracts are compared with DV production value over the same guaranteed term. Player opt-outs can change the value to the signing team.</p>
       {signedRows.length > 0 && <p className="fa-updated">Recorded contracts total {signedNum(signedRows.reduce((a, x) => a + (x.s!.total_musd! - x.p.publishedForecast!.total), 0))} million dollars versus the original October 29 forecasts, across {signedRows.length} originally forecast players.</p>}
     </section>
   );

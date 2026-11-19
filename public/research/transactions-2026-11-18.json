@@ -1,0 +1,382 @@
+{
+  "asOf": "2026-11-18",
+  "model": "Dugout Value projections v1.5",
+  "players": {
+    "Maikel Garcia": {
+      "id": "mlb-672580",
+      "detail": {
+        "avg": 0.261,
+        "obp": 0.321,
+        "slg": 0.387,
+        "wrc": 99,
+        "bsr": 1.4,
+        "fpos": "3B",
+        "fld": 7
+      },
+      "war": {
+        "2027": 3.07,
+        "2028": 2.82,
+        "2029": 2.58,
+        "2030": 2.32,
+        "2031": 2.07
+      },
+      "pt": {
+        "2027": 646,
+        "2028": 636,
+        "2029": 627,
+        "2030": 611,
+        "2031": 596
+      },
+      "surplus": 46.1158957660002,
+      "projectionSurplus": 46.1158957660002,
+      "prospectWeight": 0
+    },
+    "Bryce Miller": {
+      "id": "mlb-682243",
+      "detail": {
+        "era": 4.1,
+        "fip": 4.06,
+        "k": 23.4,
+        "bb": 7.6
+      },
+      "war": {
+        "2027": 2.18,
+        "2028": 1.96,
+        "2029": 1.73,
+        "2030": 1.51,
+        "2031": 1.31
+      },
+      "pt": {
+        "2027": 150,
+        "2028": 147,
+        "2029": 142,
+        "2030": 138,
+        "2031": 134
+      },
+      "surplus": 21.522594900099023,
+      "projectionSurplus": 21.522594900099023,
+      "prospectWeight": 0
+    },
+    "Logan Evans": {
+      "id": "mlb-688138",
+      "detail": {
+        "era": 4.31,
+        "fip": 4.51,
+        "k": 20,
+        "bb": 8
+      },
+      "war": {
+        "2027": 0.6,
+        "2028": 0.62,
+        "2029": 0.65,
+        "2030": 0.67,
+        "2031": 0.68
+      },
+      "pt": {
+        "2027": 82,
+        "2028": 81,
+        "2029": 79,
+        "2030": 77,
+        "2031": 75
+      },
+      "surplus": 2.509873828623572,
+      "projectionSurplus": -4.62597187875307,
+      "prospectWeight": 0.5424711167700431
+    },
+    "José A. Ferrer": {
+      "id": "mlb-678606",
+      "detail": {
+        "era": 3.42,
+        "fip": 3.55,
+        "k": 20.7,
+        "bb": 7.1
+      },
+      "war": {
+        "2027": 0.8,
+        "2028": 0.73,
+        "2029": 0.65,
+        "2030": 0.58,
+        "2031": 0.51
+      },
+      "pt": {
+        "2027": 70,
+        "2028": 70,
+        "2029": 69,
+        "2030": 68,
+        "2031": 67
+      },
+      "surplus": 10.113314657211987,
+      "projectionSurplus": 10.113314657211987,
+      "prospectWeight": 0
+    },
+    "James McArthur": {
+      "id": "mlb-663704",
+      "detail": {
+        "era": 4.12,
+        "fip": 4.07,
+        "k": 20,
+        "bb": 7.4
+      },
+      "war": {
+        "2027": 0.47,
+        "2028": 0.43,
+        "2029": 0.39,
+        "2030": 0.35,
+        "2031": 0.31
+      },
+      "pt": {
+        "2027": 57,
+        "2028": 56,
+        "2029": 55,
+        "2030": 53,
+        "2031": 52
+      },
+      "surplus": 0.49362258173993356,
+      "projectionSurplus": 0.49362258173993356,
+      "prospectWeight": 0
+    },
+    "Sonny Gray": {
+      "id": "mlb-543243",
+      "detail": {
+        "era": 3.91,
+        "fip": 3.92,
+        "k": 21.9,
+        "bb": 7
+      },
+      "war": {
+        "2027": 2.61,
+        "2028": 2.04,
+        "2029": 1.45,
+        "2030": 0.98,
+        "2031": 0.61
+      },
+      "pt": {
+        "2027": 175,
+        "2028": 161,
+        "2029": 138,
+        "2030": 119,
+        "2031": 102
+      }
+    },
+    "Dustin May": {
+      "id": "mlb-669160",
+      "detail": {
+        "era": 4.05,
+        "fip": 4.06,
+        "k": 22.7,
+        "bb": 8.3
+      },
+      "war": {
+        "2027": 1.9,
+        "2028": 1.84,
+        "2029": 1.78,
+        "2030": 1.73,
+        "2031": 1.64
+      },
+      "pt": {
+        "2027": 144,
+        "2028": 139,
+        "2029": 135,
+        "2030": 131,
+        "2031": 124
+      }
+    },
+    "Nick Fortes": {
+      "id": "mlb-663743",
+      "detail": {
+        "avg": 0.239,
+        "obp": 0.287,
+        "slg": 0.364,
+        "wrc": 81,
+        "bsr": -2.9,
+        "fpos": "C",
+        "fld": 2.1
+      },
+      "war": {
+        "2027": 1.33,
+        "2028": 1.05,
+        "2029": 0.78,
+        "2030": 0.52,
+        "2031": 0.28
+      },
+      "pt": {
+        "2027": 476,
+        "2028": 465,
+        "2029": 453,
+        "2030": 437,
+        "2031": 422
+      },
+      "surplus": 3.4610315056636383,
+      "projectionSurplus": 3.4610315056636383,
+      "prospectWeight": 0
+    },
+    "Connor Wong": {
+      "id": "mlb-657136",
+      "detail": {
+        "avg": 0.225,
+        "obp": 0.288,
+        "slg": 0.365,
+        "wrc": 79,
+        "bsr": -2.1,
+        "fpos": "C",
+        "fld": -12.2
+      },
+      "war": {
+        "2027": 0.06,
+        "2028": -0.03,
+        "2029": -0.11,
+        "2030": -0.18,
+        "2031": -0.25
+      },
+      "pt": {
+        "2027": 438,
+        "2028": 427,
+        "2029": 412,
+        "2030": 397,
+        "2031": 383
+      },
+      "surplus": -6.687282362694111,
+      "projectionSurplus": -6.687282362694111,
+      "prospectWeight": 0
+    },
+    "Jace Jung": {
+      "id": "mlb-690291",
+      "detail": {
+        "avg": 0.231,
+        "obp": 0.322,
+        "slg": 0.394,
+        "wrc": 99,
+        "bsr": -0.7,
+        "fpos": "3B",
+        "fld": -0.8
+      },
+      "war": {
+        "2027": 1.05,
+        "2028": 0.98,
+        "2029": 0.91,
+        "2030": 0.84,
+        "2031": 0.76
+      },
+      "pt": {
+        "2027": 377,
+        "2028": 371,
+        "2029": 366,
+        "2030": 360,
+        "2031": 351
+      },
+      "surplus": 9.690231343848872,
+      "projectionSurplus": 5.035162287667454,
+      "prospectWeight": 0.576015657231707
+    },
+    "Kyle Isbel": {
+      "id": "mlb-664728",
+      "detail": {
+        "avg": 0.235,
+        "obp": 0.285,
+        "slg": 0.338,
+        "wrc": 73,
+        "bsr": 1.2,
+        "fpos": "CF",
+        "fld": 2.8
+      },
+      "war": {
+        "2027": 0.7,
+        "2028": 0.47,
+        "2029": 0.26,
+        "2030": 0.05,
+        "2031": -0.14
+      },
+      "pt": {
+        "2027": 446,
+        "2028": 435,
+        "2029": 424,
+        "2030": 409,
+        "2031": 395
+      },
+      "surplus": -2.1452156241074705,
+      "projectionSurplus": -2.1452156241074705,
+      "prospectWeight": 0
+    },
+    "Jordan Leasure": {
+      "id": "mlb-673929",
+      "detail": {
+        "era": 4,
+        "fip": 4.25,
+        "k": 24.9,
+        "bb": 10.5
+      },
+      "war": {
+        "2027": 0.18,
+        "2028": 0.18,
+        "2029": 0.18,
+        "2030": 0.19,
+        "2031": 0.19
+      },
+      "pt": {
+        "2027": 48,
+        "2028": 47,
+        "2029": 47,
+        "2030": 46,
+        "2031": 45
+      },
+      "surplus": -6.356842211600167,
+      "projectionSurplus": -6.356842211600167,
+      "prospectWeight": 0
+    }
+  },
+  "trade": {
+    "SeattleKnown": 46.609518347740135,
+    "KansasCity": 34.14578338593458,
+    "Seattle_2027_WAR": 3.54,
+    "KansasCity_2027_WAR": 3.58
+  },
+  "backupCatcherComparison": {
+    "200": {
+      "Fortes_WAR": 0.559,
+      "Wong_WAR": 0.027,
+      "upgrade_WAR": 0.531
+    },
+    "250": {
+      "Fortes_WAR": 0.699,
+      "Wong_WAR": 0.034,
+      "upgrade_WAR": 0.664
+    }
+  },
+  "contracts": {
+    "Sonny Gray": {
+      "years": 2,
+      "war": 4.65,
+      "dvValue": 42.4,
+      "guarantee": 55
+    },
+    "Dustin May": {
+      "years": 3,
+      "war": 5.52,
+      "dvValue": 46.9,
+      "guarantee": 52.5
+    }
+  },
+  "method": {
+    "dollarsPerWar": 11,
+    "discountPercent": 10,
+    "inflationPercent": 3,
+    "rosterWar": {
+      "regular": 0.5,
+      "reliever": 0.2
+    },
+    "unpriced": [
+      "L.P. Langevin",
+      "Angel Roa"
+    ],
+    "note": "Published default settings. Trade figures are present-value surplus over remaining control and include default rookie/prospect blends. Free-agent values cover the actual reported guaranteed term before the value of opt-outs. Workloads follow the full-season valuation assumptions.",
+    "sources": {
+      "trade": "https://www.mlb.com/royals/news/bryce-miller-royals-mariners-trade",
+      "gray": "https://www.mlb.com/twins/news/sonny-gray-free-agent-contract-twins",
+      "gray_optout": "https://www.sportsnet.ca/mlb/article/twins-sign-sonny-gray-to-two-year-contract/",
+      "may": "https://www.mlb.com/news/dustin-may-white-sox-contract",
+      "fortes": "https://www.mlb.com/rays/news/nick-fortes-red-sox-rays-trade",
+      "jung": "https://sports.yahoo.com/articles/tigers-deal-former-first-round-195726821.html"
+    }
+  },
+  "sourceCommit": "a8d1d407e1354980c30727336e3192c4ad99a6c9"
+}

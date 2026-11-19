@@ -40,3 +40,18 @@ test('unresolved or declined decisions do not become guaranteed contracts', () =
   assert.equal(withReportedGmContract(p, { outcome: 'option-declined', years: 1, total_musd: 10 }), p);
   assert.equal(withReportedGmContract(p, { outcome: 'option-exercised', years: null, total_musd: null }), p);
 });
+
+test('reported pitching deals replace stale options and preserve Gray’s opt-out', () => {
+  const may = reconcile('Dustin May');
+  assert.deepEqual(may.seasons.filter(s => s.year >= 2027).map(s => [s.year, s.salary, s.contractType]), [
+    [2027, 17.5, 'fixed'], [2028, 17.5, 'fixed'], [2029, 17.5, 'fixed'],
+  ]);
+  assert.equal(sim.players[may.id].ctl, 2029);
+  assert.deepEqual(sim.players[may.id].contract, [2027, 2028, 2029].map(year => ({year, salary: 17.5, type: 'fixed'})));
+  const gray = reconcile('Sonny Gray');
+  assert.deepEqual(gray.seasons.filter(s => s.year >= 2027).map(s => [s.year, s.salary, s.contractType]), [
+    [2027, 27.5, 'fixed'], [2028, 27.5, 'playerOption'],
+  ]);
+  assert.equal(sim.players[gray.id].ctl, 2027);
+  assert.equal(sim.players[gray.id].contract[1].type, 'playerOption');
+});

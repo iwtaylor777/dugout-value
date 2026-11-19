@@ -5,7 +5,7 @@ import {currentFreeAgentValues,marketTracker} from '../lib/free-agent-current.mj
 import {askFor,askMultiplier,requiredOfferTotal,movesValue} from '../lib/gm-sim.mjs';
 const read=p=>JSON.parse(fs.readFileSync(new URL(p,import.meta.url),'utf8'));
 const tracker=read('../app/data/free-agent-tracker.json');
-const args={tracker,database:read('../app/data/player-database.json'),projections:read('../app/data/dv-projections.json'),frozen:read('../public/research/fa-predictions-2026-27/predictions_frozen.json'),market:read('../app/data/free-agent-market.json'),terms:read('../app/data/free-agent-comparison-terms.json'),fallbacks:read('../app/data/free-agent-projection-fallbacks.json'),date:tracker.meta.built};
+const args={tracker,database:read('../app/data/player-database.json'),projections:read('../app/data/dv-projections.json'),frozen:read('../public/research/fa-predictions-2026-27/predictions_frozen.json'),market:read('../app/data/free-agent-market.json'),terms:read('../app/data/free-agent-comparison-terms.json'),signings:read('../app/data/free-agent-signings.json'),fallbacks:read('../app/data/free-agent-projection-fallbacks.json'),date:tracker.meta.built};
 test('refreshing current values is reproducible and does not mutate archived forecasts',()=>{
   const before=JSON.stringify(args.frozen);
   assert.deepEqual(currentFreeAgentValues(args),tracker);
@@ -17,6 +17,20 @@ test('a forecast update refreshes both WAR and value while the comparison term a
   const before=tracker.players.find(p=>p.id===id),after=currentFreeAgentValues(input).players.find(p=>p.id===id);
   assert.equal(after.years,before.years);assert.equal(after.publishedForecast.total,48.3);
   assert.ok(after.total>before.total&&after.total-before.total<1);
+});
+test('signed deals are compared over their actual term while the original forecast is preserved', () => {
+  const may = tracker.players.find(player => player.name === 'Dustin May');
+  assert.equal(may.years, 3);
+  assert.equal(may.total, 46.9);
+  assert.equal(may.comparisonBasis, 'reported-contract-term');
+  assert.deepEqual(may.marketForecast.alternateValues, [{years: 2, total: 31.5, aav: 15.8}]);
+  assert.equal(may.publishedForecast.years, 2);
+  assert.equal(may.publishedForecast.total, 31.3);
+  const input = structuredClone(args);
+  input.signings.entries = input.signings.entries.filter(signing => signing.player !== 'Dustin May');
+  const unsigned = currentFreeAgentValues(input).players.find(player => player.id === may.id);
+  assert.equal(unsigned.years, 2);
+  assert.equal(unsigned.total, 31.5);
 });
 test('game asks preserve forecast terms and Rogers is graded at his signed term',()=>{
   const game = marketTracker(tracker);

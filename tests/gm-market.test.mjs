@@ -72,7 +72,7 @@ test('older saves keep known offers when another bid is submitted or withdrawn',
 });
 
 test('final-round cleanup reports destinations even when a player was not won in the auctions', () => {
-  const p = row('Sonny Gray');
+  const p = row('Kevin Gausman');
   let state = { ...game(), market: { ...m.newMarket(), round: 2 } };
   state = m.submitMarketBid(ctx, state, { pid: p.id, years: 1, total: .8 }).moves;
   state = m.advanceMarket(ctx, state).moves;

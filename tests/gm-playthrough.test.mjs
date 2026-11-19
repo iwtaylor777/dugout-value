@@ -56,8 +56,8 @@ function assertComplete(state, tradeCount, signingNames) {
 
 test('Angels retool completes with clear closeout outcomes and honest buyer feedback', () => {
   const { state, responses } = play('LAA', [
-    // Boston has less room after signing Jake Bauers, so the Angels send more cash.
-    trade('BOS', ['Yusei Kikuchi'], ['Blake Wehunt'], 14),
+    // Boston's updated roster leaves little room, so the Angels retain most of the salary.
+    trade('BOS', ['Yusei Kikuchi'], ['Blake Wehunt'], 17),
     bid('Jonathan India', 2, 18), bid('Brandon Woodruff', 1, 12), bid('Edmundo Sosa', 1, 9.5), ['advance'],
     bid('Jonathan India', 2, 20), ['advance'], bid('Brusdar Graterol', 2, 12), ['advance'],
   ]);
@@ -67,8 +67,8 @@ test('Angels retool completes with clear closeout outcomes and honest buyer feed
   const league = g.buildLeague(ctx, state);
   assert.equal(league.owner.get(id('Yusei Kikuchi')), 'BOS');
   assert.equal(league.owner.get(id('Blake Wehunt')), 'LAA');
-  assert.equal(league.cash.get('LAA'), 14);
-  assert.equal(league.cash.get('BOS'), -14);
+  assert.equal(league.cash.get('LAA'), 17);
+  assert.equal(league.cash.get('BOS'), -17);
   const graterolNews = responses.at(-1).news.filter(line => line.includes('Brusdar Graterol'));
   assert.equal(graterolNews.length, 1, 'only the final Graterol decision remains');
   assert.match(graterolNews[0], /signed with Los Angeles Angels/);
@@ -83,7 +83,8 @@ test('Yankees contender can buy Neto, move Volpe, and finish after losing a free
     trade('LAA', ['Carlos Lagrange', 'Ben Hess', 'Spencer Jones'], ['Zach Neto']),
     bid('Jazz Chisholm Jr.', 2, 40), bid('Teruaki Sato', 5, 95), ['advance'],
     bid('Teruaki Sato', 5, 100), ['advance'],
-    trade('PIT', ['Anthony Volpe'], ['Termarr Johnson']),
+    // Bednar's accepted QO raises the opening payroll. Include a controllable depth starter to finish under budget.
+    trade('PIT', ['Anthony Volpe', 'Brendan Beck'], ['Termarr Johnson']),
     bid('Teruaki Sato', 5, 105), ['advance'],
   ]);
   assertComplete(state, 2, ['Jazz Chisholm Jr.']);
@@ -124,13 +125,13 @@ test('Athletics rebuild can retain salary, add short-term veterans and finish be
   assert.equal(first.accepted, false);
   const { state } = play('ATH', [
     bid('Chris Bassitt', 1, 13), bid('Andrew Kittredge', 1, 4.5), ['advance'],
-    trade('BOS', ['Luis Severino'], ['Blake Wehunt'], 15), ['advance'], ['advance'],
+    trade('BOS', ['Luis Severino'], ['Blake Wehunt'], 21), ['advance'], ['advance'],
   ]);
   assertComplete(state, 1, ['Chris Bassitt', 'Andrew Kittredge']);
   assert.equal(g.offseasonObjective(ctx, state).label, 'Build for the future');
   const league = g.buildLeague(ctx, state);
   assert.equal(league.owner.get(id('Luis Severino')), 'BOS');
   assert.equal(league.owner.get(id('Blake Wehunt')), 'ATH');
-  assert.equal(league.cash.get('ATH'), 15);
-  assert.equal(league.cash.get('BOS'), -15);
+  assert.equal(league.cash.get('ATH'), 21);
+  assert.equal(league.cash.get('BOS'), -21);
 });

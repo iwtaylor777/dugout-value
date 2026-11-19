@@ -157,15 +157,6 @@
       "source": "https://www.mlbtraderumors.com/2026/10/rays-decline-mutual-option-on-cedric-mullins.html"
     },
     {
-      "player": "Sonny Gray",
-      "outcome": "option-declined",
-      "team": null,
-      "years": null,
-      "total_musd": null,
-      "date": "2026-10-30",
-      "source": "https://www.mlbtraderumors.com/2026/10/sonny-gray-becomes-free-agent-after-mutual-option-is-declined.html"
-    },
-    {
       "player": "Matthew Boyd",
       "outcome": "option-declined",
       "team": null,
@@ -596,6 +587,17 @@
       "total_musd": 23.15,
       "date": "2026-11-17",
       "source": "https://www.mlbtraderumors.com/2026/11/ryan-jeffers-to-accept-qualifying-offer.html"
+    },
+    {
+      "player": "Sonny Gray",
+      "outcome": "signed",
+      "team": "MIN",
+      "years": 2,
+      "total_musd": 55,
+      "opt_out_after": 2027,
+      "date": "2026-11-18",
+      "source": "https://www.mlb.com/twins/news/sonny-gray-free-agent-contract-twins",
+      "opt_out_source": "https://abc7news.com/post/mlb-free-agency-tracker-2026-27-offseason-trades-moves/20000238/"
     }
   ],
   "qualifying_offers": {
