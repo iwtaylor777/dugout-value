@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-18",
+  "updated": "2026-11-20",
   "note": "Reported trades, waiver claims and designations for assignment since the 2026 season ended, applied on top of the depth-chart rosters. Pieces outside the model are listed in the note. A null destination removes a designated player from the active roster while his transaction is pending.",
   "trades": [
     {
@@ -85,6 +85,50 @@
       "teams": ["CHW"],
       "moves": [{"player": "Jordan Leasure", "from": "CHW", "to": null}],
       "source": "https://www.mlb.com/news/dustin-may-white-sox-contract"
+    },
+    {
+      "date": "2026-11-19",
+      "kind": "trade",
+      "teams": ["COL", "CHW"],
+      "moves": [{ "player": "Davis Martin", "from": "CHW", "to": "COL" }, { "player": "Luis Castillo", "from": "CHW", "to": "COL" }, { "player": "Sean Sullivan", "from": "COL", "to": "CHW" }],
+      "note": "White Sox also receive teenage C prospect Douglas Veliz, who is outside current model coverage. Colorado absorbs Castillo's $22.75M 2027 salary.",
+      "source": "https://www.mlbtraderumors.com/2026/11/white-sox-to-trade-davis-martin-luis-castillo-to-rockies.html"
+    },
+    {
+      "date": "2026-11-19",
+      "kind": "waiver-claim",
+      "teams": ["CHC", "NYM"],
+      "moves": [{ "player": "Chayce McDermott", "from": "NYM", "to": "CHC" }],
+      "source": "https://www.mlbtraderumors.com/2026/11/cubs-claim-chayce-mcdermott.html"
+    },
+    {
+      "date": "2026-11-19",
+      "kind": "waiver-claim",
+      "teams": ["TOR", "LAD"],
+      "moves": [{ "player": "Christian Cairo", "from": "LAD", "to": "TOR" }],
+      "source": "https://www.mlbtraderumors.com/2026/11/blue-jays-claim-christian-cairo-designate-chase-lee-for-assignment.html"
+    },
+    {
+      "date": "2026-11-19",
+      "kind": "waiver-claim",
+      "teams": ["BAL", "ATH"],
+      "moves": [{ "player": "Braden Nett", "from": "ATH", "to": "BAL" }],
+      "source": "https://www.mlbtraderumors.com/2026/11/orioles-to-claim-braden-nett.html"
+    },
+    {
+      "date": "2026-11-19",
+      "kind": "dfa",
+      "teams": ["TOR"],
+      "moves": [{ "player": "Chase Lee", "from": "TOR", "to": null }],
+      "source": "https://www.mlbtraderumors.com/2026/11/blue-jays-claim-christian-cairo-designate-chase-lee-for-assignment.html"
+    },
+    {
+      "date": "2026-11-19",
+      "kind": "dfa",
+      "teams": ["TBR"],
+      "moves": [{ "player": "Jesse Scholtens", "from": "TBR", "to": null }],
+      "note": "Released outright to pursue a KBO opportunity.",
+      "source": "https://www.mlbtraderumors.com/2026/11/rays-release-jesse-scholtens-to-pursue-kbo-opportunity.html"
     }
   ]
 }
