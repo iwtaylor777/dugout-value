@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20",
+  "updated": "2026-11-24",
   "note": "Reported trades, waiver claims and designations for assignment since the 2026 season ended, applied on top of the depth-chart rosters. Pieces outside the model are listed in the note. A null destination removes a designated player from the active roster while his transaction is pending.",
   "trades": [
     {
@@ -129,6 +129,53 @@
       "moves": [{ "player": "Jesse Scholtens", "from": "TBR", "to": null }],
       "note": "Released outright to pursue a KBO opportunity.",
       "source": "https://www.mlbtraderumors.com/2026/11/rays-release-jesse-scholtens-to-pursue-kbo-opportunity.html"
+    },
+    {
+      "date": "2026-11-20",
+      "kind": "trade",
+      "teams": ["LAD", "MIN"],
+      "moves": [{ "player": "Royce Lewis", "from": "MIN", "to": "LAD" }, { "player": "Bobby Miller", "from": "LAD", "to": "MIN" }],
+      "note": "Twins also receive 19-year-old C prospect Francisco Espinoza, who is outside current model coverage.",
+      "source": "https://www.mlbtraderumors.com/2026/11/dodgers-acquire-royce-lewis.html"
+    },
+    {
+      "date": "2026-11-20",
+      "kind": "waiver-claim",
+      "teams": ["NYM", "WSN"],
+      "moves": [{ "player": "Gus Varland", "from": "WSN", "to": "NYM" }],
+      "source": "https://www.mlbtraderumors.com/2026/11/mets-claim-gus-varland.html"
+    },
+    {
+      "date": "2026-11-20",
+      "kind": "waiver-claim",
+      "teams": ["CHC", "CHW"],
+      "moves": [{ "player": "Joey Bart", "from": "CHW", "to": "CHC" }],
+      "note": "Bart agreed to a 2027 contract, avoiding arbitration. Cubs also acquired RHP Braxton Roxby from Washington for cash considerations.",
+      "source": "https://www.mlb.com/news/joey-bart-deal-with-cubs"
+    },
+    {
+      "date": "2026-11-20",
+      "kind": "trade",
+      "teams": ["ARI", "BOS"],
+      "moves": [{ "player": "Johan Oviedo", "from": "BOS", "to": "ARI" }],
+      "note": "Red Sox receive minor-league LHP Luke Dotson plus a player to be named later or cash considerations.",
+      "source": "https://www.mlb.com/news/johan-oviedo-traded-to-d-backs-from-red-sox"
+    },
+    {
+      "date": "2026-11-20",
+      "kind": "trade",
+      "teams": ["TBR", "SFG"],
+      "moves": [{ "player": "Christian Koss", "from": "SFG", "to": "TBR" }],
+      "note": "Giants receive minor-league RHP Cole Stokes.",
+      "source": "https://www.mlb.com/news/camilo-doval-giants-contract-christian-koss-traded-to-rays"
+    },
+    {
+      "date": "2026-11-20",
+      "kind": "dfa",
+      "teams": ["COL"],
+      "moves": [{ "player": "Jimmy Herget", "from": "COL", "to": null }],
+      "note": "Designated to clear a 40-man spot after Colorado acquired RHP Chase Lee from Toronto for cash.",
+      "source": "https://www.mlb.com/news/chase-lee-acquired-by-rockies-from-blue-jays"
     }
   ]
 }

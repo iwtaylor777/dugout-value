@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20",
+  "updated": "2026-11-24",
   "note": "Reported outcomes for the 2026–27 class. Outcomes: signed, re-signed, extension, qo-accepted, option-exercised, option-declined, opted-out, opted-in, retired. Contract totals are guaranteed money in millions; option and opt-out entries leave years and total empty unless a new contract was signed.",
   "entries": [
     {
@@ -437,12 +437,12 @@
     },
     {
       "player": "Caleb Thielbar",
-      "outcome": "option-declined",
-      "team": null,
-      "years": null,
-      "total_musd": null,
-      "date": "2026-11-02",
-      "source": "https://www.mlbtraderumors.com/2026/11/clay-holmes-declines-player-option.html"
+      "outcome": "signed",
+      "team": "KCR",
+      "years": 1,
+      "total_musd": 3.3,
+      "date": "2026-11-23",
+      "source": "https://www.mlbtraderumors.com/2026/11/royals-to-sign-caleb-thielbar.html"
     },
     {
       "player": "Hunter Harvey",
@@ -598,6 +598,69 @@
       "date": "2026-11-18",
       "source": "https://www.mlb.com/twins/news/sonny-gray-free-agent-contract-twins",
       "opt_out_source": "https://abc7news.com/post/mlb-free-agency-tracker-2026-27-offseason-trades-moves/20000238/"
+    },
+    {
+      "player": "Jonathan Loaisiga",
+      "outcome": "signed",
+      "team": "NYY",
+      "years": 2,
+      "total_musd": 18.0,
+      "date": "2026-11-20",
+      "source": "https://www.mlb.com/news/jonathan-loaisiga-yankees-contract-2026"
+    },
+    {
+      "player": "Tarik Skubal",
+      "outcome": "signed",
+      "team": "NYM",
+      "years": 9,
+      "total_musd": 450.0,
+      "date": "2026-11-22",
+      "source": "https://www.mlbtraderumors.com/2026/11/mets-to-sign-tarik-skubal.html"
+    },
+    {
+      "player": "Paul Goldschmidt",
+      "outcome": "signed",
+      "team": "NYM",
+      "years": 1,
+      "total_musd": 8.0,
+      "date": "2026-11-23",
+      "source": "https://www.mlbtraderumors.com/2026/11/mets-sign-paul-goldschmidt.html"
+    },
+    {
+      "player": "Brent Suter",
+      "outcome": "signed",
+      "team": "NYY",
+      "years": 1,
+      "total_musd": 4.0,
+      "date": "2026-11-23",
+      "source": "https://www.mlbtraderumors.com/2026/11/yankees-to-sign-brent-suter.html"
+    },
+    {
+      "player": "Trevor Rogers",
+      "outcome": "signed",
+      "team": "CHC",
+      "years": 5,
+      "total_musd": 120.0,
+      "date": "2026-11-23",
+      "source": "https://www.mlbtraderumors.com/2026/11/cubs-to-sign-trevor-rogers.html"
+    },
+    {
+      "player": "Teruaki Sato",
+      "outcome": "signed",
+      "team": "CHC",
+      "years": 6,
+      "total_musd": 120.0,
+      "date": "2026-11-24",
+      "source": "https://www.mlbtraderumors.com/2026/11/cubs-to-sign-teruaki-sato.html"
+    },
+    {
+      "player": "Freddy Peralta",
+      "outcome": "signed",
+      "team": "BAL",
+      "years": 5,
+      "total_musd": 125.0,
+      "date": "2026-11-24",
+      "source": "https://www.mlb.com/news/freddy-peralta-orioles-contract"
     }
   ],
   "qualifying_offers": {
