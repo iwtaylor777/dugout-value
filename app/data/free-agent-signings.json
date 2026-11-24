@@ -661,6 +661,15 @@
       "total_musd": 125.0,
       "date": "2026-11-24",
       "source": "https://www.mlb.com/news/freddy-peralta-orioles-contract"
+    },
+    {
+      "player": "Kris Bubic",
+      "outcome": "signed",
+      "team": "CLE",
+      "years": 1,
+      "total_musd": 17.5,
+      "date": "2026-11-24",
+      "source": "https://www.mlbtraderumors.com/2026/11/guardians-sign-kris-bubic.html"
     }
   ],
   "qualifying_offers": {
