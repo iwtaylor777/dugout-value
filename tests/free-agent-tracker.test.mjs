@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import fs from 'node:fs';
+import {signedContractGap} from '../lib/free-agent-signing-gap.mjs';
 const read = p => JSON.parse(fs.readFileSync(new URL(p, import.meta.url)));
 const tracker = read('../app/data/free-agent-tracker.json');
 const signings = read('../app/data/free-agent-signings.json');
@@ -73,4 +74,33 @@ test('every qualifying offer names a tracked player, his team and a known status
     assert.ok(['pending', 'rejected'].includes(o.status), o.player);
   }
   assert.equal(new Set(qo.players.map(o => key(o.player))).size, qo.players.length);
+});
+
+test('tracked contract gaps use the same guaranteed term as the deal', () => {
+  const examples = [
+    ['Kevin Gausman', 1, 23.2, 1.8],
+    ['Alec Bohm', 2, 18.1, 1.9],
+    ['A.J. Puk', 1, 4.6, 0.4],
+    ['Tyler Stephenson', 3, 14.3, 15.7],
+  ];
+  for (const [name, years, value, gap] of examples) {
+    const row = tracker.players.find(p => p.name === name);
+    const signing = signings.entries.find(s => s.player === name);
+    assert.equal(signing.years, years, name);
+    assert.equal(row.years, years, name);
+    assert.equal(row.total, value, name);
+    const values = [row, ...(row.marketForecast?.alternateValues ?? [])];
+    assert.equal(Number(signedContractGap(signing, values)?.toFixed(1)), gap, name);
+  }
+});
+
+test('the display can use an exact alternate term and never falls back to a different term', () => {
+  const oneYear = {years: 1, total: 23.2};
+  const twoYears = {years: 2, total: 40.4};
+  const signing = {years: 1, total_musd: 25};
+  assert.equal(signedContractGap(signing, [twoYears, oneYear])?.toFixed(1), '1.8');
+  assert.equal(signedContractGap(signing, [twoYears]), null);
+  assert.equal(signedContractGap({years: 3, total_musd: 30}, [twoYears]), null);
+  assert.equal(signedContractGap({years: 1, total_musd: null}, [oneYear]), null);
+  assert.equal(signedContractGap({years: 1, total_musd: 1}, [{years: 1, total: 0}]), 1);
 });

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { parkPlayers } from "../park-fit/data";
 import data from "../../data/free-agent-tracker.json";
 import signingsData from "../../data/free-agent-signings.json";
+import { signedContractGap } from "../../../lib/free-agent-signing-gap.mjs";
 import { compareTableValues } from "../../../lib/table-sort.mjs";
 
 const parkPlayerIds = new Set(parkPlayers.map(player => `mlb-${player.id}`));
@@ -149,7 +150,8 @@ export function FreeAgentTracker() {
               const values = p.total != null && p.years != null && p.aav != null
                 ? [{ years: p.years, total: p.total, aav: p.aav }, ...(market?.alternateValues ?? [])]
                 : [];
-              const diff = s?.total_musd != null && p.total != null && MARKET_DEALS.includes(s.outcome) ? s.total_musd - p.total : null;
+              const isMarketDeal = s != null && MARKET_DEALS.includes(s.outcome);
+              const diff = isMarketDeal ? signedContractGap(s, values) : null;
               return (
                 <tr key={p.id} className={st.status === "signed" ? "fa-signed" : st.status === "pending" ? "fa-pending" : undefined}>
                   <th scope="row">
@@ -192,7 +194,7 @@ export function FreeAgentTracker() {
                       <>
                         <strong className={`fa-status-chip ${st.status}`}>{outcomeLabel[s.outcome]}</strong>
                         {s.team && <> · {s.team}</>}
-                        {s.total_musd != null && s.years != null && <small className="dv-war-sub">{yrs(s.years)}, {money(s.total_musd)}{diff != null && <> · <span className={diff >= 0 ? "fa-over" : "fa-under"}>{signedNum(diff)} vs {values.length > 1 ? `${yrs(p.years!)} model value` : "current value"}</span></>}</small>}
+                        {s.total_musd != null && s.years != null && <small className="dv-war-sub">{yrs(s.years)}, {money(s.total_musd)}{diff != null ? <> · <span className={diff >= 0 ? "fa-over" : "fa-under"}>{signedNum(diff)}M vs {yrs(s.years)} model value</span></> : isMarketDeal ? " · No model value for this term" : null}</small>}
                         {s.opt_out_after != null && <small className="dv-war-sub">Player opt-out after {s.opt_out_after}</small>}
                       </>
                     ) : qoStatus(p) === "pending" ? <><span className="fa-status-chip pending">QO pending</span><small className="dv-war-sub">{qoPendingLabel(p)}</small></>
