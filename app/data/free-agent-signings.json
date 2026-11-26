@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24",
+  "updated": "2026-11-26",
   "note": "Reported outcomes for the 2026–27 class. Outcomes: signed, re-signed, extension, qo-accepted, option-exercised, option-declined, opted-out, opted-in, retired. Contract totals are guaranteed money in millions; option and opt-out entries leave years and total empty unless a new contract was signed.",
   "entries": [
     {
@@ -347,12 +347,12 @@
     },
     {
       "player": "Luis Robert Jr.",
-      "outcome": "option-declined",
-      "team": null,
-      "years": null,
-      "total_musd": null,
-      "date": "2026-10-31",
-      "source": "https://www.mlbtraderumors.com/2026/10/orioles-expected-to-decline-club-option-on-luis-robert-jr.html"
+      "outcome": "re-signed",
+      "team": "BAL",
+      "years": 1,
+      "total_musd": 12.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/orioles-luis-robert-jr-reportedly-finalizing-contract.html"
     },
     {
       "player": "Eugenio Suarez",
@@ -482,21 +482,21 @@
     },
     {
       "player": "Antonio Senzatela",
-      "outcome": "option-declined",
-      "team": null,
-      "years": null,
-      "total_musd": null,
-      "date": "2026-11-03",
-      "source": "https://mlb.com/news/brewers-pick-up-william-contreras-option-extend-jake-bauers-qualifying-offer"
+      "outcome": "re-signed",
+      "team": "MIL",
+      "years": 1,
+      "total_musd": 4.8,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/brewers-sign-antonio-senzatela.html"
     },
     {
       "player": "Gary Sanchez",
-      "outcome": "option-declined",
-      "team": null,
-      "years": null,
-      "total_musd": null,
-      "date": "2026-11-03",
-      "source": "https://mlb.com/news/brewers-pick-up-william-contreras-option-extend-jake-bauers-qualifying-offer"
+      "outcome": "signed",
+      "team": "MIA",
+      "years": 1,
+      "total_musd": 6.5,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/marlins-to-sign-gary-sanchez.html"
     },
     {
       "player": "Myles Straw",
@@ -670,6 +670,105 @@
       "total_musd": 17.5,
       "date": "2026-11-24",
       "source": "https://www.mlbtraderumors.com/2026/11/guardians-sign-kris-bubic.html"
+    },
+    {
+      "player": "Ha-Seong Kim",
+      "outcome": "signed",
+      "team": "DET",
+      "years": 1,
+      "total_musd": 5.0,
+      "date": "2026-11-24",
+      "source": "https://www.mlbtraderumors.com/2026/11/tigers-to-sign-ha-seong-kim.html"
+    },
+    {
+      "player": "Tyrone Taylor",
+      "outcome": "signed",
+      "team": "CHW",
+      "years": 2,
+      "total_musd": 17.0,
+      "date": "2026-11-24",
+      "source": "https://www.mlbtraderumors.com/2026/11/white-sox-to-sign-tyrone-taylor.html"
+    },
+    {
+      "player": "Tyler Stephenson",
+      "outcome": "re-signed",
+      "team": "CIN",
+      "years": 3,
+      "total_musd": 30.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/reds-to-re-sign-tyler-stephenson-to-three-year-deal.html"
+    },
+    {
+      "player": "Kevin Gausman",
+      "outcome": "signed",
+      "team": "DET",
+      "years": 1,
+      "total_musd": 25.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/tigers-to-sign-kevin-gausman.html"
+    },
+    {
+      "player": "Alec Bohm",
+      "outcome": "signed",
+      "team": "KCR",
+      "years": 2,
+      "total_musd": 20.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/royals-to-sign-alec-bohm.html"
+    },
+    {
+      "player": "JoJo Romero",
+      "outcome": "signed",
+      "team": "SDP",
+      "years": 3,
+      "total_musd": 21.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/padres-to-sign-jojo-romero.html"
+    },
+    {
+      "player": "David Peterson",
+      "outcome": "signed",
+      "team": "COL",
+      "years": 2,
+      "total_musd": 32.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/rockies-to-sign-david-peterson.html"
+    },
+    {
+      "player": "Foster Griffin",
+      "outcome": "re-signed",
+      "team": "CLE",
+      "years": 3,
+      "total_musd": 48.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/guardians-to-sign-foster-griffin.html"
+    },
+    {
+      "player": "Patrick Sandoval",
+      "outcome": "signed",
+      "team": "COL",
+      "years": 3,
+      "total_musd": 42.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/rockies-patrick-sandoval-agree-to-three-year-deal.html"
+    },
+    {
+      "player": "Kevin Ginkel",
+      "outcome": "signed",
+      "team": "MIN",
+      "years": 2,
+      "total_musd": 18.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/twins-to-sign-kevin-ginkel.html"
+    },
+    {
+      "player": "A.J. Puk",
+      "outcome": "signed",
+      "team": "WSN",
+      "years": 1,
+      "total_musd": 5.0,
+      "date": "2026-11-25",
+      "source": "https://www.mlbtraderumors.com/2026/11/nationals-to-sign-a-j-puk.html"
     }
   ],
   "qualifying_offers": {

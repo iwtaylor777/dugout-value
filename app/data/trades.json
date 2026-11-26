@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24",
+  "updated": "2026-11-26",
   "note": "Reported trades, waiver claims and designations for assignment since the 2026 season ended, applied on top of the depth-chart rosters. Pieces outside the model are listed in the note. A null destination removes a designated player from the active roster while his transaction is pending.",
   "trades": [
     {
@@ -176,6 +176,14 @@
       "moves": [{ "player": "Jimmy Herget", "from": "COL", "to": null }],
       "note": "Designated to clear a 40-man spot after Colorado acquired RHP Chase Lee from Toronto for cash.",
       "source": "https://www.mlb.com/news/chase-lee-acquired-by-rockies-from-blue-jays"
+    },
+    {
+      "date": "2026-11-25",
+      "kind": "dfa",
+      "teams": ["MIL"],
+      "moves": [{ "player": "Tyler Black", "from": "MIL", "to": null }],
+      "note": "Designated to open a 40-man spot after Milwaukee re-signed RHP Antonio Senzatela.",
+      "source": "https://www.mlbtraderumors.com/2026/11/brewers-sign-antonio-senzatela.html"
     }
   ]
 }
